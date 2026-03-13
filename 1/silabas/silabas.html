@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divisão Silábica</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        text-align: center;
+    }
+
+    header {
+        padding: 20px 0;
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        color: #155a8a;
+    }
+
+    .image-box {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .image-box img {
+        width: 200px;
+        height: 200px;
+        object-fit: contain;
+    }
+
+    .instruction {
+        margin-top: 25px;
+        font-size: 1.4rem;
+        color: #155a8a;
+    }
+
+    .syllables,
+    .slots {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .syl {
+        background: white;
+        border: 2px solid #7ac7f0;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 1.6rem;
+        cursor: grab;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        user-select: none;
+    }
+
+    .slot {
+        width: 120px;
+        height: 65px;
+        background: white;
+        border: 3px dashed #155a8a;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.6rem;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    .correct {
+        background: #c8f7c5 !important;
+        border-color: #2ecc71 !important;
+    }
+
+    .wrong {
+        background: #ffd4d4 !important;
+        border-color: #ff6b6b !important;
+    }
+
+    #score {
+        margin-top: 25px;
+        font-size: 1.4rem;
+        color: #155a8a;
+    }
+
+    #next-btn {
+        margin-top: 30px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        font-size: 1.3rem;
+        border-radius: 10px;
+        cursor: pointer;
+        display: none;
+    }
+
+    #next-btn:hover {
+        background: #43a047;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Divisão Silábica</h1>
+</header>
+
+<div class="image-box">
+    <img id="word-img" src="">
+</div>
+
+<div class="instruction">
+    Arrasta as sílabas para formar a palavra:
+</div>
+
+<div class="syllables" id="syl-container"></div>
+
+<div class="slots" id="slot-container"></div>
+
+<div id="score">Pontuação: 0</div>
+
+<button id="next-btn" onclick="nextWord()">Seguinte</button>
+
+<script>
+let score = 0;
+let current = 0;
+let dragged = null;
+
+/* ============================================================
+   LISTA COMPLETA DE 30 PALAVRAS + IMAGENS OPENMOJI
+   ============================================================ */
+
+const words = [
+
+    /* 10 palavras iniciais */
+    { w:"pato",   img:"https://openmoji.org/data/color/svg/1F986.svg", syl:["PA","TO"] },
+    { w:"gato",   img:"https://openmoji.org/data/color/svg/1F431.svg", syl:["GA","TO"] },
+    { w:"bola",   img:"https://openmoji.org/data/color/svg/1F3C0.svg", syl:["BO","LA"] },
+    { w:"vaca",   img:"https://openmoji.org/data/color/svg/1F404.svg", syl:["VA","CA"] },
+    { w:"ratito", img:"https://openmoji.org/data/color/svg/1F42D.svg", syl:["RA","TI","TO"] },
+    { w:"palito", img:"https://openmoji.org/data/color/svg/1F362.svg", syl:["PA","LI","TO"] },
+    { w:"melão",  img:"https://openmoji.org/data/color/svg/1F348.svg", syl:["ME","LÃO"] },
+    { w:"mota",   img:"https://openmoji.org/data/color/svg/1F3CD.svg", syl:["MO","TA"] },
+    { w:"janela", img:"https://openmoji.org/data/color/svg/1FA9F.svg", syl:["JA","NE","LA"] },
+    { w:"jipe",   img:"https://openmoji.org/data/color/svg/1F699.svg", syl:["JI","PE"] },
+
+    /* 20 palavras adicionadas */
+    { w:"cama",   img:"https://openmoji.org/data/color/svg/1F6CF.svg", syl:["CA","MA"] },
+    { w:"dado",   img:"https://openmoji.org/data/color/svg/1F3B2.svg", syl:["DA","DO"] },
+    { w:"mesa",   img:"https://openmoji.org/data/color/svg/1FA91.svg", syl:["ME","SA"] },
+    { w:"vela",   img:"https://openmoji.org/data/color/svg/1F56F.svg", syl:["VE","LA"] },
+    { w:"mala",   img:"https://openmoji.org/data/color/svg/1F9F3.svg", syl:["MA","LA"] },
+    { w:"moto",   img:"https://openmoji.org/data/color/svg/1F3CD.svg", syl:["MO","TO"] },
+    { w:"dedo",   img:"https://openmoji.org/data/color/svg/261D.svg", syl:["DE","DO"] },
+    { w:"coco",   img:"https://openmoji.org/data/color/svg/1F965.svg", syl:["CO","CO"] },
+    { w:"lima",   img:"https://openmoji.org/data/color/svg/1F34B.svg", syl:["LI","MA"] },
+    { w:"foca",   img:"https://openmoji.org/data/color/svg/1F9AD.svg", syl:["FO","CA"] },
+    { w:"pipa",   img:"https://openmoji.org/data/color/svg/1FA81.svg", syl:["PI","PA"] },
+    { w:"rato",   img:"https://openmoji.org/data/color/svg/1F42D.svg", syl:["RA","TO"] },
+    { w:"pote",   img:"https://openmoji.org/data/color/svg/1F3FA.svg", syl:["PO","TE"] },
+    { w:"tomate", img:"https://openmoji.org/data/color/svg/1F345.svg", syl:["TO","MA","TE"] },
+    { w:"banana", img:"https://openmoji.org/data/color/svg/1F34C.svg", syl:["BA","NA","NA"] },
+    { w:"tapete", img:"https://openmoji.org/data/color/svg/1F9F6.svg", syl:["TA","PE","TE"] },
+    { w:"rodas",  img:"https://openmoji.org/data/color/svg/1F697.svg", syl:["RO","DAS"] },
+    { w:"botas",  img:"https://openmoji.org/data/color/svg/1F462.svg", syl:["BO","TAS"] },
+    { w:"mapa",   img:"https://openmoji.org/data/color/svg/1F5FA.svg", syl:["MA","PA"] },
+
+    /* Palavra 30 — escolhida: FADA */
+    { w:"fada",   img:"https://openmoji.org/data/color/svg/1F9DA.svg", syl:["FA","DA"] }
+];
+
+/* ============================================================
+   FUNÇÕES PRINCIPAIS DO JOGO
+   ============================================================ */
+
+function loadWord() {
+    const w = words[current];
+    document.getElementById("word-img").src = w.img;
+
+    const syls = shuffle([...w.syl]);
+    const sylDiv = document.getElementById("syl-container");
+    sylDiv.innerHTML = "";
+
+    syls.forEach(s => {
+        const el = document.createElement("div");
+        el.className = "syl";
+        el.textContent = s;
+        el.draggable = true;
+        el.addEventListener("dragstart", () => dragged = el);
+        sylDiv.appendChild(el);
+    });
+
+    const slotDiv = document.getElementById("slot-container");
+    slotDiv.innerHTML = "";
+
+    w.syl.forEach(s => {
+        const sl = document.createElement("div");
+        sl.className = "slot";
+        sl.dataset.correct = s;
+        sl.addEventListener("dragover", e => e.preventDefault());
+        sl.addEventListener("drop", () => dropSyllable(sl));
+        slotDiv.appendChild(sl);
+    });
+
+    document.getElementById("next-btn").style.display = "none";
+}
+
+function dropSyllable(slot) {
+    if (!dragged) return;
+
+    const chosen = dragged.textContent;
+    const correct = slot.dataset.correct;
+
+    if (slot.textContent.trim() !== "") return;
+
+    if (chosen === correct) {
+        slot.textContent = chosen;
+        slot.classList.add("correct");
+        dragged.remove();
+        score += 5;
+
+        if (allCorrect()) {
+            document.getElementById("next-btn").style.display = "inline-block";
+        }
+
+    } else {
+        slot.classList.add("wrong");
+        score = Math.max(0, score - 1);
+        setTimeout(() => slot.classList.remove("wrong"), 500);
+    }
+
+    document.getElementById("score").textContent = "Pontuação: " + score;
+}
+
+function allCorrect() {
+    return [...document.querySelectorAll(".slot")]
+        .every(s => s.textContent.trim() !== "");
+}
+
+function nextWord() {
+    current = (current + 1) % words.length;
+    loadWord();
+}
+
+function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+loadWord();
+</script>
+
+</body>
+</html>
