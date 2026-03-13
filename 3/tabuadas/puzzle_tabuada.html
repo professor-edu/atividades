@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puzzle da Tabuada</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        text-align: center;
+    }
+
+    header {
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+        padding: 20px;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 2.3rem;
+        color: #155a8a;
+    }
+
+    #tab-select {
+        margin-top: 20px;
+        padding: 10px;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        border: 2px solid #7ac7f0;
+    }
+
+    #progress-container {
+        width: 90%;
+        height: 18px;
+        background: #cfe0ff;
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+
+    #progress {
+        height: 100%;
+        width: 0%;
+        background: #4c8bff;
+        border-radius: 10px;
+        transition: width .3s;
+    }
+
+    #pieces, #targets {
+        margin: 25px auto;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        max-width: 900px;
+    }
+
+    .piece, .slot {
+        background: white;
+        border-radius: 10px;
+        border: 2px solid #7ac7f0;
+        padding: 15px 20px;
+        font-size: 1.5rem;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        cursor: grab;
+        user-select: none;
+        width: 120px;
+        text-align: center;
+    }
+
+    .slot {
+        cursor: default;
+        border-style: dashed;
+        background: #ffffff;
+    }
+
+    .correct {
+        background: #c8f7c5 !important;
+        border-color: #2ecc71 !important;
+    }
+
+    .wrong {
+        background: #ffd4d4 !important;
+        border-color: #ff6b6b !important;
+    }
+
+    #score {
+        color: #155a8a;
+        font-size: 1.4rem;
+    }
+
+    #final-screen {
+        display:none;
+        margin-top: 30px;
+    }
+
+    #medal {
+        width: 120px;
+        margin-top: 20px;
+    }
+
+    #restart {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 1.2rem;
+        background: #4c8bff;
+        color: white;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Puzzle da Tabuada</h1>
+</header>
+
+<select id="tab-select" onchange="startGame()">
+    <option value="">Escolhe a tabuada</option>
+    <option value="2">Tabuada do 2</option>
+    <option value="3">Tabuada do 3</option>
+    <option value="4">Tabuada do 4</option>
+    <option value="5">Tabuada do 5</option>
+    <option value="6">Tabuada do 6</option>
+    <option value="7">Tabuada do 7</option>
+    <option value="8">Tabuada do 8</option>
+    <option value="9">Tabuada do 9</option>
+    <option value="10">Tabuada do 10</option>
+</select>
+
+<div id="progress-container">
+    <div id="progress"></div>
+</div>
+
+<div id="score">Pontos: 0</div>
+
+<div id="pieces"></div>
+<div id="targets"></div>
+
+<div id="final-screen">
+    <h2 id="final-title"></h2>
+    <p id="stats"></p>
+    <img id="medal">
+    <br>
+    <button id="restart" onclick="startGame()">Recomeçar</button>
+</div>
+
+<script>
+let tabuada = null;
+let acertos = 0;
+let erros = 0;
+let pontos = 0;
+let total = 10;
+
+function startGame() {
+    tabuada = Number(document.getElementById("tab-select").value);
+    if (!tabuada) return;
+
+    acertos = 0;
+    erros = 0;
+    pontos = 0;
+
+    document.getElementById("score").textContent = "Pontos: 0";
+    document.getElementById("final-screen").style.display = "none";
+
+    gerarPuzzle();
+}
+
+function gerarPuzzle() {
+    let nums = [];
+    for (let i = 1; i <= total; i++) nums.push(i);
+
+    nums.sort(() => Math.random() - 0.5);
+
+    const pieces = document.getElementById("pieces");
+    const targets = document.getElementById("targets");
+    pieces.innerHTML = "";
+    targets.innerHTML = "";
+
+    nums.forEach(n => {
+        let peça = document.createElement("div");
+        peça.className = "piece";
+        peça.textContent = `${tabuada} × ${n}`;
+        peça.draggable = true;
+        peça.dataset.value = tabuada * n;
+
+        peça.addEventListener("dragstart", () => dragging = peça);
+
+        pieces.appendChild(peça);
+
+        let slot = document.createElement("div");
+        slot.className = "slot";
+        slot.dataset.correct = tabuada * n;
+        slot.textContent = "?";
+
+        slot.addEventListener("dragover", e => e.preventDefault());
+        slot.addEventListener("drop", () => soltar(slot));
+
+        targets.appendChild(slot);
+    });
+
+    updateProgress();
+}
+
+let dragging = null;
+
+function soltar(slot) {
+    if (!dragging) return;
+
+    let correto = Number(slot.dataset.correct);
+    let valor = Number(dragging.dataset.value);
+
+    if (slot.textContent !== "?") return;
+
+    if (correto === valor) {
+        slot.textContent = valor;
+        slot.classList.add("correct");
+        dragging.remove();
+        acertos++;
+        pontos++;
+
+        updateProgress();
+
+        if (acertos === total) fimDoPuzzle();
+
+    } else {
+        slot.classList.add("wrong");
+        erros++;
+        pontos = Math.max(0, pontos - 1);
+        setTimeout(() => slot.classList.remove("wrong"), 500);
+    }
+
+    document.getElementById("score").textContent =
+        "Pontos: " + pontos;
+}
+
+function updateProgress() {
+    let percent = (acertos / total) * 100;
+    document.getElementById("progress").style.width = percent + "%";
+}
+
+function fimDoPuzzle() {
+    document.getElementById("final-screen").style.display = "block";
+
+    const percent = Math.round((acertos / total) * 100);
+
+    const medal =
+        percent >= 80 ? "https://openmoji.org/data/color/svg/1F947.svg" :
+        percent >= 60 ? "https://openmoji.org/data/color/svg/1F948.svg" :
+        percent >= 40 ? "https://openmoji.org/data/color/svg/1F949.svg" :
+                        "https://openmoji.org/data/color/svg/1F614.svg";
+
+    document.getElementById("final-title").textContent =
+        "Puzzle completo!";
+
+    document.getElementById("stats").innerHTML =
+        `Acertos: ${acertos}<br>Erros: ${erros}<br>Percentagem: ${percent}%`;
+
+    document.getElementById("medal").src = medal;
+}
+</script>
+
+</body>
+</html>
