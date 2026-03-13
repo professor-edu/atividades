@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labirinto da Tabuada</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        text-align: center;
+    }
+
+    header {
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+        padding: 20px;
+    }
+
+    header h1 {
+        margin: 0;
+        color: #155a8a;
+        font-size: 2.3rem;
+    }
+
+    #tab-select {
+        margin-top: 20px;
+        padding: 10px;
+        font-size: 1.3rem;
+        border-radius: 10px;
+        border: 2px solid #7ac7f0;
+    }
+
+    #maze {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        max-width: 460px;
+        margin: 30px auto;
+    }
+
+    .cell {
+        background: white;
+        padding: 18px;
+        border-radius: 10px;
+        font-size: 1.3rem;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        cursor: pointer;
+        user-select: none;
+        border: 2px solid transparent;
+    }
+
+    .correct { background: #c8f7c5; border-color: #2ecc71; }
+    .wrong { background: #ffd4d4; border-color: #ff6b6b; }
+
+    #progress-container {
+        width: 90%;
+        height: 18px;
+        background: #cfe0ff;
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+
+    #progress {
+        height: 100%;
+        width: 0%;
+        background: #4c8bff;
+        border-radius: 10px;
+        transition: width .4s;
+    }
+
+    #score {
+        font-size: 1.4rem;
+        color: #155a8a;
+    }
+
+    #final-screen {
+        display: none;
+        margin-top: 30px;
+    }
+
+    #medal {
+        width: 120px;
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Labirinto da Tabuada</h1>
+</header>
+
+<select id="tab-select" onchange="startGame()">
+    <option value="">Escolhe a tabuada</option>
+    <option value="2">Tabuada do 2</option>
+    <option value="3">Tabuada do 3</option>
+    <option value="4">Tabuada do 4</option>
+    <option value="5">Tabuada do 5</option>
+    <option value="6">Tabuada do 6</option>
+    <option value="7">Tabuada do 7</option>
+    <option value="8">Tabuada do 8</option>
+    <option value="9">Tabuada do 9</option>
+    <option value="10">Tabuada do 10</option>
+</select>
+
+<div id="progress-container">
+    <div id="progress"></div>
+</div>
+
+<div id="score">Pontos: 0</div>
+
+<div id="maze"></div>
+
+<div id="final-screen">
+    <h2 id="final-title"></h2>
+    <p id="stats"></p>
+    <img id="medal">
+    <br><br>
+    <button onclick="startGame()">Recomeçar</button>
+</div>
+
+<script>
+let tabuada = null;
+let pontos = 0;
+let acertos = 0;
+let erros = 0;
+let caminho = [];
+let posicao = 0;
+
+function startGame() {
+    tabuada = Number(document.getElementById("tab-select").value);
+    if (!tabuada) return;
+
+    pontos = 0;
+    acertos = 0;
+    erros = 0;
+    posicao = 0;
+
+    document.getElementById("score").textContent = "Pontos: 0";
+    document.getElementById("final-screen").style.display = "none";
+
+    gerarCaminho();
+    gerarLabirinto();
+    atualizarProgresso();
+}
+
+function gerarCaminho() {
+    caminho = [];
+    for (let i = 1; i <= 10; i++) {
+        caminho.push(tabuada * i);
+    }
+}
+
+function gerarLabirinto() {
+    const maze = document.getElementById("maze");
+    maze.innerHTML = "";
+
+    let numeros = [];
+
+    caminho.forEach(num => numeros.push(num));
+
+    while (numeros.length < 49) {
+        numeros.push(Math.floor(Math.random() * 81) + 1);
+    }
+
+    numeros.sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < 49; i++) {
+        let cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = numeros[i];
+
+        cell.onclick = () => clicarNumero(cell);
+
+        maze.appendChild(cell);
+    }
+}
+
+function clicarNumero(cell) {
+    let valor = Number(cell.textContent);
+
+    if (cell.classList.contains("correct") ||
+        cell.classList.contains("wrong")) return;
+
+    if (valor === caminho[posicao]) {
+
+        cell.classList.add("correct");
+        pontos++;
+        acertos++;
+        posicao++;
+
+        atualizarProgresso();
+
+        if (posicao === caminho.length) terminarJogo();
+
+    } else {
+
+        cell.classList.add("wrong");
+        erros++;
+        pontos = Math.max(0, pontos - 1);
+
+        document.getElementById("score").textContent =
+            "Pontos: " + pontos;
+    }
+
+    document.getElementById("score").textContent =
+        "Pontos: " + pontos;
+}
+
+function atualizarProgresso() {
+    let percent = (posicao / caminho.length) * 100;
+    document.getElementById("progress").style.width = percent + "%";
+}
+
+function terminarJogo() {
+    document.getElementById("final-screen").style.display = "block";
+
+    const percent = Math.round((acertos / caminho.length) * 100);
+
+    let medalURL = "";
+
+    if (percent >= 80) medalURL = "https://openmoji.org/data/color/svg/1F947.svg";
+    else if (percent >= 60) medalURL = "https://openmoji.org/data/color/svg/1F948.svg";
+    else if (percent >= 40) medalURL = "https://openmoji.org/data/color/svg/1F949.svg";
+    else medalURL = "https://openmoji.org/data/color/svg/1F614.svg";
+
+    document.getElementById("final-title").textContent =
+        "Completaste o Labirinto da Tabuada do " + tabuada;
+
+    document.getElementById("stats").innerHTML =
+        `Acertos: ${acertos}<br>Erros: ${erros}<br>Percentagem: ${percent}%`;
+
+    document.getElementById("medal").src = medalURL;
+}
+</script>
+
+</body>
+</html>
