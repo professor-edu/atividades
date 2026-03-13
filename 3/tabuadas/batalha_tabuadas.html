@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batalha das Tabuadas</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f7ff;
+    text-align: center;
+}
+
+header {
+    padding: 20px 0;
+    background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+    border-bottom: 4px solid #7ac7f0;
+}
+
+header h1 {
+    color: #155a8a;
+    margin: 0;
+}
+
+#tab-select {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    border: 2px solid #7ac7f0;
+}
+
+#battle-area {
+    margin-top: 30px;
+}
+
+.avatar {
+    width: 120px;
+}
+
+.lives {
+    font-size: 1.5rem;
+    color: #155a8a;
+    margin-top: 10px;
+}
+
+#question {
+    margin-top: 30px;
+    font-size: 2rem;
+    color: #155a8a;
+}
+
+.answer-btn {
+    background: white;
+    border: 2px solid #7ac7f0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    margin: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.answer-btn:hover {
+    background: #bde6ff;
+}
+
+#final-screen {
+    display: none;
+    margin-top: 40px;
+}
+
+#medal {
+    width: 150px;
+    margin-top: 20px;
+}
+
+#restart-btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 1.3rem;
+    background: #4c8bff;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+#restart-btn:hover {
+    background: #3a6ed8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Batalha das Tabuadas</h1>
+</header>
+
+<select id="tab-select" onchange="startGame()">
+    <option value="">Escolhe a tabuada</option>
+    <option value="2">Tabuada do 2</option>
+    <option value="3">Tabuada do 3</option>
+    <option value="4">Tabuada do 4</option>
+    <option value="5">Tabuada do 5</option>
+    <option value="6">Tabuada do 6</option>
+    <option value="7">Tabuada do 7</option>
+    <option value="8">Tabuada do 8</option>
+    <option value="9">Tabuada do 9</option>
+    <option value="10">Tabuada do 10</option>
+</select>
+
+<div id="battle-area">
+
+    <div style="display:flex; justify-content:space-around; margin-top:40px;">
+        <div>
+            https://openmoji.org/data/color/svg/1F610.svg
+            <div class="lives" id="player-lives">❤️❤️❤️❤️❤️</div>
+        </div>
+
+        <div>
+            https://openmoji.org/data/color/svg/1F479.svg
+            <div class="lives" id="enemy-lives">💀💀💀💀💀</div>
+        </div>
+    </div>
+
+</div>
+
+<div id="question"></div>
+<div id="answers"></div>
+
+<div id="final-screen">
+    <h2 id="final-title"></h2>
+    <p id="final-info"></p>
+    <img id="medal">
+    <br>
+    <button id="restart-btn" onclick="startGame()">Recomeçar</button>
+</div>
+
+<script>
+let tabuada = null;
+let playerLives = 5;
+let enemyLives = 5;
+let acertos = 0;
+let erros = 0;
+
+function startGame() {
+    tabuada = Number(document.getElementById("tab-select").value);
+    if (!tabuada) return;
+
+    playerLives = 5;
+    enemyLives = 5;
+    acertos = 0;
+    erros = 0;
+
+    atualizarVidas();
+    document.getElementById("final-screen").style.display = "none";
+
+    novaPergunta();
+}
+
+function atualizarVidas() {
+    document.getElementById("player-lives").textContent = "❤️".repeat(playerLives);
+    document.getElementById("enemy-lives").textContent = "💀".repeat(enemyLives);
+}
+
+function novaPergunta() {
+    if (playerLives <= 0 || enemyLives <= 0) {
+        fimDaBatalha();
+        return;
+    }
+
+    let n = Math.floor(Math.random() * 10) + 1;
+    let resultado = n * tabuada;
+
+    document.getElementById("question").textContent =
+        `${tabuada} × ${n} = ?`;
+
+    let respostas = [
+        resultado,
+        resultado + tabuada,
+        resultado - tabuada,
+        resultado + 3
+    ].sort(() => Math.random() - 0.5);
+
+    let container = document.getElementById("answers");
+    container.innerHTML = "";
+
+    respostas.forEach(r => {
+        let btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = r;
+        btn.onclick = () => verificar(r, resultado);
+        container.appendChild(btn);
+    });
+}
+
+function verificar(resp, correto) {
+    if (resp === correto) {
+        enemyLives--;
+        acertos++;
+    } else {
+        playerLives--;
+        erros++;
+    }
+
+    atualizarVidas();
+
+    novaPergunta();
+}
+
+function fimDaBatalha() {
+    document.getElementById("final-screen").style.display = "block";
+
+    let percent = Math.round((acertos / (acertos + erros)) * 100);
+
+    let medal =
+        percent >= 80 ? "https://openmoji.org/data/color/svg/1F947.svg" :
+        percent >= 60 ? "https://openmoji.org/data/color/svg/1F948.svg" :
+        percent >= 40 ? "https://openmoji.org/data/color/svg/1F949.svg" :
+                        "https://openmoji.org/data/color/svg/1F614.svg";
+
+    let titulo = playerLives > 0 ? "Vitória!" : "Derrota...";
+    document.getElementById("final-title").textContent = titulo;
+
+    document.getElementById("final-info").innerHTML =
+        `Acertos: ${acertos}<br>Erros: ${erros}<br>Percentagem: ${percent}%`;
+
+    document.getElementById("medal").src = medal;
+}
+</script>
+
+</body>
+</html>
