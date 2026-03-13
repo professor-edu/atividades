@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Leitura e Cópia de Frases</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        color: #333;
+    }
+
+    /* --- Cabeçalho --- */
+    header {
+        width: 100%;
+        padding: 15px 0;
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+    }
+
+    header img {
+        width: 120px;
+    }
+
+    header .letter-box {
+        padding: 10px 25px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #155a8a;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    }
+
+    /* --- Conteúdo Central --- */
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .progress {
+        margin: 20px auto;
+        width: 100%;
+        background: #cfe0ff;
+        height: 18px;
+        border-radius: 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        background: #4c8bff;
+        transition: width .4s;
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .sentence-box {
+       background: linear-gradient(to bottom, #e8f7ff, #bde6ff);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 18px 0;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .sentence-text {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .sentence-input {
+        width: 95%;
+        padding: 10px;
+        font-size: 24px;
+        border-radius: 8px;
+        border: 2px solid #bbbbbb;
+    }
+
+    .neutral { background: white; border-color: #bbbbbb; }
+    .correct { background: #e6ffe6; border-color: #2ecc71; }
+    .wrong   { background: #ffe8e8; border-color: #ff6b6b; }
+
+    /* --- Botões --- */
+    .buttons-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 25px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        display: none;
+    }
+
+    #next-btn {
+        background: #4caf50;
+        color: white;
+    }
+
+   
+    #next-btn:hover { background: #43a047; }
+
+    /* --- Página Final --- */
+    #final-screen {
+        text-align: center;
+        display: none;
+    }
+
+    .medal {
+        width: 140px;
+        margin: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html"><img id="header-img" src=""></a>
+    <div class="letter-box" id="header-letter"></div>
+</header>
+
+<div class="container">
+
+    <div class="progress">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <h2 id="page-title"></h2>
+
+    <div id="sentences"></div>
+
+    <div class="buttons-row">
+       <button id="next-btn" class="btn" onclick="nextPage()">Seguinte</button>
+    </div>
+
+    <div id="final-screen">
+        <h1>🎉 Parabéns! 👍</h1>
+        <h2 id="final-score"></h2>
+        <img class="medal" id="medal-img">
+    </div>
+</div>
+
+<script>
+/* --- Imagens OpenMoji --- */
+
+const imageFor = {
+    "P": "https://openmoji.org/data/color/svg/1F986.svg",
+    "T": "https://openmoji.org/data/color/svg/1F578.svg",
+    "L": "https://openmoji.org/data/color/svg/1F319.svg",
+    "D": "https://openmoji.org/data/color/svg/1F3B2.svg",
+    "M": "https://openmoji.org/data/color/svg/1F412.svg",
+    "V": "https://openmoji.org/data/color/svg/1F404.svg",
+    "N": "https://openmoji.org/data/color/svg/2601.svg",
+    "R": "https://openmoji.org/data/color/svg/1F42D.svg",
+    "C": "https://openmoji.org/data/color/svg/1F415.svg",
+    "Q": "https://openmoji.org/data/color/svg/1F95D.svg",
+    "B": "https://openmoji.org/data/color/svg/26BD.svg",
+    "G": "https://openmoji.org/data/color/svg/1F408.svg",
+    "J": "https://openmoji.org/data/color/svg/1FA9F.svg",
+    "F": "https://openmoji.org/data/color/svg/1F9DA.svg",
+    "S": "https://openmoji.org/data/color/svg/1F438.svg",
+    "Z": "https://openmoji.org/data/color/svg/1F993.svg",
+    "H": "https://openmoji.org/data/color/svg/1F99B.svg",
+    "X": "/xerife.png",
+    "K": "/kart.png",
+    "W": "https://openmoji.org/data/color/svg/E189.svg",
+    "Y": "/yoga.png"
+};
+
+/* --- Páginas (21 letras) --- */
+
+const pages = [
+    {letter:"P",sentences:["O pai papa o pão.","É o Pepe e o pau.","É o pote e o pai."]},
+    {letter:"T",sentences:["É o tapete e o Tó.","A tia tapa o pote.","É o tapete e o tio."]},
+    {letter:"L",sentences:["É a Lili e o leite.","O Paulo pula.","É a lula e a lua."]},
+    {letter:"D",sentences:["O dedo da Dalila dói muito.","A dália é da Didi.","É dia de ditado."]},
+    {letter:"M",sentences:["A mãe mede a mala.","É a mala e a moeda da Mimi.","A Milu deu o mapa à Ema."]},
+    {letter:"V",sentences:["A Violeta vê a vela.","O avô leva o vitelo até à vila.","A vaca teve medo do leão."]},
+    {letter:"N",sentences:["A Nena é a neta do avô Nuno.","O Nito dá a nota ai Paulo.","A Diana nada muito."]},
+    {letter:"R",sentences:["O Rui roda a roda do carro.","A Rita vê o ramo.","O rato roeu a rede e a roupa toda."]},
+    {letter:"C",sentences:["A Cátia come a comida.","O cão vê o camião e corre na rua.","O Caio colou o copo."]},
+    {letter:"Q",sentences:["O Quico comeu um quivi no piquenique.","A Quina queima o papel.","O Aquilino é do Quénia."]},
+    {letter:"B",sentences:["O Beto bebe água.","A Bela dá a boneca à Bárbara.","O bolo é de banana."]},
+    {letter:"G",sentences:["O Gugu come o gelado.","A Gabi cuida do gato.","O cágado vive na água do lago."]},
+    {letter:"J",sentences:["A Júlia joga à bola.","O João leva areia no jipe.","A Joana vai ao judo."]},
+    {letter:"F",sentences:["A faca é da Fátima.","O Filipe teve fome e comeu o figo.","A fada Fifó fala."]},
+    {letter:"S",sentences:["A Sara sapateia na sala.","O Simão salta no sofá.","A Sofia vai no passeio."]},
+    {letter:"Z",sentences:["A zebra zune no zoo.","O búzio é do Zeca.","A baliza é azul."]},
+    {letter:"H",sentences:["O Hugo há-de voltar.","Na horta há hortelã.","A Helena humedece o pano."]},
+    {letter:"X",sentences:["O Xico toca xilofone.","A Xana come o peixe.","O Aleixo toca xilofone no xalé."]},
+    {letter:"K",sentences:["A Filipa vai ao karaté.","A Kika vai kung-fu.","A Kiara vai ao kart."]},
+    {letter:"W",sentences:["A Wanda vê a webcam.","O Wilson come waffles.","O wifi da sala é muito rápido."]},
+    {letter:"Y",sentences:["O Yuri faz yoga.","A Yara come yogurte.","É o Yuki e a Yara."]}
+];
+
+let pageIndex = 0;
+let totalScore = 0;
+
+function loadPage() {
+    const page = pages[pageIndex];
+
+    document.getElementById("header-img").src = imageFor[page.letter];
+    document.getElementById("header-letter").textContent =
+        page.letter.toLowerCase() + " - " + page.letter;
+
+    document.getElementById("page-title").textContent =
+        "Consoante " + (pageIndex+1) + " de " + pages.length;
+
+    const box = document.getElementById("sentences");
+    box.innerHTML = "";
+
+    page.sentences.forEach((txt,i)=>{
+        const div = document.createElement("div");
+        div.className="sentence-box";
+
+        div.innerHTML = `
+            <div class="sentence-text">${txt}</div>
+            <input id="inp${i}" class="sentence-input neutral">
+        `;
+        box.appendChild(div);
+    });
+
+    document.querySelectorAll(".sentence-input").forEach((input,i)=>{
+        input.addEventListener("input",()=>checkSentence(input,page.sentences[i]));
+    });
+
+    
+
+    document.getElementById("next-btn").style.display = "none";
+
+    updateProgress();
+}
+
+function checkSentence(input, correct) {
+    const val = input.value.trim();
+
+    if (val === "") input.className="sentence-input neutral";
+    else if (val === correct) input.className="sentence-input correct";
+    else input.className="sentence-input wrong";
+
+    checkPageComplete();
+}
+
+function checkPageComplete() {
+    const inputs = document.querySelectorAll(".sentence-input");
+
+    for (const inp of inputs) {
+        if (!inp.classList.contains("correct")) {
+            document.getElementById("next-btn").style.display="none";
+            return;
+        }
+    }
+
+    totalScore += 3;
+    document.getElementById("next-btn").style.display="inline-block";
+}
+
+function nextPage() {
+    pageIndex++;
+    if (pageIndex >= pages.length) return finish();
+    loadPage();
+}
+
+
+function updateProgress() {
+    const percent = (pageIndex / pages.length) * 100;
+    document.getElementById("progress-bar").style.width = percent + "%";
+}
+
+function finish() {
+    document.getElementById("sentences").style.display="none";
+    document.querySelector(".buttons-row").style.display="none";
+    document.getElementById("page-title").style.display="none";
+    document.getElementById("final-screen").style.display="block";
+
+    const maxScore = pages.length * 3;
+
+    document.getElementById("final-score").textContent =
+        "Pontos totais: " + maxScore + " / " + maxScore;
+
+    document.getElementById("medal-img").src =
+        "https://upload.wikimedia.org/wikipedia/commons/4/4e/Gold_medal_icon.svg";
+}
+
+loadPage();
+</script>
+
+</body>
+</html>
