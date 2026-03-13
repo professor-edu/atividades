@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corrida das Tabuadas</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        text-align: center;
+    }
+
+    header {
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+        padding: 20px;
+    }
+
+    header h1 {
+        margin: 0;
+        color: #155a8a;
+        font-size: 2.3rem;
+    }
+
+    #select-tab {
+        margin-top: 20px;
+        padding: 10px;
+        font-size: 1.3rem;
+        border-radius: 10px;
+        border: 2px solid #7ac7f0;
+    }
+
+    /* Barra de corrida */
+    #track {
+        width: 90%;
+        height: 40px;
+        background: #cfe0ff;
+        margin: 30px auto;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #car {
+        width: 40px;
+        height: 40px;
+        background: url("https://openmoji.org/data/color/svg/1F697.svg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: left .4s;
+    }
+
+    #question {
+        font-size: 2rem;
+        color: #155a8a;
+        margin-top: 20px;
+    }
+
+    .answer-btn {
+        background: white;
+        border: 2px solid #7ac7f0;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 1.4rem;
+        cursor: pointer;
+        margin: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    .answer-btn:hover {
+        background: #bde6ff;
+    }
+
+    #score {
+        font-size: 1.4rem;
+        margin-top: 20px;
+        color: #155a8a;
+    }
+
+    #final-screen {
+        display: none;
+        margin-top: 40px;
+    }
+
+    #medal {
+        width: 150px;
+        margin-top: 25px;
+    }
+
+    #restart {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 1.3rem;
+        border: none;
+        background: #4c8bff;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    #restart:hover {
+        background: #3a6ed8;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Corrida das Tabuadas</h1>
+</header>
+
+<select id="select-tab" onchange="startGame()">
+    <option value="">Escolhe a tabuada</option>
+    <option value="2">Tabuada do 2</option>
+    <option value="3">Tabuada do 3</option>
+    <option value="4">Tabuada do 4</option>
+    <option value="5">Tabuada do 5</option>
+    <option value="6">Tabuada do 6</option>
+    <option value="7">Tabuada do 7</option>
+    <option value="8">Tabuada do 8</option>
+    <option value="9">Tabuada do 9</option>
+    <option value="10">Tabuada do 10</option>
+</select>
+
+<div id="track">
+    <div id="car"></div>
+</div>
+
+<div id="question"></div>
+
+<div id="answers"></div>
+
+<div id="score">Pontos: 0</div>
+
+<div id="final-screen">
+    <h2 id="final-title"></h2>
+    <p id="final-info"></p>
+    <img id="medal">
+    <br>
+    <button id="restart" onclick="restartGame()">Recomeçar</button>
+</div>
+
+<script>
+let tabuada = null;
+let pontos = 0;
+let acertos = 0;
+let erros = 0;
+let perguntaAtual = 0;
+let totalPerguntas = 10;
+
+/* INICIAR O JOGO */
+function startGame() {
+    tabuada = Number(document.getElementById("select-tab").value);
+    if (!tabuada) return;
+
+    pontos = 0;
+    acertos = 0;
+    erros = 0;
+    perguntaAtual = 0;
+
+    document.getElementById("final-screen").style.display = "none";
+    document.getElementById("car").style.left = "0px";
+
+    novaPergunta();
+}
+
+/* GERAR PERGUNTA */
+function novaPergunta() {
+    if (perguntaAtual >= totalPerguntas) {
+        fimDoJogo();
+        return;
+    }
+
+    let n = Math.floor(Math.random() * 10) + 1;
+    let resultado = n * tabuada;
+
+    document.getElementById("question").textContent =
+        `${tabuada} × ${n} = ?`;
+
+    let respostas = [
+        resultado,
+        resultado + tabuada,
+        resultado - tabuada,
+        resultado + 3
+    ].sort(() => Math.random() - 0.5);
+
+    let container = document.getElementById("answers");
+    container.innerHTML = "";
+
+    respostas.forEach(r => {
+        let b = document.createElement("button");
+        b.className = "answer-btn";
+        b.textContent = r;
+        b.onclick = () => verificar(r, resultado);
+        container.appendChild(b);
+    });
+}
+
+/* VERIFICAR RESPOSTA */
+function verificar(rep, correto) {
+    if (rep === correto) {
+        pontos++;
+        acertos++;
+        moverCarro();
+    } else {
+        pontos = Math.max(0, pontos - 1);
+        erros++;
+    }
+
+    document.getElementById("score").textContent =
+        `Pontos: ${pontos}`;
+
+    perguntaAtual++;
+    novaPergunta();
+}
+
+/* AVANÇAR CARRO */
+function moverCarro() {
+    let percent = (acertos / totalPerguntas) * 100;
+    let pista = document.getElementById("track").offsetWidth;
+    let novaPos = (percent / 100) * (pista - 40);
+    document.getElementById("car").style.left = novaPos + "px";
+}
+
+/* FINAL DO JOGO */
+function fimDoJogo() {
+    document.getElementById("final-screen").style.display = "block";
+
+    let percent = Math.round((acertos / totalPerguntas) * 100);
+    let medal = "";
+
+    if (percent >= 80) medal = "https://openmoji.org/data/color/svg/1F947.svg"; 
+    else if (percent >= 60) medal = "https://openmoji.org/data/color/svg/1F948.svg";
+    else if (percent >= 40) medal = "https://openmoji.org/data/color/svg/1F949.svg";
+    else medal = "https://openmoji.org/data/color/svg/1F614.svg";
+
+    document.getElementById("final-title").textContent =
+        "Corrida completa!";
+
+    document.getElementById("final-info").innerHTML =
+        `Acertos: ${acertos}<br>Erros: ${erros}<br>Percentagem: ${percent}%`;
+
+    document.getElementById("medal").src = medal;
+}
+
+/* RECOMEÇAR JOGO */
+function restartGame() {
+    startGame();
+}
+</script>
+
+</body>
+</html>
