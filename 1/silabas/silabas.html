@@ -24,13 +24,29 @@
     }
 
     header img {
-        width: 60px;
+        width: 55px;
     }
 
     header h1 {
         margin: 0;
         font-size: 2.2rem;
         color: #155a8a;
+    }
+
+    #progress-container {
+        width: 90%;
+        height: 18px;
+        background: #cfe0ff;
+        border-radius: 10px;
+        margin: 20px auto 10px auto;
+    }
+
+    #progress-bar {
+        height: 100%;
+        width: 0%;
+        background: #4c8bff;
+        border-radius: 10px;
+        transition: width .4s;
     }
 
     .image-box {
@@ -51,7 +67,6 @@
         background:white;
     }
 
-    /* Ícone de som: canto inferior direito */
     .sound-btn {
         position: absolute;
         bottom: 8px;
@@ -140,7 +155,6 @@
         background: #43a047;
     }
 
-    /* Página final */
     #final-screen {
         display: none;
         margin-top: 40px;
@@ -172,9 +186,14 @@
 <body>
 
 <header>
-   <img src="https://openmoji.org/data/color/svg/270F.svg" alt="Divisão Silábica">
+    https://openmoji.org/data/color/svg/270F.svg
     <h1>Divisão Silábica</h1>
+    https://openmoji.org/data/color/svg/1F4AC.svg
 </header>
+
+<div id="progress-container">
+    <div id="progress-bar"></div>
+</div>
 
 <div id="game-area">
 
@@ -195,12 +214,23 @@
 
 <div id="final-screen">
     <h1 id="final-text"></h1>
+
+    <div style="font-size: 1.4rem; margin-top:10px;">
+        <p id="final-points"></p>
+        <p id="final-acertos"></p>
+        <p id="final-erros"></p>
+        <p id="final-percent"></p>
+    </div>
+
     <img id="medal">
+
     <br>
     <button id="restart-btn" onclick="restartGame()">Recomeçar</button>
 </div>
     <script>
 let score = 0;
+let acertos = 0;
+let erros = 0;
 let current = 0;
 let dragged = null;
 
@@ -212,7 +242,7 @@ const words = [
     { w:"gato",img:"https://openmoji.org/data/color/svg/1F431.svg",syl:["GA","TO"] },
     { w:"bola",img:"https://openmoji.org/data/color/svg/1F3C0.svg",syl:["BO","LA"] },
     { w:"vaca",img:"https://openmoji.org/data/color/svg/1F404.svg",syl:["VA","CA"] },
-    { w:"rato",img:"https://openmoji.org/data/color/svg/1F42D.svg",syl:["RA","TO"] },
+    { w:"ratito",img:"https://openmoji.org/data/color/svg/1F42D.svg",syl:["RA","TI","TO"] },
     { w:"violino",img:"https://openmoji.org/data/color/svg/1F3BB.svg",syl:["VI","O","LI","NO"] },
     { w:"melão",img:"https://openmoji.org/data/color/svg/1F348.svg",syl:["ME","LÃO"] },
     { w:"mota",img:"https://openmoji.org/data/color/svg/1F3CD.svg",syl:["MO","TA"] },
@@ -240,19 +270,23 @@ const words = [
     { w:"fada",img:"https://openmoji.org/data/color/svg/1F9DA.svg",syl:["FA","DA"] }
 ];
 
-/* ALEATORIZAR A ORDEM DAS PALAVRAS */
+/* Baralhar palavras */
 words.sort(() => Math.random() - 0.5);
 
+/* Atualizar barra de progresso */
+function updateProgress() {
+    let percent = (current / words.length) * 100;
+    document.getElementById("progress-bar").style.width = percent + "%";
+}
 
-/* =====================================================
-   FUNÇÕES DO JOGO
-   ===================================================== */
-
+/* Carregar palavra */
 function loadWord() {
     if (current >= words.length) {
         endGame();
         return;
     }
+
+    updateProgress();
 
     const w = words[current];
     document.getElementById("word-img").src = w.img;
@@ -285,6 +319,7 @@ function loadWord() {
     document.getElementById("next-btn").style.display = "none";
 }
 
+/* Largar sílaba nas caixas */
 function dropSyllable(slot) {
     if (!dragged) return;
 
@@ -298,6 +333,7 @@ function dropSyllable(slot) {
         slot.classList.add("correct");
         dragged.remove();
         score += 1;
+        acertos++;
 
         if (allCorrect()) {
             document.getElementById("next-btn").style.display = "inline-block";
@@ -305,6 +341,7 @@ function dropSyllable(slot) {
 
     } else {
         slot.classList.add("wrong");
+        erros++;
         score = Math.max(0, score - 1);
         setTimeout(() => slot.classList.remove("wrong"), 400);
     }
@@ -312,7 +349,7 @@ function dropSyllable(slot) {
     document.getElementById("score").textContent = "Pontuação: " + score;
 }
 
-/* SOM DA PALAVRA */
+/* Som da palavra */
 function playWord() {
     const word = words[current].w;
     const speak = new SpeechSynthesisUtterance(word);
@@ -320,41 +357,56 @@ function playWord() {
     window.speechSynthesis.speak(speak);
 }
 
+/* Verificar se completou */
 function allCorrect() {
     return [...document.querySelectorAll(".slot")]
         .every(s => s.textContent.trim() !== "");
 }
 
+/* Próxima palavra */
 function nextWord() {
     current++;
     loadWord();
 }
 
-/* ECRÃ FINAL */
+/* Fim do jogo */
 function endGame() {
+
     document.getElementById("game-area").style.display = "none";
     document.getElementById("final-screen").style.display = "block";
 
     const totalSyllables = words.reduce((sum,w)=> sum + w.syl.length, 0);
     const percent = Math.round((score / totalSyllables) * 100);
 
+    document.getElementById("final-points").textContent =
+        "Pontuação final: " + score + " pontos";
+
+    document.getElementById("final-acertos").textContent =
+        "Acertos: " + acertos;
+
+    document.getElementById("final-erros").textContent =
+        "Erros: " + erros;
+
+    document.getElementById("final-percent").textContent =
+        "Percentagem: " + percent + "%";
+
     let medal = "";
     let text = "";
 
     if (percent >= 80) {
-        medal = "https://openmoji.org/data/color/svg/1F947.svg"; // OURO
+        medal = "https://openmoji.org/data/color/svg/1F947.svg";
         text = "Excelente! Medalha de Ouro!";
     } 
     else if (percent >= 60) {
-        medal = "https://openmoji.org/data/color/svg/1F948.svg"; // PRATA
+        medal = "https://openmoji.org/data/color/svg/1F948.svg";
         text = "Muito bem! Medalha de Prata!";
     }
     else if (percent >= 40) {
-        medal = "https://openmoji.org/data/color/svg/1F949.svg"; // BRONZE
+        medal = "https://openmoji.org/data/color/svg/1F949.svg";
         text = "Bom esforço! Medalha de Bronze!";
     }
     else {
-        medal = "https://openmoji.org/data/color/svg/1F614.svg"; // carinha triste leve
+        medal = "https://openmoji.org/data/color/svg/1F614.svg";
         text = "Continua a treinar!";
     }
 
@@ -362,9 +414,11 @@ function endGame() {
     document.getElementById("medal").src = medal;
 }
 
-/* RECOMEÇAR O JOGO */
+/* Recomeçar jogo */
 function restartGame() {
     score = 0;
+    acertos = 0;
+    erros = 0;
     current = 0;
     words.sort(() => Math.random() - 0.5);
     document.getElementById("score").textContent = "Pontuação: 0";
@@ -373,17 +427,17 @@ function restartGame() {
     loadWord();
 }
 
-/* Função baralhar */
+/* Função de baralhar */
 function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+
     }
     return a;
 }
 
 loadWord();
 </script>
-
 </body>
 </html>
