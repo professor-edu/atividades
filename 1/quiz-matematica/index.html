@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz Matemática – 1º Ano</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f7ff;
+        text-align: center;
+    }
+
+    header {
+        padding: 20px 0;
+        background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+        border-bottom: 4px solid #7ac7f0;
+        margin-bottom: 20px;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        color: #155a8a;
+    }
+
+    #question-box {
+        background: white;
+        max-width: 650px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    #question {
+        font-size: 1.8rem;
+        color: #155a8a;
+        margin-bottom: 20px;
+    }
+
+    .answers {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .btn {
+        background: white;
+        border: 2px solid #7ac7f0;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 1.4rem;
+        cursor: pointer;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        transition: 0.2s;
+        min-width: 80px;
+    }
+
+    .btn:hover {
+        background: #bde6ff;
+    }
+
+    .correct {
+        background: #c8f7c5 !important;
+        border-color: #2ecc71 !important;
+    }
+
+    .wrong {
+        background: #ffd4d4 !important;
+        border-color: #ff6b6b !important;
+    }
+
+    #next-btn {
+        margin-top: 25px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.3rem;
+        display: none;
+        cursor: pointer;
+    }
+
+    #next-btn:hover {
+        background: #43a047;
+    }
+
+    #score {
+        margin-top: 25px;
+        font-size: 1.4rem;
+        color: #155a8a;
+    }
+
+    #final-screen {
+        display: none;
+        background: white;
+        max-width: 650px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        margin-top: 20px;
+    }
+
+    #medal {
+        width: 150px;
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Quiz de Matemática</h1>
+</header>
+
+<div id="question-box">
+    <div id="question"></div>
+    <div id="images"></div>
+    <div class="answers" id="answers"></div>
+    <button id="next-btn" onclick="nextQuestion()">Seguinte</button>
+</div>
+
+<div id="score">Pontuação: 0</div>
+
+<div id="final-screen">
+    <h1>🎉 Parabéns! 🎉</h1>
+    <h2 id="final-text"></h2>
+    <img id="medal">
+</div>
+
+<script>
+let score = 0;
+let index = 0;
+
+/* ============
+   30 QUESTÕES
+   ============ */
+
+let quiz = [
+
+    /* Adições */
+    { q:"2 + 3 =", a:[3,4,5,6], correct:5 },
+    { q:"5 + 4 =", a:[8,9,10,7], correct:9 },
+    { q:"7 + 2 =", a:[9,8,10,5], correct:9 },
+    { q:"10 + 4 =", a:[12,13,14,15], correct:14 },
+    { q:"6 + 6 =", a:[10,11,12,13], correct:12 },
+    { q:"8 + 7 =", a:[14,15,16,17], correct:15 },
+    { q:"3 + 9 =", a:[10,11,12,13], correct:12 },
+    { q:"4 + 5 =", a:[8,9,10,11], correct:9 },
+
+    /* Subtrações */
+    { q:"8 - 3 =", a:[4,5,6,3], correct:5 },
+    { q:"12 - 5 =", a:[7,8,9,6], correct:7 },
+    { q:"15 - 9 =", a:[7,5,6,4], correct:6 },
+    { q:"20 - 8 =", a:[10,11,12,13], correct:12 },
+    { q:"14 - 6 =", a:[7,8,9,6], correct:8 },
+    { q:"18 - 9 =", a:[9,8,7,6], correct:9 },
+    { q:"11 - 7 =", a:[4,3,5,2], correct:4 },
+    { q:"13 - 4 =", a:[8,9,7,10], correct:9 },
+
+    /* Contagens */
+    { q:"Quantos gatos?", img:"🐱🐱🐱", a:[2,3,4,5], correct:3 },
+    { q:"Quantos patos?", img:"🦆🦆🦆🦆", a:[3,4,5,6], correct:4 },
+    { q:"Quantas vacas?", img:"🐄🐄🐄🐄🐄", a:[4,5,6,7], correct:5 },
+    { q:"Quantas bolas?", img:"🏀🏀", a:[1,2,3,4], correct:2 },
+    { q:"Quantas estrelas?", img:"⭐ ⭐ ⭐ ⭐ ⭐ ⭐", a:[5,6,7,8], correct:6 },
+
+    /* Mistos */
+    { q:"6 + 7 =", a:[11,12,13,14], correct:13 },
+    { q:"9 + 8 =", a:[15,16,17,18], correct:17 },
+    { q:"3 + 11 =", a:[14,12,13,10], correct:14 },
+    { q:"19 - 3 =", a:[15,16,17,18], correct:16 },
+    { q:"7 + 5 =", a:[13,12,14,11], correct:12 },
+    { q:"16 - 7 =", a:[9,8,7,10], correct:9 },
+    { q:"4 + 12 =", a:[15,16,17,18], correct:16 },
+    { q:"10 - 4 =", a:[7,5,6,4], correct:6 }
+];
+
+/* Embaralhar ordem das perguntas */
+quiz = quiz.sort(() => Math.random() - 0.5);
+
+/* ============
+   FUNÇÕES
+   ============ */
+
+function loadQuestion() {
+    if (index >= quiz.length) {
+        finishQuiz();
+        return;
+    }
+
+    const q = quiz[index];
+
+    document.getElementById("question").textContent =
+        (index+1) + " de " + quiz.length + " — " + q.q;
+
+    if (q.img) {
+        document.getElementById("images").innerHTML =
+            `<div style="font-size:2.5rem;margin:15px;">${q.img}</div>`;
+    } else {
+        document.getElementById("images").innerHTML = "";
+    }
+
+    const box = document.getElementById("answers");
+    box.innerHTML = "";
+
+    q.a.forEach(num => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = num;
+        btn.onclick = () => check(btn, num);
+        box.appendChild(btn);
+    });
+
+    document.getElementById("next-btn").style.display = "none";
+}
+
+function check(btn, choice) {
+    const q = quiz[index];
+
+    document.querySelectorAll(".btn")
+            .forEach(b => b.style.pointerEvents = "none");
+
+    if (choice === q.correct) {
+        btn.classList.add("correct");
+        score += 5;
+    } else {
+        btn.classList.add("wrong");
+        score = Math.max(0, score - 1);
+    }
+
+    document.getElementById("score")
+        .textContent = "Pontuação: " + score;
+
+    document.getElementById("next-btn").style.display = "inline-block";
+}
+
+function nextQuestion() {
+    index++;
+    loadQuestion();
+}
+
+function finishQuiz() {
+    document.getElementById("question-box").style.display = "none";
+    document.getElementById("score").style.display = "none";
+
+    let medal = "";
+    let text = "";
+
+    if (score >= 130) {
+        medal = "https://upload.wikimedia.org/wikipedia/commons/4/4e/Gold_medal_icon.svg";
+        text = "🥇 Medalha de OURO! Excelente trabalho!";
+    }
+    else if (score >= 100) {
+        medal = "https://upload.wikimedia.org/wikipedia/commons/1/15/Silver_medal_icon.svg";
+        text = "🥈 Medalha de PRATA! Muito bem!";
+    }
+    else if (score >= 60) {
+        medal = "https://upload.wikimedia.org/wikipedia/commons/7/70/Bronze_medal_icon.svg";
+        text = "🥉 Medalha de BRONZE! Bom trabalho!";
+    }
+    else {
+        medal = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Crystal_project_success.png";
+        text = "Continua a treinar! 💪";
+    }
+
+    document.getElementById("final-text").innerHTML = 
+        "Pontuação final: <b>" + score + "</b><br>" + text;
+
+    document.getElementById("medal").src = medal;
+
+    document.getElementById("final-screen").style.display = "block";
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
