@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quiz Matemática | 1º Ano</title>
+<title>Quiz Matemática – 1º Ano</title>
 
 <style>
     body {
@@ -106,7 +106,7 @@
         border-color: #ff6b6b !important;
     }
 
-    #next-btn {
+    #next-btn, #restart-btn {
         margin-top: 25px;
         background: #4caf50;
         color: white;
@@ -118,7 +118,7 @@
         cursor: pointer;
     }
 
-    #next-btn:hover {
+    #next-btn:hover, #restart-btn:hover {
         background: #43a047;
     }
 
@@ -139,17 +139,13 @@
         margin-top: 20px;
     }
 
-    #medal {
-        width: 150px;
-        margin-top: 15px;
-    }
 </style>
 </head>
 
 <body>
 
 <header>
-    <img src="contar.png">
+    https://openmoji.org/data/color/svg/2795.svg
     <h1>Quiz de Matemática</h1>
 </header>
 
@@ -167,57 +163,66 @@
 <div id="score">Pontuação: 0</div>
 
 <div id="final-screen">
-    <h1>🎉 Parabéns! 🎉</h1>
+    <h1>✨ Terminaste! ✨</h1>
     <h2 id="final-text"></h2>
-    <img id="medal">
+    <button id="restart-btn" onclick="restartQuiz()">Recomeçar</button>
 </div>
 
 <script>
 let score = 0;
 let index = 0;
 
-// 30 QUESTIONS (aleatórias)
+/* ======================================================
+   30 QUESTÕES – contagens com mais emojis, adições maiores,
+   operações com emojis e subtrações variadas.
+   ====================================================== */
+
 let quiz = [
 
-    /* Adições */
-    { q:"2 + 3 =", a:[3,4,5,6], correct:5 },
-    { q:"5 + 4 =", a:[8,9,10,7], correct:9 },
-    { q:"7 + 2 =", a:[9,8,10,5], correct:9 },
-    { q:"10 + 4 =", a:[12,13,14,15], correct:14 },
-    { q:"6 + 6 =", a:[10,11,12,13], correct:12 },
-    { q:"3 + 9 =", a:[10,11,12,13], correct:12 },
-    { q:"4 + 5 =", a:[8,9,10,11], correct:9 },
-    { q:"8 + 7 =", a:[14,15,16,17], correct:15 },
+    /* Adições maiores */
+    { q:"12 + 7 =", a:[18,19,20,17], correct:19 },
+    { q:"9 + 8 =", a:[16,17,18,19], correct:17 },
+    { q:"15 + 4 =", a:[18,17,19,20], correct:19 },
+    { q:"11 + 9 =", a:[20,19,18,17], correct:20 },
 
-    /* Subtrações */
-    { q:"8 - 3 =", a:[4,5,6,3], correct:5 },
-    { q:"12 - 5 =", a:[7,8,9,6], correct:7 },
-    { q:"15 - 9 =", a:[7,5,6,4], correct:6 },
-    { q:"20 - 8 =", a:[10,11,12,13], correct:12 },
-    { q:"14 - 6 =", a:[7,8,9,6], correct:8 },
-    { q:"18 - 9 =", a:[9,8,7,6], correct:9 },
-    { q:"11 - 7 =", a:[4,3,5,2], correct:4 },
-    { q:"13 - 4 =", a:[8,9,7,10], correct:9 },
+    /* Operações com emojis */
+    { q:"🐱 + 🐱🐱 =", img:"🐱🐱🐱", a:[2,3,4,5], correct:3 },
+    { q:"🍎🍎🍎 – 🍎 =", img:"🍎🍎", a:[1,2,3,4], correct:2 },
+    { q:"🐟🐟 + 🐟 =", img:"🐟🐟🐟", a:[2,3,4,5], correct:3 },
+    { q:"🦆🦆🦆 – 🦆 =", img:"🦆🦆", a:[1,2,3,4], correct:2 },
 
-    /* Contagens com emojis */
-    { q:"Quantos gatos?", img:"🐱🐱🐱", a:[2,3,4,5], correct:3 },
-    { q:"Quantos patos?", img:"🦆🦆🦆🦆", a:[3,4,5,6], correct:4 },
-    { q:"Quantas vacas?", img:"🐄🐄🐄🐄🐄", a:[4,5,6,7], correct:5 },
-    { q:"Quantas bolas?", img:"🏀🏀", a:[1,2,3,4], correct:2 },
-    { q:"Quantas estrelas?", img:"⭐ ⭐ ⭐ ⭐ ⭐ ⭐", a:[5,6,7,8], correct:6 },
+    /* Contagens reforçadas */
+    { q:"Quantos cães?", img:"🐶🐶🐶🐶", a:[3,4,5,6], correct:4 },
+    { q:"Quantas bolas?", img:"🏀🏀🏀🏀🏀", a:[4,5,6,7], correct:5 },
+    { q:"Quantas estrelas?", img:"⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐", a:[6,7,8,9], correct:7 },
+    { q:"Quantos corações?", img:"❤️❤️❤️❤️", a:[3,4,5,6], correct:4 },
+
+    /* Subtrações reforçadas */
+    { q:"18 - 7 =", a:[10,11,12,13], correct:11 },
+    { q:"20 - 9 =", a:[10,11,12,13], correct:11 },
+    { q:"17 - 8 =", a:[9,8,7,6], correct:9 },
 
     /* Mistos */
-    { q:"6 + 7 =", a:[11,12,13,14], correct:13 },
-    { q:"9 + 8 =", a:[15,16,17,18], correct:17 },
-    { q:"3 + 11 =", a:[14,12,13,10], correct:14 },
+    { q:"3 + 11 =", a:[12,13,14,15], correct:14 },
     { q:"19 - 3 =", a:[15,16,17,18], correct:16 },
-    { q:"7 + 5 =", a:[13,12,14,11], correct:12 },
-    { q:"16 - 7 =", a:[9,8,7,10], correct:9 },
-    { q:"4 + 12 =", a:[15,16,17,18], correct:16 },
-    { q:"10 - 4 =", a:[7,5,6,4], correct:6 }
+    { q:"7 + 5 =", a:[11,12,13,14], correct:12 },
+    { q:"16 - 7 =", a:[7,8,9,10], correct:9 },
+    { q:"4 + 12 =", a:[14,15,16,17], correct:16 },
+
+    /* MAIS perguntas novas */
+    { q:"8 + 9 =", a:[16,17,18,19], correct:17 },
+    { q:"6 + 13 =", a:[17,18,19,20], correct:19 },
+    { q:"14 - 5 =", a:[8,9,10,11], correct:9 },
+    { q:"🦋🦋🦋🦋 + 🦋 =", img:"🦋🦋🦋🦋🦋", a:[4,5,6,7], correct:5 },
+    { q:"🍓🍓🍓 – 🍓 =", img:"🍓🍓", a:[1,2,3,4], correct:2 },
+    { q:"🐢🐢🐢🐢🐢 – 🐢 =", img:"🐢🐢🐢🐢", a:[3,4,5,6], correct:4 },
+    { q:"9 + 6 =", a:[15,16,17,18], correct:15 },
+    { q:"11 - 2 =", a:[8,9,10,11], correct:9 },
+    { q:"4 + 14 =", a:[17,18,19,20], correct:18 },
+    { q:"13 - 4 =", a:[7,8,9,10], correct:9 }
 ];
 
-// randomizar
+// ▶️ Aleatorizar
 quiz = quiz.sort(() => Math.random() - 0.5);
 
 function loadQuestion() {
@@ -227,15 +232,15 @@ function loadQuestion() {
         return;
     }
 
-    const qtd = quiz.length;
-    const percent = (index / qtd) * 100;
+    // Barra de progresso
+    const percent = (index / quiz.length) * 100;
     document.getElementById("progress-bar").style.width = percent + "%";
 
     const q = quiz[index];
     document.getElementById("question").textContent = q.q;
 
     if (q.img) {
-        document.getElementById("images").innerHTML = 
+        document.getElementById("images").innerHTML =
             `<div style="font-size:2.6rem;margin:15px;">${q.img}</div>`;
     } else {
         document.getElementById("images").innerHTML = "";
@@ -259,7 +264,7 @@ function check(btn, choice) {
 
     const q = quiz[index];
 
-    document.querySelectorAll(".btn").forEach(b => 
+    document.querySelectorAll(".btn").forEach(b =>
         b.style.pointerEvents = "none"
     );
 
@@ -271,7 +276,7 @@ function check(btn, choice) {
         score = Math.max(0, score - 1);
     }
 
-    document.getElementById("score").textContent = 
+    document.getElementById("score").textContent =
         "Pontuação: " + score;
 
     document.getElementById("next-btn").style.display = "inline-block";
@@ -286,32 +291,24 @@ function finishQuiz() {
     document.getElementById("question-box").style.display = "none";
     document.getElementById("score").style.display = "none";
 
-    let medal = "";
-    let text = "";
+    document.getElementById("final-text").innerHTML =
+        "Pontuação final: <b>" + score + "</b>";
 
-    if (score >= 28) {
-        medal = "https://upload.wikimedia.org/wikipedia/commons/4/4e/Gold_medal_icon.svg";
-        text = "🥇 Medalha de OURO! Excelente trabalho!";
-    }
-    else if (score >= 22) {
-        medal = "https://upload.wikimedia.org/wikipedia/commons/1/15/Silver_medal_icon.svg";
-        text = "🥈 Medalha de PRATA! Muito bem!";
-    }
-    else if (score >= 15) {
-        medal = "https://upload.wikimedia.org/wikipedia/commons/7/70/Bronze_medal_icon.svg";
-        text = "🥉 Medalha de BRONZE! Bom esforço!";
-    }
-    else {
-        medal = "https://upload.wikimedia.org/wikipedia/commons/3/3c/Crystal_project_success.png";
-        text = "Continua a treinar! 💪";
-    }
-
-    document.getElementById("final-text").innerHTML = 
-        "Pontuação final: <b>" + score + "</b><br>" + text;
-
-    document.getElementById("medal").src = medal;
-
+    document.getElementById("restart-btn").style.display = "inline-block";
     document.getElementById("final-screen").style.display = "block";
+}
+
+function restartQuiz() {
+    index = 0;
+    score = 0;
+    quiz = quiz.sort(() => Math.random() - 0.5);
+
+    document.getElementById("final-screen").style.display = "none";
+    document.getElementById("question-box").style.display = "block";
+    document.getElementById("score").style.display = "block";
+    document.getElementById("score").textContent = "Pontuação: 0";
+
+    loadQuestion();
 }
 
 loadQuestion();
