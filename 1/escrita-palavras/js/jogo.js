@@ -69,12 +69,16 @@ function mostrarFeedback(ok) {
     const fb = document.getElementById("feedback");
 
     if (ok) {
-        fb.innerHTML = "✔️";
-        fb.style.color = "green";
+        fb.innerHTML = "✔";
+        fb.className = "feedback-certo";
     } else {
-        fb.innerHTML = "✖️";
-        fb.style.color = "red";
+        fb.innerHTML = "✘";
+        fb.className = "feedback-errado";
     }
+
+    document.getElementById("certas").textContent = "Certas: " + certas;
+    document.getElementById("erros").content = "Erradas: " + erros;
+}
 
     // atualizar contadores
     document.getElementById("certas").textContent = "Certas: " + certas;
