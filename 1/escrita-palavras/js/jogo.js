@@ -107,31 +107,39 @@ function terminarJogo() {
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
         <p>Total de erradas: ${erros}</p>
-
         <button id="recomecar">Recomeçar</button>
     `;
 
     document.getElementById("recomecar").addEventListener("click", () => {
+        
         indice = 0;
         certas = 0;
         erros = 0;
 
-        // Baralhar novamente
         palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
-        // Restaurar cartão e recarregar
-       document.getElementById("areaJogo").innerHTML = `
-    <img id="imagemPalavra" src="" class="imagem">
-    <div id="silabas"></div>
-    <input …>
-    <button id="validar">Verificar</button>
-    <div id="feedback"></div>
-`;
+        // restaurar o cartão ORIGINAL
+        document.getElementById("areaJogo").innerHTML = `
+            <img id="imagemPalavra" src="" alt="imagem da palavra" class="imagem">
+
+            <div id="silabas" class="silabas"></div>
+
+            <input id="campoEscrita"
+                type="text"
+                placeholder="Escreve aqui..."
+                autocomplete="off">
+
+            <button id="validar">
+                <img src="img/lupa.png" class="icone-lupa"> Verificar
+            </button>
+
+            <div id="feedback"></div>
+        `;
 
         document.getElementById("validar").addEventListener("click", validar);
 
-        atualizarProgresso();
         carregarPalavra();
+        atualizarProgresso();
     });
 }
 
@@ -143,7 +151,7 @@ document.getElementById("validar").addEventListener("click", validar);
 // Iniciar jogo ao carregar a página
 window.onload = carregarPalavra;
 
-/ Permitir validar com Enter
+// Permitir validar com Enter
 document.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         validar();
