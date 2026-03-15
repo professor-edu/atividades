@@ -81,8 +81,13 @@ function mostrarFeedback(ok) {
     }
 
     // Atualizar contadores
-    document.getElementById("certas").textContent = "Certas: " + certas;
-    document.getElementById("erros").textContent = "Erradas: " + erros;
+   
+ocument.getElementById("certas").innerHTML =
+    img/certo.png Certas: " + certas;
+
+document.getElementById("erros").innerHTML =
+    img/errado.png Erros: " + erros;
+
 }
 
 // =========================================
