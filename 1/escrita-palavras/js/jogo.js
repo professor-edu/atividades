@@ -1,20 +1,20 @@
-// baralha a lista inteira de palavras quando o jogo inicia
+// Baralhar lista inteira de palavras quando o jogo inicia
 let palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
 let indice = 0;
 let certas = 0;
 let erros = 0;
 
-// -------------------------
+// =========================================
 // Carregar palavra atual
-// -------------------------
+// =========================================
 function carregarPalavra() {
     const p = palavrasBaralhadas[indice];
 
-    // imagem
+    // Imagem da palavra
     document.getElementById("imagemPalavra").src = p.imagem;
 
-    // sílabas baralhadas
+    // Baralhar sílabas
     const silabasMisturadas = [...p.silabas].sort(() => Math.random() - 0.5);
 
     const zona = document.getElementById("silabas");
@@ -27,19 +27,23 @@ function carregarPalavra() {
         zona.appendChild(div);
     });
 
-    // limpar campo de escrita e feedback
+    // Limpar campo e feedback
     document.getElementById("campoEscrita").value = "";
-    document.getElementById("feedback").innerHTML = "";
+    const fb = document.getElementById("feedback");
+    fb.innerHTML = "";
+    fb.className = "";
 
-    // atualizar barra de progresso
     atualizarProgresso();
 }
 
-// -------------------------
-// Validar resposta
-// -------------------------
+// =========================================
+// Validar resposta escrita
+// =========================================
 function validar() {
-    const resposta = document.getElementById("campoEscrita").value.toLowerCase().trim();
+    const resposta = document.getElementById("campoEscrita").value
+        .toLowerCase()
+        .trim();
+
     const p = palavrasBaralhadas[indice];
 
     if (resposta === p.palavra) {
@@ -52,7 +56,7 @@ function validar() {
 
     indice++;
 
-    // avançar automaticamente
+    // Avançar para a próxima palavra depois de 0,9s
     setTimeout(() => {
         if (indice < palavrasBaralhadas.length) {
             carregarPalavra();
@@ -62,9 +66,9 @@ function validar() {
     }, 900);
 }
 
-// -------------------------
-// Feedback visual
-// -------------------------
+// =========================================
+// Mostrar feedback visual (✔ ou ✘)
+// =========================================
 function mostrarFeedback(ok) {
     const fb = document.getElementById("feedback");
 
@@ -76,27 +80,22 @@ function mostrarFeedback(ok) {
         fb.className = "feedback-errado";
     }
 
-    document.getElementById("certas").textContent = "Certas: " + certas;
-    document.getElementById("erros").content = "Erradas: " + erros;
-}
-
-    // atualizar contadores
+    // Atualizar contadores
     document.getElementById("certas").textContent = "Certas: " + certas;
     document.getElementById("erros").textContent = "Erradas: " + erros;
 }
 
-// -------------------------
+// =========================================
 // Barra de progresso
-// -------------------------
+// =========================================
 function atualizarProgresso() {
     const percentagem = (indice / palavrasBaralhadas.length) * 100;
     document.getElementById("progressoInterno").style.width = percentagem + "%";
 }
 
-// -------------------------
-// Fim do jogo
-// -------------------------
-
+// =========================================
+// Fim do jogo + botão Recomeçar
+// =========================================
 function terminarJogo() {
     document.getElementById("areaJogo").innerHTML = `
         <h2>Fim do jogo!</h2>
@@ -111,17 +110,36 @@ function terminarJogo() {
         certas = 0;
         erros = 0;
 
+        // Baralhar novamente
         palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
+        // Restaurar cartão e recarregar
+        document.getElementById("areaJogo").innerHTML = `
+            <img id="imagemPalavra" src="" alt="imagem da palavra" class="imagem">
+
+            <div id="silabas" class="silabas"></div>
+
+            <input id="campoEscrita"
+                type="text"
+                placeholder="Escreve aqui..."
+                autocomplete="off">
+
+            <button id="validar">Validar</button>
+
+            <div id="feedback"></div>
+        `;
+
+        document.getElementById("validar").addEventListener("click", validar);
+
+        atualizarProgresso();
         carregarPalavra();
     });
 }
 
-
-// -------------------------
+// =========================================
 // Eventos
-// -------------------------
+// =========================================
 document.getElementById("validar").addEventListener("click", validar);
 
-// carregar primeira palavra
+// Iniciar jogo ao carregar a página
 window.onload = carregarPalavra;
