@@ -120,20 +120,13 @@ function terminarJogo() {
         palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
         // Restaurar cartão e recarregar
-        document.getElementById("areaJogo").innerHTML = `
-            <img id="imagemPalavra" src="" alt="imagem da palavra" class="imagem">
-
-            <div id="silabas" class="silabas"></div>
-
-            <input id="campoEscrita"
-                type="text"
-                placeholder="Escreve aqui..."
-                autocomplete="off">
-
-            <button id="validar">Validar</button>
-
-            <div id="feedback"></div>
-        `;
+       document.getElementById("areaJogo").innerHTML = `
+    <img id="imagemPalavra" src="" class="imagem">
+    <div id="silabas"></div>
+    <input …>
+    <button id="validar">Validar</button>
+    <div id="feedback"></div>
+`;
 
         document.getElementById("validar").addEventListener("click", validar);
 
