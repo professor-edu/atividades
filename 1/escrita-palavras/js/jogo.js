@@ -82,11 +82,12 @@ function mostrarFeedback(ok) {
 
     // Atualizar contadores
    
-ocument.getElementById("certas").innerHTML =
-    img/certo.png Certas: " + certas;
+
+document.getElementById("certas").innerHTML =
+    '<img src="img/icones/certo.png" class="icone-contador"> Certas: ' + certas;
 
 document.getElementById("erros").innerHTML =
-    img/errado.png Erros: " + erros;
+    '<img src="img/icones/errado.png" class="icone-contador"> Erradas: ' + erros;
 
 }
 
