@@ -92,13 +92,27 @@ function atualizarProgresso() {
 // -------------------------
 // Fim do jogo
 // -------------------------
+
 function terminarJogo() {
     document.getElementById("areaJogo").innerHTML = `
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
         <p>Total de erros: ${erros}</p>
+
+        <button id="recomecar">Recomeçar</button>
     `;
+
+    document.getElementById("recomecar").addEventListener("click", () => {
+        indice = 0;
+        certas = 0;
+        erros = 0;
+
+        palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
+
+        carregarPalavra();
+    });
 }
+
 
 // -------------------------
 // Eventos
