@@ -106,7 +106,7 @@ function terminarJogo() {
     document.getElementById("areaJogo").innerHTML = `
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
-        <p>Total de erros: ${erros}</p>
+        <p>Total de erradas: ${erros}</p>
 
         <button id="recomecar">Recomeçar</button>
     `;
@@ -142,3 +142,11 @@ document.getElementById("validar").addEventListener("click", validar);
 
 // Iniciar jogo ao carregar a página
 window.onload = carregarPalavra;
+
+/ Permitir validar com Enter
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        validar();
+    }
+});
+
