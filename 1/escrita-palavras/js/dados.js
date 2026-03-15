@@ -31,6 +31,10 @@ const palavras = [
     { palavra: "mapa",     silabas: ["ma", "pa"],                       imagem: "img/mapa.png" },
     { palavra: "fada",     silabas: ["fa", "da"],                       imagem: "img/fada.png" },
     { palavra: "boneca",   silabas: ["bo", "ne", "ca"],                 imagem: "img/boneca.png" },
+    { palavra: "batata",   silabas: ["ba", "ta", "ta"],                 imagem: "img/batata.png" },
+    { palavra: "girafa",   silabas: ["gi", "ra", "fa"],                 imagem: "img/girafa.png" },
+    { palavra: "cadeira",   silabas: ["ca", "dei", "ra"],               imagem: "img/cadeira.png" },
+    { palavra: "caracol",   silabas: ["ca", "ra", "col"],               imagem: "img/caracol.png" },
     { palavra: "piano",   silabas: ["pi", "a", "no"],                   imagem: "img/piano.png" }
 
 ];
