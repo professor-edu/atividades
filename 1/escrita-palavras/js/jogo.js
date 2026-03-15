@@ -124,7 +124,7 @@ function terminarJogo() {
     <img id="imagemPalavra" src="" class="imagem">
     <div id="silabas"></div>
     <input …>
-    <button id="validar">Validar</button>
+    <button id="validar">Verificar</button>
     <div id="feedback"></div>
 `;
 
