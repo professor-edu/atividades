@@ -1,10 +1,13 @@
+// Baralhar lista inicial
 let palavrasBaralhadas2 = [...palavras2].sort(() => Math.random() - 0.5);
 
 let indice2 = 0;
 let certas2 = 0;
 let erros2 = 0;
 
+// ------------------------------------------------------
 // Carregar palavra
+// ------------------------------------------------------
 function carregarPalavra2() {
     const p = palavrasBaralhadas2[indice2];
 
@@ -19,9 +22,14 @@ function carregarPalavra2() {
     atualizarProgresso2();
 }
 
+// ------------------------------------------------------
 // Validar
+// ------------------------------------------------------
 function validar2() {
-    const resposta = document.getElementById("campoEscrita2").value.toLowerCase().trim();
+    const resposta = document.getElementById("campoEscrita2").value
+        .toLowerCase()
+        .trim();
+
     const p = palavrasBaralhadas2[indice2];
 
     if (resposta === p.palavra) {
@@ -43,7 +51,9 @@ function validar2() {
     }, 900);
 }
 
-// Feedback
+// ------------------------------------------------------
+// Feedback visual
+// ------------------------------------------------------
 function mostrarFeedback2(ok) {
     const fb = document.getElementById("feedback2");
 
@@ -56,19 +66,24 @@ function mostrarFeedback2(ok) {
     }
 
     document.getElementById("certas2").innerHTML =
-        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas2}`;
+        `img/certo.png Certas: ${certas2}`;
 
     document.getElementById("erros2").innerHTML =
-        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros2}`;
+        `img/errado.png Erradas: ${erros2}`;
 }
 
+// ------------------------------------------------------
 // Progresso
+// ------------------------------------------------------
 function atualizarProgresso2() {
     const percentagem = (indice2 / palavrasBaralhadas2.length) * 100;
-    document.getElementById("progressoInterno2").style.width = percentagem + "%";
+    document.getElementById("progressoInterno2").style.width =
+        percentagem + "%";
 }
 
+// ------------------------------------------------------
 // Fim + Recomeçar
+// ------------------------------------------------------
 function terminarJogo2() {
     document.getElementById("areaJogo2").innerHTML = `
         <h2>Fim do jogo!</h2>
@@ -85,6 +100,7 @@ function terminarJogo2() {
 
         palavrasBaralhadas2 = [...palavras2].sort(() => Math.random() - 0.5);
 
+        // restaurar cartão original com IDs CORRETOS
         document.getElementById("areaJogo2").innerHTML = `
             <img id="imagemPalavra2" src="" class="imagem">
 
@@ -94,7 +110,7 @@ function terminarJogo2() {
                    autocomplete="off">
 
             <button id="validar2">
-                <img src="img/lupa.png" class="icone-lupa"> Verificar
+                img/lupa.png Verificar
             </button>
 
             <div id="feedback2"></div>
@@ -107,13 +123,17 @@ function terminarJogo2() {
     });
 }
 
+// ------------------------------------------------------
 // Eventos
+// ------------------------------------------------------
 document.getElementById("validar2").addEventListener("click", validar2);
 
+// Enter também valida
 document.addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         validar2();
     }
 });
 
+// Arranque
 window.onload = carregarPalavra2;
