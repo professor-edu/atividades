@@ -84,10 +84,10 @@ function mostrarFeedback(ok) {
    
 
 document.getElementById("certas").innerHTML =
-    '<img src="img/icones/certo.png" class="icone-contador"> Certas: ' + certas;
+    '<img src="img/certo.png" class="icone-contador"> Certas: ' + certas;
 
 document.getElementById("erros").innerHTML =
-    '<img src="img/icones/errado.png" class="icone-contador"> Erradas: ' + erros;
+    '<img src="img/errado.png" class="icone-contador"> Erradas: ' + erros;
 
 }
 
