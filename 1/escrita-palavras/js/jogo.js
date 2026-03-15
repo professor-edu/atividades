@@ -78,7 +78,7 @@ function mostrarFeedback(ok) {
 
     // atualizar contadores
     document.getElementById("certas").textContent = "Certas: " + certas;
-    document.getElementById("erros").textContent = "Erros: " + erros;
+    document.getElementById("erros").textContent = "Erradas: " + erros;
 }
 
 // -------------------------
