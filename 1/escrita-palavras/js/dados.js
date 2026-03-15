@@ -29,7 +29,8 @@ const palavras = [
     { palavra: "roda",     silabas: ["ro", "da"],                       imagem: "img/roda.png" },
     { palavra: "bota",     silabas: ["bo", "ta"],                       imagem: "img/bota.png" },
     { palavra: "mapa",     silabas: ["ma", "pa"],                       imagem: "img/mapa.png" },
-    { palavra: "fada",     silabas: ["fa", "da"],                       imagem: "img/fada.png" }
-    { palavra: "boneca",   silabas: ["bo", "ne", "ca"],                 imagem: "img/boneca.png" }
+    { palavra: "fada",     silabas: ["fa", "da"],                       imagem: "img/fada.png" },
+    { palavra: "boneca",   silabas: ["bo", "ne", "ca"],                 imagem: "img/boneca.png" },
+    { palavra: "piano",   silabas: ["pi", "a", "no"],                   imagem: "img/piano.png" }
 
 ];
