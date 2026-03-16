@@ -17,12 +17,11 @@ function carregarPalavra() {
     campo.disabled = false;
     campo.classList.remove("shake");
 
+    document.getElementById("validar").disabled = false;
+
     const fb = document.getElementById("feedback");
     fb.innerHTML = "";
     fb.className = "";
-
-    // reativar botão verificar
-    document.getElementById("validar").disabled = false;
 
     atualizarProgresso();
 }
@@ -41,35 +40,26 @@ function validar() {
         mostrarFeedback(true);
         indice++;
 
-        // avanço automático
         setTimeout(() => {
-            if (indice < palavrasBaralhadas.length) {
-                carregarPalavra();
-            } else {
-                terminarJogo();
-            }
+            if (indice < palavrasBaralhadas.length) carregarPalavra();
+            else terminarJogo();
         }, 900);
 
     } else {
 
         erros++;
 
-        // impedir Verificar repetido
         document.getElementById("validar").disabled = true;
 
-        // tremer input
         campo.classList.add("shake");
-
-        // bloquear input
         campo.disabled = true;
 
-        // feedback especial
         mostrarFeedback(false, p.palavra);
     }
 }
 
 // ------------------------------------------------------
-// Feedback ✔ / ✘  + Palavra correta + Botão Continuar
+// Feedback
 // ------------------------------------------------------
 function mostrarFeedback(ok, correta = "") {
     const fb = document.getElementById("feedback");
@@ -89,38 +79,33 @@ function mostrarFeedback(ok, correta = "") {
             </button>
         `;
 
-        // comportamento do botão Continuar
         document.getElementById("continuarBtn").addEventListener("click", () => {
 
-            // reativar botão validar
             document.getElementById("validar").disabled = false;
 
             indice++;
-
-            if (indice < palavrasBaralhadas.length) {
-                carregarPalavra();
-            } else {
-                terminarJogo();
-            }
+            if (indice < palavrasBaralhadas.length) carregarPalavra();
+            else terminarJogo();
         });
     }
 
-    // atualizar contadores SEM perder ícones
     document.getElementById("certas").innerHTML =
-        `img/certo.png Certas: ${certas}`;
+        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
 
     document.getElementById("erros").innerHTML =
-        `img/ ------------------------------------------------------
+        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
+}
+
+// ------------------------------------------------------
 // Barra de progresso
 // ------------------------------------------------------
 function atualizarProgresso() {
     const percentagem = (indice / palavrasBaralhadas.length) * 100;
-    document.getElementById("progressoInterno").style.width =
-        percentagem + "%";
+    document.getElementById("progressoInterno").style.width = percentagem + "%";
 }
 
 // ------------------------------------------------------
-// Ecrã Final + Recomeçar
+// Fim + Recomeçar
 // ------------------------------------------------------
 function terminarJogo() {
 
@@ -128,14 +113,7 @@ function terminarJogo() {
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
         <p>Total de erradas: ${erros}</p>
-        <button id="recomecar" class="btn-recomecar">
-            Recomeçar
-        </button>
-    `;
-
-    document.getElementById("recomecar").addEventListener("click", () => {
-
-        indice = 0;
+        <button id="recomecar" class="btn-recomecar">Recomendice = 0;
         certas = 0;
         erros = 0;
         palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
@@ -169,7 +147,7 @@ function terminarJogo() {
 // ------------------------------------------------------
 document.getElementById("validar").addEventListener("click", validar);
 
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", e => {
     if (e.key === "Enter") validar();
 });
 
