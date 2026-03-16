@@ -12,9 +12,14 @@ function carregarPalavra() {
 
     document.getElementById("imagemPalavra").src = p.imagem;
 
-    document.getElementById("campoEscrita").value = "";
-    document.getElementById("feedback").innerHTML = "";
-    document.getElementById("feedback").className = "";
+    const campo = document.getElementById("campoEscrita");
+    campo.value = "";
+    campo.disabled = false;     // desbloqueia depois de erro
+    campo.classList.remove("shake");
+
+    const fb = document.getElementById("feedback");
+    fb.innerHTML = "";
+    fb.className = "";
 
     atualizarProgresso();
 }
@@ -23,7 +28,9 @@ function carregarPalavra() {
 // Validar
 // -------------------------
 function validar() {
-    const resposta = document.getElementById("campoEscrita").value
+    const campo = document.getElementById("campoEscrita");
+
+    const resposta = campo.value
         .toLowerCase()
         .trim();
 
@@ -34,7 +41,7 @@ function validar() {
         mostrarFeedback(true);
         indice++;
 
-        // avanço automático quando acerta
+        // ACERTO → avança automaticamente
         setTimeout(() => {
             if (indice < palavrasBaralhadas.length) {
                 carregarPalavra();
@@ -44,9 +51,17 @@ function validar() {
         }, 900);
 
     } else {
+        // ERRO
         erros++;
+
+        // (1) tremer o input
+        campo.classList.add("shake");
+
+        // (2) bloquear input
+        campo.disabled = true;
+
+        // (3) feedback especial
         mostrarFeedback(false, p.palavra);
-        // NÃO avança automaticamente → espera pelo botão "Continuar"
     }
 }
 
@@ -59,16 +74,19 @@ function mostrarFeedback(ok, correta = "") {
     if (ok) {
         fb.innerHTML = "✔";
         fb.className = "feedback-certo";
+
     } else {
-        // feedback no erro
         fb.className = "feedback-errado";
+
         fb.innerHTML = `
             ✘<br>
-            A palavra correta é: <strong>${correta.toUpperCase()}</strong><br><br>
-            <button id="continuarBtn" class="btn-recomecar">Continuar</button>
+            <span class="palavra-correta">A palavra correta é: ${correta.toUpperCase()}</span>
+            <button id="continuarBtn">
+                img/continuar.png Continuar
+            </button>
         `;
 
-        // botão "Continuar"
+        // (4) botão Continuar estilizado
         document.getElementById("continuarBtn").addEventListener("click", () => {
             indice++;
             if (indice < palavrasBaralhadas.length) {
@@ -79,9 +97,10 @@ function mostrarFeedback(ok, correta = "") {
         });
     }
 
-    // Atualizar contadores mantendo ícones
+    // atualizar contadores mantendo ícones
     document.getElementById("certas").innerHTML =
         `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
+
     document.getElementById("erros").innerHTML =
         `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
 }
@@ -142,7 +161,7 @@ function terminarJogo() {
 // -------------------------
 document.getElementById("validar").addEventListener("click", validar);
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", e => {
     if (e.key === "Enter") validar();
 });
 
