@@ -4,9 +4,9 @@ let indice = 0;
 let certas = 0;
 let erros = 0;
 
-// -------------------------
+// ------------------------------------------------------
 // Carregar palavra
-// -------------------------
+// ------------------------------------------------------
 function carregarPalavra() {
     const p = palavrasBaralhadas[indice];
 
@@ -14,34 +14,34 @@ function carregarPalavra() {
 
     const campo = document.getElementById("campoEscrita");
     campo.value = "";
-    campo.disabled = false;     // desbloqueia depois de erro
+    campo.disabled = false;
     campo.classList.remove("shake");
 
     const fb = document.getElementById("feedback");
     fb.innerHTML = "";
     fb.className = "";
 
+    // reativar botão verificar
+    document.getElementById("validar").disabled = false;
+
     atualizarProgresso();
 }
 
-// -------------------------
-// Validar
-// -------------------------
+// ------------------------------------------------------
+// Validar resposta
+// ------------------------------------------------------
 function validar() {
     const campo = document.getElementById("campoEscrita");
-
-    const resposta = campo.value
-        .toLowerCase()
-        .trim();
-
+    const resposta = campo.value.toLowerCase().trim();
     const p = palavrasBaralhadas[indice];
 
     if (resposta === p.palavra) {
+
         certas++;
         mostrarFeedback(true);
         indice++;
 
-        // ACERTO → avança automaticamente
+        // avanço automático
         setTimeout(() => {
             if (indice < palavrasBaralhadas.length) {
                 carregarPalavra();
@@ -51,23 +51,26 @@ function validar() {
         }, 900);
 
     } else {
-        // ERRO
+
         erros++;
 
-        // (1) tremer o input
+        // impedir Verificar repetido
+        document.getElementById("validar").disabled = true;
+
+        // tremer input
         campo.classList.add("shake");
 
-        // (2) bloquear input
+        // bloquear input
         campo.disabled = true;
 
-        // (3) feedback especial
+        // feedback especial
         mostrarFeedback(false, p.palavra);
     }
 }
 
-// -------------------------
-// Feedback ✔ / ✘ + palavra correta no erro
-// -------------------------
+// ------------------------------------------------------
+// Feedback ✔ / ✘  + Palavra correta + Botão Continuar
+// ------------------------------------------------------
 function mostrarFeedback(ok, correta = "") {
     const fb = document.getElementById("feedback");
 
@@ -80,15 +83,20 @@ function mostrarFeedback(ok, correta = "") {
 
         fb.innerHTML = `
             ✘<br>
-            <span class="palavra-correta">A palavra correta é: ${correta.toUpperCase()}</span>
+            <span class="palavra-correta">Palavra correta: ${correta.toUpperCase()}</span>
             <button id="continuarBtn">
-                img/continuar.png Continuar
+                <img src="img/continuar.png" class="icone-continuar"> Continuar
             </button>
         `;
 
-        // (4) botão Continuar estilizado
+        // comportamento do botão Continuar
         document.getElementById("continuarBtn").addEventListener("click", () => {
+
+            // reativar botão validar
+            document.getElementById("validar").disabled = false;
+
             indice++;
+
             if (indice < palavrasBaralhadas.length) {
                 carregarPalavra();
             } else {
@@ -97,32 +105,32 @@ function mostrarFeedback(ok, correta = "") {
         });
     }
 
-    // atualizar contadores mantendo ícones
+    // atualizar contadores SEM perder ícones
     document.getElementById("certas").innerHTML =
-        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
+        `img/certo.png Certas: ${certas}`;
 
     document.getElementById("erros").innerHTML =
-        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
-}
-
-// -------------------------
-// Progresso
-// -------------------------
+        `img/ ------------------------------------------------------
+// Barra de progresso
+// ------------------------------------------------------
 function atualizarProgresso() {
     const percentagem = (indice / palavrasBaralhadas.length) * 100;
     document.getElementById("progressoInterno").style.width =
         percentagem + "%";
 }
 
-// -------------------------
-// Fim + Recomeçar
-// -------------------------
+// ------------------------------------------------------
+// Ecrã Final + Recomeçar
+// ------------------------------------------------------
 function terminarJogo() {
+
     document.getElementById("areaJogo").innerHTML = `
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
         <p>Total de erradas: ${erros}</p>
-        <button id="recomecar" class="btn-recomecar">Recomeçar</button>
+        <button id="recomecar" class="btn-recomecar">
+            Recomeçar
+        </button>
     `;
 
     document.getElementById("recomecar").addEventListener("click", () => {
@@ -137,9 +145,9 @@ function terminarJogo() {
 
             <div class="entrada">
                 <input id="campoEscrita"
-                    type="text"
-                    placeholder="Escreve aqui..."
-                    autocomplete="off">
+                       type="text"
+                       placeholder="Escreve aqui..."
+                       autocomplete="off">
 
                 <button id="validar">
                     img/lupa.png Verificar
@@ -156,12 +164,12 @@ function terminarJogo() {
     });
 }
 
-// -------------------------
+// ------------------------------------------------------
 // Eventos
-// -------------------------
+// ------------------------------------------------------
 document.getElementById("validar").addEventListener("click", validar);
 
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") validar();
 });
 
