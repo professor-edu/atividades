@@ -81,9 +81,9 @@ function mostrarFeedback(ok, correta = "") {
 
     // Atualizar contadores mantendo ícones
     document.getElementById("certas").innerHTML =
-        `img/certo.png Certas: ${certas}`;
+        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
     document.getElementById("erros").innerHTML =
-        `img/errado.png Erradas: ${erros}`;
+        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
 }
 
 // -------------------------
