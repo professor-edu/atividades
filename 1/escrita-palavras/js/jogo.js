@@ -1,16 +1,18 @@
-let palavrasBaralhadas = [...palavras2].sort(() => Math.random() - 0.5);
+let palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
 let indice = 0;
 let certas = 0;
 let erros = 0;
 
+// -------------------------
 // Carregar palavra
+// -------------------------
 function carregarPalavra() {
     const p = palavrasBaralhadas[indice];
 
     document.getElementById("imagemPalavra").src = p.imagem;
-    document.getElementById("campoEscrita").value = "";
 
+    document.getElementById("campoEscrita").value = "";
     const fb = document.getElementById("feedback");
     fb.innerHTML = "";
     fb.className = "";
@@ -18,10 +20,13 @@ function carregarPalavra() {
     atualizarProgresso();
 }
 
+// -------------------------
 // Validar
+// -------------------------
 function validar() {
     const resposta = document.getElementById("campoEscrita").value
-        .toLowerCase().trim();
+        .toLowerCase()
+        .trim();
 
     const p = palavrasBaralhadas[indice];
 
@@ -44,7 +49,9 @@ function validar() {
     }, 900);
 }
 
+// -------------------------
 // Feedback
+// -------------------------
 function mostrarFeedback(ok) {
     const fb = document.getElementById("feedback");
 
@@ -62,14 +69,18 @@ function mostrarFeedback(ok) {
         `img/errado.png Erradas: ${erros}`;
 }
 
+// -------------------------
 // Progresso
+// -------------------------
 function atualizarProgresso() {
     const percentagem = (indice / palavrasBaralhadas.length) * 100;
     document.getElementById("progressoInterno").style.width =
         percentagem + "%";
 }
 
+// -------------------------
 // Fim + Recomeçar
+// -------------------------
 function terminarJogo() {
     document.getElementById("areaJogo").innerHTML = `
         <h2>Fim do jogo!</h2>
@@ -83,9 +94,8 @@ function terminarJogo() {
         indice = 0;
         certas = 0;
         erros = 0;
-        palavrasBaralhadas = [...palavras2].sort(() => Math.random() - 0.5);
+        palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
 
-        // restaurar cartão original
         document.getElementById("areaJogo").innerHTML = `
             <img id="imagemPalavra" src="" class="imagem">
 
@@ -108,10 +118,15 @@ function terminarJogo() {
     });
 }
 
+// -------------------------
 // Eventos
+// -------------------------
 document.getElementById("validar").addEventListener("click", validar);
-document.addEventListener("keydown", e => {
-    if (e.key === "Enter") validar();
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        validar();
+    }
 });
 
 window.onload = carregarPalavra;
