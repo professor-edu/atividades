@@ -10,6 +10,7 @@ const palavras = [
   { palavra: "janela", imagem: "img/janela.png" },
   { palavra: "jipe", imagem: "img/jipe.png" },
   { palavra: "cama", imagem: "img/cama.png" },
+  { palavra: "tartaruga", imagem: "img/tartaruga.png" },
   { palavra: "dado", imagem: "img/dado.png" },
   { palavra: "baleia", imagem: "img/baleia.png" },
   { palavra: "vela", imagem: "img/vela.png" },
