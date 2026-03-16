@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo das Sílabas - Versão XL</title>
+    <title>Jogo das Sílabas</title>
     <style>
         :root {
             --azul-claro: #f0f7ff;
@@ -13,151 +13,77 @@
             --laranja: #ff9800;
         }
 
-        /* Ocupar toda a altura do ecrã e evitar scroll */
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--azul-claro);
-        }
-
-        body { display: flex; flex-direction: column; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
         
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 10px 20px; 
-            color: var(--azul-escuro); 
-            border-bottom: 3px solid #fff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 60px;
+            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
         }
 
-        .cabecalho-conteudo { display: flex; align-items: center; gap: 10px; }
-        .icone-cabecalho { width: 35px; height: auto; }
-        .estrelas { font-size: 22px; color: #f57c00; font-weight: bold; }
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .icone-cabecalho { width: 45px; height: auto; }
 
-        /* CONTENTOR PRINCIPAL MAIOR */
-        .area-jogo {
-            flex: 1; /* Ocupa o resto do ecrã */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            gap: 15px;
+        .cartao {
+            background: white; width: 95%; max-width: 500px;
+            margin: 30px auto; padding: 30px 20px;
+            border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
 
-        .cartao-grande {
-            background: white;
-            width: 90%;
-            max-width: 1000px; /* Aumentado de 500px para 1000px */
-            height: 85%;
-            border-radius: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            padding: 30px;
-            position: relative;
-        }
-
-        /* IMAGEM MUITO MAIOR */
         .imagem-pergunta {
-            max-height: 45%; /* Ocupa quase metade do cartão */
-            width: auto;
-            object-fit: contain;
-            border-radius: 25px;
-            transition: transform 0.3s;
+            height: 180px; width: 180px; object-fit: contain;
+            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 10px;
         }
 
-        .pergunta-texto { 
-            font-size: clamp(24px, 4vw, 36px); 
-            font-weight: bold; 
-            color: var(--azul-escuro); 
-            margin: 0;
-        }
+        .pergunta-texto { font-size: 22px; font-weight: bold; color: var(--azul-escuro); margin: 10px 0; }
 
-        /* BOTÕES DE NÚMEROS GIGANTES */
-        .container-numeros { 
-            display: flex; 
-            gap: 20px; 
-            width: 100%;
-            justify-content: center; 
-        }
+        /* BOTÕES DE NÚMEROS */
+        .container-numeros { display: flex; gap: 15px; justify-content: center; margin-top: 10px; }
         
         .btn-numero {
-            width: clamp(80px, 15vw, 150px);
-            height: clamp(80px, 15vw, 150px);
-            font-size: clamp(40px, 6vw, 80px);
-            font-weight: bold;
-            background: #fff; 
-            border: 5px solid var(--azul-medio);
-            color: var(--azul-medio); 
-            border-radius: 25px;
-            cursor: pointer; 
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 70px; height: 70px;
+            font-size: 30px; font-weight: bold;
+            background: white; border: 3px solid var(--azul-medio);
+            color: var(--azul-medio); border-radius: 15px;
+            cursor: pointer; transition: all 0.2s;
         }
 
-        .btn-numero:hover { transform: scale(1.05); background: var(--azul-claro); }
-        .btn-numero.correto { background: var(--verde) !important; color: white !important; border-color: var(--verde) !important; }
-        .btn-numero.errado { background: #ffeded !important; color: #d32f2f !important; border-color: #fde2e2 !important; }
+        .btn-numero:hover { transform: translateY(-5px); background: var(--azul-claro); }
+        .btn-numero.correto { background: var(--verde); color: white; border-color: var(--verde); }
+        .btn-numero.errado { background: #ffeded; color: #d32f2f; border-color: #fde2e2; }
 
-        /* FEEDBACK INTEGRADO (Overlay) */
-        #overlay-feedback {
-            position: absolute;
-            bottom: 20px;
-            font-size: 40px;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            min-height: 50px;
-        }
+        #feedback { min-height: 60px; font-size: 24px; font-weight: bold; margin-top: 20px; }
 
-        #silabas-reveladas { 
-            font-size: clamp(40px, 8vw, 70px); 
-            letter-spacing: 10px; 
-            color: var(--laranja); 
-            font-weight: bold;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.05);
-        }
-
+        /* DIVISÃO SILÁBICA REVELADA */
+        #silabas-reveladas { font-size: 32px; letter-spacing: 5px; color: var(--laranja); margin-top: 10px; font-weight: bold; }
+        
+        .estrelas { font-size: 20px; color: #f57c00; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="https://openmoji.org/data/color/svg/1F44F.svg" class="icone-cabecalho">
-        <h1 style="margin:0; font-size: 24px;">Quantas Sílabas?</h1>
-        <img src="palmas.png" class="icone-cabecalho">
+        <img src="https://openmoji.org/data/color/svg/1F44F.svg" class="icone-cabecalho"> <h1 style="margin:0">Quantas Sílabas?</h1>
+        <img src="palmas.png" class="icone-cabecalho"> 
     </div>
-    <div class="estrelas">⭐ <span id="contador-estrelas">0</span></div>
+    <div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
 </header>
 
-<main class="area-jogo">
-    <div class="cartao-grande" id="cartao">
-        <img id="img-pergunta" class="imagem-pergunta" src="">
-        
-        <div id="silabas-reveladas"></div> <div class="pergunta-texto" id="texto-instrucao">Quantas sílabas ouves?</div>
+<div class="cartao">
+    <img id="img-pergunta" class="imagem-pergunta" src="">
+    <div class="pergunta-texto">Quantas vezes bates as palmas?</div>
 
-        <div class="container-numeros" id="teclado">
-            <button class="btn-numero" onclick="verificar(1)">1</button>
-            <button class="btn-numero" onclick="verificar(2)">2</button>
-            <button class="btn-numero" onclick="verificar(3)">3</button>
-            <button class="btn-numero" onclick="verificar(4)">4</button>
-            <button class="btn-numero" onclick="verificar(5)">5</button> </div>
-
-        <div id="overlay-feedback"></div>
+    <div class="container-numeros">
+        <button class="btn-numero" onclick="verificar(1)">1</button>
+        <button class="btn-numero" onclick="verificar(2)">2</button>
+        <button class="btn-numero" onclick="verificar(3)">3</button>
+        <button class="btn-numero" onclick="verificar(4)">4</button>
     </div>
-</main>
+
+    <div id="feedback"></div>
+    <div id="silabas-reveladas"></div>
+</div>
 
 <script src="js/dados.js"></script>
 <script>
@@ -165,6 +91,16 @@
     let estrelas = 0;
     let podeClicar = true;
     let listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+
+    // Função para contar sílabas (ajuste básico para português)
+    // Nota: Como a contagem automática é complexa, se puderes, adiciona "silabas: 2" no dados.js
+    // Mas este código tenta estimar ou podes definir manualmente.
+    function contarSilabas(palavra) {
+        // Esta é uma lógica simplificada. O ideal é ter no dados.js a divisão.
+        // Exemplo: {palavra: "bola", silabas: "BO-LA", num: 2}
+        // Para este exercício, vamos assumir que vais adicionar o campo 'num' no dados.js
+        return listaJogo[indiceAtual].num || 2; 
+    }
 
     function carregarPergunta() {
         if (indiceAtual >= listaJogo.length) {
@@ -174,15 +110,11 @@
         
         podeClicar = true;
         const item = listaJogo[indiceAtual];
-        
-        // CORREÇÃO: Usar o caminho exato do dados.js
-        document.getElementById('img-pergunta').src = item.imagem;
-        document.getElementById('img-pergunta').style.display = "block";
-        
-        document.getElementById('overlay-feedback').innerHTML = "";
+        document.getElementById('img-pergunta').src = "img/" + item.palavra.toLowerCase() + ".png";
+        document.getElementById('feedback').innerHTML = "";
         document.getElementById('silabas-reveladas').innerHTML = "";
-        document.getElementById('texto-instrucao').style.visibility = "visible";
         
+        // Resetar cores dos botões
         document.querySelectorAll('.btn-numero').forEach(btn => {
             btn.className = 'btn-numero';
         });
@@ -192,27 +124,25 @@
         if (!podeClicar) return;
         
         const item = listaJogo[indiceAtual];
-        const correta = item.num;
+        const correta = item.num; // Precisas de ter o número de sílabas no dados.js
+
         const botoes = document.querySelectorAll('.btn-numero');
         podeClicar = false;
 
         if (escolha === correta) {
             estrelas++;
             document.getElementById('contador-estrelas').innerText = estrelas;
-            
-            // Feedback Visual de Sucesso
             botoes[escolha-1].classList.add('correto');
-            document.getElementById('img-pergunta').style.display = "none"; // Esconde imagem para mostrar texto grande
-            document.getElementById('texto-instrucao').style.visibility = "hidden";
-            document.getElementById('silabas-reveladas').innerText = item.divisao;
-            
-            setTimeout(proxima, 2000);
-        } else {
-            // Feedback de Erro
-            botoes[escolha-1].classList.add('errado');
-            botoes[correta-1].classList.add('correto');
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Muito bem!</span>";
+            document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             
             setTimeout(proxima, 2500);
+        } else {
+            botoes[escolha-1].classList.add('errado');
+            botoes[correta-1].classList.add('correto');
+            document.getElementById('feedback').innerHTML = "<span style='color: #d32f2f'>Eram " + correta + " sílabas.</span>";
+            
+            setTimeout(proxima, 3000);
         }
     }
 
@@ -222,12 +152,10 @@
     }
 
     function finalizarJogo() {
-        const cartao = document.getElementById('cartao');
-        cartao.innerHTML = `
-            <h1 style="font-size: 80px;">🏆</h1>
-            <h2 style="font-size: 40px; color: var(--azul-escuro);">Incrível!</h2>
-            <p style="font-size: 30px;">Ganhaste ${estrelas} estrelas!</p>
-            <button onclick="location.reload()" style="padding: 20px 50px; font-size: 24px; border-radius: 50px; cursor: pointer; background: var(--azul-medio); color: white; border: none; font-weight: bold;">Jogar de Novo</button>
+        document.querySelector('.cartao').innerHTML = `
+            <h2>🏆 Jogo Terminado!</h2>
+            <p style="font-size: 20px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
+            <button onclick="location.reload()" style="padding: 10px 30px; border-radius: 50px; cursor: pointer; border: 2px solid var(--azul-medio); font-weight: bold;">Jogar de Novo</button>
         `;
     }
 
