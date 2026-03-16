@@ -13,7 +13,7 @@
             --amarelo: #ffeb3b;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; user-select: none; /* Impede seleção de texto ao arrastar */ }
         
         .cabecalho { background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; }
         .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
@@ -21,74 +21,42 @@
 
         #cronometro { font-size: 18px; font-weight: bold; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; margin: 10px 0; border: 2px solid var(--azul-medio); color: var(--azul-escuro); }
 
-        /* CONTENTOR PRINCIPAL ALINHADO */
-        .container { 
-            display: flex; 
-            justify-content: center; 
-            align-items: stretch; /* Garante que as colunas tenham a mesma altura */
-            gap: 25px; 
-            padding: 20px; 
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { display: flex; justify-content: center; align-items: stretch; gap: 25px; padding: 20px; max-width: 1000px; margin: 0 auto; }
 
-        /* GRELHA (ALTURA FIXA) */
         #grid { 
             display: grid; 
             grid-template-columns: repeat(10, 45px); 
-            grid-template-rows: repeat(10, 45px); /* Define altura fixa para alinhar */
+            grid-template-rows: repeat(10, 45px); 
             gap: 5px; 
             background: white;
             padding: 15px;
             border-radius: 20px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            cursor: pointer; /* Indica que é interativo */
         }
 
         .letra { 
             width: 45px; height: 45px; 
             border: 1px solid #e3efff; 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 22px; cursor: pointer;
+            font-weight: bold; font-size: 22px; 
             border-radius: 10px; background: #fff;
-            user-select: none;
+            transition: background 0.1s; /* Mais rápido para o arrastamento */
         }
 
-        .letra.selecionada { background: var(--amarelo); border-color: #ffd600; }
+        /* Estilo durante o arrastamento */
+        .letra.selecionando { background: #fff9c4; border-color: #fbc02d; } 
+        /* Estilo da palavra validada */
         .letra.correta { background: var(--verde) !important; color: white; border-color: #388e3c; }
 
-        /* LISTA DE PALAVRAS ALINHADA À GRELHA */
-        #lista-palavras { 
-            display: grid; 
-            grid-template-columns: repeat(2, 170px); 
-            grid-template-rows: repeat(4, 1fr); /* 4 linhas para alinhar com os 10x10 */
-            gap: 12px; 
-        }
-
-        .item-palavra { 
-            background: white; 
-            padding: 5px; 
-            border-radius: 15px; 
-            border: 2px solid var(--azul-medio); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; /* Centra imagem e texto verticalmente na célula */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-
+        #lista-palavras { display: grid; grid-template-columns: repeat(2, 170px); grid-template-rows: repeat(4, 1fr); gap: 12px; }
+        .item-palavra { background: white; padding: 5px; border-radius: 15px; border: 2px solid var(--azul-medio); display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .item-palavra img { width: 65px; height: 65px; object-fit: contain; }
         .item-palavra span { font-weight: bold; font-size: 13px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
-        
         .item-palavra.encontrada { opacity: 0.3; background: #e8f5e9; border-color: var(--verde); }
         .item-palavra.encontrada span { text-decoration: line-through; }
 
-        /* FEEDBACK FINAL */
-        #feedback-final {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center; align-items: center; z-index: 100;
-        }
+        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
         .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; }
         .btn-reiniciar { background: var(--azul-medio); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
 
@@ -105,8 +73,7 @@
 </header>
 
 <div class="container">
-    <div id="grid"></div>
-    <div id="lista-palavras"></div>
+    <div id="grid" oncontextmenu="return false;"></div> <div id="lista-palavras"></div>
 </div>
 
 <div id="feedback-final">
@@ -136,7 +103,13 @@
 
     let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
 
+    // --- Variáveis para o Arrastamento ---
+    let estaArrastando = false;
+    let celulaInicial = null; // {l, c}
+    let celulasSelecionadasAtuais = []; // Lista de IDs "l-c"
+
     function iniciarJogo() {
+        // ... (Lógica de colocação de palavras permanece igual)
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
@@ -144,7 +117,6 @@
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
-                
                 if (verificarEspaco(pObj.nome, l, c, dir)) {
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = dir === 'V' ? l + i : l;
@@ -158,6 +130,7 @@
             }
         });
         desenharInterface();
+        configurarEventosArrastamento(); // Nova função
         iniciarCronometro();
     }
 
@@ -178,7 +151,9 @@
                 div.className = 'letra';
                 div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
                 div.id = `cell-${l}-${c}`;
-                div.onclick = () => clicarLetra(l, c, div);
+                // Guardamos as coordenadas no dataset para facilitar o acesso nos eventos
+                div.dataset.l = l;
+                div.dataset.c = c;
                 gridElement.appendChild(div);
             }
         }
@@ -191,38 +166,135 @@
         });
     }
 
-    let selecionadasAtuais = [];
-    function clicarLetra(l, c, el) {
-        const id = `${l}-${c}`;
-        if (el.classList.contains('correta')) return;
-        
-        el.classList.toggle('selecionada');
-        if (el.classList.contains('selecionada')) {
-            selecionadasAtuais.push(id);
-        } else {
-            selecionadasAtuais = selecionadasAtuais.filter(item => item !== id);
-        }
-        verificarPalavras();
+    // --- NOVA LÓGICA DE ARRASTAMENTO ---
+
+    function configurarEventosArrastamento() {
+        // Eventos do Rato
+        gridElement.addEventListener('mousedown', iniciarSelecao);
+        window.addEventListener('mousemove', enquantoArrasta); // Window para detetar fora da grelha
+        window.addEventListener('mouseup', finalizarSelecao);
+
+        // Eventos de Toque (para tablets/telemóveis)
+        gridElement.addEventListener('touchstart', iniciarSelecao, {passive: false});
+        window.addEventListener('touchmove', enquantoArrasta, {passive: false});
+        window.addEventListener('touchend', finalizarSelecao);
     }
 
-    function verificarPalavras() {
+    function obterCelulaDosEventos(e) {
+        // Normaliza o evento (rato ou toque)
+        const touch = e.touches ? e.touches[0] : e;
+        const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        if (elemento && elemento.classList.contains('letra') && !elemento.classList.contains('correta')) {
+            return {
+                el: elemento,
+                l: parseInt(elemento.dataset.l),
+                c: parseInt(elemento.dataset.c)
+            };
+        }
+        return null;
+    }
+
+    function iniciarSelecao(e) {
+        const celula = obterCelulaDosEventos(e);
+        if (!celula) return;
+
+        estaArrastando = true;
+        celulaInicial = { l: celula.l, c: celula.c };
+        celulasSelecionadasAtuais = [];
+        
+        // Limpa seleções anteriores visuais (que não sejam corretas)
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        
+        adicionarCelulaASelecao(celula);
+        if (e.cancelable) e.preventDefault(); // Impede scroll no toque
+    }
+
+    function enquantoArrasta(e) {
+        if (!estaArrastando) return;
+
+        const celulaAtual = obterCelulaDosEventos(e);
+        if (!celulaAtual) return;
+
+        // Calcula a linha reta (Horizontal ou Vertical) a partir do início
+        const lInicial = celulaInicial.l;
+        const cInicial = celulaInicial.c;
+        const lAtual = celulaAtual.l;
+        const cAtual = celulaAtual.c;
+
+        const deltaL = lAtual - lInicial;
+        const deltaC = cAtual - cInicial;
+
+        // Determina se o arrastamento é predominantemente H ou V
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        celulasSelecionadasAtuais = [];
+
+        if (Math.abs(deltaL) > Math.abs(deltaC)) {
+            // Arrastamento Vertical
+            const passo = deltaL > 0 ? 1 : -1;
+            for (let l = lInicial; l !== lAtual + passo; l += passo) {
+                if (l >= 0 && l < TAMANHO) destacarCelula(l, cInicial);
+            }
+        } else {
+            // Arrastamento Horizontal (ou deltaL === deltaC, assumimos H)
+            const passo = deltaC > 0 ? 1 : -1;
+            for (let c = cInicial; c !== cAtual + passo; c += passo) {
+                if (c >= 0 && c < TAMANHO) destacarCelula(lInicial, c);
+            }
+        }
+        
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function destacarCelula(l, c) {
+        const id = `${l}-${c}`;
+        const el = document.getElementById(`cell-${id}`);
+        if (el && !el.classList.contains('correta')) {
+            el.classList.add('selecionando');
+            celulasSelecionadasAtuais.push(id);
+        }
+    }
+
+    function finalizarSelecao() {
+        if (!estaArrastando) return;
+        estaArrastando = false;
+
+        verificarPalavrasArrastadas();
+
+        // Limpa o visual da seleção temporária
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        celulasSelecionadasAtuais = [];
+        celulaInicial = null;
+    }
+
+    function verificarPalavrasArrastadas() {
+        // Cria uma string ordenada com os IDs selecionados para comparar
+        const selecaoQuery = celulasSelecionadasAtuais.sort().join(',');
+
         palavrasParaEncontrar.forEach(p => {
             if (!p.encontrada) {
-                const encontrouTodas = p.celulas.every(celula => selecionadasAtuais.includes(celula));
-                if (encontrouTodas) {
-                    p.encontrada = true;
-                    p.celulas.forEach(id => {
-                        const el = document.getElementById(`cell-${id}`);
-                        el.classList.remove('selecionada');
-                        el.classList.add('correta');
-                        selecionadasAtuais = selecionadasAtuais.filter(s => s !== id);
-                    });
-                    document.getElementById(`item-${p.nome}`).classList.add('encontrada');
+                // Cria a string ordenada dos IDs da palavra correta
+                const palavraQuery = p.celulas.sort().join(',');
+
+                if (selecaoQuery === palavraQuery) {
+                    marcarComoEncontrada(p);
                 }
             }
         });
+
         if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo();
     }
+
+    function marcarComoEncontrada(p) {
+        p.encontrada = true;
+        p.celulas.forEach(id => {
+            const el = document.getElementById(`cell-${id}`);
+            el.classList.add('correta');
+        });
+        document.getElementById(`item-${p.nome}`).classList.add('encontrada');
+    }
+
+    // --- FIM DA NOVA LÓGICA ---
 
     function iniciarCronometro() {
         intervaloCronometro = setInterval(() => {
