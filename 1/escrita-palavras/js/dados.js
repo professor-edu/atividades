@@ -1,4 +1,4 @@
-const palavras2 = [
+const palavras = [
   { palavra: "pato", imagem: "img/pato.png" },
   { palavra: "gato", imagem: "img/gato.png" },
   { palavra: "bola", imagem: "img/bola.png" },
