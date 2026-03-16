@@ -8,20 +8,35 @@ let erros = 0;
 // Carregar palavra
 // ------------------------------------------------------
 function carregarPalavra() {
-    const p = palavrasBaralhadas[indice];
+    if (indice >= palavrasBaralhadas.length) {
+        terminarJogo();
+        return;
+    }
 
-    document.getElementById("imagemPalavra").src = p.imagem;
+    const p = palavrasBaralhadas[indice];
+    const imgElement = document.getElementById("imagemPalavra");
+    
+    // Garantir que a imagem existe antes de mudar o src
+    if (imgElement) {
+        imgElement.src = p.imagem;
+    }
 
     const campo = document.getElementById("campoEscrita");
-    campo.value = "";
-    campo.disabled = false;
-    campo.classList.remove("shake");
+    if (campo) {
+        campo.value = "";
+        campo.disabled = false;
+        campo.classList.remove("shake");
+        campo.focus(); // Foca automaticamente no campo para facilitar a escrita
+    }
 
-    document.getElementById("validar").disabled = false;
+    const btnValidar = document.getElementById("validar");
+    if (btnValidar) btnValidar.disabled = false;
 
     const fb = document.getElementById("feedback");
-    fb.innerHTML = "";
-    fb.className = "";
+    if (fb) {
+        fb.innerHTML = "";
+        fb.className = "";
+    }
 
     atualizarProgresso();
 }
@@ -31,26 +46,26 @@ function carregarPalavra() {
 // ------------------------------------------------------
 function validar() {
     const campo = document.getElementById("campoEscrita");
+    if (!campo || campo.disabled) return; // Evita validações duplas se o campo estiver desativado
+
     const resposta = campo.value.toLowerCase().trim();
     const p = palavrasBaralhadas[indice];
 
-    if (resposta === p.palavra) {
-
+    // Compara a resposta (podes adicionar lógica de acentos aqui se desejares)
+    if (resposta === p.palavra.toLowerCase()) {
         certas++;
         mostrarFeedback(true);
         indice++;
 
+        // Pequena pausa antes de carregar a próxima para o utilizador ver o "✔"
         setTimeout(() => {
-            if (indice < palavrasBaralhadas.length) carregarPalavra();
-            else terminarJogo();
+            carregarPalavra();
         }, 900);
 
     } else {
-
         erros++;
-
+        // Desativa controlos para forçar o uso do botão "Continuar"
         document.getElementById("validar").disabled = true;
-
         campo.classList.add("shake");
         campo.disabled = true;
 
@@ -65,32 +80,26 @@ function mostrarFeedback(ok, correta = "") {
     const fb = document.getElementById("feedback");
 
     if (ok) {
-
         fb.innerHTML = "✔";
         fb.className = "feedback-certo";
-
     } else {
-
         fb.className = "feedback-errado";
-
         fb.innerHTML = `
             ✘<br>
             <span class="palavra-correta">Palavra correta: ${correta.toUpperCase()}</span>
             <button id="continuarBtn" class="btn-continuar">
-                <img src="img/continuar.png" class="icone-continuar"> Continuar
+                <img src="img/continuar.png" class="icone-continuar" style="width:20px;"> Continuar
             </button>
         `;
 
+        // Evento para o botão de erro - limpa o estado e avança
         document.getElementById("continuarBtn").addEventListener("click", () => {
-
-            document.getElementById("validar").disabled = false;
-
             indice++;
-            if (indice < palavrasBaralhadas.length) carregarPalavra();
-            else terminarJogo();
+            carregarPalavra();
         });
     }
 
+    // Atualiza contadores com os ícones originais
     document.getElementById("certas").innerHTML =
         `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
 
@@ -102,54 +111,47 @@ function mostrarFeedback(ok, correta = "") {
 // Barra de progresso
 // ------------------------------------------------------
 function atualizarProgresso() {
-    const percentagem = (indice / palavrasBaralhadas.length) * 100;
-    document.getElementById("progressoInterno").style.width = percentagem + "%";
+    const progressoInterno = document.getElementById("progressoInterno");
+    if (progressoInterno) {
+        const percentagem = (indice / palavrasBaralhadas.length) * 100;
+        progressoInterno.style.width = percentagem + "%";
+    }
 }
 
 // ------------------------------------------------------
 // Fim + Recomeçar
 // ------------------------------------------------------
 function terminarJogo() {
-
-    document.getElementById("areaJogo").innerHTML = `
-        <h2>Fim do jogo!</h2>
-        <p>Total de certas: ${certas}</p>
-        <p>Total de erradas: ${erros}</p>
-        <button id="recomecar" class="btn-recomecar">Recomeçar</button>
+    const area = document.getElementById("areaJogo");
+    area.innerHTML = `
+        <div class="fim-jogo">
+            <h2>Fim do jogo!</h2>
+            <p>Total de certas: <strong>${certas}</strong></p>
+            <p>Total de erradas: <strong>${erros}</strong></p>
+            <button id="recomecar" class="btn-recomecar" style="padding: 10px 20px; cursor: pointer;">Recomeçar</button>
+        </div>
     `;
 
     document.getElementById("recomecar").addEventListener("click", () => {
-
-        indice = 0;
-        certas = 0;
-        erros = 0;
-        palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
-
-        document.getElementById("areaJogo").innerHTML = `
-            <img id="imagemPalavra" src="" class="imagem">
-
-            <div class="entrada">
-                <input id="campoEscrita"
-                       type="text"
-                       placeholder="Escreve aqui..."
-                       autocomplete="off">
-
-                <button id="validar">
-                    <img src="img/lupa.png" class="icone-lupa"> Verificar
-                </button>
-            </div>
-
-            <div id="feedback"></div>
-        `;
-
-        document.getElementById("validar").addEventListener("click", validar);
-
-        atualizarProgresso();
-        carregarPalavra();
+        location.reload(); // Forma mais limpa de reiniciar sem perder listeners globais
     });
 }
 
 // ------------------------------------------------------
+// Listeners Iniciais
+// ------------------------------------------------------
 document.getElementById("validar").addEventListener("click", validar);
-document.addEventListener("keydown", e => { if (e.key === "Enter") validar(); });
+
+document.addEventListener("keydown", (e) => { 
+    if (e.key === "Enter") {
+        // Se o botão continuar existir (erro), o Enter clica nele
+        const btnCont = document.getElementById("continuarBtn");
+        if (btnCont) {
+            btnCont.click();
+        } else {
+            validar();
+        }
+    } 
+});
+
 window.onload = carregarPalavra;
