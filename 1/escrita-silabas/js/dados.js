@@ -8,6 +8,7 @@ const palavras = [
     { palavra: "violino",  silabas: ["vi", "o", "li", "no"],            imagem: "img/violino.png" },
     { palavra: "melão",    silabas: ["me", "lão"],                      imagem: "img/melao.png" },
     { palavra: "mota",     silabas: ["mo", "ta"],                       imagem: "img/mota.png" },
+    { palavra: "tartaruga", silabas: ["tar", "ta", "ru", "ga"],         imagem: "img/tartaruga.png" },
     { palavra: "janela",   silabas: ["ja", "ne", "la"],                 imagem: "img/janela.png" },
     { palavra: "jipe",     silabas: ["ji", "pe"],                       imagem: "img/jipe.png" },
     { palavra: "cama",     silabas: ["ca", "ma"],                       imagem: "img/cama.png" },
