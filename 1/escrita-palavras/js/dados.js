@@ -3,7 +3,7 @@ const palavras = [
   { palavra: "gato", imagem: "img/gato.png" },
   { palavra: "bola", imagem: "img/bola.png" },
   { palavra: "vaca", imagem: "img/vaca.png" },
-  { palavra: "ratito", imagem: "img/ratito.png" },
+  { palavra: "rato", imagem: "img/ratito.png" },
   { palavra: "violino", imagem: "img/violino.png" },
   { palavra: "melão", imagem: "img/melao.png" },
   { palavra: "mota", imagem: "img/mota.png" },
