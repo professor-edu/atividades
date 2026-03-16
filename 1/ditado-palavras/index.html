@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ditado Digital Interativo</title>
+    <style>
+        :root {
+            --azul-claro: #f0f7ff;
+            --azul-medio: #7ac7f0;
+            --azul-escuro: #0d47a1;
+            --verde: #4caf50;
+            --amarelo: #ffca28;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
+        
+        .cabecalho { 
+            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
+            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
+        }
+
+        /* SELETOR DE VOZ */
+        .config-voz { margin: 10px; font-size: 14px; color: var(--azul-escuro); }
+        select { padding: 5px; border-radius: 10px; border: 1px solid var(--azul-medio); outline: none; }
+
+        /* PONTUAÇÃO */
+        .pontos { font-size: 20px; font-weight: bold; color: var(--amarelo); margin: 10px; }
+
+        .cartao {
+            background: white; width: 95%; max-width: 500px;
+            margin: 20px auto; padding: 30px 20px;
+            border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+
+        .btn-ouvir {
+            width: 100px; height: 100px;
+            background: #e3f2fd; border: 3px solid var(--azul-medio);
+            border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .btn-ouvir img { width: 50px; }
+
+        /* ÁREA DE REVELAÇÃO (IMAGEM) */
+        #revelacao { height: 120px; display: flex; align-items: center; justify-content: center; }
+        #imgSucesso { max-height: 100%; display: none; border-radius: 15px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        input {
+            font-size: 24px; padding: 12px; width: 80%;
+            border: 2px solid var(--azul-medio); border-radius: 12px;
+            text-align: center; outline: none;
+        }
+
+        #validar {
+            padding: 12px 60px; font-size: 20px; font-weight: bold;
+            background: var(--azul-escuro); color: white; border: none;
+            border-radius: 50px; cursor: pointer;
+        }
+
+        #feedback { min-height: 80px; width: 100%; }
+        .feedback-errado { background: #fff5f5; padding: 15px; border-radius: 15px; border: 1px solid #fde2e2; color: #d32f2f; }
+        
+        .btn-continuar {
+            margin-top: 10px; padding: 8px 25px; background: white;
+            border: 2px solid var(--azul-medio); border-radius: 50px; cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <h1>Ditado Digital</h1>
+    <div class="config-voz">
+        Voz: <select id="selecaoVoz"></select>
+    </div>
+    <div class="pontos">⭐ Pontos: <span id="valorPontos">0</span></div>
+</header>
+
+<div class="cartao">
+    <div id="revelacao">
+        <img id="imgSucesso" src="" alt="Acertaste!">
+    </div>
+
+    <button class="btn-ouvir" onclick="tocarVoz()">
+        <img src="https://openmoji.org/data/color/svg/1F50A.svg">
+    </button>
+
+    <input type="text" id="campoEscrita" placeholder="Escreve aqui..." autocomplete="off">
+    
+    <button id="validar" onclick="verificar()">Verificar</button>
+
+    <div id="feedback"></div>
+</div>
+
+<script src="js/dados.js"></script>
+<script>
+    let indiceAtual = 0;
+    let pontos = 0;
+    let listaDitado = [...palavras].sort(() => 0.5 - Math.random());
+    const sintetizador = window.speechSynthesis;
+    let vozesPT = [];
+
+    // Carregar vozes do sistema
+    function carregarVozes() {
+        vozesPT = sintetizador.getVoices().filter(v => v.lang.includes('pt'));
+        const select = document.getElementById('selecaoVoz');
+        select.innerHTML = vozesPT.map((v, i) => `<option value="${i}">${v.name}</option>`).join('');
+    }
+
+    // O evento de vozes carregadas pode demorar em alguns browsers
+    sintetizador.onvoiceschanged = carregarVozes;
+    carregarVozes();
+
+    function tocarVoz() {
+        if (sintetizador.speaking) sintetizador.cancel();
+        const enunciado = new SpeechSynthesisUtterance(listaDitado[indiceAtual].palavra);
+        const indexVoz = document.getElementById('selecaoVoz').value;
+        if (vozesPT[indexVoz]) enunciado.voice = vozesPT[indexVoz];
+        enunciado.lang = 'pt-PT';
+        enunciado.rate = 0.8;
+        sintetizador.speak(enunciado);
+    }
+
+    function verificar() {
+        const campo = document.getElementById('campoEscrita');
+        const resposta = campo.value.trim().toLowerCase();
+        const correta = listaDitado[indiceAtual].palavra.toLowerCase();
+        const feedback = document.getElementById('feedback');
+        const imgSucesso = document.getElementById('imgSucesso');
+
+        if (resposta === correta) {
+            pontos += 10;
+            document.getElementById('valorPontos').innerText = pontos;
+            
+            // Revelar imagem e feedback
+            imgSucesso.src = listaDitado[indiceAtual].imagem;
+            imgSucesso.style.display = 'block';
+            feedback.innerHTML = "<h2 style='color: var(--verde);'>Boa! ✨</h2>";
+            
+            setTimeout(proximaPalavra, 2000); // Dá tempo para ver a imagem
+        } else {
+            feedback.innerHTML = `
+                <div class="feedback-errado">
+                    <span>Era a palavra: <strong>${correta}</strong></span><br>
+                    <button class="btn-continuar" onclick="proximaPalavra()">Continuar</button>
+                </div>`;
+        }
+    }
+
+    function proximaPalavra() {
+        indiceAtual++;
+        document.getElementById('imgSucesso').style.display = 'none';
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('campoEscrita').value = "";
+        
+        if (indiceAtual < listaDitado.length) {
+            tocarVoz();
+            document.getElementById('campoEscrita').focus();
+        } else {
+            document.querySelector('.cartao').innerHTML = `<h2>🏆 Fim do Ditado!<br>Fizeste ${pontos} pontos!</h2><button class="btn-continuar" onclick="location.reload()">Jogar de Novo</button>`;
+        }
+    }
+
+    document.getElementById('campoEscrita').addEventListener('keypress', (e) => { if(e.key === 'Enter') verificar(); });
+</script>
+
+</body>
+</html>
