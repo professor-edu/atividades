@@ -15,9 +15,14 @@
 
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; padding-bottom: 50px; }
         
-        .cabecalho { background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); padding: 20px; color: var(--azul-escuro); border-bottom: 3px solid #fff; }
+        /* CABEÇALHO COM ÍCONE */
+        .cabecalho { background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; }
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .icone-titulo { width: 50px; height: auto; }
 
-        /* PAINEL PRINCIPAL */
+        /* TEMPORIZADOR */
+        #cronometro { font-size: 20px; font-weight: bold; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; margin-top: 10px; border: 2px solid var(--azul-medio); }
+
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 20px; align-items: flex-start; }
 
         /* GRELHA */
@@ -40,77 +45,86 @@
             user-select: none; transition: all 0.2s;
         }
 
-        .letra:hover { background: var(--azul-claro); transform: scale(1.05); }
+        .letra:hover { background: var(--azul-claro); }
         .letra.selecionada { background: var(--amarelo); border-color: #ffd600; }
         .letra.correta { background: var(--verde) !important; color: white; border-color: #388e3c; }
 
-        /* PAINEL LATERAL (IMAGENS E LISTA) */
-        #lista-palavras {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            max-width: 400px;
-        }
-
-        .item-palavra {
-            background: white;
-            padding: 10px;
-            border-radius: 15px;
-            border: 2px solid var(--azul-medio);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: opacity 0.3s;
-        }
-
-        .item-palavra img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 5px; }
-        .item-palavra span { font-weight: bold; color: var(--azul-escuro); text-transform: uppercase; }
-
-        /* Quando encontrada */
+        /* LISTA DE IMAGENS */
+        #lista-palavras { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 400px; }
+        .item-palavra { background: white; padding: 10px; border-radius: 15px; border: 2px solid var(--azul-medio); display: flex; flex-direction: column; align-items: center; }
+        .item-palavra img { width: 70px; height: 70px; object-fit: contain; }
+        .item-palavra span { font-weight: bold; font-size: 14px; margin-top: 5px; }
         .item-palavra.encontrada { opacity: 0.4; background: #e8f5e9; border-color: var(--verde); }
         .item-palavra.encontrada span { text-decoration: line-through; color: var(--verde); }
 
+        /* FEEDBACK FINAL (OVERLAY) */
+        #feedback-final {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .painel-vitoria {
+            background: white; padding: 40px; border-radius: 30px;
+            text-align: center; max-width: 400px;
+        }
+        .painel-vitoria h2 { color: var(--verde); font-size: 32px; }
+        .btn-reiniciar { 
+            background: var(--azul-medio); color: white; border: none; 
+            padding: 10px 30px; font-size: 18px; border-radius: 50px; 
+            cursor: pointer; margin-top: 20px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <h1>Sopa de Letras</h1>
-    <p>Clica nas letras para formar as palavras!</p>
+    <div class="cabecalho-conteudo">
+        <img src="img/confuso.png" class="icone-titulo">
+        <h1 style="margin:0">Sopa de Letras</h1>
+    </div>
+    <div id="cronometro">Tempo: 0s</div>
 </header>
 
 <div class="container">
     <div id="grid"></div>
-
     <div id="lista-palavras"></div>
+</div>
+
+<div id="feedback-final">
+    <div class="painel-vitoria">
+        <img src="img/certo.png" style="width: 80px;">
+        <h2>Parabéns!</h2>
+        <p id="msg-tempo"></p>
+        <button class="btn-reiniciar" onclick="location.reload()">Jogar Novamente</button>
+    </div>
 </div>
 
 <script src="js/dados.js"></script>
 <script>
     const TAMANHO = 10;
+    let tempo = 0;
+    let intervaloCronometro;
     const gridElement = document.getElementById('grid');
     const listaElement = document.getElementById('lista-palavras');
     
-    // 1. Selecionar 4 palavras aleatórias do teu dados.js
     let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 4);
     let palavrasParaEncontrar = selecaoOriginal.map(p => ({
         nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
         imagem: p.imagem,
         encontrada: false,
-        celulas: [] // Guardará as coordenadas das letras na sopa
+        celulas: []
     }));
 
     let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
 
-    function inicializar() {
-        // Colocar palavras na matriz
+    function iniciarJogo() {
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             while (!colocada) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
-
                 if (verificarEspaco(pObj.nome, l, c, dir)) {
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = dir === 'V' ? l + i : l;
@@ -122,8 +136,8 @@
                 }
             }
         });
-
         desenharInterface();
+        iniciarCronometro();
     }
 
     function verificarEspaco(palavra, l, c, dir) {
@@ -136,21 +150,17 @@
     }
 
     function desenharInterface() {
-        // Criar Grid
         const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (let l = 0; l < TAMANHO; l++) {
             for (let c = 0; c < TAMANHO; c++) {
                 const div = document.createElement('div');
                 div.className = 'letra';
-                let letraFinal = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
-                div.textContent = letraFinal;
+                div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
                 div.id = `cell-${l}-${c}`;
                 div.onclick = () => clicarLetra(l, c, div);
                 gridElement.appendChild(div);
             }
         }
-
-        // Criar Lista com Imagens
         palavrasParaEncontrar.forEach(p => {
             const item = document.createElement('div');
             item.className = 'item-palavra';
@@ -161,12 +171,9 @@
     }
 
     let selecionadasAtuais = [];
-
     function clicarLetra(l, c, el) {
         const id = `${l}-${c}`;
-        
         if (el.classList.contains('correta')) return;
-
         if (el.classList.contains('selecionada')) {
             el.classList.remove('selecionada');
             selecionadasAtuais = selecionadasAtuais.filter(item => item !== id);
@@ -174,41 +181,41 @@
             el.classList.add('selecionada');
             selecionadasAtuais.push(id);
         }
-
         verificarPalavras();
     }
 
     function verificarPalavras() {
         palavrasParaEncontrar.forEach(p => {
             if (!p.encontrada) {
-                // Verifica se todas as células da palavra estão na lista de selecionadas
                 const encontrouTodas = p.celulas.every(celula => selecionadasAtuais.includes(celula));
-                
-                // Verifica se o número de selecionadas coincide com o tamanho da palavra 
-                // (Para evitar que ganhe selecionando o tabuleiro todo)
-                const apenasLetrasCertas = selecionadasAtuais.length === p.nome.length && encontrouTodas;
-
                 if (encontrouTodas) {
-                    marcarComoCerta(p);
+                    p.encontrada = true;
+                    p.celulas.forEach(id => {
+                        const el = document.getElementById(`cell-${id}`);
+                        el.classList.replace('selecionada', 'correta');
+                    });
+                    document.getElementById(`item-${p.nome}`).classList.add('encontrada');
+                    selecionadasAtuais = selecionadasAtuais.filter(id => !p.celulas.includes(id));
                 }
             }
         });
+        if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo();
     }
 
-    function marcarComoCerta(p) {
-        p.encontrada = true;
-        p.celulas.forEach(id => {
-            const el = document.getElementById(`cell-${id}`);
-            el.classList.remove('selecionada');
-            el.classList.add('correta');
-        });
-        document.getElementById(`item-${p.nome}`).classList.add('encontrada');
-        
-        // Limpa a seleção atual para a próxima palavra
-        selecionadasAtuais = selecionadasAtuais.filter(id => !p.celulas.includes(id));
+    function iniciarCronometro() {
+        intervaloCronometro = setInterval(() => {
+            tempo++;
+            document.getElementById('cronometro').textContent = `Tempo: ${tempo}s`;
+        }, 1000);
     }
 
-    inicializar();
+    function finalizarJogo() {
+        clearInterval(intervaloCronometro);
+        document.getElementById('feedback-final').style.display = 'flex';
+        document.getElementById('msg-tempo').textContent = `Encontraste todas as palavras em ${tempo} segundos!`;
+    }
+
+    iniciarJogo();
 </script>
 </body>
 </html>
