@@ -113,7 +113,12 @@ function terminarJogo() {
         <h2>Fim do jogo!</h2>
         <p>Total de certas: ${certas}</p>
         <p>Total de erradas: ${erros}</p>
-        <button id="recomecar" class="btn-recomecar">Recomendice = 0;
+        <button id="recomecar" class="btn-recomecar">Recomeçar</button>
+    `;
+
+    document.getElementById("recomecar").addEventListener("click", () => {
+
+        indice = 0;
         certas = 0;
         erros = 0;
         palavrasBaralhadas = [...palavras].sort(() => Math.random() - 0.5);
@@ -128,7 +133,7 @@ function terminarJogo() {
                        autocomplete="off">
 
                 <button id="validar">
-                    img/lupa.png Verificar
+                    <img src="img/lupa.png" class="icone-lupa"> Verificar
                 </button>
             </div>
 
@@ -143,12 +148,6 @@ function terminarJogo() {
 }
 
 // ------------------------------------------------------
-// Eventos
-// ------------------------------------------------------
 document.getElementById("validar").addEventListener("click", validar);
-
-document.addEventListener("keydown", e => {
-    if (e.key === "Enter") validar();
-});
-
+document.addEventListener("keydown", (e) => { if (e.key === "Enter") validar(); });
 window.onload = carregarPalavra;
