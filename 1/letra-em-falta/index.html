@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qual falta?</title>
+    <style>
+        :root {
+            --azul-claro: #f0f7ff;
+            --azul-medio: #7ac7f0;
+            --azul-escuro: #0d47a1;
+            --verde: #4caf50;
+            --laranja: #ff9800;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; overflow-x: hidden; }
+        
+        .cabecalho { 
+            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
+            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
+        }
+
+        .cartao-xl {
+            background: white; width: 90%; max-width: 800px;
+            margin: 20px auto; padding: 40px;
+            border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+
+        .imagem-ajuda { max-height: 250px; border-radius: 20px; }
+
+        .palavra-lacuna {
+            font-size: 80px; font-weight: bold; letter-spacing: 10px;
+            color: var(--azul-escuro); text-transform: uppercase; margin: 20px 0;
+        }
+
+        .lacuna { color: var(--laranja); border-bottom: 5px solid var(--laranja); padding: 0 10px; }
+
+        .container-opcoes { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+
+        .btn-letra {
+            width: 100px; height: 100px; font-size: 50px; font-weight: bold;
+            background: white; border: 4px solid var(--azul-medio);
+            color: var(--azul-escuro); border-radius: 20px; cursor: pointer;
+            transition: all 0.2s; text-transform: uppercase;
+        }
+
+        .btn-letra:hover { transform: scale(1.1); background: var(--azul-claro); }
+        .btn-letra.correto { background: var(--verde); color: white; border-color: var(--verde); }
+        .btn-letra.errado { background: #ffeded; color: #d32f2f; border-color: #fde2e2; }
+
+        #feedback { font-size: 30px; font-weight: bold; min-height: 40px; margin-top: 20px; }
+        .estrelas { font-size: 24px; color: #f57c00; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 15px;">
+        <img src="https://openmoji.org/data/color/svg/1F9D0.svg" style="width: 45px;">
+        <h1 style="margin:0">Qual é a letra?</h1>
+    </div>
+    <div class="estrelas">⭐ Estrelas: <span id="pts">0</span></div>
+</header>
+
+<main class="cartao-xl">
+    <img id="imagem" class="imagem-ajuda" src="">
+    
+    <div id="display-palavra" class="palavra-lacuna"></div>
+
+    <div class="container-opcoes" id="opcoes-letras">
+        </div>
+
+    <div id="feedback"></div>
+</main>
+
+<script src="js/dados.js"></script>
+<script>
+    let indice = 0;
+    let estrelas = 0;
+    // Filtrar apenas palavras que têm o desafio "falta" definido no dados.js
+    // Se não tiver, o código gera um automático (remove a primeira letra)
+    let lista = [...palavras].sort(() => 0.5 - Math.random());
+
+    function carregar() {
+        if (indice >= lista.length) {
+            document.querySelector('.cartao-xl').innerHTML = "<h1>🏆 Parabéns! Ganhaste " + estrelas + " estrelas!</h1>";
+            return;
+        }
+
+        const item = lista[indice];
+        document.getElementById('imagem').src = item.imagem;
+        document.getElementById('feedback').innerHTML = "";
+        
+        // Lógica: Se não houver lacuna definida, tira a primeira letra
+        let correta = item.correta || item.palavra[0];
+        let base = item.falta || "_" + item.palavra.substring(1);
+        
+        // Mostra a palavra com a lacuna estilizada
+        document.getElementById('display-palavra').innerHTML = base.replace("_", "<span class='lacuna'>?</span>");
+
+        // Gerar opções (se não houver no dados.js, gera aleatórias)
+        let letrasOpcoes = item.opcoes || gerarOpcoesAleatorias(correta);
+        
+        const container = document.getElementById('opcoes-letras');
+        container.innerHTML = "";
+        
+        letrasOpcoes.forEach(letra => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-letra';
+            btn.innerText = letra;
+            btn.onclick = () => verificar(letra, correta, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function verificar(escolha, correta, btn) {
+        const feedback = document.getElementById('feedback');
+        
+        if (escolha.toLowerCase() === correta.toLowerCase()) {
+            estrelas++;
+            document.getElementById('pts').innerText = estrelas;
+            btn.classList.add('correto');
+            feedback.innerHTML = "<span style='color: var(--verde)'>Boa! É a letra " + correta.toUpperCase() + "!</span>";
+            
+            // Revela a palavra completa
+            document.getElementById('display-palavra').innerText = lista[indice].palavra.toUpperCase();
+            
+            setTimeout(() => {
+                indice++;
+                carregar();
+            }, 2000);
+        } else {
+            btn.classList.add('errado');
+            feedback.innerHTML = "<span style='color: #d32f2f'>Tenta outra vez!</span>";
+        }
+    }
+
+    function gerarOpcoesAleatorias(correta) {
+        let alfabeto = "abcdefghijklmnopqrstuvwxyz";
+        let erradas = alfabeto.replace(correta, "").split("");
+        let final = [correta];
+        for(let i=0; i<2; i++) {
+            let rand = Math.floor(Math.random() * erradas.length);
+            final.push(erradas.splice(rand, 1)[0]);
+        }
+        return final.sort();
+    }
+
+    window.onload = carregar;
+</script>
+
+</body>
+</html>
