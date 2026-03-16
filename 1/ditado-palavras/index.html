@@ -15,35 +15,22 @@
 
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
         
-        /* CABEÇALHO COM ÍCONE E TÍTULO NOVO */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
             padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
         }
 
         .cabecalho-conteudo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
+            display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px;
         }
 
-        .icone-cabecalho {
-            width: 45px; /* Tamanho do ícone de escrita */
-            height: auto;
-        }
-
-        .titulo-cabecalho {
-            margin: 0;
-            font-size: 28px;
-            font-weight: bold;
-        }
+        .icone-cabecalho { width: 45px; height: auto; }
+        .titulo-cabecalho { margin: 0; font-size: 28px; font-weight: bold; }
 
         .config-voz { margin: 5px 0; font-size: 14px; color: var(--azul-escuro); }
-        select { padding: 5px 10px; border-radius: 10px; border: 1px solid var(--azul-medio); outline: none; background: white; cursor: pointer;}
+        select { padding: 5px 10px; border-radius: 10px; border: 1px solid var(--azul-medio); outline: none; background: white; cursor: pointer; }
 
-        .pontos { font-size: 20px; font-weight: bold; color: #f57c00; margin: 10px 0; text-shadow: 1px 1px 0px white; }
+        .pontos { font-size: 20px; font-weight: bold; color: #f57c00; margin: 10px 0; }
 
         .cartao {
             background: white; width: 95%; max-width: 500px;
@@ -53,12 +40,9 @@
             min-height: 400px;
         }
 
-        /* ÁREA DE REVELAÇÃO */
         #revelacao { height: 150px; display: flex; align-items: center; justify-content: center; width: 100%; }
         #imgSucesso { 
-            max-height: 100%; 
-            display: none; 
-            border-radius: 15px; 
+            max-height: 100%; display: none; border-radius: 15px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
@@ -71,42 +55,32 @@
             border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.2s;
-            border-style: outset;
         }
-        .btn-ouvir:hover { transform: scale(1.1); background: #bbdefb;}
+        .btn-ouvir:hover { transform: scale(1.1); background: #bbdefb; }
         .btn-ouvir img { width: 55px; }
 
         input {
             font-size: 24px; padding: 12px; width: 80%;
             border: 2px solid var(--azul-medio); border-radius: 12px;
             text-align: center; outline: none;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         #validar {
             padding: 12px 60px; font-size: 20px; font-weight: bold;
             background: var(--azul-escuro); color: white; border: none;
             border-radius: 50px; cursor: pointer;
-            transition: background 0.2s;
         }
-        #validar:hover { background: #002f6c; }
 
         #feedback { min-height: 80px; width: 100%; font-weight: bold; }
         .feedback-errado { background: #fff5f5; padding: 15px; border-radius: 15px; border: 1px solid #fde2e2; color: #d32f2f; }
-        
-        .btn-continuar {
-            margin-top: 10px; padding: 8px 25px; background: white;
-            border: 2px solid var(--azul-medio); border-radius: 50px; cursor: pointer; font-weight: bold;
-            color: var(--azul-escuro);
-        }
-        .btn-continuar:hover { background: var(--azul-claro); }
+        .btn-continuar { margin-top: 10px; padding: 8px 25px; background: white; border: 2px solid var(--azul-medio); border-radius: 50px; cursor: pointer; font-weight: bold; color: var(--azul-escuro); }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="ouvir.png" class="icone-cabecalho" alt="Ícone de Ditado">
+        <img src="https://openmoji.org/data/color/svg/270E.svg" class="icone-cabecalho">
         <h1 class="titulo-cabecalho">Ditado de Palavras</h1>
     </div>
 
@@ -118,17 +92,15 @@
 
 <div class="cartao">
     <div id="revelacao">
-        <img id="imgSucesso" src="" alt="Parabéns!">
+        <img id="imgSucesso" src="">
     </div>
 
-    <button class="btn-ouvir" onclick="tocarVoz()" title="Ouvir palavra">
+    <button class="btn-ouvir" onclick="tocarVoz()">
         <img src="https://openmoji.org/data/color/svg/1F50A.svg">
     </button>
 
-    <input type="text" id="campoEscrita" placeholder="Escreve o que ouviste..." autocomplete="off">
-    
+    <input type="text" id="campoEscrita" placeholder="Ouve e escreve aqui..." autocomplete="off">
     <button id="validar" onclick="verificar()">Verificar</button>
-
     <div id="feedback"></div>
 </div>
 
@@ -141,39 +113,46 @@
     let vozesPT = [];
 
     function carregarVozes() {
-        vozesPT = sintetizador.getVoices().filter(v => v.lang.includes('pt'));
+        // Filtra estritamente por pt-PT (Portugal)
+        const todasAsVozes = sintetizador.getVoices();
+        vozesPT = todasAsVozes.filter(v => v.lang === 'pt-PT');
+
+        // Se o browser não identificar 'pt-PT', tentamos 'pt_PT'
+        if (vozesPT.length === 0) {
+            vozesPT = todasAsVozes.filter(v => v.lang.includes('pt-PT') || v.lang.includes('pt_PT'));
+        }
+
         const select = document.getElementById('selecaoVoz');
-        // Limpa e preenche o select
         select.innerHTML = '';
+
         vozesPT.forEach((v, i) => {
             const option = document.createElement('option');
             option.value = i;
-            option.textContent = v.name;
-            // Tenta selecionar uma voz feminina por defeito (opcional)
-            if (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('maria')) {
-                 option.selected = true;
-            }
+            // Simplifica o nome para o utilizador (Voz 1, Voz 2 ou Masculina/Feminina se o nome ajudar)
+            let nomeVoz = v.name.includes('Duarte') || v.name.includes('Helder') ? 'Masculina' : 
+                          v.name.includes('Raquel') || v.name.includes('Fernanda') ? 'Feminina' : v.name;
+            option.textContent = nomeVoz;
             select.appendChild(option);
         });
     }
 
-    // Alguns browsers precisam deste evento, outros carregam imediatamente
     if (speechSynthesis.onvoiceschanged !== undefined) {
         speechSynthesis.onvoiceschanged = carregarVozes;
     }
-    
-    // Tenta carregar imediatamente (para browsers que não disparam o evento)
     carregarVozes();
 
     function tocarVoz() {
         if (sintetizador.speaking) sintetizador.cancel();
-        const texto = listaDitado[indiceAtual].palavra;
-        const enunciado = new SpeechSynthesisUtterance(texto);
+        
+        const enunciado = new SpeechSynthesisUtterance(listaDitado[indiceAtual].palavra);
         const indexVoz = document.getElementById('selecaoVoz').value;
         
-        if (vozesPT[indexVoz]) enunciado.voice = vozesPT[indexVoz];
-        enunciado.lang = 'pt-PT'; // Sotaque de Portugal
-        enunciado.rate = 0.8;      // Velocidade mais lenta
+        if (vozesPT[indexVoz]) {
+            enunciado.voice = vozesPT[indexVoz];
+        }
+        
+        enunciado.lang = 'pt-PT';
+        enunciado.rate = 0.8;
         sintetizador.speak(enunciado);
     }
 
@@ -188,17 +167,12 @@
             pontos += 1;
             document.getElementById('valorPontos').innerText = pontos;
             
-            // Assume que as imagens estão em atividades/1/img/
-            let caminhoImg = listaDitado[indiceAtual].imagem;
-            if (!caminhoImg.startsWith('atividades/')) {
-                caminhoImg = "atividades/1/" + caminhoImg;
-            }
-
-            imgSucesso.src = caminhoImg;
+            // Procura na pasta img/
+            imgSucesso.src = "img/" + listaDitado[indiceAtual].palavra.toLowerCase() + ".png";
             imgSucesso.style.display = 'block';
-            feedback.innerHTML = "<span style='color: var(--verde); font-size: 24px;'>Excelente! ✨</span>";
+            feedback.innerHTML = "<span style='color: var(--verde); font-size: 24px;'>Boa! ✨</span>";
             
-            setTimeout(proximaPalavra, 2500); // Mais tempo para celebrar
+            setTimeout(proximaPalavra, 2500); 
         } else {
             feedback.innerHTML = `
                 <div class="feedback-errado">
@@ -215,29 +189,19 @@
         document.getElementById('campoEscrita').value = "";
         
         if (indiceAtual < listaDitado.length) {
-            tocarVoz();
             document.getElementById('campoEscrita').focus();
+            // REMOVIDO: tocarVoz() automático para respeitar o pedido de clicar no ícone
         } else {
-            // Ecrã final
             document.querySelector('.cartao').innerHTML = `
                 <div style="padding: 40px 0;">
-                    <h2 style="color: var(--azul-escuro); font-size: 32px;">🏆 Parabéns!</h2>
-                    <p style="font-size: 22px; color: #f57c00; font-weight: bold;">⭐ Ganhaste ${pontos} estrelas! ⭐</p>
-                    <p>Completaste o ditado de palavras.</p>
-                    <button class="btn-continuar" onclick="location.reload()" style="font-size: 18px; padding: 10px 30px;">Jogar de Novo</button>
+                    <h2>🏆 Parabéns!</h2>
+                    <p style="font-size: 22px; color: #f57c00; font-weight: bold;">⭐ Ganhaste ${pontos} estrelas!</p>
+                    <button class="btn-continuar" onclick="location.reload()">Jogar de Novo</button>
                 </div>`;
         }
     }
 
-    // Atalho: Enter valida
     document.getElementById('campoEscrita').addEventListener('keypress', (e) => { if(e.key === 'Enter') verificar(); });
-
-    // Tocar a primeira automaticamente (pode ser bloqueado pelo browser)
-    window.onload = () => {
-        // Dá um pequeno atraso para o sintetizador carregar as vozes
-        setTimeout(carregarVozes, 200);
-        setTimeout(tocarVoz, 800); 
-    };
 </script>
 
 </body>
