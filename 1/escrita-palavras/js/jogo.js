@@ -90,10 +90,10 @@ function mostrarFeedback(ok, correta = "") {
     }
 
     document.getElementById("certas").innerHTML =
-    '<img src="img/certo.png" class="icone-contador"> Certas: ' + certas;
+        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
 
-document.getElementById("erros").innerHTML =
-    '<img src="img/errado.png" class="icone-contador"> Erradas: ' + erros;
+    document.getElementById("erros").innerHTML =
+        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
 }
 
 // ------------------------------------------------------
@@ -149,5 +149,5 @@ function terminarJogo() {
 
 // ------------------------------------------------------
 document.getElementById("validar").addEventListener("click", validar);
-document.addEventListener("keydown", (e) => { if (e.key === "Enter") validar(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter") validar(); });
 window.onload = carregarPalavra;
