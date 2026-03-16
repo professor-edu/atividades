@@ -50,7 +50,7 @@ function validar() {
 }
 
 // -------------------------
-// Feedback
+// Feedback ✔ / ✘
 // -------------------------
 function mostrarFeedback(ok) {
     const fb = document.getElementById("feedback");
@@ -63,11 +63,11 @@ function mostrarFeedback(ok) {
         fb.className = "feedback-errado";
     }
 
-   document.getElementById("certas").innerHTML =
-    `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
+    document.getElementById("certas").innerHTML =
+        `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
 
-document.getElementById("erros").innerHTML =
-    `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
+    document.getElementById("erros").innerHTML =
+        `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
 }
 
 // -------------------------
@@ -100,19 +100,22 @@ function terminarJogo() {
         document.getElementById("areaJogo").innerHTML = `
             <img id="imagemPalavra" src="" class="imagem">
 
-            <input id="campoEscrita"
-                   type="text"
-                   placeholder="Escreve aqui..."
-                   autocomplete="off">
+            <div class="entrada">
+                <input id="campoEscrita"
+                       type="text"
+                       placeholder="Escreve aqui..."
+                       autocomplete="off">
 
-            <button id="validar">
-                img/lupa.png Verificar
-            </button>
+                <button id="validar">
+                    <img src="img/lupa.png" class="icone-lupa"> Verificar
+                </button>
+            </div>
 
             <div id="feedback"></div>
         `;
 
-        document.getElementById("validar").addEventListener("click", validar);
+        document.getElementById("validar")
+            .addEventListener("click", validar);
 
         atualizarProgresso();
         carregarPalavra();
@@ -125,9 +128,7 @@ function terminarJogo() {
 document.getElementById("validar").addEventListener("click", validar);
 
 document.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-        validar();
-    }
+    if (e.key === "Enter") validar();
 });
 
 window.onload = carregarPalavra;
