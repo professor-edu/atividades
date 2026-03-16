@@ -13,55 +13,72 @@
             --amarelo: #ffeb3b;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; padding-bottom: 30px; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; }
         
         .cabecalho { background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; }
         .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
         .icone-titulo { width: 50px; height: auto; }
 
-        #cronometro { font-size: 18px; font-weight: bold; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; margin-top: 10px; border: 2px solid var(--azul-medio); color: var(--azul-escuro); }
+        #cronometro { font-size: 18px; font-weight: bold; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; margin: 10px 0; border: 2px solid var(--azul-medio); color: var(--azul-escuro); }
 
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; align-items: flex-start; }
+        /* CONTENTOR PRINCIPAL ALINHADO */
+        .container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: stretch; /* Garante que as colunas tenham a mesma altura */
+            gap: 25px; 
+            padding: 20px; 
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-        /* GRELHA MAIS COMPACTA */
+        /* GRELHA (ALTURA FIXA) */
         #grid { 
             display: grid; 
-            grid-template-columns: repeat(10, 42px); 
-            gap: 4px; 
+            grid-template-columns: repeat(10, 45px); 
+            grid-template-rows: repeat(10, 45px); /* Define altura fixa para alinhar */
+            gap: 5px; 
             background: white;
-            padding: 12px;
+            padding: 15px;
             border-radius: 20px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.05);
         }
 
         .letra { 
-            width: 42px; height: 42px; 
+            width: 45px; height: 45px; 
             border: 1px solid #e3efff; 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 20px; cursor: pointer;
-            border-radius: 8px; background: #fff;
-            user-select: none; transition: background 0.2s;
+            font-weight: bold; font-size: 22px; cursor: pointer;
+            border-radius: 10px; background: #fff;
+            user-select: none;
         }
 
         .letra.selecionada { background: var(--amarelo); border-color: #ffd600; }
         .letra.correta { background: var(--verde) !important; color: white; border-color: #388e3c; }
 
-        /* LISTA DE 8 PALAVRAS (2 colunas de 4) */
+        /* LISTA DE PALAVRAS ALINHADA À GRELHA */
         #lista-palavras { 
             display: grid; 
-            grid-template-columns: repeat(2, 160px); 
-            gap: 10px; 
+            grid-template-columns: repeat(2, 170px); 
+            grid-template-rows: repeat(4, 1fr); /* 4 linhas para alinhar com os 10x10 */
+            gap: 12px; 
         }
 
         .item-palavra { 
-            background: white; padding: 8px; border-radius: 12px; 
+            background: white; 
+            padding: 5px; 
+            border-radius: 15px; 
             border: 2px solid var(--azul-medio); 
-            display: flex; flex-direction: column; align-items: center; 
-            font-size: 13px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; /* Centra imagem e texto verticalmente na célula */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
-        .item-palavra img { width: 55px; height: 55px; object-fit: contain; }
-        .item-palavra span { font-weight: bold; margin-top: 4px; color: var(--azul-escuro); }
+        .item-palavra img { width: 65px; height: 65px; object-fit: contain; }
+        .item-palavra span { font-weight: bold; font-size: 13px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
+        
         .item-palavra.encontrada { opacity: 0.3; background: #e8f5e9; border-color: var(--verde); }
         .item-palavra.encontrada span { text-decoration: line-through; }
 
@@ -72,8 +89,8 @@
             background: rgba(0,0,0,0.7);
             justify-content: center; align-items: center; z-index: 100;
         }
-        .painel-vitoria { background: white; padding: 30px; border-radius: 25px; text-align: center; max-width: 350px; }
-        .btn-reiniciar { background: var(--azul-medio); color: white; border: none; padding: 12px 25px; font-size: 16px; border-radius: 50px; cursor: pointer; margin-top: 15px; font-weight: bold; }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; }
+        .btn-reiniciar { background: var(--azul-medio); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
 
     </style>
 </head>
@@ -82,7 +99,7 @@
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
         <img src="confuso.png" class="icone-titulo">
-        <h1 style="margin:0; font-size: 24px;">Sopa de Letras</h1>
+        <h1 style="margin:0; font-size: 28px;">Sopa de Letras</h1>
     </div>
     <div id="cronometro">Tempo: 0s</div>
 </header>
@@ -94,8 +111,8 @@
 
 <div id="feedback-final">
     <div class="painel-vitoria">
-        <img src="img/certo.png" style="width: 60px;">
-        <h2>Incrível!</h2>
+        <img src="img/certo.png" style="width: 80px;">
+        <h2>Excelente Trabalho!</h2>
         <p id="msg-tempo"></p>
         <button class="btn-reiniciar" onclick="location.reload()">Jogar de Novo</button>
     </div>
@@ -109,7 +126,6 @@
     const gridElement = document.getElementById('grid');
     const listaElement = document.getElementById('lista-palavras');
     
-    // Seleciona 8 palavras
     let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
     let palavrasParaEncontrar = selecaoOriginal.map(p => ({
         nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
@@ -124,7 +140,7 @@
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
-            while (!colocada && tentativas < 100) {
+            while (!colocada && tentativas < 150) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
@@ -219,8 +235,8 @@
         clearInterval(intervaloCronometro);
         setTimeout(() => {
             document.getElementById('feedback-final').style.display = 'flex';
-            document.getElementById('msg-tempo').textContent = `Terminaste em ${tempo} segundos!`;
-        }, 500);
+            document.getElementById('msg-tempo').textContent = `Conseguiste encontrar as 8 palavras em ${tempo} segundos!`;
+        }, 600);
     }
 
     iniciarJogo();
