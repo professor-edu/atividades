@@ -13,9 +13,8 @@ function carregarPalavra() {
     document.getElementById("imagemPalavra").src = p.imagem;
 
     document.getElementById("campoEscrita").value = "";
-    const fb = document.getElementById("feedback");
-    fb.innerHTML = "";
-    fb.className = "";
+    document.getElementById("feedback").innerHTML = "";
+    document.getElementById("feedback").className = "";
 
     atualizarProgresso();
 }
@@ -63,6 +62,7 @@ function mostrarFeedback(ok) {
         fb.className = "feedback-errado";
     }
 
+    // MANTER ÍCONES SEMPRE VISÍVEIS
     document.getElementById("certas").innerHTML =
         `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
 
@@ -102,9 +102,9 @@ function terminarJogo() {
 
             <div class="entrada">
                 <input id="campoEscrita"
-                       type="text"
-                       placeholder="Escreve aqui..."
-                       autocomplete="off">
+                    type="text"
+                    placeholder="Escreve aqui..."
+                    autocomplete="off">
 
                 <button id="validar">
                     <img src="img/lupa.png" class="icone-lupa"> Verificar
@@ -114,8 +114,7 @@ function terminarJogo() {
             <div id="feedback"></div>
         `;
 
-        document.getElementById("validar")
-            .addEventListener("click", validar);
+        document.getElementById("validar").addEventListener("click", validar);
 
         atualizarProgresso();
         carregarPalavra();
