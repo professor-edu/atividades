@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo das Sílabas</title>
+    <style>
+        :root {
+            --azul-claro: #f0f7ff;
+            --azul-medio: #7ac7f0;
+            --azul-escuro: #0d47a1;
+            --verde: #4caf50;
+            --laranja: #ff9800;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
+        
+        .cabecalho { 
+            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
+            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
+        }
+
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .icone-cabecalho { width: 45px; height: auto; }
+
+        .cartao {
+            background: white; width: 95%; max-width: 500px;
+            margin: 30px auto; padding: 30px 20px;
+            border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+
+        .imagem-pergunta {
+            height: 180px; width: 180px; object-fit: contain;
+            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 10px;
+        }
+
+        .pergunta-texto { font-size: 22px; font-weight: bold; color: var(--azul-escuro); margin: 10px 0; }
+
+        /* BOTÕES DE NÚMEROS */
+        .container-numeros { display: flex; gap: 15px; justify-content: center; margin-top: 10px; }
+        
+        .btn-numero {
+            width: 70px; height: 70px;
+            font-size: 30px; font-weight: bold;
+            background: white; border: 3px solid var(--azul-medio);
+            color: var(--azul-medio); border-radius: 15px;
+            cursor: pointer; transition: all 0.2s;
+        }
+
+        .btn-numero:hover { transform: translateY(-5px); background: var(--azul-claro); }
+        .btn-numero.correto { background: var(--verde); color: white; border-color: var(--verde); }
+        .btn-numero.errado { background: #ffeded; color: #d32f2f; border-color: #fde2e2; }
+
+        #feedback { min-height: 60px; font-size: 24px; font-weight: bold; margin-top: 20px; }
+
+        /* DIVISÃO SILÁBICA REVELADA */
+        #silabas-reveladas { font-size: 32px; letter-spacing: 5px; color: var(--laranja); margin-top: 10px; font-weight: bold; }
+        
+        .estrelas { font-size: 20px; color: #f57c00; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <div class="cabecalho-conteudo">
+        <img src="https://openmoji.org/data/color/svg/1F44F.svg" class="icone-cabecalho"> <h1 style="margin:0">Quantas Sílabas?</h1>
+    </div>
+    <div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
+</header>
+
+<div class="cartao">
+    <img id="img-pergunta" class="imagem-pergunta" src="">
+    <div class="pergunta-texto">Quantas vezes bates as palmas?</div>
+
+    <div class="container-numeros">
+        <button class="btn-numero" onclick="verificar(1)">1</button>
+        <button class="btn-numero" onclick="verificar(2)">2</button>
+        <button class="btn-numero" onclick="verificar(3)">3</button>
+        <button class="btn-numero" onclick="verificar(4)">4</button>
+    </div>
+
+    <div id="feedback"></div>
+    <div id="silabas-reveladas"></div>
+</div>
+
+<script src="js/dados.js"></script>
+<script>
+    let indiceAtual = 0;
+    let estrelas = 0;
+    let podeClicar = true;
+    let listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+
+    // Função para contar sílabas (ajuste básico para português)
+    // Nota: Como a contagem automática é complexa, se puderes, adiciona "silabas: 2" no dados.js
+    // Mas este código tenta estimar ou podes definir manualmente.
+    function contarSilabas(palavra) {
+        // Esta é uma lógica simplificada. O ideal é ter no dados.js a divisão.
+        // Exemplo: {palavra: "bola", silabas: "BO-LA", num: 2}
+        // Para este exercício, vamos assumir que vais adicionar o campo 'num' no dados.js
+        return listaJogo[indiceAtual].num || 2; 
+    }
+
+    function carregarPergunta() {
+        if (indiceAtual >= listaJogo.length) {
+            finalizarJogo();
+            return;
+        }
+        
+        podeClicar = true;
+        const item = listaJogo[indiceAtual];
+        document.getElementById('img-pergunta').src = "img/" + item.palavra.toLowerCase() + ".png";
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('silabas-reveladas').innerHTML = "";
+        
+        // Resetar cores dos botões
+        document.querySelectorAll('.btn-numero').forEach(btn => {
+            btn.className = 'btn-numero';
+        });
+    }
+
+    function verificar(escolha) {
+        if (!podeClicar) return;
+        
+        const item = listaJogo[indiceAtual];
+        const correta = item.num; // Precisas de ter o número de sílabas no dados.js
+
+        const botoes = document.querySelectorAll('.btn-numero');
+        podeClicar = false;
+
+        if (escolha === correta) {
+            estrelas++;
+            document.getElementById('contador-estrelas').innerText = estrelas;
+            botoes[escolha-1].classList.add('correto');
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Muito bem!</span>";
+            document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
+            
+            setTimeout(proxima, 2500);
+        } else {
+            botoes[escolha-1].classList.add('errado');
+            botoes[correta-1].classList.add('correto');
+            document.getElementById('feedback').innerHTML = "<span style='color: #d32f2f'>Eram " + correta + " sílabas.</span>";
+            
+            setTimeout(proxima, 3000);
+        }
+    }
+
+    function proxima() {
+        indiceAtual++;
+        carregarPergunta();
+    }
+
+    function finalizarJogo() {
+        document.querySelector('.cartao').innerHTML = `
+            <h2>🏆 Jogo Terminado!</h2>
+            <p style="font-size: 20px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
+            <button onclick="location.reload()" style="padding: 10px 30px; border-radius: 50px; cursor: pointer; border: 2px solid var(--azul-medio); font-weight: bold;">Jogar de Novo</button>
+        `;
+    }
+
+    window.onload = carregarPergunta;
+</script>
+
+</body>
+</html>
