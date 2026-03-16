@@ -63,10 +63,11 @@ function mostrarFeedback(ok) {
         fb.className = "feedback-errado";
     }
 
-    document.getElementById("certas").innerHTML =
-        `img/certo.png Certas: ${certas}`;
-    document.getElementById("erros").innerHTML =
-        `img/errado.png Erradas: ${erros}`;
+   document.getElementById("certas").innerHTML =
+    `<img src="img/certo.png" class="icone-contador"> Certas: ${certas}`;
+
+document.getElementById("erros").innerHTML =
+    `<img src="img/errado.png" class="icone-contador"> Erradas: ${erros}`;
 }
 
 // -------------------------
