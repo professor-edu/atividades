@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qual falta?</title>
+    <title>Qual Falta?</title>
     <style>
         :root {
             --azul-claro: #f0f7ff;
             --azul-medio: #7ac7f0;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
+            --vermelho: #e53935;
             --laranja: #ff9800;
         }
 
@@ -20,11 +21,31 @@
             padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
         }
 
+        .cabecalho-principal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .icone-questao {
+            width: 40px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .icone-questao:hover { transform: scale(1.1); }
+
+        .pontos { font-size: 24px; font-weight: bold; color: #f57c00; margin: 10px 0; transition: all 0.3s; }
+        .perdeu-estrela { color: var(--vermelho); transform: scale(1.2); }
+
         .cartao-xl {
             background: white; width: 90%; max-width: 800px;
             margin: 20px auto; padding: 40px;
             border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
+            min-height: 500px;
         }
 
         .imagem-ajuda { max-height: 250px; border-radius: 20px; }
@@ -47,29 +68,28 @@
 
         .btn-letra:hover { transform: scale(1.1); background: var(--azul-claro); }
         .btn-letra.correto { background: var(--verde); color: white; border-color: var(--verde); }
-        .btn-letra.errado { background: #ffeded; color: #d32f2f; border-color: #fde2e2; }
+        .btn-letra.errado { background: var(--vermelho); color: white; border-color: var(--vermelho); }
 
-        #feedback { font-size: 30px; font-weight: bold; min-height: 40px; margin-top: 20px; }
-        .estrelas { font-size: 24px; color: #f57c00; font-weight: bold; }
+        #feedback { font-size: 24px; font-weight: bold; min-height: 40px; margin-top: 20px; }
+        .btn-acao { margin-top: 15px; padding: 12px 40px; background: var(--azul-medio); border: none; border-radius: 50px; cursor: pointer; color: white; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <div style="display: flex; justify-content: center; align-items: center; gap: 15px;">
-        <img src="https://openmoji.org/data/color/svg/1F9D0.svg" style="width: 45px;">
-        <h1 style="margin:0">Qual é a letra?</h1>
+    <div class="cabecalho-principal">
+        <h1 style="margin:0">Qual Falta?</h1>
+        <img src="img/questao.png" alt="Ajuda" class="icone-questao" onclick="mostrarAjuda()">
     </div>
-    <div class="estrelas">⭐ Estrelas: <span id="pts">0</span></div>
+    <div class="pontos" id="area-pontos">⭐ Estrelas: <span id="valorPontos">10</span></div>
 </header>
 
-<main class="cartao-xl">
+<main class="cartao-xl" id="conteudo-jogo">
     <img id="imagem" class="imagem-ajuda" src="">
     
     <div id="display-palavra" class="palavra-lacuna"></div>
 
-    <div class="container-opcoes" id="opcoes-letras">
-        </div>
+    <div class="container-opcoes" id="opcoes-letras"></div>
 
     <div id="feedback"></div>
 </main>
@@ -77,14 +97,17 @@
 <script src="js/dados.js"></script>
 <script>
     let indice = 0;
-    let estrelas = 0;
-    // Filtrar apenas palavras que têm o desafio "falta" definido no dados.js
-    // Se não tiver, o código gera um automático (remove a primeira letra)
-    let lista = [...palavras].sort(() => 0.5 - Math.random());
+    let estrelas = 10;
+    // Seleciona 10 desafios aleatórios do dados.js
+    let lista = [...palavras].sort(() => 0.5 - Math.random()).slice(0, 10);
+
+    function mostrarAjuda() {
+        alert("Como jogar:\n1. Olha para a imagem e para a palavra.\n2. Falta uma letra onde está o ponto de interrogação.\n3. Clica na letra certa para ganhar! ✨\n4. Se errares, perdes uma estrela. ⭐");
+    }
 
     function carregar() {
-        if (indice >= lista.length) {
-            document.querySelector('.cartao-xl').innerHTML = "<h1>🏆 Parabéns! Ganhaste " + estrelas + " estrelas!</h1>";
+        if (indice >= lista.length || estrelas <= 0) {
+            finalizarJogo();
             return;
         }
 
@@ -92,11 +115,10 @@
         document.getElementById('imagem').src = item.imagem;
         document.getElementById('feedback').innerHTML = "";
         
-        // Lógica: Se não houver lacuna definida, tira a primeira letra
+        // Se não houver lacuna definida no dados.js, retira a primeira letra
         let correta = item.correta || item.palavra[0];
         let base = item.falta || "_" + item.palavra.substring(1);
         
-        // Mostra a palavra com a lacuna estilizada
         document.getElementById('display-palavra').innerHTML = base.replace("_", "<span class='lacuna'>?</span>");
 
         // Gerar opções (se não houver no dados.js, gera aleatórias)
@@ -118,12 +140,8 @@
         const feedback = document.getElementById('feedback');
         
         if (escolha.toLowerCase() === correta.toLowerCase()) {
-            estrelas++;
-            document.getElementById('pts').innerText = estrelas;
             btn.classList.add('correto');
-            feedback.innerHTML = "<span style='color: var(--verde)'>Boa! É a letra " + correta.toUpperCase() + "!</span>";
-            
-            // Revela a palavra completa
+            feedback.innerHTML = "<span style='color: var(--verde)'>Excelente! ✨</span>";
             document.getElementById('display-palavra').innerText = lista[indice].palavra.toUpperCase();
             
             setTimeout(() => {
@@ -131,20 +149,47 @@
                 carregar();
             }, 2000);
         } else {
+            estrelas--;
+            atualizarEstrelasVisual();
             btn.classList.add('errado');
-            feedback.innerHTML = "<span style='color: #d32f2f'>Tenta outra vez!</span>";
+            feedback.innerHTML = "<span style='color: var(--vermelho)'>Ups! Perdeste uma estrela.</span>";
+            
+            if (estrelas <= 0) setTimeout(finalizarJogo, 1000);
         }
     }
 
+    function atualizarEstrelasVisual() {
+        const span = document.getElementById('valorPontos');
+        const area = document.getElementById('area-pontos');
+        span.innerText = estrelas;
+        area.classList.add('perdeu-estrela');
+        setTimeout(() => area.classList.remove('perdeu-estrela'), 500);
+    }
+
     function gerarOpcoesAleatorias(correta) {
-        let alfabeto = "abcdefghijklmnopqrstuvwxyz";
+        let alfabeto = "abcdefghijklmnopqrstuvwxyzç";
         let erradas = alfabeto.replace(correta, "").split("");
         let final = [correta];
         for(let i=0; i<2; i++) {
             let rand = Math.floor(Math.random() * erradas.length);
             final.push(erradas.splice(rand, 1)[0]);
         }
-        return final.sort();
+        return final.sort(() => 0.5 - Math.random());
+    }
+
+    function finalizarJogo() {
+        const cartao = document.getElementById('conteudo-jogo');
+        let mensagemFinal = estrelas >= 8 ? "És um mestre das letras! 🏆" : (estrelas > 0 ? "Muito bem! 👍" : "Tenta outra vez! 💪");
+        
+        cartao.innerHTML = `
+            <div style="padding: 20px;">
+                <h2 style="color: var(--azul-escuro); font-size: 36px;">Jogo Terminado!</h2>
+                <p style="font-size: 60px; margin: 10px 0;">${estrelas > 0 ? '⭐' : '☁️'}</p>
+                <p style="font-size: 24px;">Terminaste com <strong>${estrelas}</strong> estrelas!</p>
+                <p style="font-size: 20px; color: #555;">${mensagemFinal}</p>
+                <button class="btn-acao" onclick="location.reload()" style="background:var(--azul-escuro); padding: 15px 50px; font-size: 22px; margin-top: 20px;">Recomeçar</button>
+            </div>
+        `;
     }
 
     window.onload = carregar;
