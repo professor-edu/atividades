@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⭐ Jogo da Memória ⭐</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
     
     <style>
         :root {
@@ -44,29 +44,34 @@
         .stats { font-size: 1.2rem; margin: 10px 0; }
         .stat-item { margin: 0 15px; font-weight: bold; }
 
-        /* TABULEIRO ORGANIZADO */
         .tabuleiro {
             display: grid;
             gap: 12px;
             max-width: 900px;
             margin: 20px auto;
             padding: 15px;
-            justify-content: center; /* Centra as cartas no ecrã */
+            justify-content: center;
         }
 
         .carta {
-            width: 130px; /* Tamanho fixo para manter a simetria */
+            width: 130px;
             aspect-ratio: 1/1;
             background-color: var(--azul-medio);
             border-radius: 12px;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.5s, opacity 0.5s;
+            transition: transform 0.5s, opacity 0.8s;
         }
 
         .carta.virada { transform: rotateY(180deg); }
-        .carta.par-encontrado { opacity: 0.4; cursor: default; }
+
+        /* CORREÇÃO: Mantém a carta virada e esbatida quando acerta */
+        .carta.par-encontrado { 
+            opacity: 0.5; 
+            cursor: default;
+            transform: rotateY(180deg) !important; 
+        }
 
         .face {
             position: absolute;
@@ -81,7 +86,7 @@
         .frente { transform: rotateY(180deg); color: var(--azul-escuro); }
         .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
-        #final-screen { display: none; padding: 30px; }
+        #final-screen { display: none; padding: 30px; flex-grow: 1; }
 
         footer {
             margin-top: auto;
@@ -89,7 +94,6 @@
             text-align: center;
             border-top: 1px solid #ddd;
         }
-        /* Cor do ano igual à cor do link da escola */
         .footer-link, .footer-ano { color: #0d47a1; text-decoration: none; font-weight: bold; }
     </style>
 </head>
@@ -97,7 +101,7 @@
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="memoria.png" class="icone-titulo"> 
+        <img src="img/escola.png" class="icone-titulo"> 
         <h1 style="margin:0">Jogo da Memória</h1>
     </div>
 </header>
@@ -143,11 +147,11 @@
         tabuleiro.style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
         
-        // Ajuste Simétrico de Colunas
-        if(numPares === 4) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x2
-        else if(numPares === 6) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x3
-        else if(numPares === 8) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x4
-        else if(numPares === 10) tabuleiro.style.gridTemplateColumns = "repeat(5, 1fr)"; // 5x4
+        // Simetria das colunas
+        if(numPares === 4) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
+        else if(numPares === 6) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
+        else if(numPares === 8) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
+        else if(numPares === 10) tabuleiro.style.gridTemplateColumns = "repeat(5, 1fr)";
 
         document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
         document.getElementById('btn-' + numPares).classList.add('ativo');
@@ -157,6 +161,7 @@
         nAcertos = 0; nErros = 0;
         atualizarStats();
 
+        // Embaralhar
         const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
         let baralho = [];
         selecao.forEach(item => {
