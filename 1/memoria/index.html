@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Memória</title>
+    <title>Jogo da Memória Pro</title>
     <style>
         :root {
             --azul-claro: #f0f7ff;
@@ -11,6 +11,7 @@
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
+            --vermelho: #e53935;
         }
 
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
@@ -20,117 +21,156 @@
             padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
         }
 
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .icone-titulo { width: 50px; height: auto; }
+
+        /* PAINEL DE NÍVEIS */
+        .menu-niveis { margin: 20px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .btn-nivel { 
+            padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; 
+            font-weight: bold; background: white; color: var(--azul-escuro); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
+        }
+        .btn-nivel:hover { transform: scale(1.05); background: var(--azul-claro); }
+        .btn-nivel.ativo { background: var(--azul-escuro); color: white; }
+
+        /* ESTATÍSTICAS */
+        .stats { font-size: 1.2rem; margin: 10px 0; color: #555; }
+        .stat-item { margin: 0 15px; font-weight: bold; }
+        .acertos { color: var(--verde); }
+        .erros { color: var(--vermelho); }
+
+        /* TABULEIRO */
         .tabuleiro {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            gap: 12px;
             max-width: 800px;
-            margin: 30px auto;
-            padding: 10px;
+            margin: 20px auto;
+            padding: 15px;
         }
 
+        /* CARTAS */
         .carta {
             aspect-ratio: 1/1;
             background-color: var(--azul-medio);
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.5s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.5s, opacity 0.5s;
         }
 
         .carta.virada { transform: rotateY(180deg); }
+        
+        /* Efeito Esbatido para Pares Encontrados */
+        .carta.par-encontrado { 
+            opacity: 0.4; 
+            cursor: default;
+            transform: rotateY(180deg);
+        }
 
         .face {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            padding: 5px;
-            box-sizing: border-box;
-            background: white;
-            border: 4px solid var(--azul-medio);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; font-weight: bold; padding: 5px; box-sizing: border-box;
+            background: white; border: 3px solid var(--azul-medio);
         }
 
         .verso { background-color: var(--azul-escuro); color: white; font-size: 2rem; }
+        .frente { transform: rotateY(180deg); color: var(--azul-escuro); font-size: 0.9rem; }
+        .frente img { max-width: 85%; max-height: 85%; object-fit: contain; }
 
-        .frente { transform: rotateY(180deg); color: var(--azul-escuro); }
-
-        .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
-
-        .acertou { visibility: hidden; opacity: 0; transition: opacity 0.5s, visibility 0.5s; }
-
-        #feedback-final { display: none; padding: 20px; }
-        .btn-recomecar { padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; margin-top: 20px; }
+        #final-screen { display: none; padding: 30px; }
+        .btn-acao { padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <h1 style="margin:0">Jogo da Memória</h1>
-    <div style="margin-top: 5px;">Encontra os pares (Imagem e Nome)!</div>
+    <div class="cabecalho-conteudo">
+        <img src="img/escola.png" class="icone-titulo"> 
+        <h1 style="margin:0">Jogo da Memória</h1>
+    </div>
 </header>
+
+<div class="menu-niveis">
+    <button class="btn-nivel" onclick="iniciarJogo(4)">Fácil (8)</button>
+    <button class="btn-nivel" onclick="iniciarJogo(6)">Médio (12)</button>
+    <button class="btn-nivel" onclick="iniciarJogo(8)">Difícil (16)</button>
+    <button class="btn-nivel" onclick="iniciarJogo(10)">Génio (20)</button>
+</div>
+
+<div class="stats">
+    <span class="stat-item">✅ Acertos: <span id="v-acertos" class="acertos">0</span></span>
+    <span class="stat-item">❌ Erros: <span id="v-erros" class="erros">0</span></span>
+</div>
 
 <div class="tabuleiro" id="tabuleiro"></div>
 
-<div id="feedback-final">
-    <h2>🎉 Parabéns! Completaste o desafio!</h2>
-    <button class="btn-recomecar" onclick="location.reload()">Jogar de Novo</button>
+<div id="final-screen">
+    <h2>🏆 Incrível! Terminaste o desafio!</h2>
+    <p id="resumo-final"></p>
+    <button class="btn-acao" onclick="location.reload()">Jogar Novamente</button>
 </div>
 
 <script src="js/dados.js"></script>
 <script>
     let cartasViradas = [];
-    let paresEncontrados = 0;
+    let paresDescobertos = 0;
+    let totalPares = 0;
+    let nAcertos = 0;
+    let nErros = 0;
     let podeJogar = true;
 
-    // Selecionamos 6 palavras aleatórias do dados.js para criar 12 cartas (6 imagens + 6 nomes)
-    const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, 6);
-    
-    let baralho = [];
-    selecao.forEach(item => {
-        // Carta de Imagem
-        baralho.push({ id: item.palavra, tipo: 'imagem', conteudo: item.imagem });
-        // Carta de Nome
-        baralho.push({ id: item.palavra, tipo: 'nome', conteudo: item.palavra });
-    });
+    function iniciarJogo(numPares) {
+        // Reset de variáveis
+        document.getElementById('tabuleiro').innerHTML = "";
+        document.getElementById('tabuleiro').style.display = "grid";
+        document.getElementById('final-screen').style.display = "none";
+        paresDescobertos = 0;
+        totalPares = numPares;
+        nAcertos = 0;
+        nErros = 0;
+        atualizarStats();
 
-    // Baralhar as 12 cartas
-    baralho.sort(() => 0.5 - Math.random());
+        // Seleção e Preparação do Baralho
+        const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
+        let baralho = [];
+        selecao.forEach(item => {
+            baralho.push({ id: item.palavra, tipo: 'img', conteudo: item.imagem });
+            baralho.push({ id: item.palavra, tipo: 'txt', conteudo: item.palavra });
+        });
+        baralho.sort(() => 0.5 - Math.random());
 
-    const tabuleiro = document.getElementById('tabuleiro');
+        // Criar cartas no HTML
+        const tabuleiro = document.getElementById('tabuleiro');
+        
+        // Ajustar colunas conforme dificuldade
+        tabuleiro.style.gridTemplateColumns = numPares > 8 ? "repeat(5, 1fr)" : "repeat(4, 1fr)";
 
-    function criarTabuleiro() {
-        baralho.forEach((info, index) => {
+        baralho.forEach(info => {
             const carta = document.createElement('div');
-            carta.classList.add('carta');
+            carta.className = 'carta';
             carta.dataset.id = info.id;
-            carta.dataset.index = index;
-
             carta.innerHTML = `
                 <div class="face verso">?</div>
                 <div class="face frente">
-                    ${info.tipo === 'imagem' ? `<img src="${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
+                    ${info.tipo === 'img' ? `<img src="${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
                 </div>
             `;
-
-            carta.addEventListener('click', virarCarta);
+            carta.onclick = function() { virarCarta(this); };
             tabuleiro.appendChild(carta);
         });
     }
 
-    function virarCarta() {
-        if (!podeJogar || this.classList.contains('virada') || cartasViradas.length >= 2) return;
+    function virarCarta(carta) {
+        if (!podeJogar || carta.classList.contains('virada') || carta.classList.contains('par-encontrado')) return;
 
-        this.classList.add('virada');
-        cartasViradas.push(this);
+        carta.classList.add('virada');
+        cartasViradas.push(carta);
 
         if (cartasViradas.length === 2) {
             verificarPar();
@@ -139,37 +179,48 @@
 
     function verificarPar() {
         podeJogar = false;
-        const [carta1, carta2] = cartasViradas;
+        const [c1, c2] = cartasViradas;
 
-        if (carta1.dataset.id === carta2.dataset.id) {
-            // Acertou!
+        if (c1.dataset.id === c2.dataset.id) {
+            // ACERTO
+            nAcertos++;
+            paresDescobertos++;
             setTimeout(() => {
-                carta1.classList.add('acertou');
-                carta2.classList.add('acertou');
-                paresEncontrados++;
+                c1.classList.add('par-encontrado');
+                c2.classList.add('par-encontrado');
                 cartasViradas = [];
                 podeJogar = true;
-
-                if (paresEncontrados === selecao.length) {
-                    document.getElementById('feedback-final').style.display = 'block';
-                    tabuleiro.style.display = 'none';
-                }
-            }, 1000);
+                if (paresDescobertos === totalPares) finalizar();
+            }, 700);
         } else {
-            // Errou
+            // ERRO
+            nErros++;
             setTimeout(() => {
-                carta1.classList.remove('virada');
-                carta2.classList.remove('virada');
+                c1.classList.remove('virada');
+                c2.classList.remove('virada');
                 cartasViradas = [];
                 podeJogar = true;
-            }, 1500);
+            }, 1200);
         }
+        atualizarStats();
     }
 
-    criarTabuleiro();
+    function atualizarStats() {
+        document.getElementById('v-acertos').innerText = nAcertos;
+        document.getElementById('v-erros').innerText = nErros;
+    }
+
+    function finalizar() {
+        document.getElementById('tabuleiro').style.display = "none";
+        document.getElementById('final-screen').style.display = "block";
+        document.getElementById('resumo-final').innerText = `Completaste o nível com ${nAcertos} acertos e apenas ${nErros} erros!`;
+    }
+
+    // Inicia automaticamente no fácil
+    window.onload = () => iniciarJogo(4);
 </script>
 
-<script src="js/componentes.js"></script> EB1PE da Marinheira
+<script src="js/componentes.js"></script> EB1/PE da Marinheira
 
 </body>
 </html>
