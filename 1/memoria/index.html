@@ -15,7 +15,15 @@
             --vermelho: #e53935;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            text-align: center; 
+            background-color: var(--azul-claro); 
+            margin: 0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
         
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
@@ -31,25 +39,23 @@
             font-weight: bold; background: white; color: var(--azul-escuro); 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
         }
-        .btn-nivel:hover { transform: scale(1.05); }
         .btn-nivel.ativo { background: var(--azul-escuro); color: white; }
 
         .stats { font-size: 1.2rem; margin: 10px 0; }
         .stat-item { margin: 0 15px; font-weight: bold; }
 
-        /* TABULEIRO FLEXÍVEL */
+        /* TABULEIRO ORGANIZADO */
         .tabuleiro {
             display: grid;
-            /* Esta linha faz a magia das colunas flexíveis */
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 12px;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 20px auto;
             padding: 15px;
-            width: 90%;
+            justify-content: center; /* Centra as cartas no ecrã */
         }
 
         .carta {
+            width: 130px; /* Tamanho fixo para manter a simetria */
             aspect-ratio: 1/1;
             background-color: var(--azul-medio);
             border-radius: 12px;
@@ -60,12 +66,7 @@
         }
 
         .carta.virada { transform: rotateY(180deg); }
-        
-        /* Efeito Esbatido: Mantém visível mas suave */
-        .carta.par-encontrado { 
-            opacity: 0.4; 
-            cursor: default;
-        }
+        .carta.par-encontrado { opacity: 0.4; cursor: default; }
 
         .face {
             position: absolute;
@@ -81,23 +82,23 @@
         .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
         #final-screen { display: none; padding: 30px; }
-        
-        /* FOOTER ESTILIZADO */
+
         footer {
-            margin-top: auto; /* Empurra para o fim da página */
+            margin-top: auto;
             padding: 25px;
             text-align: center;
             border-top: 1px solid #ddd;
-            color: #555;
         }
-        footer a { color: #0d47a1; text-decoration: none; font-weight: bold; }
+        /* Cor do ano igual à cor do link da escola */
+        .footer-link, .footer-ano { color: #0d47a1; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="../escola.png" class="icone-titulo"> <h1 style="margin:0">Jogo da Memória</h1>
+        <img src="../escola.png" class="icone-titulo"> 
+        <h1 style="margin:0">Jogo da Memória</h1>
     </div>
 </header>
 
@@ -122,8 +123,8 @@
 
 <footer>
     <p>
-        <strong>2026</strong> 🏫 
-        <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a>
+        <span class="footer-ano">2026</span> 🏫 
+        <a href="https://eb1pemarinheira.pt/" target="_blank" class="footer-link">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
@@ -137,20 +138,25 @@
     let podeJogar = true;
 
     function iniciarJogo(numPares) {
-        // Reset Visual
-        document.getElementById('tabuleiro').innerHTML = "";
-        document.getElementById('tabuleiro').style.display = "grid";
+        const tabuleiro = document.getElementById('tabuleiro');
+        tabuleiro.innerHTML = "";
+        tabuleiro.style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
+        
+        // Ajuste Simétrico de Colunas
+        if(numPares === 4) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x2
+        else if(numPares === 6) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x3
+        else if(numPares === 8) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)"; // 4x4
+        else if(numPares === 10) tabuleiro.style.gridTemplateColumns = "repeat(5, 1fr)"; // 5x4
+
         document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
         document.getElementById('btn-' + numPares).classList.add('ativo');
 
         paresDescobertos = 0;
         totalPares = numPares;
-        nAcertos = 0;
-        nErros = 0;
+        nAcertos = 0; nErros = 0;
         atualizarStats();
 
-        // Preparar cartas
         const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
         let baralho = [];
         selecao.forEach(item => {
@@ -170,7 +176,7 @@
                 </div>
             `;
             carta.onclick = function() { virarCarta(this); };
-            document.getElementById('tabuleiro').appendChild(carta);
+            tabuleiro.appendChild(carta);
         });
     }
 
@@ -184,15 +190,12 @@
     function verificarPar() {
         podeJogar = false;
         const [c1, c2] = cartasViradas;
-
         if (c1.dataset.id === c2.dataset.id) {
-            nAcertos++;
-            paresDescobertos++;
+            nAcertos++; paresDescobertos++;
             setTimeout(() => {
                 c1.classList.add('par-encontrado');
                 c2.classList.add('par-encontrado');
-                cartasViradas = [];
-                podeJogar = true;
+                cartasViradas = []; podeJogar = true;
                 if (paresDescobertos === totalPares) finalizar();
             }, 600);
         } else {
@@ -200,8 +203,7 @@
             setTimeout(() => {
                 c1.classList.remove('virada');
                 c2.classList.remove('virada');
-                cartasViradas = [];
-                podeJogar = true;
+                cartasViradas = []; podeJogar = true;
             }, 1000);
         }
         atualizarStats();
@@ -219,7 +221,6 @@
 
     window.onload = () => iniciarJogo(4);
 </script>
-
 <script src="js/componentes.js"></script>
 </body>
 </html>
