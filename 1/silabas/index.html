@@ -14,6 +14,7 @@
             --vermelho: #e53935;
         }
 
+        /* Estrutura Flexbox para garantir footer no fundo */
         body { 
             font-family: 'Segoe UI', sans-serif; 
             text-align: center; 
@@ -24,31 +25,62 @@
             min-height: 100vh;
         }
         
-        /* CABEÇALHO PADRÃO OFICIAL */
+        /* CABEÇALHO PADRÃO EM 3 COLUNAS */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px; 
+            padding: 15px 20px; 
             color: var(--azul-escuro); 
-            border-bottom: 3px solid #fff; 
+            border-bottom: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left, .header-right {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .header-right {
+            justify-content: flex-end;
         }
 
         .cabecalho-conteudo { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 15px; 
+            gap: 15px;
+            flex: 2;
         }
 
         .icone-cabecalho { 
-            width: 100px; /* Tamanho oficial que definiste */
+            width: 100px;
             height: auto; 
         }
+
+        /* BOTÃO MENU LARANJA */
+        .btn-menu {
+            background: var(--laranja);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-menu:hover { transform: scale(1.05); }
 
         .estrelas { 
             font-size: 20px; 
             color: #f57c00; 
             font-weight: bold; 
-            margin-top: 10px; 
+            padding: 10px 0;
+            background: rgba(255,255,255,0.3);
         }
 
         /* ÁREA DE JOGO */
@@ -109,6 +141,7 @@
             font-weight: bold;
             cursor: grab;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            user-select: none;
         }
 
         .slot {
@@ -128,19 +161,18 @@
         .correct { background: var(--verde) !important; border-color: var(--verde) !important; color: white !important; }
         .wrong { background: var(--vermelho) !important; border-color: var(--vermelho) !important; }
 
-        #score-display { font-size: 1.2rem; font-weight: bold; color: var(--azul-escuro); }
-
         #next-btn {
             background: var(--verde);
             color: white;
-            padding: 12px 30px;
+            padding: 15px 35px;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             border-radius: 50px;
             cursor: pointer;
             display: none;
-            margin: 20px 0;
+            margin: 20px auto;
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
         }
 
         /* FOOTER PADRÃO OFICIAL */
@@ -149,7 +181,7 @@
             padding: 25px;
             text-align: center;
             border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd; /* Dupla borda */
+            border-bottom: 1px solid #ddd;
             background: #fff;
             width: 100%;
             box-sizing: border-box;
@@ -165,12 +197,20 @@
 <body>
 
 <header class="cabecalho">
+    <div class="header-left">
+        <button class="btn-menu" onclick="window.location.href='index.html'">🏠 Menu</button>
+    </div>
+
     <div class="cabecalho-conteudo">
         <img src="https://openmoji.org/data/color/svg/270F.svg" class="icone-cabecalho" alt="lápis"> 
         <h1 style="margin:0">Divisão Silábica</h1>
     </div>
-    <div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
+
+    <div class="header-right">
+        </div>
 </header>
+
+<div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
 
 <div id="progress-container">
     <div id="progress-bar"></div>
@@ -186,7 +226,6 @@
     <div class="syllables" id="syl-container"></div>
     <div class="slots" id="slot-container"></div>
 
-    <div id="score-display">Pontos: <span id="pontos-valor">0</span></div>
     <button id="next-btn" onclick="nextWord()">Seguinte ✨</button>
 </div>
 
@@ -196,6 +235,13 @@
     <div id="estatisticas" style="font-size: 1.2rem; line-height: 1.8;"></div>
     <button onclick="location.reload()" style="padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px;">Jogar de Novo</button>
 </div>
+
+<footer>
+    <p>
+        <span class="footer-ano">2026</span> 🏫 
+        <a href="https://eb1pemarinheira.pt/" target="_blank" class="footer-link">EB1/PE da Marinheira</a>
+    </p>
+</footer>
 
 <script>
     let score = 0;
@@ -238,12 +284,15 @@
         const syls = [...w.syl].sort(() => Math.random() - 0.5);
         const sylDiv = document.getElementById("syl-container");
         sylDiv.innerHTML = "";
+        
         syls.forEach(s => {
             const el = document.createElement("div");
             el.className = "syl";
             el.textContent = s;
             el.draggable = true;
             el.addEventListener("dragstart", () => dragged = el);
+            // Suporte para touch (mobile)
+            el.addEventListener("touchstart", (e) => dragged = el, {passive: true});
             sylDiv.appendChild(el);
         });
 
@@ -266,12 +315,10 @@
             slot.textContent = dragged.textContent;
             slot.classList.add("correct");
             dragged.remove();
-            score += 10;
-            document.getElementById("pontos-valor").textContent = score;
             if ([...document.querySelectorAll(".slot")].every(s => s.textContent !== "")) {
                 acertos++;
                 document.getElementById("contador-estrelas").textContent = acertos;
-                document.getElementById("next-btn").style.display = "inline-block";
+                document.getElementById("next-btn").style.display = "block";
             }
         } else {
             slot.classList.add("wrong");
@@ -287,18 +334,11 @@
         const perc = Math.round((acertos / words.length) * 100);
         document.getElementById("final-text").textContent = perc >= 70 ? "Excelente Trabalho! 🌟" : "Bom esforço! 💪";
         document.getElementById("medal").src = perc >= 70 ? "https://openmoji.org/data/color/svg/1F947.svg" : "https://openmoji.org/data/color/svg/1F949.svg";
-        document.getElementById("estatisticas").innerHTML = `Pontuação: ${score}<br>Palavras Certas: ${acertos}/${words.length}`;
+        document.getElementById("estatisticas").innerHTML = `Palavras Completas: ${acertos}/${words.length}<br>Percentagem: ${perc}%`;
     }
 
     loadWord();
 </script>
-
-<footer>
-    <p>
-        <span class="footer-ano">2026</span> 🏫 
-        <a href="https://eb1pemarinheira.pt/" target="_blank" class="footer-link">EB1/PE da Marinheira</a>
-    </p>
-</footer>
 
 <script src="js/componentes.js"></script>
 </body>
