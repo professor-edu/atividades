@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⭐ Jogo da Memória ⭐</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
             --azul-medio: #7ac7f0;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
-            --laranja: #ff9800;
             --vermelho: #e53935;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
         
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
@@ -24,33 +25,30 @@
         .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
         .icone-titulo { width: 50px; height: auto; }
 
-        /* PAINEL DE NÍVEIS */
         .menu-niveis { margin: 20px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn-nivel { 
             padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; 
             font-weight: bold; background: white; color: var(--azul-escuro); 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
         }
-        .btn-nivel:hover { transform: scale(1.05); background: var(--azul-claro); }
+        .btn-nivel:hover { transform: scale(1.05); }
         .btn-nivel.ativo { background: var(--azul-escuro); color: white; }
 
-        /* ESTATÍSTICAS */
-        .stats { font-size: 1.2rem; margin: 10px 0; color: #555; }
+        .stats { font-size: 1.2rem; margin: 10px 0; }
         .stat-item { margin: 0 15px; font-weight: bold; }
-        .acertos { color: var(--verde); }
-        .erros { color: var(--vermelho); }
 
-        /* TABULEIRO */
+        /* TABULEIRO FLEXÍVEL */
         .tabuleiro {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            /* Esta linha faz a magia das colunas flexíveis */
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 12px;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 20px auto;
             padding: 15px;
+            width: 90%;
         }
 
-        /* CARTAS */
         .carta {
             aspect-ratio: 1/1;
             background-color: var(--azul-medio);
@@ -63,11 +61,10 @@
 
         .carta.virada { transform: rotateY(180deg); }
         
-        /* Efeito Esbatido para Pares Encontrados */
+        /* Efeito Esbatido: Mantém visível mas suave */
         .carta.par-encontrado { 
             opacity: 0.4; 
             cursor: default;
-            transform: rotateY(180deg);
         }
 
         .face {
@@ -75,46 +72,60 @@
             width: 100%; height: 100%;
             backface-visibility: hidden;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; font-weight: bold; padding: 5px; box-sizing: border-box;
+            border-radius: 12px; font-weight: bold; padding: 10px; box-sizing: border-box;
             background: white; border: 3px solid var(--azul-medio);
         }
 
         .verso { background-color: var(--azul-escuro); color: white; font-size: 2rem; }
-        .frente { transform: rotateY(180deg); color: var(--azul-escuro); font-size: 0.9rem; }
-        .frente img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .frente { transform: rotateY(180deg); color: var(--azul-escuro); }
+        .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
         #final-screen { display: none; padding: 30px; }
-        .btn-acao { padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 1.1rem; }
+        
+        /* FOOTER ESTILIZADO */
+        footer {
+            margin-top: auto; /* Empurra para o fim da página */
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #555;
+        }
+        footer a { color: #0d47a1; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="memoria.png" class="icone-titulo"> 
-        <h1 style="margin:0">Jogo da Memória</h1>
+        <img src="../escola.png" class="icone-titulo"> <h1 style="margin:0">Jogo da Memória</h1>
     </div>
 </header>
 
 <div class="menu-niveis">
-    <button class="btn-nivel" onclick="iniciarJogo(4)">Fácil (8)</button>
-    <button class="btn-nivel" onclick="iniciarJogo(6)">Médio (12)</button>
-    <button class="btn-nivel" onclick="iniciarJogo(8)">Difícil (16)</button>
-    <button class="btn-nivel" onclick="iniciarJogo(10)">Génio (20)</button>
+    <button class="btn-nivel" id="btn-4" onclick="iniciarJogo(4)">Fácil (8)</button>
+    <button class="btn-nivel" id="btn-6" onclick="iniciarJogo(6)">Médio (12)</button>
+    <button class="btn-nivel" id="btn-8" onclick="iniciarJogo(8)">Difícil (16)</button>
+    <button class="btn-nivel" id="btn-10" onclick="iniciarJogo(10)">Génio (20)</button>
 </div>
 
 <div class="stats">
-    <span class="stat-item">✅ Acertos: <span id="v-acertos" class="acertos">0</span></span>
-    <span class="stat-item">❌ Erros: <span id="v-erros" class="erros">0</span></span>
+    <span class="stat-item" style="color: var(--verde);">✅ Acertos: <span id="v-acertos">0</span></span>
+    <span class="stat-item" style="color: var(--vermelho);">❌ Erros: <span id="v-erros">0</span></span>
 </div>
 
 <div class="tabuleiro" id="tabuleiro"></div>
 
 <div id="final-screen">
-    <h2>🏆 Incrível! Terminaste o desafio!</h2>
-    <p id="resumo-final"></p>
-    <button class="btn-acao" onclick="location.reload()">Jogar Novamente</button>
+    <h2>🏆 Parabéns! Estás na memória de um génio!</h2>
+    <button class="btn-nivel" style="background: var(--azul-escuro); color: white; padding: 15px 30px;" onclick="location.reload()">Jogar de Novo</button>
 </div>
+
+<footer>
+    <p>
+        <strong>2026</strong> 🏫 
+        <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a>
+    </p>
+</footer>
 
 <script src="js/dados.js"></script>
 <script>
@@ -126,17 +137,20 @@
     let podeJogar = true;
 
     function iniciarJogo(numPares) {
-        // Reset de variáveis
+        // Reset Visual
         document.getElementById('tabuleiro').innerHTML = "";
         document.getElementById('tabuleiro').style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
+        document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
+        document.getElementById('btn-' + numPares).classList.add('ativo');
+
         paresDescobertos = 0;
         totalPares = numPares;
         nAcertos = 0;
         nErros = 0;
         atualizarStats();
 
-        // Seleção e Preparação do Baralho
+        // Preparar cartas
         const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
         let baralho = [];
         selecao.forEach(item => {
@@ -145,12 +159,6 @@
         });
         baralho.sort(() => 0.5 - Math.random());
 
-        // Criar cartas no HTML
-        const tabuleiro = document.getElementById('tabuleiro');
-        
-        // Ajustar colunas conforme dificuldade
-        tabuleiro.style.gridTemplateColumns = numPares > 8 ? "repeat(5, 1fr)" : "repeat(4, 1fr)";
-
         baralho.forEach(info => {
             const carta = document.createElement('div');
             carta.className = 'carta';
@@ -158,23 +166,19 @@
             carta.innerHTML = `
                 <div class="face verso">?</div>
                 <div class="face frente">
-                    ${info.tipo === 'img' ? `<img src="${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
+                    ${info.tipo === 'img' ? `<img src="../${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
                 </div>
             `;
             carta.onclick = function() { virarCarta(this); };
-            tabuleiro.appendChild(carta);
+            document.getElementById('tabuleiro').appendChild(carta);
         });
     }
 
     function virarCarta(carta) {
         if (!podeJogar || carta.classList.contains('virada') || carta.classList.contains('par-encontrado')) return;
-
         carta.classList.add('virada');
         cartasViradas.push(carta);
-
-        if (cartasViradas.length === 2) {
-            verificarPar();
-        }
+        if (cartasViradas.length === 2) verificarPar();
     }
 
     function verificarPar() {
@@ -182,7 +186,6 @@
         const [c1, c2] = cartasViradas;
 
         if (c1.dataset.id === c2.dataset.id) {
-            // ACERTO
             nAcertos++;
             paresDescobertos++;
             setTimeout(() => {
@@ -191,16 +194,15 @@
                 cartasViradas = [];
                 podeJogar = true;
                 if (paresDescobertos === totalPares) finalizar();
-            }, 700);
+            }, 600);
         } else {
-            // ERRO
             nErros++;
             setTimeout(() => {
                 c1.classList.remove('virada');
                 c2.classList.remove('virada');
                 cartasViradas = [];
                 podeJogar = true;
-            }, 1200);
+            }, 1000);
         }
         atualizarStats();
     }
@@ -213,23 +215,11 @@
     function finalizar() {
         document.getElementById('tabuleiro').style.display = "none";
         document.getElementById('final-screen').style.display = "block";
-        document.getElementById('resumo-final').innerText = `Completaste o nível com ${nAcertos} acertos e apenas ${nErros} erros!`;
     }
 
-    // Inicia automaticamente no fácil
     window.onload = () => iniciarJogo(4);
 </script>
-<footer style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #ddd; color: #555; font-family: sans-serif;">
-    <p style="margin: 0;">
-        2026 🏫 
-        <a href="https://eb1pemarinheira.pt/" 
-           target="_blank" 
-           style="color: #0d47a1; text-decoration: none; font-weight: bold;">
-           EB1/PE da Marinheira
-        </a>
-    </p>
-</footer>
-<script src="js/componentes.js"></script>
 
+<script src="js/componentes.js"></script>
 </body>
 </html>
