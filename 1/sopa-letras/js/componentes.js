@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Função para navegar de volta para o index
     btnVoltar.onclick = function() {
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
     };
 
     // Adiciona o botão ao início do body de cada jogo
