@@ -64,12 +64,14 @@
             transition: transform 0.5s, opacity 0.8s;
         }
 
+        /* ESTADO VIRADO */
         .carta.virada { transform: rotateY(180deg); }
 
-        /* CORREÇÃO: Mantém a carta virada e esbatida quando acerta */
+        /* ESTADO ESBATIDO (ACERTO) */
         .carta.par-encontrado { 
-            opacity: 0.5; 
+            opacity: 0.4 !important; 
             cursor: default;
+            pointer-events: none;
             transform: rotateY(180deg) !important; 
         }
 
@@ -83,7 +85,15 @@
         }
 
         .verso { background-color: var(--azul-escuro); color: white; font-size: 2rem; }
-        .frente { transform: rotateY(180deg); color: var(--azul-escuro); }
+        
+        .frente { 
+            transform: rotateY(180deg); 
+            color: var(--azul-escuro); 
+        }
+
+        /* Garante que a frente continua visível após o esbatimento */
+        .par-encontrado .frente { backface-visibility: visible; }
+
         .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
         #final-screen { display: none; padding: 30px; flex-grow: 1; }
@@ -101,7 +111,7 @@
 
 <header class="cabecalho">
     <div class="cabecalho-conteudo">
-        <img src="img/escola.png" class="icone-titulo"> 
+        <img src="memoria.png" class="icone-titulo"> 
         <h1 style="margin:0">Jogo da Memória</h1>
     </div>
 </header>
@@ -121,7 +131,7 @@
 <div class="tabuleiro" id="tabuleiro"></div>
 
 <div id="final-screen">
-    <h2>🏆 Parabéns! Estás na memória de um génio!</h2>
+    <h2>🏆 Parabéns! Tens boa memória!</h2>
     <button class="btn-nivel" style="background: var(--azul-escuro); color: white; padding: 15px 30px;" onclick="location.reload()">Jogar de Novo</button>
 </div>
 
@@ -147,7 +157,6 @@
         tabuleiro.style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
         
-        // Simetria das colunas
         if(numPares === 4) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
         else if(numPares === 6) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
         else if(numPares === 8) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
@@ -161,7 +170,6 @@
         nAcertos = 0; nErros = 0;
         atualizarStats();
 
-        // Embaralhar
         const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
         let baralho = [];
         selecao.forEach(item => {
@@ -198,6 +206,7 @@
         if (c1.dataset.id === c2.dataset.id) {
             nAcertos++; paresDescobertos++;
             setTimeout(() => {
+                // Adicionamos a classe sem remover a classe 'virada'
                 c1.classList.add('par-encontrado');
                 c2.classList.add('par-encontrado');
                 cartasViradas = []; podeJogar = true;
