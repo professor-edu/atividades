@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👏 Quantas Sílabas? 👏</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
@@ -14,9 +16,8 @@
             --vermelho: #e53935;
         }
 
-        /* 1. LAYOUT BASE E FOOTER SEMPRE EM BAIXO */
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Quicksand', sans-serif; 
             text-align: center; 
             background-color: var(--azul-claro); 
             margin: 0; 
@@ -25,16 +26,17 @@
             min-height: 100vh;
         }
         
-        /* 2. CABEÇALHO COM ALINHAMENTO VERTICAL E CONTRASTE */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 10px 20px; 
+            padding: 8px 20px; 
             color: var(--azul-escuro); 
             display: flex;
             align-items: center; 
             justify-content: space-between;
-            border-bottom: 4px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 10;
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -45,92 +47,101 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 15px; 
+            gap: 12px; 
             flex: 2;
         }
 
-        .icone-cabecalho { width: 80px; height: auto; }
+        .icone-cabecalho { width: 70px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
 
-        /* 3. MENU - SÓ ANIMA NO HOVER (SEM PISCAR) */
         .btn-menu {
-    background: var(--laranja);
-    color: white;
-    border: none;
-    padding: 6px 14px; /* Menor espaço interno */
-    border-radius: 20px; /* Arredondamento ajustado */
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    font-size: 0.9rem; /* Fonte ligeiramente menor */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: transform 0.2s ease;
-}
-
-.btn-menu span { 
-    font-size: 1.3rem; /* A casa continua visível, mas proporcional */
-} /* Casa Maior */
-
-        .btn-menu:hover {
-            transform: scale(1.1);
+            background: var(--laranja);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        /* 4. CONTEÚDO DO JOGO */
-        #main-content { flex-grow: 1; padding: 20px; }
+        .btn-menu span { font-size: 1.3rem; }
+        .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
+
+        #main-content { flex-grow: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
         .cartao {
-            background: white; width: 95%; max-width: 500px;
-            margin: 10px auto; padding: 30px 20px;
-            border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            background: white; width: 95%; max-width: 480px;
+            margin: 10px auto; padding: 25px;
+            border-radius: 30px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
-            min-height: 450px;
+            border: 4px solid transparent; /* Reservado para animação */
+            transition: border-color 0.3s ease;
+        }
+
+        /* ANIMAÇÕES DE FEEDBACK */
+        .animar-sucesso { 
+            animation: bounce 0.5s ease; 
+            border-color: var(--verde) !important;
+        }
+        
+        .animar-erro { 
+            animation: shake 0.5s ease; 
+            border-color: var(--vermelho) !important;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
         }
 
         .imagem-pergunta {
-            height: 180px; width: 180px; object-fit: contain;
-            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 10px;
-            display: block;
+            height: 160px; width: 160px; object-fit: contain;
+            border: 5px solid var(--azul-claro); border-radius: 25px; padding: 10px;
+            background: #fff;
         }
 
         .btn-numero {
-            width: 70px; height: 70px;
-            font-size: 30px; font-weight: bold;
+            width: 65px; height: 65px;
+            font-size: 28px; font-weight: 700;
             background: white; border: 3px solid var(--azul-medio);
-            color: var(--azul-medio); border-radius: 15px;
+            color: var(--azul-medio); border-radius: 20px;
             cursor: pointer; transition: all 0.2s;
         }
 
-        .btn-numero:hover { transform: translateY(-5px); background: var(--azul-claro); }
+        .btn-numero:hover { transform: scale(1.1); background: var(--azul-medio); color: white; }
         .btn-numero.correto { background: var(--verde) !important; color: white !important; border-color: var(--verde) !important; }
         .btn-numero.errado { background: var(--vermelho) !important; color: white !important; border-color: var(--vermelho) !important; }
 
-        .estrelas { font-size: 22px; color: #f57c00; font-weight: bold; padding: 10px; }
+        .estrelas { font-size: 20px; color: #f57c00; font-weight: 700; padding: 15px; }
 
-        /* 5. FOOTER COM ALTURA SEMPRE IGUAL */
         footer {
             margin-top: auto;
-            min-height: 80px; /* Altura fixa garantida */
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #fff;
-            border-top: 1px solid #ddd;
-            width: 100%;
-            box-sizing: border-box;
+            background: white;
+            border-top: 1px solid #eee;
         }
 
-        /* 6. RESPONSIVIDADE (TELEMÓVEIS) */
         @media (max-width: 600px) {
-            .cabecalho { padding: 8px 12px; }
+            .cabecalho { padding: 8px 10px; }
             .icone-cabecalho { width: 50px; }
-            h1 { font-size: 1.1rem; }
-            .btn-menu { padding: 6px 12px; font-size: 0.9rem; }
-            .btn-menu span { font-size: 1.2rem; }
-            .cartao { width: 90%; padding: 15px; min-height: 400px; }
-            .imagem-pergunta { width: 140px; height: 140px; }
-            .btn-numero { width: 55px; height: 55px; font-size: 22px; }
-            #silabas-reveladas { font-size: 26px; }
+            h1 { font-size: 1rem; }
+            .cartao { padding: 20px; width: 85%; }
+            .btn-numero { width: 50px; height: 50px; font-size: 20px; }
         }
     </style>
 </head>
@@ -139,7 +150,7 @@
 <header class="cabecalho">
     <div class="header-left">
         <button class="btn-menu" onclick="window.location.href='../index.html'">
-            <span>🏠</span> Menu
+            <span>🏠</span> MENU
         </button>
     </div>
     <div class="cabecalho-conteudo">
@@ -155,24 +166,24 @@
     <div class="cartao" id="jogo-container">
         <img id="img-pergunta" class="imagem-pergunta" src="">
         
-        <div style="font-size: 20px; font-weight: bold; color: var(--azul-escuro);">
+        <div style="font-size: 1.3rem; font-weight: 700; color: var(--azul-escuro);">
             Quantas vezes bates as palmas? 👏
         </div>
         
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
             <button class="btn-numero" onclick="verificar(1, this)">1</button>
             <button class="btn-numero" onclick="verificar(2, this)">2</button>
             <button class="btn-numero" onclick="verificar(3, this)">3</button>
             <button class="btn-numero" onclick="verificar(4, this)">4</button>
         </div>
 
-        <div id="feedback" style="min-height: 30px; font-weight: bold; font-size: 22px;"></div>
-        <div id="silabas-reveladas" style="font-weight: bold; color: var(--laranja);"></div>
+        <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.4rem;"></div>
+        <div id="silabas-reveladas" style="font-size: 2rem; color: var(--laranja); font-weight: 700; letter-spacing: 3px;"></div>
     </div>
 </main>
 
 <footer>
-    <p style="margin: 0; color: var(--azul-escuro); font-weight: bold;">
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.9rem;">
         2026 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
@@ -188,6 +199,11 @@
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
         podeClicar = true;
         const item = listaJogo[indiceAtual];
+        const container = document.getElementById('jogo-container');
+        
+        // Remove classes de animação para a próxima pergunta
+        container.classList.remove('animar-sucesso', 'animar-erro');
+        
         document.getElementById('img-pergunta').src = item.imagem; 
         document.getElementById('feedback').innerHTML = "";
         document.getElementById('silabas-reveladas').innerText = "";
@@ -198,19 +214,22 @@
         if (!podeClicar) return;
         const item = listaJogo[indiceAtual];
         const correta = item.num;
+        const container = document.getElementById('jogo-container');
         podeClicar = false;
 
         if (escolha === correta) {
             estrelas++;
             document.getElementById('contador-estrelas').innerText = estrelas;
             btnCuidado.classList.add('correto');
+            container.classList.add('animar-sucesso');
             document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Muito bem! ✨</span>";
             document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             setTimeout(proxima, 2000);
         } else {
             btnCuidado.classList.add('errado');
+            container.classList.add('animar-erro');
             document.querySelectorAll('.btn-numero')[correta - 1].classList.add('correto');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Eram " + correta + " sílabas.</span>";
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Ups! Eram " + correta + " sílabas.</span>";
             document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             setTimeout(proxima, 3000);
         }
@@ -220,9 +239,9 @@
 
     function finalizarJogo() {
         document.getElementById('jogo-container').innerHTML = `
-            <h2>🏆 Jogo Terminado!</h2>
+            <h2 style="color: var(--azul-escuro)">🏆 Jogo Terminado!</h2>
             <p style="font-size: 24px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
-            <button onclick="location.reload()" style="padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px;">Jogar de Novo</button>
+            <button onclick="location.reload()" style="padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px; font-family: 'Quicksand', sans-serif;">Jogar de Novo</button>
         `;
     }
 
