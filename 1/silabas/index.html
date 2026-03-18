@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👏 Divisão Silábica 👏</title>
+    <title>🧩 Arrastar Sílabas 🧩</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
@@ -14,183 +16,133 @@
             --vermelho: #e53935;
         }
 
-        /* Estrutura Flexbox para garantir footer no fundo */
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Quicksand', sans-serif; 
             text-align: center; 
             background-color: var(--azul-claro); 
             margin: 0; 
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 100dvh; 
         }
         
-        /* CABEÇALHO PADRÃO EM 3 COLUNAS */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px 20px; 
+            padding: 10px 20px 0 20px; 
             color: var(--azul-escuro); 
-            border-bottom: 3px solid #fff;
             display: flex;
-            align-items: center;
+            align-items: center; 
             justify-content: space-between;
+            position: relative;
+            z-index: 20;
+            flex-shrink: 0;
         }
 
-        .header-left, .header-right {
-            flex: 1;
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .header-right {
-            justify-content: flex-end;
-        }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
 
         .cabecalho-conteudo { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 15px;
+            gap: 12px; 
             flex: 2;
         }
 
-        .icone-cabecalho { 
-            width: 100px;
-            height: auto; 
-        }
+        .icone-cabecalho { width: 60px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
 
-        /* BOTÃO MENU LARANJA */
         .btn-menu {
             background: var(--laranja);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .btn-menu:hover { transform: scale(1.05); }
-
-        .estrelas { 
-            font-size: 20px; 
-            color: #f57c00; 
-            font-weight: bold; 
-            padding: 10px 0;
-            background: rgba(255,255,255,0.3);
-        }
-
-        /* ÁREA DE JOGO */
-        #progress-container {
-            width: 90%;
-            height: 12px;
-            background: #cfe0ff;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--azul-escuro);
-            border-radius: 10px;
-            transition: width .4s;
-        }
-
-        .image-box {
-            background: white;
-            padding: 15px;
+            padding: 6px 14px;
             border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            display: inline-block;
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .image-box img {
-            width: 180px;
-            height: 180px;
-            object-fit: contain;
-        }
-
-        .instruction {
-            font-size: 1.3rem;
-            color: var(--azul-escuro);
-            font-weight: bold;
-            margin: 15px 0;
-        }
-
-        .syllables, .slots {
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            font-size: 0.85rem;
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .syl {
-            background: white;
-            border: 2px solid var(--azul-medio);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 1.5rem;
-            color: var(--azul-escuro);
-            font-weight: bold;
-            cursor: grab;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        .btn-menu span { font-size: 1.2rem; }
+        .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
+
+        .onda-container {
+            height: 45px; width: 100%; overflow: hidden; line-height: 0;
+            margin-top: -1px; filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.1));
+            position: relative; z-index: 10; flex-shrink: 0;
+        }
+
+        .onda-container svg { width: 100%; height: 100%; }
+
+        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; padding: 10px; }
+
+        #main-content { 
+            flex: 1 0 auto; 
+            padding: 10px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        .cartao {
+            background: white; width: 95%; max-width: 500px;
+            margin: 5px auto; padding: 25px;
+            border-radius: 30px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .imagem-pergunta {
+            height: 140px; width: 140px; object-fit: contain;
+            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 8px;
+        }
+
+        .zona-drop {
+            display: flex; gap: 10px; justify-content: center; min-height: 65px;
+            margin: 15px 0; flex-wrap: wrap;
+        }
+
+        .caixa-vazia {
+            width: 85px; height: 60px; border: 3px dashed var(--azul-medio);
+            border-radius: 15px; background: var(--azul-claro);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .caixa-silaba {
+            width: 85px; height: 60px; background: white;
+            border: 3px solid var(--azul-medio); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 700; color: var(--azul-escuro);
+            cursor: grab; transition: all 0.2s;
+            box-shadow: 0 4px 0px var(--azul-medio);
             user-select: none;
         }
 
-        .slot {
-            width: 100px;
-            height: 60px;
-            background: white;
-            border: 3px dashed var(--azul-medio);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--azul-escuro);
+        .caixa-silaba:active { transform: translateY(2px); box-shadow: none; }
+
+        .opcoes-silabas {
+            display: flex; gap: 12px; justify-content: center; 
+            margin-top: 10px; flex-wrap: wrap; padding: 10px;
+            background: #f9f9f9; border-radius: 20px; width: 100%;
         }
 
-        .correct { background: var(--verde) !important; border-color: var(--verde) !important; color: white !important; }
-        .wrong { background: var(--vermelho) !important; border-color: var(--vermelho) !important; }
-
-        #next-btn {
-            background: var(--verde);
-            color: white;
-            padding: 15px 35px;
-            border: none;
-            font-size: 1.3rem;
-            border-radius: 50px;
-            cursor: pointer;
-            display: none;
-            margin: 20px auto;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
-        }
-
-        /* FOOTER PADRÃO OFICIAL */
         footer {
-            margin-top: auto;
-            padding: 25px;
-            text-align: center;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            background: #fff;
-            width: 100%;
-            box-sizing: border-box;
+            flex-shrink: 0; min-height: 70px; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
         }
-        
-        .footer-link, .footer-ano { 
-            color: var(--azul-escuro); 
-            text-decoration: none; 
-            font-weight: bold; 
+
+        @media (max-width: 600px) {
+            .cabecalho { padding: 8px 10px 0 10px; }
+            h1 { font-size: 0.9rem; }
+            .cartao { padding: 15px; width: 92%; }
+            .caixa-silaba, .caixa-vazia { width: 70px; height: 55px; font-size: 18px; }
+            .onda-container { height: 30px; }
         }
     </style>
 </head>
@@ -198,148 +150,156 @@
 
 <header class="cabecalho">
     <div class="header-left">
-        <button class="btn-menu" onclick="window.location.href='../index.html'">🏠 Menu</button>
+        <button class="btn-menu" onclick="window.location.href='../index.html'">
+            <span>🏠</span> MENU
+        </button>
     </div>
-
     <div class="cabecalho-conteudo">
-        <img src="10223302.png" class="icone-cabecalho" alt="silabas"> 
-        <h1 style="margin:0">Divisão Silábica</h1>
+        <img src="puzzle.png" class="icone-cabecalho" alt="jogo"> 
+        <h1 style="margin:0">Arrastar Sílabas</h1>
     </div>
-
-    <div class="header-right">
-        </div>
+    <div class="header-right"></div>
 </header>
 
-<div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
-
-<div id="progress-container">
-    <div id="progress-bar"></div>
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+        <defs>
+            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#bde6ff; stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#7ac7f0; stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+    </svg>
 </div>
 
-<div id="game-area" style="flex-grow: 1; padding: 20px;">
-    <div class="image-box">
-        <img id="word-img" src="">
+<div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
+
+<main id="main-content">
+    <div class="cartao" id="jogo-container">
+        <img id="img-pergunta" class="imagem-pergunta" src="">
+        
+        <p style="font-weight: 700; color: var(--azul-escuro); margin: 5px 0;">Forma a palavra:</p>
+        
+        <div class="zona-drop" id="caixas-destino"></div>
+
+        <div class="opcoes-silabas" id="caixas-origem"></div>
+
+        <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem; margin-top: 10px;"></div>
     </div>
-
-    <div class="instruction">Arrasta as sílabas para formar a palavra:</div>
-
-    <div class="syllables" id="syl-container"></div>
-    <div class="slots" id="slot-container"></div>
-
-    <button id="next-btn" onclick="nextWord()">Seguinte ✨</button>
-</div>
-
-<div id="final-screen" style="display:none; flex-grow:1; padding: 40px;">
-    <h2 id="final-text" style="color: var(--azul-escuro); font-size: 2rem;"></h2>
-    <img id="medal" style="width: 150px; margin: 20px;">
-    <div id="estatisticas" style="font-size: 1.2rem; line-height: 1.8;"></div>
-    <button onclick="location.reload()" style="padding: 15px 40px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: bold; font-size: 18px; margin-top: 20px;">Jogar de Novo</button>
-</div>
+</main>
 
 <footer>
-    <p>
-        <span class="footer-ano">2026</span> 🏫 
-        <a href="https://eb1pemarinheira.pt/" target="_blank" class="footer-link">EB1/PE da Marinheira</a>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.85rem;">
+        2026 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
+<script src="js/dados.js"></script>
 <script>
-    let score = 0;
-    let acertos = 0;
-    let current = 0;
-    let dragged = null;
+    let indiceAtual = 0;
+    let estrelas = 0;
+    let listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+    let silabasColocadas = [];
 
-    const words = [
-        { w:"pato",img:"https://openmoji.org/data/color/svg/1F986.svg",syl:["PA","TO"] },
-        { w:"gato",img:"https://openmoji.org/data/color/svg/1F431.svg",syl:["GA","TO"] },
-        { w:"bola",img:"https://openmoji.org/data/color/svg/1F3C0.svg",syl:["BO","LA"] },
-        { w:"vaca",img:"https://openmoji.org/data/color/svg/1F404.svg",syl:["VA","CA"] },
-        { w:"ratito",img:"https://openmoji.org/data/color/svg/1F42D.svg",syl:["RA","TI","TO"] },
-        { w:"mota",img:"https://openmoji.org/data/color/svg/1F3CD.svg",syl:["MO","TA"] },
-        { w:"janela",img:"https://openmoji.org/data/color/svg/1FA9F.svg",syl:["JA","NE","LA"] },
-        { w:"jipe",img:"https://openmoji.org/data/color/svg/1F699.svg",syl:["JI","PE"] },
-        { w:"cama",img:"https://openmoji.org/data/color/svg/1F6CF.svg",syl:["CA","MA"] },
-        { w:"dado",img:"https://openmoji.org/data/color/svg/1F3B2.svg",syl:["DA","DO"] },
-        { w:"vela",img:"https://openmoji.org/data/color/svg/1F56F.svg",syl:["VE","LA"] },
-        { w:"mala",img:"https://openmoji.org/data/color/svg/1F9F3.svg",syl:["MA","LA"] },
-        { w:"macaco",img:"https://openmoji.org/data/color/svg/1F412.svg",syl:["MA","CA","CO"] },
-        { w:"dedo",img:"https://openmoji.org/data/color/svg/261D.svg",syl:["DE","DO"] },
-        { w:"cavalo",img:"https://openmoji.org/data/color/svg/1F40E.svg",syl:["CA","VA","LO"] },
-        { w:"limão",img:"https://openmoji.org/data/color/svg/1F34B.svg",syl:["LI","MÃO"] },
-        { w:"foca",img:"https://openmoji.org/data/color/svg/1F9AD.svg",syl:["FO","CA"] },
-        { w:"tomate",img:"https://openmoji.org/data/color/svg/1F345.svg",syl:["TO","MA","TE"] },
-        { w:"banana",img:"https://openmoji.org/data/color/svg/1F34C.svg",syl:["BA","NA","NA"] },
-        { w:"fada",img:"https://openmoji.org/data/color/svg/1F9DA.svg",syl:["FA","DA"] }
-    ];
-
-    words.sort(() => Math.random() - 0.5);
-
-    function loadWord() {
-        if (current >= words.length) { endGame(); return; }
+    function carregarPergunta() {
+        if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
         
-        document.getElementById("progress-bar").style.width = (current / words.length * 100) + "%";
-        const w = words[current];
-        document.getElementById("word-img").src = w.img;
-
-        const syls = [...w.syl].sort(() => Math.random() - 0.5);
-        const sylDiv = document.getElementById("syl-container");
-        sylDiv.innerHTML = "";
+        const item = listaJogo[indiceAtual];
+        const silabasCorretas = item.divisao.split('-');
+        silabasColocadas = new Array(silabasCorretas.length).fill(null);
         
-        syls.forEach(s => {
-            const el = document.createElement("div");
-            el.className = "syl";
-            el.textContent = s;
-            el.draggable = true;
-            el.addEventListener("dragstart", () => dragged = el);
-            // Suporte para touch (mobile)
-            el.addEventListener("touchstart", (e) => dragged = el, {passive: true});
-            sylDiv.appendChild(el);
+        document.getElementById('img-pergunta').src = item.imagem;
+        document.getElementById('feedback').innerText = "";
+        
+        // Criar caixas vazias de destino
+        const destino = document.getElementById('caixas-destino');
+        destino.innerHTML = "";
+        silabasCorretas.forEach((_, i) => {
+            const caixa = document.createElement('div');
+            caixa.className = 'caixa-vazia';
+            caixa.dataset.index = i;
+            caixa.onclick = () => removerSilaba(i);
+            destino.appendChild(caixa);
         });
 
-        const slotDiv = document.getElementById("slot-container");
-        slotDiv.innerHTML = "";
-        w.syl.forEach(s => {
-            const sl = document.createElement("div");
-            sl.className = "slot";
-            sl.dataset.correct = s;
-            sl.addEventListener("dragover", e => e.preventDefault());
-            sl.addEventListener("drop", () => dropSyllable(sl));
-            slotDiv.appendChild(sl);
+        // Criar opções de sílabas (baralhadas)
+        const origem = document.getElementById('caixas-origem');
+        origem.innerHTML = "";
+        const silabasEmbaralhadas = [...silabasCorretas].sort(() => 0.5 - Math.random());
+        
+        silabasEmbaralhadas.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'caixa-silaba';
+            div.innerText = s;
+            div.onclick = () => colocarSilaba(s, div);
+            origem.appendChild(div);
         });
-        document.getElementById("next-btn").style.display = "none";
     }
 
-    function dropSyllable(slot) {
-        if (!dragged || slot.textContent !== "") return;
-        if (dragged.textContent === slot.dataset.correct) {
-            slot.textContent = dragged.textContent;
-            slot.classList.add("correct");
-            dragged.remove();
-            if ([...document.querySelectorAll(".slot")].every(s => s.textContent !== "")) {
-                acertos++;
-                document.getElementById("contador-estrelas").textContent = acertos;
-                document.getElementById("next-btn").style.display = "block";
-            }
-        } else {
-            slot.classList.add("wrong");
-            setTimeout(() => slot.classList.remove("wrong"), 500);
+    function colocarSilaba(silaba, elemento) {
+        const proxEspaco = silabasColocadas.indexOf(null);
+        if (proxEspaco !== -1) {
+            silabasColocadas[proxEspaco] = silaba;
+            const caixasVazias = document.querySelectorAll('.caixa-vazia');
+            caixasVazias[proxEspaco].innerText = silaba;
+            caixasVazias[proxEspaco].style.borderStyle = "solid";
+            caixasVazias[proxEspaco].style.background = "white";
+            elemento.style.visibility = "hidden";
+            verificarResultado();
         }
     }
 
-    function nextWord() { current++; loadWord(); }
-
-    function endGame() {
-        document.getElementById("game-area").style.display = "none";
-        document.getElementById("final-screen").style.display = "block";
-        const perc = Math.round((acertos / words.length) * 100);
-        document.getElementById("final-text").textContent = perc >= 70 ? "Excelente Trabalho! 🌟" : "Bom esforço! 💪";
-        document.getElementById("medal").src = perc >= 70 ? "https://openmoji.org/data/color/svg/1F947.svg" : "https://openmoji.org/data/color/svg/1F949.svg";
-        document.getElementById("estatisticas").innerHTML = `Palavras Completas: ${acertos}/${words.length}<br>Percentagem: ${perc}%`;
+    function removerSilaba(index) {
+        if (silabasColocadas[index] !== null) {
+            const silabaRemovida = silabasColocadas[index];
+            silabasColocadas[index] = null;
+            
+            const caixasVazias = document.querySelectorAll('.caixa-vazia');
+            caixasVazias[index].innerText = "";
+            caixasVazias[index].style.borderStyle = "dashed";
+            caixasVazias[index].style.background = "var(--azul-claro)";
+            
+            // Devolver à origem
+            const opcoes = document.querySelectorAll('.caixa-silaba');
+            for (let opt of opcoes) {
+                if (opt.innerText === silabaRemovida && opt.style.visibility === "hidden") {
+                    opt.style.visibility = "visible";
+                    break;
+                }
+            }
+        }
     }
 
-    loadWord();
-</script>
+    function verificarResultado() {
+        if (silabasColocadas.includes(null)) return;
 
-<script src="js/componentes.js"></script>
+        const item = listaJogo[indiceAtual];
+        const palavraFormada = silabasColocadas.join('-');
+        
+        if (palavraFormada === item.divisao) {
+            estrelas++;
+            document.getElementById('contador-estrelas').innerText = estrelas;
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Correto! ✨</span>";
+            setTimeout(() => { indiceAtual++; carregarPergunta(); }, 1500);
+        } else {
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! 🔄</span>";
+            setTimeout(() => {
+                silabasColocadas.forEach((_, i) => removerSilaba(i));
+                document.getElementById('feedback').innerText = "";
+            }, 1500);
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('jogo-container').innerHTML = `
+            <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
+            <p style="font-size: 20px;">Terminaste o desafio com <strong>${estrelas}</strong> estrelas!</p>
+            <button onclick="location.reload()" style="padding: 12px 30px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: 700; font-family: 'Quicksand';">Jogar de Novo</button>
+        `;
+    }
+
+    window.onload = carregarPergunta;
+</script>
 </body>
 </html>
