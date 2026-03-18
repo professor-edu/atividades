@@ -16,6 +16,7 @@
             --vermelho: #e53935;
         }
 
+        /* Estrutura Flexível Dinâmica para Telemóveis */
         body { 
             font-family: 'Quicksand', sans-serif; 
             text-align: center; 
@@ -23,9 +24,10 @@
             margin: 0; 
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 100dvh; /* Altura dinâmica para navegadores móveis */
         }
         
+        /* Cabeçalho */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
             padding: 10px 20px 0 20px; 
@@ -34,7 +36,8 @@
             align-items: center; 
             justify-content: space-between;
             position: relative;
-            z-index: 20; /* Garante que fica acima da sombra da onda */
+            z-index: 20;
+            flex-shrink: 0;
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -51,6 +54,7 @@
 
         .icone-cabecalho { width: 70px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
 
+        /* Menu Laranja Pequeno */
         .btn-menu {
             background: var(--laranja);
             color: white;
@@ -70,6 +74,7 @@
         .btn-menu span { font-size: 1.2rem; }
         .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
 
+        /* Onda Divisora com Sombra */
         .onda-container {
             height: 45px;
             width: 100%;
@@ -77,15 +82,23 @@
             line-height: 0;
             background: none;
             margin-top: -1px;
-            /* A "Borda" em forma de sombra projetada */
             filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.1));
             position: relative;
             z-index: 10;
+            flex-shrink: 0;
         }
 
         .onda-container svg { width: 100%; height: 100%; }
 
-        #main-content { flex-grow: 1; padding: 10px 20px; display: flex; flex-direction: column; align-items: center; }
+        /* Conteúdo Principal Centrado */
+        #main-content { 
+            flex: 1 0 auto; 
+            padding: 10px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; /* Centra o jogo verticalmente se houver espaço */
+        }
 
         .cartao {
             background: white; width: 95%; max-width: 480px;
@@ -97,6 +110,7 @@
             transition: border-color 0.3s ease;
         }
 
+        /* Animações de Feedback */
         .animar-sucesso { animation: bounce 0.5s ease; border-color: var(--verde) !important; }
         .animar-erro { animation: shake 0.5s ease; border-color: var(--vermelho) !important; }
 
@@ -121,16 +135,18 @@
         .btn-numero.correto { background: var(--verde) !important; color: white !important; border-color: var(--verde) !important; }
         .btn-numero.errado { background: var(--vermelho) !important; color: white !important; border-color: var(--vermelho) !important; }
 
-        .estrelas { font-size: 20px; color: #f57c00; font-weight: 700; padding: 10px; }
+        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; padding: 10px; }
 
+        /* Footer Estático no Fundo */
         footer {
-            margin-top: auto;
+            flex-shrink: 0;
             min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: white;
             border-top: 1px solid #eee;
+            width: 100%;
         }
 
         @media (max-width: 600px) {
@@ -138,8 +154,9 @@
             .icone-cabecalho { width: 45px; }
             h1 { font-size: 0.95rem; }
             .cartao { padding: 20px; width: 88%; gap: 15px; }
-            .btn-numero { width: 50px; height: 50px; font-size: 20px; }
+            .btn-numero { width: 52px; height: 52px; font-size: 20px; }
             .onda-container { height: 30px; }
+            .estrelas { font-size: 18px; }
         }
     </style>
 </head>
@@ -170,7 +187,7 @@
     </svg>
 </div>
 
-<div class="estrelas">⭐ Estrelas: <span id="contador-estrelas">0</span></div>
+<div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
 
 <main id="main-content">
     <div class="cartao" id="jogo-container">
@@ -197,7 +214,6 @@
 
 <script src="js/dados.js"></script>
 <script>
-    // Lógica do jogo (índice, estrelas, verificar, etc.)
     let indiceAtual = 0;
     let estrelas = 0;
     let podeClicar = true;
@@ -208,6 +224,7 @@
         podeClicar = true;
         const item = listaJogo[indiceAtual];
         const container = document.getElementById('jogo-container');
+        
         container.classList.remove('animar-sucesso', 'animar-erro');
         document.getElementById('img-pergunta').src = item.imagem; 
         document.getElementById('feedback').innerHTML = "";
@@ -234,7 +251,7 @@
             btnCuidado.classList.add('errado');
             container.classList.add('animar-erro');
             document.querySelectorAll('.btn-numero')[correta - 1].classList.add('correto');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Eram " + correta + " sílabas.</span>";
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Ups! Eram " + correta + " sílabas.</span>";
             document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             setTimeout(proxima, 3000);
         }
