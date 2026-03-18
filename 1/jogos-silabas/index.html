@@ -16,7 +16,6 @@
             --vermelho: #e53935;
         }
 
-        /* Estrutura para Footer no fundo */
         body { 
             font-family: 'Quicksand', sans-serif; 
             text-align: center; 
@@ -27,7 +26,6 @@
             min-height: 100vh;
         }
         
-        /* Cabeçalho com Degradê - REMOVI O PADDING INFERIOR PARA A ONDA COLAR */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
             padding: 10px 20px 0 20px; 
@@ -36,7 +34,7 @@
             align-items: center; 
             justify-content: space-between;
             position: relative;
-            z-index: 10;
+            z-index: 20; /* Garante que fica acima da sombra da onda */
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -53,7 +51,6 @@
 
         .icone-cabecalho { width: 70px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
 
-        /* Menu Laranja Pequeno */
         .btn-menu {
             background: var(--laranja);
             color: white;
@@ -73,22 +70,21 @@
         .btn-menu span { font-size: 1.2rem; }
         .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
 
-        /* Estilo da Onda (Wave Divider) */
         .onda-container {
             height: 45px;
             width: 100%;
             overflow: hidden;
             line-height: 0;
             background: none;
-            margin-top: -1px; /* Garante que não há fresta branca */
+            margin-top: -1px;
+            /* A "Borda" em forma de sombra projetada */
+            filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.1));
+            position: relative;
+            z-index: 10;
         }
 
-        .onda-container svg {
-            width: 100%;
-            height: 100%;
-        }
+        .onda-container svg { width: 100%; height: 100%; }
 
-        /* Cartão e Jogo */
         #main-content { flex-grow: 1; padding: 10px 20px; display: flex; flex-direction: column; align-items: center; }
 
         .cartao {
@@ -101,7 +97,6 @@
             transition: border-color 0.3s ease;
         }
 
-        /* Animações de Feedback */
         .animar-sucesso { animation: bounce 0.5s ease; border-color: var(--verde) !important; }
         .animar-erro { animation: shake 0.5s ease; border-color: var(--vermelho) !important; }
 
@@ -128,7 +123,6 @@
 
         .estrelas { font-size: 20px; color: #f57c00; font-weight: 700; padding: 10px; }
 
-        /* Footer */
         footer {
             margin-top: auto;
             min-height: 70px;
@@ -139,7 +133,6 @@
             border-top: 1px solid #eee;
         }
 
-        /* Responsividade */
         @media (max-width: 600px) {
             .cabecalho { padding: 8px 10px 0 10px; }
             .icone-cabecalho { width: 45px; }
@@ -182,18 +175,15 @@
 <main id="main-content">
     <div class="cartao" id="jogo-container">
         <img id="img-pergunta" class="imagem-pergunta" src="">
-        
         <div style="font-size: 1.2rem; font-weight: 700; color: var(--azul-escuro);">
             Quantas vezes bates as palmas? 👏
         </div>
-        
         <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
             <button class="btn-numero" onclick="verificar(1, this)">1</button>
             <button class="btn-numero" onclick="verificar(2, this)">2</button>
             <button class="btn-numero" onclick="verificar(3, this)">3</button>
             <button class="btn-numero" onclick="verificar(4, this)">4</button>
         </div>
-
         <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem;"></div>
         <div id="silabas-reveladas" style="font-size: 1.8rem; color: var(--laranja); font-weight: 700; letter-spacing: 2px;"></div>
     </div>
@@ -207,6 +197,7 @@
 
 <script src="js/dados.js"></script>
 <script>
+    // Lógica do jogo (índice, estrelas, verificar, etc.)
     let indiceAtual = 0;
     let estrelas = 0;
     let podeClicar = true;
@@ -217,7 +208,6 @@
         podeClicar = true;
         const item = listaJogo[indiceAtual];
         const container = document.getElementById('jogo-container');
-        
         container.classList.remove('animar-sucesso', 'animar-erro');
         document.getElementById('img-pergunta').src = item.imagem; 
         document.getElementById('feedback').innerHTML = "";
@@ -244,7 +234,7 @@
             btnCuidado.classList.add('errado');
             container.classList.add('animar-erro');
             document.querySelectorAll('.btn-numero')[correta - 1].classList.add('correto');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Ups! Eram " + correta + " sílabas.</span>";
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Eram " + correta + " sílabas.</span>";
             document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             setTimeout(proxima, 3000);
         }
