@@ -14,7 +14,7 @@
             --vermelho: #e53935;
         }
 
-        /* 1. LAYOUT FLEXBOX PARA O FOOTER NO FUNDO */
+        /* 1. LAYOUT BASE E FOOTER SEMPRE EM BAIXO */
         body { 
             font-family: 'Segoe UI', sans-serif; 
             text-align: center; 
@@ -25,7 +25,7 @@
             min-height: 100vh;
         }
         
-        /* 2. CABEÇALHO COM CONTRASTE */
+        /* 2. CABEÇALHO COM ALINHAMENTO VERTICAL E CONTRASTE */
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
             padding: 10px 20px; 
@@ -51,7 +51,7 @@
 
         .icone-cabecalho { width: 80px; height: auto; }
 
-        /* 3. MENU - SEM ANIMAÇÃO AUTOMÁTICA (SÓ HOVER) */
+        /* 3. MENU - SÓ ANIMA NO HOVER (SEM PISCAR) */
         .btn-menu {
             background: var(--laranja);
             color: white;
@@ -65,28 +65,30 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: transform 0.2s ease; /* Transição simples */
+            transition: transform 0.2s ease;
         }
 
-        .btn-menu span { font-size: 1.6rem; } /* Casa maior */
+        .btn-menu span { font-size: 1.6rem; } /* Casa Maior */
 
         .btn-menu:hover {
-            transform: scale(1.1); /* Aumenta ligeiramente ao passar o rato */
+            transform: scale(1.1);
         }
 
-        /* 4. CONTEÚDO DO JOGO (RESTAURADO) */
+        /* 4. CONTEÚDO DO JOGO */
         #main-content { flex-grow: 1; padding: 20px; }
 
         .cartao {
             background: white; width: 95%; max-width: 500px;
-            margin: 20px auto; padding: 30px 20px;
+            margin: 10px auto; padding: 30px 20px;
             border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
+            min-height: 450px;
         }
 
         .imagem-pergunta {
             height: 180px; width: 180px; object-fit: contain;
             border: 4px solid var(--azul-claro); border-radius: 20px; padding: 10px;
+            display: block;
         }
 
         .btn-numero {
@@ -103,13 +105,30 @@
 
         .estrelas { font-size: 22px; color: #f57c00; font-weight: bold; padding: 10px; }
 
-        /* 5. FOOTER NO FUNDO */
+        /* 5. FOOTER COM ALTURA SEMPRE IGUAL */
         footer {
             margin-top: auto;
-            padding: 25px;
+            min-height: 80px; /* Altura fixa garantida */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: #fff;
             border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 6. RESPONSIVIDADE (TELEMÓVEIS) */
+        @media (max-width: 600px) {
+            .cabecalho { padding: 8px 12px; }
+            .icone-cabecalho { width: 50px; }
+            h1 { font-size: 1.1rem; }
+            .btn-menu { padding: 6px 12px; font-size: 0.9rem; }
+            .btn-menu span { font-size: 1.2rem; }
+            .cartao { width: 90%; padding: 15px; min-height: 400px; }
+            .imagem-pergunta { width: 140px; height: 140px; }
+            .btn-numero { width: 55px; height: 55px; font-size: 22px; }
+            #silabas-reveladas { font-size: 26px; }
         }
     </style>
 </head>
@@ -134,19 +153,19 @@
     <div class="cartao" id="jogo-container">
         <img id="img-pergunta" class="imagem-pergunta" src="">
         
-        <div style="font-size: 22px; font-weight: bold; color: var(--azul-escuro);">
+        <div style="font-size: 20px; font-weight: bold; color: var(--azul-escuro);">
             Quantas vezes bates as palmas? 👏
         </div>
         
-        <div style="display: flex; gap: 15px; justify-content: center;">
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
             <button class="btn-numero" onclick="verificar(1, this)">1</button>
             <button class="btn-numero" onclick="verificar(2, this)">2</button>
             <button class="btn-numero" onclick="verificar(3, this)">3</button>
             <button class="btn-numero" onclick="verificar(4, this)">4</button>
         </div>
 
-        <div id="feedback" style="min-height: 40px; font-weight: bold; font-size: 24px; margin-top: 15px;"></div>
-        <div id="silabas-reveladas" style="font-size: 32px; color: var(--laranja); font-weight: bold;"></div>
+        <div id="feedback" style="min-height: 30px; font-weight: bold; font-size: 22px;"></div>
+        <div id="silabas-reveladas" style="font-weight: bold; color: var(--laranja);"></div>
     </div>
 </main>
 
@@ -167,12 +186,9 @@
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
         podeClicar = true;
         const item = listaJogo[indiceAtual];
-        
-        // Verifica se a imagem existe no item
         document.getElementById('img-pergunta').src = item.imagem; 
-        
         document.getElementById('feedback').innerHTML = "";
-        document.getElementById('silabas-reveladas').innerHTML = "";
+        document.getElementById('silabas-reveladas').innerText = "";
         document.querySelectorAll('.btn-numero').forEach(btn => btn.className = 'btn-numero');
     }
 
@@ -192,7 +208,7 @@
         } else {
             btnCuidado.classList.add('errado');
             document.querySelectorAll('.btn-numero')[correta - 1].classList.add('correto');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Ups! Eram " + correta + " sílabas.</span>";
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Eram " + correta + " sílabas.</span>";
             document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
             setTimeout(proxima, 3000);
         }
@@ -210,7 +226,6 @@
 
     window.onload = carregarPergunta;
 </script>
-
 <script src="js/componentes.js"></script>
 </body>
 </html>
