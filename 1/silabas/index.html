@@ -28,7 +28,7 @@
         
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 10px 20px 0 20px; 
+            padding: 15px 20px 0 20px; 
             color: var(--azul-escuro); 
             display: flex;
             align-items: center; 
@@ -36,6 +36,7 @@
             position: relative;
             z-index: 20;
             flex-shrink: 0;
+            min-height: 100px; 
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -46,29 +47,34 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 12px; 
+            gap: 15px; 
             flex: 2;
         }
 
-        .icone-cabecalho { width: 60px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
+        /* IMAGEM NO HEADER SEMPRE COM 80PX */
+        .icone-cabecalho { 
+            width: 80px !important; 
+            height: 80px !important; 
+            object-fit: contain;
+            filter: drop-shadow(2px 2px 0px #fff); 
+        }
 
         .btn-menu {
             background: var(--laranja);
             color: white;
             border: none;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
         }
 
-        .btn-menu span { font-size: 1.2rem; }
         .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
 
         .onda-container {
@@ -79,7 +85,7 @@
 
         .onda-container svg { width: 100%; height: 100%; }
 
-        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; padding: 10px; }
+        .estrelas { font-size: 24px; color: #f57c00; font-weight: 700; padding: 15px; }
 
         #main-content { 
             flex: 1 0 auto; 
@@ -98,13 +104,18 @@
             display: flex; flex-direction: column; align-items: center; gap: 15px;
         }
 
+        /* IMAGEM DO CARTÃO (A que não aparecia) */
         .imagem-pergunta {
-            height: 140px; width: 140px; object-fit: contain;
-            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 8px;
+            height: 180px; width: 180px; /* Aumentei um pouco para destaque */
+            object-fit: contain;
+            border: 4px solid var(--azul-claro); 
+            border-radius: 20px; 
+            padding: 8px;
+            background-color: white;
         }
 
         .zona-drop {
-            display: flex; gap: 10px; justify-content: center; min-height: 65px;
+            display: flex; gap: 10px; justify-content: center; min-height: 70px;
             margin: 15px 0; flex-wrap: wrap;
         }
 
@@ -112,6 +123,7 @@
             width: 85px; height: 60px; border: 3px dashed var(--azul-medio);
             border-radius: 15px; background: var(--azul-claro);
             display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
         }
 
         .caixa-silaba {
@@ -119,16 +131,14 @@
             border: 3px solid var(--azul-medio); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             font-size: 22px; font-weight: 700; color: var(--azul-escuro);
-            cursor: grab; transition: all 0.2s;
+            cursor: pointer; transition: all 0.2s;
             box-shadow: 0 4px 0px var(--azul-medio);
             user-select: none;
         }
 
-        .caixa-silaba:active { transform: translateY(2px); box-shadow: none; }
-
         .opcoes-silabas {
             display: flex; gap: 12px; justify-content: center; 
-            margin-top: 10px; flex-wrap: wrap; padding: 10px;
+            margin-top: 10px; flex-wrap: wrap; padding: 15px;
             background: #f9f9f9; border-radius: 20px; width: 100%;
         }
 
@@ -138,10 +148,11 @@
         }
 
         @media (max-width: 600px) {
-            .cabecalho { padding: 8px 10px 0 10px; }
-            h1 { font-size: 0.9rem; }
+            .cabecalho { padding: 10px 10px 0 10px; min-height: 95px; }
+            .icone-cabecalho { width: 80px !important; height: 80px !important; }
+            h1 { font-size: 0.85rem; }
             .cartao { padding: 15px; width: 92%; }
-            .caixa-silaba, .caixa-vazia { width: 70px; height: 55px; font-size: 18px; }
+            .imagem-pergunta { height: 140px; width: 140px; }
             .onda-container { height: 30px; }
         }
     </style>
@@ -177,14 +188,10 @@
 
 <main id="main-content">
     <div class="cartao" id="jogo-container">
-        <img id="img-pergunta" class="imagem-pergunta" src="">
-        
+        <img id="img-pergunta" class="imagem-pergunta" src="" alt="carregando...">
         <p style="font-weight: 700; color: var(--azul-escuro); margin: 5px 0;">Forma a palavra:</p>
-        
         <div class="zona-drop" id="caixas-destino"></div>
-
         <div class="opcoes-silabas" id="caixas-origem"></div>
-
         <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem; margin-top: 10px;"></div>
     </div>
 </main>
@@ -199,35 +206,44 @@
 <script>
     let indiceAtual = 0;
     let estrelas = 0;
-    let listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+    // Garante que "palavras" existe no dados.js
+    let listaJogo = [];
+    if (typeof palavras !== 'undefined') {
+        listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+    }
+
     let silabasColocadas = [];
 
     function carregarPergunta() {
+        if (listaJogo.length === 0) {
+            console.error("Erro: A variável 'palavras' não foi encontrada no js/dados.js");
+            return;
+        }
+
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
         
         const item = listaJogo[indiceAtual];
         const silabasCorretas = item.divisao.split('-');
         silabasColocadas = new Array(silabasCorretas.length).fill(null);
         
-        document.getElementById('img-pergunta').src = item.imagem;
+        // CORREÇÃO DA IMAGEM: Forçar o carregamento do SRC
+        const imgElemento = document.getElementById('img-pergunta');
+        imgElemento.src = item.imagem; 
+
         document.getElementById('feedback').innerText = "";
         
-        // Criar caixas vazias de destino
         const destino = document.getElementById('caixas-destino');
         destino.innerHTML = "";
         silabasCorretas.forEach((_, i) => {
             const caixa = document.createElement('div');
             caixa.className = 'caixa-vazia';
-            caixa.dataset.index = i;
             caixa.onclick = () => removerSilaba(i);
             destino.appendChild(caixa);
         });
 
-        // Criar opções de sílabas (baralhadas)
         const origem = document.getElementById('caixas-origem');
         origem.innerHTML = "";
         const silabasEmbaralhadas = [...silabasCorretas].sort(() => 0.5 - Math.random());
-        
         silabasEmbaralhadas.forEach(s => {
             const div = document.createElement('div');
             div.className = 'caixa-silaba';
@@ -241,10 +257,9 @@
         const proxEspaco = silabasColocadas.indexOf(null);
         if (proxEspaco !== -1) {
             silabasColocadas[proxEspaco] = silaba;
-            const caixasVazias = document.querySelectorAll('.caixa-vazia');
-            caixasVazias[proxEspaco].innerText = silaba;
-            caixasVazias[proxEspaco].style.borderStyle = "solid";
-            caixasVazias[proxEspaco].style.background = "white";
+            const caixas = document.querySelectorAll('#caixas-destino div');
+            caixas[proxEspaco].innerText = silaba;
+            caixas[proxEspaco].className = 'caixa-silaba'; 
             elemento.style.visibility = "hidden";
             verificarResultado();
         }
@@ -254,14 +269,10 @@
         if (silabasColocadas[index] !== null) {
             const silabaRemovida = silabasColocadas[index];
             silabasColocadas[index] = null;
-            
-            const caixasVazias = document.querySelectorAll('.caixa-vazia');
-            caixasVazias[index].innerText = "";
-            caixasVazias[index].style.borderStyle = "dashed";
-            caixasVazias[index].style.background = "var(--azul-claro)";
-            
-            // Devolver à origem
-            const opcoes = document.querySelectorAll('.caixa-silaba');
+            const caixas = document.querySelectorAll('#caixas-destino div');
+            caixas[index].innerText = "";
+            caixas[index].className = 'caixa-vazia';
+            const opcoes = document.querySelectorAll('#caixas-origem .caixa-silaba');
             for (let opt of opcoes) {
                 if (opt.innerText === silabaRemovida && opt.style.visibility === "hidden") {
                     opt.style.visibility = "visible";
@@ -273,11 +284,8 @@
 
     function verificarResultado() {
         if (silabasColocadas.includes(null)) return;
-
         const item = listaJogo[indiceAtual];
-        const palavraFormada = silabasColocadas.join('-');
-        
-        if (palavraFormada === item.divisao) {
+        if (silabasColocadas.join('-') === item.divisao) {
             estrelas++;
             document.getElementById('contador-estrelas').innerText = estrelas;
             document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Correto! ✨</span>";
@@ -287,14 +295,14 @@
             setTimeout(() => {
                 silabasColocadas.forEach((_, i) => removerSilaba(i));
                 document.getElementById('feedback').innerText = "";
-            }, 1500);
+            }, 1200);
         }
     }
 
     function finalizarJogo() {
         document.getElementById('jogo-container').innerHTML = `
             <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
-            <p style="font-size: 20px;">Terminaste o desafio com <strong>${estrelas}</strong> estrelas!</p>
+            <p style="font-size: 20px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
             <button onclick="location.reload()" style="padding: 12px 30px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: 700; font-family: 'Quicksand';">Jogar de Novo</button>
         `;
     }
