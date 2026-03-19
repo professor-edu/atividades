@@ -15,7 +15,6 @@ const palavras = [
   { palavra: "baleia", imagem: "img/baleia.png", num: 3, divisao: "BA - LEI - A" },
   { palavra: "vela", imagem: "img/vela.png", num: 2, divisao: "VE - LA" },
   { palavra: "abelha", imagem: "img/abelha.png", num: 3, divisao: "A - BE - LHA" },
-  { palavra: "autocarro", imagem: "img/autocarro.png", num: 4, divisao: "AU - TO - CAR - RO" },
   { palavra: "bicicleta", imagem: "img/bicicleta.png", num: 4, divisao: "BI - CI - CLE - TA" },
   { palavra: "cenoura", imagem: "img/cenoura.png", num: 3, divisao: "CE - NOU - RA" },
   { palavra: "maçã", imagem: "img/maca.png", num: 2, divisao: "MA - ÇÃ" },
