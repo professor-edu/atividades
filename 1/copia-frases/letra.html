@@ -17,7 +17,7 @@
             min-height: 100vh;
         }
 
-        /* --- Cabeçalho com Menus --- */
+        /* --- Cabeçalho --- */
         header {
             width: 100%;
             padding: 15px 0;
@@ -108,10 +108,13 @@
             border: 2px solid #bbbbbb;
             box-sizing: border-box;
             outline: none;
+            background: white;
+            transition: all 0.2s;
         }
 
-        .correct { background: #e6ffe6; border-color: #2ecc71; }
-        .wrong { background: #ffe8e8; border-color: #ff6b6b; }
+        /* Feedbacks Visuais */
+        .correct { background: #e6ffe6 !important; border-color: #2ecc71 !important; }
+        .wrong { background: #ffe8e8 !important; border-color: #ff6b6b !important; }
 
         #final-btn {
             background: #4caf50;
@@ -124,9 +127,9 @@
             display: none;
             margin: 20px auto;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
         }
 
-        /* --- Footer Oficial --- */
         footer {
             padding: 20px;
             text-align: center;
@@ -242,7 +245,7 @@ function loadPage() {
         div.className = "sentence-box";
         div.innerHTML = `
             <div class="sentence-text">${txt}</div>
-            <input id="inp${i}" class="sentence-input" placeholder="" oninput="checkSentence(this, '${txt.replace(/'/g, "\\'")}')">
+            <input id="inp${i}" class="sentence-input" placeholder="Copia aqui a frase..." oninput="checkSentence(this, '${txt.replace(/'/g, "\\'")}')">
         `;
         container.appendChild(div);
     });
@@ -250,15 +253,25 @@ function loadPage() {
     updateProgress();
 }
 
+// LOGICA DE FEEDBACK CORRIGIDA
 function checkSentence(input, correct) {
-    if (input.value.trim() === correct) {
-        input.classList.add("correct");
-        input.classList.remove("wrong");
-    } else if (input.value.length >= correct.length) {
-        input.classList.add("wrong");
-    } else {
+    const val = input.value; // Valor que o aluno está a escrever
+
+    if (val === "") {
         input.classList.remove("correct", "wrong");
+    } else if (val === correct) {
+        // Frase totalmente correta
+        input.classList.remove("wrong");
+        input.classList.add("correct");
+    } else if (correct.startsWith(val)) {
+        // Está no caminho certo, mas ainda não terminou
+        input.classList.remove("correct", "wrong");
+    } else {
+        // Errou alguma letra
+        input.classList.remove("correct");
+        input.classList.add("wrong");
     }
+    
     checkPageComplete();
 }
 
