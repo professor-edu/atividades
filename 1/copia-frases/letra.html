@@ -113,7 +113,7 @@
         .correct { background: #e6ffe6; border-color: #2ecc71; }
         .wrong { background: #ffe8e8; border-color: #ff6b6b; }
 
-        #next-btn {
+        #final-btn {
             background: #4caf50;
             color: white;
             padding: 15px 40px;
@@ -123,6 +123,7 @@
             cursor: pointer;
             display: none;
             margin: 20px auto;
+            text-decoration: none;
         }
 
         /* --- Footer Oficial --- */
@@ -157,20 +158,20 @@
         <div id="progress-bar" class="progress-bar"></div>
     </div>
 
-    <h2 id="page-title" style="text-align:center; color:#155a8a;"></h2>
-
-    <div id="sentences-container"></div>
-
-    <div style="text-align: center;">
-        <button id="next-btn" onclick="nextPage()">Seguinte ➔</button>
+    <div id="game-area">
+        <h2 id="page-title" style="text-align:center; color:#155a8a;"></h2>
+        <div id="sentences-container"></div>
     </div>
 
     <div id="final-screen" style="display:none; text-align:center; padding: 40px 0;">
         <h1>🎉 Parabéns! 👍</h1>
-        <p>Completaste todas as frases desta letra!</p>
+        <p id="final-msg">Completaste todas as frases desta letra!</p>
         <img src="https://openmoji.org/data/color/svg/1F3C6.svg" style="width:120px;">
         <br><br>
-        <a href="index.html" class="btn-nav" style="padding:15px 30px; font-size:1.1rem;">Escolher outra Letra</a>
+    </div>
+    
+    <div style="text-align: center;">
+        <a id="final-btn" href="#">Avançar para a letra ...</a>
     </div>
 </div>
 
@@ -182,26 +183,16 @@
 
 <script>
 const imageFor = {
-    "P": "https://openmoji.org/data/color/svg/1F986.svg",
-    "T": "https://openmoji.org/data/color/svg/1F578.svg",
-    "L": "https://openmoji.org/data/color/svg/1F319.svg",
-    "D": "https://openmoji.org/data/color/svg/1F3B2.svg",
-    "M": "https://openmoji.org/data/color/svg/1F412.svg",
-    "V": "https://openmoji.org/data/color/svg/1F404.svg",
-    "N": "https://openmoji.org/data/color/svg/2601.svg",
-    "R": "https://openmoji.org/data/color/svg/1F42D.svg",
-    "C": "https://openmoji.org/data/color/svg/1F415.svg",
-    "Q": "https://openmoji.org/data/color/svg/1F95D.svg",
-    "B": "https://openmoji.org/data/color/svg/26BD.svg",
-    "G": "https://openmoji.org/data/color/svg/1F408.svg",
-    "J": "https://openmoji.org/data/color/svg/1FA9F.svg",
-    "F": "https://openmoji.org/data/color/svg/1F9DA.svg",
-    "S": "https://openmoji.org/data/color/svg/1F438.svg",
-    "Z": "https://openmoji.org/data/color/svg/1F993.svg",
-    "H": "https://openmoji.org/data/color/svg/1F99B.svg",
-    "X": "https://openmoji.org/data/color/svg/1F4AE.svg", 
-    "K": "https://openmoji.org/data/color/svg/1F3CE.svg",
-    "W": "https://openmoji.org/data/color/svg/1F310.svg",
+    "P": "https://openmoji.org/data/color/svg/1F986.svg", "T": "https://openmoji.org/data/color/svg/1F578.svg",
+    "L": "https://openmoji.org/data/color/svg/1F319.svg", "D": "https://openmoji.org/data/color/svg/1F3B2.svg",
+    "M": "https://openmoji.org/data/color/svg/1F412.svg", "V": "https://openmoji.org/data/color/svg/1F404.svg",
+    "N": "https://openmoji.org/data/color/svg/2601.svg", "R": "https://openmoji.org/data/color/svg/1F42D.svg",
+    "C": "https://openmoji.org/data/color/svg/1F415.svg", "Q": "https://openmoji.org/data/color/svg/1F95D.svg",
+    "B": "https://openmoji.org/data/color/svg/26BD.svg", "G": "https://openmoji.org/data/color/svg/1F408.svg",
+    "J": "https://openmoji.org/data/color/svg/1FA9F.svg", "F": "https://openmoji.org/data/color/svg/1F9DA.svg",
+    "S": "https://openmoji.org/data/color/svg/1F438.svg", "Z": "https://openmoji.org/data/color/svg/1F993.svg",
+    "H": "https://openmoji.org/data/color/svg/1F99B.svg", "X": "https://openmoji.org/data/color/svg/1F4AE.svg", 
+    "K": "https://openmoji.org/data/color/svg/1F3CE.svg", "W": "https://openmoji.org/data/color/svg/1F310.svg",
     "Y": "https://openmoji.org/data/color/svg/1F9D8.svg"
 };
 
@@ -251,11 +242,11 @@ function loadPage() {
         div.className = "sentence-box";
         div.innerHTML = `
             <div class="sentence-text">${txt}</div>
-            <input id="inp${i}" class="sentence-input" placeholder="Copia aqui a frase..." oninput="checkSentence(this, '${txt.replace(/'/g, "\\'")}')">
+            <input id="inp${i}" class="sentence-input" placeholder="" oninput="checkSentence(this, '${txt.replace(/'/g, "\\'")}')">
         `;
         container.appendChild(div);
     });
-    document.getElementById("next-btn").style.display = "none";
+    document.getElementById("final-btn").style.display = "none";
     updateProgress();
 }
 
@@ -275,15 +266,24 @@ function checkPageComplete() {
     const inputs = document.querySelectorAll(".sentence-input");
     const allCorrect = Array.from(inputs).every(inp => inp.classList.contains("correct"));
     if (allCorrect) {
-        document.getElementById("next-btn").style.display = "block";
+        showFinalOptions();
     }
 }
 
-function nextPage() {
+function showFinalOptions() {
+    document.getElementById("game-area").style.display = "none";
     document.getElementById("final-screen").style.display = "block";
-    document.getElementById("sentences-container").style.display = "none";
-    document.getElementById("next-btn").style.display = "none";
-    document.getElementById("progress-bar").style.width = "100%";
+    const btnNext = document.getElementById("final-btn");
+    
+    if (pageIndex < pages.length - 1) {
+        const proximaLetra = pages[pageIndex + 1].letter;
+        btnNext.textContent = "Avançar para a letra " + proximaLetra + " ➔";
+        btnNext.href = "letra.html?letra=" + proximaLetra;
+    } else {
+        btnNext.textContent = "🏆 Terminar Desafio";
+        btnNext.href = "index.html";
+    }
+    btnNext.style.display = "inline-block";
 }
 
 function updateProgress() {
