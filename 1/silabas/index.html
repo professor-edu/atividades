@@ -11,8 +11,8 @@
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-janela-fundo: #ebf5ff; /* Fundo suave da tua foto */
-            --azul-janela-borda: #add8e6; /* Contorno azul céu da tua foto */
+            --azul-janela-fundo: #ebf5ff;
+            --azul-janela-borda: #add8e6;
             --azul-grad-esq: #bde6ff; 
             --azul-grad-dir: #2e86de; 
             --azul-vibrante: #0091ff;
@@ -30,7 +30,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh; 
-            overflow: hidden; 
+            /* Removido o overflow: hidden para evitar cortes em ecrãs pequenos */
         }
         
         .cabecalho { 
@@ -41,7 +41,7 @@
             justify-content: space-between;
             height: 85px; 
             flex-shrink: 0;
-            z-index: 20;
+            z-index: 30; /* Aumentado para ficar sempre no topo */
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -84,7 +84,12 @@
             filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        .status-jogo { padding: 5px; flex-shrink: 0; }
+        .status-jogo { 
+            padding: 5px; 
+            flex-shrink: 0; 
+            position: relative; 
+            z-index: 25; /* Garante que a barra de progresso não é coberta */
+        }
         .estrelas { font-size: 24px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
 
         .progresso-container {
@@ -99,38 +104,53 @@
         }
 
         #main-content { 
-            flex: 1; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-            min-height: 0; padding: 10px;
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            min-height: 0; 
+            padding: 15px;
+            overflow-y: auto; /* Permite scroll se o cartão for maior que o ecrã */
         }
 
-        /* CARTÃO AMPLIADO PARA ECRÃS GRANDES */
         .cartao {
-            background: white; width: 95%; max-width: 650px;
-            padding: 30px; border-radius: 30px; 
+            background: white; 
+            width: 95%; 
+            max-width: 650px;
+            padding: 25px; 
+            border-radius: 30px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 12px;
+            position: relative;
+            z-index: 1;
         }
 
         .imagem-pergunta {
-            height: 180px; width: 180px; object-fit: contain;
-            border: 3px solid var(--azul-claro); border-radius: 20px; padding: 10px;
+            height: 160px; /* Ajustado para poupar espaço vertical */
+            width: 160px; 
+            object-fit: contain;
+            border: 3px solid var(--azul-claro); 
+            border-radius: 20px; 
+            padding: 10px;
         }
 
         .zona-drop {
-            display: flex; gap: 15px; justify-content: center; min-height: 90px;
-            margin: 10px 0; flex-wrap: wrap; padding: 15px;
+            display: flex; gap: 15px; justify-content: center; min-height: 80px;
+            margin: 5px 0; flex-wrap: wrap; padding: 12px;
             border-radius: 20px; background: #fdfdfd; border: 2px dashed var(--azul-janela-borda);
         }
 
-        /* CAIXAS ESTILO "JANELA" */
         .caixa-silaba {
-            width: 90px; height: 65px; 
+            width: 85px; height: 60px; 
             background: var(--azul-janela-fundo);
             border: 2px solid var(--azul-janela-borda); 
-            border-radius: 18px;
+            border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 26px; font-weight: 700; color: var(--azul-escuro);
+            font-size: 24px; font-weight: 700; color: var(--azul-escuro);
             cursor: grab; 
             box-shadow: 0 4px 0px rgba(173, 216, 230, 0.5);
             transition: all 0.2s ease;
@@ -138,34 +158,40 @@
         }
 
         .caixa-vazia {
-            width: 90px; height: 65px; border: 3px dashed #cbd5e0;
-            border-radius: 18px; background: #f8fafc;
+            width: 85px; height: 60px; border: 3px dashed #cbd5e0;
+            border-radius: 15px; background: #f8fafc;
             display: flex; align-items: center; justify-content: center;
         }
 
         .caixa-silaba:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 0px rgba(173, 216, 230, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0px rgba(173, 216, 230, 0.5);
         }
-
-        .caixa-silaba:active { cursor: grabbing; }
 
         .opcoes-silabas {
             display: flex; gap: 15px; justify-content: center; 
-            margin-top: 10px; flex-wrap: wrap; padding: 20px;
+            margin-top: 5px; flex-wrap: wrap; padding: 15px;
             background: #fff; border: 2px solid var(--azul-claro);
-            border-radius: 20px; width: 100%; min-height: 100px;
+            border-radius: 20px; width: 100%; min-height: 90px;
         }
 
         footer {
-            height: 50px; flex-shrink: 0; display: flex; align-items: center;
-            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
+            height: 50px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            background: white; 
+            border-top: 1px solid #eee; 
+            width: 100%;
+            z-index: 30;
         }
 
         @media (max-width: 600px) {
             .cabecalho h1 { font-size: 1.4rem; }
-            .caixa-silaba, .caixa-vazia { width: 75px; height: 55px; font-size: 20px; }
-            .imagem-pergunta { height: 140px; width: 140px; }
+            .caixa-silaba, .caixa-vazia { width: 70px; height: 50px; font-size: 18px; }
+            .imagem-pergunta { height: 130px; width: 130px; }
+            .cartao { padding: 15px; }
         }
     </style>
 </head>
@@ -209,7 +235,7 @@
         <p style="font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; margin: 5px 0;">Organiza as sílabas:</p>
         <div class="zona-drop" id="caixas-destino"></div>
         <div class="opcoes-silabas" id="caixas-origem"></div>
-        <div id="feedback" style="min-height: 35px; font-weight: 700; font-size: 1.3rem; margin-top: 10px;"></div>
+        <div id="feedback" style="min-height: 35px; font-weight: 700; font-size: 1.3rem; margin-top: 5px;"></div>
     </div>
 </main>
 
