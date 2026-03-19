@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧩 Arrastar Sílabas 🧩</title>
+    
+    <link rel="icon" type="image/png" href="../palmas.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --azul-claro: #f0f7ff;
             --azul-medio: #7ac7f0;
+            --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
@@ -28,7 +31,7 @@
         
         .cabecalho { 
             background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px 20px 0 20px; 
+            padding: 10px 20px 0 20px; 
             color: var(--azul-escuro); 
             display: flex;
             align-items: center; 
@@ -36,7 +39,7 @@
             position: relative;
             z-index: 20;
             flex-shrink: 0;
-            min-height: 100px; 
+            min-height: 90px; 
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -44,102 +47,94 @@
         .header-right { justify-content: flex-end; }
 
         .cabecalho-conteudo { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px; 
-            flex: 2;
+            display: flex; justify-content: center; align-items: center; 
+            gap: 12px; flex: 2;
         }
 
-        /* IMAGEM NO HEADER SEMPRE COM 80PX */
+        /* IMAGEM NO HEADER SEMPRE COM 70PX */
         .icone-cabecalho { 
-            width: 80px !important; 
-            height: 80px !important; 
+            width: 70px !important; 
+            height: 70px !important; 
             object-fit: contain;
             filter: drop-shadow(2px 2px 0px #fff); 
         }
 
         .btn-menu {
-            background: var(--laranja);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+            background: var(--laranja); color: white; border: none;
+            padding: 8px 16px; border-radius: 20px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
         }
 
-        .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
-
         .onda-container {
-            height: 45px; width: 100%; overflow: hidden; line-height: 0;
+            height: 40px; width: 100%; overflow: hidden; line-height: 0;
             margin-top: -1px; filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.1));
             position: relative; z-index: 10; flex-shrink: 0;
         }
 
         .onda-container svg { width: 100%; height: 100%; }
 
-        .estrelas { font-size: 24px; color: #f57c00; font-weight: 700; padding: 15px; }
+        /* Estrelas e Barra de Progresso */
+        .status-jogo { padding: 10px; flex-shrink: 0; }
+        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
+
+        .progresso-container {
+            width: 250px; height: 12px; background: #d0e8ff;
+            border-radius: 10px; margin: 0 auto; overflow: hidden;
+            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .barra-progresso {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, var(--azul-vibrante), #5ec2ff);
+            transition: width 0.5s ease;
+        }
 
         #main-content { 
-            flex: 1 0 auto; 
-            padding: 10px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
+            flex: 1 0 auto; padding: 10px 20px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .cartao {
-            background: white; width: 95%; max-width: 500px;
-            margin: 5px auto; padding: 25px;
-            border-radius: 30px; 
+            background: white; width: 95%; max-width: 480px;
+            margin: 5px auto; padding: 25px; border-radius: 30px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.04);
             display: flex; flex-direction: column; align-items: center; gap: 15px;
         }
 
-        /* IMAGEM DO CARTÃO (A que não aparecia) */
         .imagem-pergunta {
-            height: 180px; width: 180px; /* Aumentei um pouco para destaque */
-            object-fit: contain;
-            border: 4px solid var(--azul-claro); 
-            border-radius: 20px; 
-            padding: 8px;
-            background-color: white;
+            height: 160px; width: 160px; object-fit: contain;
+            border: 4px solid var(--azul-claro); border-radius: 20px; padding: 8px;
         }
 
+        /* Zonas de Arrastar */
         .zona-drop {
             display: flex; gap: 10px; justify-content: center; min-height: 70px;
-            margin: 15px 0; flex-wrap: wrap;
+            margin: 15px 0; flex-wrap: wrap; padding: 10px;
+            border-radius: 20px; background: #fafafa; border: 2px dashed #eee;
         }
 
         .caixa-vazia {
-            width: 85px; height: 60px; border: 3px dashed var(--azul-medio);
-            border-radius: 15px; background: var(--azul-claro);
+            width: 80px; height: 60px; border: 2px solid #ddd;
+            border-radius: 15px; background: #fff;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
         }
 
         .caixa-silaba {
-            width: 85px; height: 60px; background: white;
+            width: 80px; height: 60px; background: white;
             border: 3px solid var(--azul-medio); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 700; color: var(--azul-escuro);
-            cursor: pointer; transition: all 0.2s;
+            font-size: 20px; font-weight: 700; color: var(--azul-escuro);
+            cursor: grab; transition: transform 0.2s;
             box-shadow: 0 4px 0px var(--azul-medio);
-            user-select: none;
+            user-select: none; touch-action: none;
         }
+
+        .caixa-silaba.dragging { opacity: 0.5; transform: scale(0.9); }
 
         .opcoes-silabas {
             display: flex; gap: 12px; justify-content: center; 
             margin-top: 10px; flex-wrap: wrap; padding: 15px;
-            background: #f9f9f9; border-radius: 20px; width: 100%;
+            background: #f1f8ff; border-radius: 20px; width: 100%; min-height: 80px;
         }
 
         footer {
@@ -148,12 +143,10 @@
         }
 
         @media (max-width: 600px) {
-            .cabecalho { padding: 10px 10px 0 10px; min-height: 95px; }
-            .icone-cabecalho { width: 80px !important; height: 80px !important; }
+            .icone-cabecalho { width: 70px !important; height: 70px !important; }
             h1 { font-size: 0.85rem; }
-            .cartao { padding: 15px; width: 92%; }
-            .imagem-pergunta { height: 140px; width: 140px; }
-            .onda-container { height: 30px; }
+            .caixa-silaba, .caixa-vazia { width: 65px; height: 55px; font-size: 17px; }
+            .imagem-pergunta { height: 130px; width: 130px; }
         }
     </style>
 </head>
@@ -166,7 +159,7 @@
         </button>
     </div>
     <div class="cabecalho-conteudo">
-        <img src="puzzle.png" class="icone-cabecalho" alt="jogo"> 
+        <img src="../puzzle.png" class="icone-cabecalho" alt="jogo"> 
         <h1 style="margin:0">Arrastar Sílabas</h1>
     </div>
     <div class="header-right"></div>
@@ -184,14 +177,21 @@
     </svg>
 </div>
 
-<div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
+<div class="status-jogo">
+    <div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
+    <div class="progresso-container">
+        <div id="barra-progresso" class="barra-progresso"></div>
+    </div>
+</div>
 
 <main id="main-content">
     <div class="cartao" id="jogo-container">
         <img id="img-pergunta" class="imagem-pergunta" src="" alt="carregando...">
-        <p style="font-weight: 700; color: var(--azul-escuro); margin: 5px 0;">Forma a palavra:</p>
+        <p style="font-weight: 700; color: var(--azul-escuro); margin: 5px 0;">Arrasta as sílabas para o sítio certo:</p>
+        
         <div class="zona-drop" id="caixas-destino"></div>
         <div class="opcoes-silabas" id="caixas-origem"></div>
+        
         <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem; margin-top: 10px;"></div>
     </div>
 </main>
@@ -206,104 +206,137 @@
 <script>
     let indiceAtual = 0;
     let estrelas = 0;
-    // Garante que "palavras" existe no dados.js
     let listaJogo = [];
     if (typeof palavras !== 'undefined') {
         listaJogo = [...palavras].sort(() => 0.5 - Math.random());
     }
 
-    let silabasColocadas = [];
-
     function carregarPergunta() {
-        if (listaJogo.length === 0) {
-            console.error("Erro: A variável 'palavras' não foi encontrada no js/dados.js");
-            return;
-        }
-
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
         
+        atualizarBarra();
         const item = listaJogo[indiceAtual];
         const silabasCorretas = item.divisao.split('-');
-        silabasColocadas = new Array(silabasCorretas.length).fill(null);
         
-        // CORREÇÃO DA IMAGEM: Forçar o carregamento do SRC
-        const imgElemento = document.getElementById('img-pergunta');
-        imgElemento.src = item.imagem; 
-
+        document.getElementById('img-pergunta').src = item.imagem;
         document.getElementById('feedback').innerText = "";
         
         const destino = document.getElementById('caixas-destino');
         destino.innerHTML = "";
-        silabasCorretas.forEach((_, i) => {
+        silabasCorretas.forEach((s, i) => {
             const caixa = document.createElement('div');
             caixa.className = 'caixa-vazia';
-            caixa.onclick = () => removerSilaba(i);
+            caixa.dataset.silabaCorreta = s;
+            caixa.ondragover = (e) => e.preventDefault();
+            caixa.ondrop = lidarDrop;
             destino.appendChild(caixa);
         });
 
         const origem = document.getElementById('caixas-origem');
         origem.innerHTML = "";
-        const silabasEmbaralhadas = [...silabasCorretas].sort(() => 0.5 - Math.random());
-        silabasEmbaralhadas.forEach(s => {
+        const silabasBaralhadas = [...silabasCorretas].sort(() => 0.5 - Math.random());
+        silabasBaralhadas.forEach((s, i) => {
             const div = document.createElement('div');
             div.className = 'caixa-silaba';
             div.innerText = s;
-            div.onclick = () => colocarSilaba(s, div);
+            div.draggable = true;
+            div.id = "silaba-" + i;
+            div.ondragstart = (e) => {
+                e.dataTransfer.setData("text", e.target.id);
+                e.target.classList.add('dragging');
+            };
+            div.ondragend = (e) => e.target.classList.remove('dragging');
+            
+            // Suporte Touch para Telemóveis
+            div.ontouchstart = lidarTouchStart;
+            div.ontouchmove = lidarTouchMove;
+            div.ontouchend = lidarTouchEnd;
+
             origem.appendChild(div);
         });
     }
 
-    function colocarSilaba(silaba, elemento) {
-        const proxEspaco = silabasColocadas.indexOf(null);
-        if (proxEspaco !== -1) {
-            silabasColocadas[proxEspaco] = silaba;
-            const caixas = document.querySelectorAll('#caixas-destino div');
-            caixas[proxEspaco].innerText = silaba;
-            caixas[proxEspaco].className = 'caixa-silaba'; 
-            elemento.style.visibility = "hidden";
-            verificarResultado();
+    function lidarDrop(e) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text");
+        const elemento = document.getElementById(id);
+        const caixaDestino = e.target.closest('.caixa-vazia');
+        
+        if (caixaDestino && !caixaDestino.hasChildNodes()) {
+            caixaDestino.appendChild(elemento);
+            elemento.style.cursor = "default";
+            elemento.draggable = false;
+            verificarPalavra();
         }
     }
 
-    function removerSilaba(index) {
-        if (silabasColocadas[index] !== null) {
-            const silabaRemovida = silabasColocadas[index];
-            silabasColocadas[index] = null;
-            const caixas = document.querySelectorAll('#caixas-destino div');
-            caixas[index].innerText = "";
-            caixas[index].className = 'caixa-vazia';
-            const opcoes = document.querySelectorAll('#caixas-origem .caixa-silaba');
-            for (let opt of opcoes) {
-                if (opt.innerText === silabaRemovida && opt.style.visibility === "hidden") {
-                    opt.style.visibility = "visible";
-                    break;
-                }
+    // --- Lógica de Touch para Mobile ---
+    let touchElement = null;
+    function lidarTouchStart(e) { touchElement = e.target; }
+    function lidarTouchMove(e) {
+        e.preventDefault();
+        let touch = e.touches[0];
+        touchElement.style.position = 'fixed';
+        touchElement.style.left = touch.clientX - 40 + 'px';
+        touchElement.style.top = touch.clientY - 30 + 'px';
+        touchElement.style.zIndex = "1000";
+    }
+    function lidarTouchEnd(e) {
+        touchElement.style.position = 'static';
+        let touch = e.changedTouches[0];
+        let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+        let caixaVazia = dropTarget ? dropTarget.closest('.caixa-vazia') : null;
+
+        if (caixaVazia && !caixaVazia.hasChildNodes()) {
+            caixaVazia.appendChild(touchElement);
+            touchElement.draggable = false;
+            verificarPalavra();
+        } else {
+            document.getElementById('caixas-origem').appendChild(touchElement);
+        }
+    }
+
+    function verificarPalavra() {
+        const caixas = document.querySelectorAll('.caixa-vazia');
+        let preenchidas = 0;
+        let todasCorretas = true;
+
+        caixas.forEach(c => {
+            if (c.hasChildNodes()) {
+                preenchidas++;
+                if (c.firstChild.innerText !== c.dataset.silabaCorreta) todasCorretas = false;
+            }
+        });
+
+        if (preenchidas === caixas.length) {
+            if (todasCorretas) {
+                estrelas++;
+                document.getElementById('contador-estrelas').innerText = estrelas;
+                document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Excelente! ✨</span>";
+                setTimeout(() => { indiceAtual++; carregarPergunta(); }, 1500);
+            } else {
+                document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Quase! Tenta de novo. 🔄</span>";
+                setTimeout(() => {
+                    caixas.forEach(c => {
+                        if (c.firstChild) document.getElementById('caixas-origem').appendChild(c.firstChild);
+                    });
+                    document.getElementById('feedback').innerText = "";
+                }, 1200);
             }
         }
     }
 
-    function verificarResultado() {
-        if (silabasColocadas.includes(null)) return;
-        const item = listaJogo[indiceAtual];
-        if (silabasColocadas.join('-') === item.divisao) {
-            estrelas++;
-            document.getElementById('contador-estrelas').innerText = estrelas;
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Correto! ✨</span>";
-            setTimeout(() => { indiceAtual++; carregarPergunta(); }, 1500);
-        } else {
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! 🔄</span>";
-            setTimeout(() => {
-                silabasColocadas.forEach((_, i) => removerSilaba(i));
-                document.getElementById('feedback').innerText = "";
-            }, 1200);
-        }
+    function atualizarBarra() {
+        const perc = (indiceAtual / listaJogo.length) * 100;
+        document.getElementById('barra-progresso').style.width = perc + "%";
     }
 
     function finalizarJogo() {
+        atualizarBarra();
         document.getElementById('jogo-container').innerHTML = `
-            <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
-            <p style="font-size: 20px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
-            <button onclick="location.reload()" style="padding: 12px 30px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: 700; font-family: 'Quicksand';">Jogar de Novo</button>
+            <h2 style="color: var(--azul-escuro)">🏆 Missão Cumprida!</h2>
+            <p style="font-size: 20px;">Ganhaste <strong>${estrelas}</strong> estrelas!</p>
+            <button onclick="location.reload()" style="padding: 12px 30px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: 700; font-family: 'Quicksand';">Jogar Novamente</button>
         `;
     }
 
