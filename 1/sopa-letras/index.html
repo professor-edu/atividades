@@ -2,8 +2,8 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🧩 Sopa de Letras 🧩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sopa de Letras 🔎</title>
     
     <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -21,281 +21,358 @@
             --laranja: #ff9800;
         }
 
-        * { box-sizing: border-box; }
-
         body { 
             font-family: 'Quicksand', sans-serif; 
+            text-align: center; 
             background-color: var(--azul-claro); 
             margin: 0; 
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden; /* Evita que a página balance para os lados */
+            height: 100vh; 
+            overflow: hidden; 
+            user-select: none;
         }
         
+        /* CABEÇALHO TEMPLATE */
         .cabecalho { 
             background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
-            display: flex; align-items: center; justify-content: space-between;
-            height: 85px; flex-shrink: 0; z-index: 20;
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+            height: 85px; 
+            flex-shrink: 0;
+            z-index: 20;
         }
 
-        .header-left { flex: 1; }
-        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; flex: 3; }
-        .cabecalho h1 { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); font-weight: 700; color: var(--azul-escuro); }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
+
+        .cabecalho-conteudo { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 3;
+        }
+
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            white-space: nowrap;
+        }
 
         .btn-menu {
             background: var(--laranja); color: white; border: none;
             padding: 10px 18px; border-radius: 25px; font-weight: 700;
             cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
-            transition: transform 0.3s ease; text-decoration: none; display: inline-block;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.3s ease;
         }
         .btn-menu:hover { transform: scale(1.05); }
 
         .onda-container {
             height: 45px; width: 100%; overflow: hidden;
             margin-top: -1px; flex-shrink: 0; z-index: 10;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.1));
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        .status-jogo { padding: 15px; text-align: center; }
-        .contadores { 
+        /* COUNTDOWN FORA DO HEADER */
+        .status-jogo { padding: 5px; flex-shrink: 0; }
+        #countdown-container {
+            display: inline-block;
+            background: white;
+            padding: 5px 25px;
+            border-radius: 20px;
+            border: 3px solid var(--laranja);
+            margin: 10px 0;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--azul-escuro);
+        }
+
+        .container { 
             display: flex; justify-content: center; align-items: center; 
-            gap: 10px; flex-wrap: wrap; 
-        }
-        
-        .btn-nivel {
-            padding: 8px 15px; border: 2.5px solid var(--azul-grad-dir); border-radius: 20px;
-            background: white; color: var(--azul-escuro); font-weight: 700; cursor: pointer;
-        }
-        .btn-nivel.active { background: var(--azul-grad-dir); color: white; }
-
-        #cronometro {
-            background: white; padding: 5px 15px; border-radius: 15px;
-            border: 2.5px solid var(--laranja); color: var(--azul-escuro); font-weight: 700;
+            gap: 25px; flex: 1; padding: 10px; overflow: hidden;
         }
 
-        main { flex: 1; padding: 10px; display: flex; justify-content: center; }
-
-        .game-layout {
-            display: flex; gap: 20px; align-items: flex-start; justify-content: center;
-            max-width: 1200px; width: 100%;
-        }
-
-        /* GRELHA ADAPTÁVEL */
+        /* GRELHA E LISTA */
         #grid { 
-            display: grid; grid-template-columns: repeat(10, 1fr); 
-            gap: 4px; background: white; padding: 10px; border-radius: 20px;
-            border: 2px solid var(--azul-janela-borda);
-            width: 100%; max-width: 500px; /* Impede que fique gigante no PC */
-            touch-action: none; /* Crucial para o toque funcionar sem scroll do browser */
+            display: grid; grid-template-columns: repeat(10, 45px); grid-template-rows: repeat(10, 45px); 
+            gap: 5px; background: white; padding: 15px; border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); border: 2px solid var(--azul-janela-borda);
         }
-        
+
         .letra { 
-            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: clamp(14px, 4vw, 22px); border-radius: 6px; 
-            background: var(--azul-janela-fundo); color: var(--azul-escuro);
+            width: 45px; height: 45px; border: 1px solid #e3efff; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 22px; border-radius: 10px; background: #fff;
         }
-        .letra.selecionando { background: #fff176 !important; } 
-        .letra.correta { background: var(--verde) !important; color: white !important; }
+        .letra.selecionando { background: #fff9c4; border-color: #fbc02d; } 
+        .letra.correta { background: var(--verde) !important; color: white; border-color: #388e3c; }
 
-        /* LISTA DE IMAGENS */
-        #lista-imagens {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-            width: 100%; max-width: 300px;
-        }
-        .cartao-img {
-            background: white; border: 2px solid var(--azul-janela-borda);
-            border-radius: 15px; padding: 8px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; text-align: center;
-        }
-        .cartao-img img { width: 100%; height: auto; max-height: 80px; object-fit: contain; }
-        .cartao-img span { font-size: 0.7rem; font-weight: 700; color: var(--azul-escuro); margin-top: 4px; }
-        .cartao-img.encontrada { opacity: 0.3; filter: grayscale(1); border-color: var(--verde); }
+        #lista-palavras { display: grid; grid-template-columns: repeat(2, 160px); gap: 10px; }
+        .item-palavra { background: white; padding: 8px; border-radius: 15px; border: 2px solid var(--azul-janela-borda); display: flex; flex-direction: column; align-items: center; }
+        .item-palavra img { width: 60px; height: 60px; object-fit: contain; }
+        .item-palavra span { font-weight: bold; font-size: 11px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
+        .item-palavra.encontrada { opacity: 0.3; background: #e8f5e9; border-color: var(--verde); }
 
+        /* FOOTER TEMPLATE */
         footer {
-            padding: 15px; background: white; border-top: 1px solid #eee; 
-            text-align: center; font-size: 0.8rem; font-weight: 700;
+            height: 50px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
         }
 
-        /* AJUSTES MOBILE */
-        @media (max-width: 800px) {
-            .game-layout { flex-direction: column; align-items: center; }
-            #lista-imagens { max-width: 500px; grid-template-columns: repeat(4, 1fr); }
-            .cabecalho { padding: 0 10px; }
-        }
+        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
     <div class="header-left">
-        <a href="../index.html" class="btn-menu">🏠 MENU</a>
+        <button class="btn-menu" onclick="window.location.href='../index.html'">
+            <span>🏠</span> MENU
+        </button>
     </div>
     <div class="cabecalho-conteudo">
-        <img src="https://openmoji.org/data/color/svg/1F50E.svg" style="width:40px">
+        <img src="sopa-letras.png" style="width:55px" alt="ícone">
         <h1>Sopa de Letras</h1>
     </div>
-    <div style="flex:1"></div>
+    <div class="header-right"></div>
 </header>
 
 <div class="onda-container">
     <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: var(--azul-grad-dir);"></path>
+        <defs>
+            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
     </svg>
 </div>
 
 <div class="status-jogo">
-    <div class="contadores">
-        <button class="btn-nivel active" onclick="setNivel(4, this)">FÁCIL</button>
-        <button class="btn-nivel" onclick="setNivel(6, this)">MÉDIO</button>
-        <button class="btn-nivel" onclick="setNivel(8, this)">DIFÍCIL</button>
-        <div id="cronometro">⏱️ <span id="tempo">0</span>s</div>
+    <div id="countdown-container">⏱️ <span id="timer-display">03:00</span></div>
+</div>
+
+<div class="container">
+    <div id="grid" oncontextmenu="return false;"></div> 
+    <div id="lista-palavras"></div>
+</div>
+
+<div id="feedback-final">
+    <div class="painel-vitoria">
+        <img src="img/certo.png" style="width: 80px;">
+        <h2 id="titulo-final">Excelente Trabalho!</h2>
+        <p id="msg-tempo"></p>
+        <button class="btn-menu" style="margin: 0 auto; padding: 15px 30px;" onclick="location.reload()">Jogar de Novo</button>
     </div>
 </div>
 
-<main>
-    <div class="game-layout">
-        <div id="grid"></div>
-        <div id="lista-imagens"></div>
-    </div>
-</main>
-
 <footer>
-    <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" style="color: var(--azul-escuro); text-decoration: none;">EB1/PE da Marinheira</a>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    </p>
 </footer>
 
 <script src="js/dados.js"></script>
 <script>
-    let nivelAtual = 4, tempo = 0, timer, palavrasJogo = [];
-    let isDragging = false, startPos = null, selectedCells = [];
+    const TAMANHO = 10;
+    let tempoRestante = 180; // 3 minutos
+    let intervaloCronometro;
+    const gridElement = document.getElementById('grid');
+    const listaElement = document.getElementById('lista-palavras');
+    
+    let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
+    let palavrasParaEncontrar = selecaoOriginal.map(p => ({
+        nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+        imagem: p.imagem,
+        encontrada: false,
+        celulas: []
+    }));
 
-    function setNivel(n, btn) {
-        document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        nivelAtual = n;
-        init();
-    }
+    let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
+    let estaArrastando = false;
+    let celulaInicial = null;
+    let celulasSelecionadasAtuais = [];
 
-    function init() {
-        clearInterval(timer);
-        tempo = 0; document.getElementById('tempo').innerText = tempo;
-        const grid = document.getElementById('grid');
-        const list = document.getElementById('lista-imagens');
-        grid.innerHTML = ""; list.innerHTML = "";
-
-        let pSel = [...palavras].sort(() => 0.5 - Math.random()).slice(0, nivelAtual);
-        palavrasJogo = pSel.map(p => ({
-            word: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
-            img: p.imagem,
-            found: false,
-            ids: []
-        }));
-
-        let matriz = Array(10).fill().map(() => Array(10).fill(''));
-        palavrasJogo.forEach(p => {
-            let placed = false;
-            while(!placed) {
+    function iniciarJogo() {
+        palavrasParaEncontrar.forEach(pObj => {
+            let colocada = false;
+            let tentativas = 0;
+            while (!colocada && tentativas < 150) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
-                let r = Math.floor(Math.random() * (dir === 'V' ? 10 - p.word.length : 10));
-                let c = Math.floor(Math.random() * (dir === 'H' ? 10 - p.word.length : 10));
-                let can = true;
-                for(let i=0; i<p.word.length; i++) {
-                    let rr = dir === 'V' ? r+i : r, cc = dir === 'H' ? c+i : c;
-                    if(matriz[rr][cc] !== '' && matriz[rr][cc] !== p.word[i]) { can = false; break; }
-                }
-                if(can) {
-                    for(let i=0; i<p.word.length; i++) {
-                        let rr = dir === 'V' ? r+i : r, cc = dir === 'H' ? c+i : c;
-                        matriz[rr][cc] = p.word[i];
-                        p.ids.push(`${rr}-${cc}`);
+                let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
+                let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
+                if (verificarEspaco(pObj.nome, l, c, dir)) {
+                    for (let i = 0; i < pObj.nome.length; i++) {
+                        let curL = dir === 'V' ? l + i : l;
+                        let curC = dir === 'H' ? c + i : c;
+                        matriz[curL][curC] = pObj.nome[i];
+                        pObj.celulas.push(`${curL}-${curC}`);
                     }
-                    placed = true;
+                    colocada = true;
                 }
+                tentativas++;
             }
         });
+        desenharInterface();
+        configurarEventosArrastamento();
+        iniciarCountdown();
+    }
 
-        const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        for(let r=0; r<10; r++) {
-            for(let c=0; c<10; c++) {
+    function verificarEspaco(palavra, l, c, dir) {
+        for (let i = 0; i < palavra.length; i++) {
+            let curL = dir === 'V' ? l + i : l;
+            let curC = dir === 'H' ? c + i : c;
+            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== palavra[i]) return false;
+        }
+        return true;
+    }
+
+    function desenharInterface() {
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let l = 0; l < TAMANHO; l++) {
+            for (let c = 0; c < TAMANHO; c++) {
                 const div = document.createElement('div');
                 div.className = 'letra';
-                div.id = `c-${r}-${c}`;
-                div.dataset.r = r; div.dataset.c = c;
-                div.textContent = matriz[r][c] || abc[Math.floor(Math.random()*26)];
-                grid.appendChild(div);
+                div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
+                div.id = `cell-${l}-${c}`;
+                div.dataset.l = l;
+                div.dataset.c = c;
+                gridElement.appendChild(div);
             }
         }
-
-        palavrasJogo.forEach(p => {
-            list.innerHTML += `<div class="cartao-img" id="img-${p.word}"><img src="${p.img}"><span>${p.word}</span></div>`;
+        palavrasParaEncontrar.forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'item-palavra';
+            item.id = `item-${p.nome}`;
+            item.innerHTML = `<img src="${p.imagem}"><span>${p.nome}</span>`;
+            listaElement.appendChild(item);
         });
-
-        timer = setInterval(() => { tempo++; document.getElementById('tempo').innerText = tempo; }, 1000);
     }
 
-    const getEl = (e) => {
-        const t = e.touches ? e.touches[0] : e;
-        return document.elementFromPoint(t.clientX, t.clientY);
-    };
+    function configurarEventosArrastamento() {
+        gridElement.addEventListener('mousedown', iniciarSelecao);
+        window.addEventListener('mousemove', enquantoArrasta);
+        window.addEventListener('mouseup', finalizarSelecao);
+        gridElement.addEventListener('touchstart', iniciarSelecao, {passive: false});
+        window.addEventListener('touchmove', enquantoArrasta, {passive: false});
+        window.addEventListener('touchend', finalizarSelecao);
+    }
 
-    const handleStart = (e) => {
-        const el = getEl(e);
-        if(el && el.classList.contains('letra')) {
-            isDragging = true;
-            startPos = {r: parseInt(el.dataset.r), c: parseInt(el.dataset.c)};
+    function obterCelulaDosEventos(e) {
+        const touch = e.touches ? e.touches[0] : e;
+        const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (elemento && elemento.classList.contains('letra') && !elemento.classList.contains('correta')) {
+            return { el: elemento, l: parseInt(elemento.dataset.l), c: parseInt(elemento.dataset.c) };
         }
-    };
+        return null;
+    }
 
-    const handleMove = (e) => {
-        if(!isDragging) return;
-        const el = getEl(e);
-        if(el && el.classList.contains('letra')) {
-            const rA = parseInt(el.dataset.r), cA = parseInt(el.dataset.c);
-            document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
-            selectedCells = [];
-            
-            if(Math.abs(rA - startPos.r) > Math.abs(cA - startPos.c)) {
-                const step = rA > startPos.r ? 1 : -1;
-                for(let i=startPos.r; i !== rA+step; i+=step) mark(i, startPos.c);
-            } else {
-                const step = cA > startPos.c ? 1 : -1;
-                for(let i=startPos.c; i !== cA+step; i+=step) mark(startPos.r, i);
+    function iniciarSelecao(e) {
+        const celula = obterCelulaDosEventos(e);
+        if (!celula) return;
+        estaArrastando = true;
+        celulaInicial = { l: celula.l, c: celula.c };
+        celulasSelecionadasAtuais = [];
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        destacarCelula(celula.l, celula.c);
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function enquantoArrasta(e) {
+        if (!estaArrastando) return;
+        const celulaAtual = obterCelulaDosEventos(e);
+        if (!celulaAtual) return;
+        const lInicial = celulaInicial.l;
+        const cInicial = celulaInicial.c;
+        const lAtual = celulaAtual.l;
+        const cAtual = celulaAtual.c;
+        const deltaL = lAtual - lInicial;
+        const deltaC = cAtual - cInicial;
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        celulasSelecionadasAtuais = [];
+        if (Math.abs(deltaL) > Math.abs(deltaC)) {
+            const passo = deltaL > 0 ? 1 : -1;
+            for (let l = lInicial; l !== lAtual + passo; l += passo) {
+                if (l >= 0 && l < TAMANHO) destacarCelula(l, cInicial);
+            }
+        } else {
+            const passo = deltaC > 0 ? 1 : -1;
+            for (let c = cInicial; c !== cAtual + passo; c += passo) {
+                if (c >= 0 && c < TAMANHO) destacarCelula(lInicial, c);
             }
         }
-        if(e.cancelable) e.preventDefault();
-    };
+        if (e.cancelable) e.preventDefault();
+    }
 
-    const mark = (r, c) => {
-        const el = document.getElementById(`c-${r}-${c}`);
-        if(el) { el.classList.add('selecionando'); selectedCells.push(`${r}-${c}`); }
-    };
+    function destacarCelula(l, c) {
+        const id = `${l}-${c}`;
+        const el = document.getElementById(`cell-${id}`);
+        if (el && !el.classList.contains('correta')) {
+            el.classList.add('selecionando');
+            celulasSelecionadasAtuais.push(id);
+        }
+    }
 
-    const handleEnd = () => {
-        if(!isDragging) return;
-        isDragging = false;
-        const sel = selectedCells.sort().join(',');
-        palavrasJogo.forEach(p => {
-            if(!p.found && p.ids.sort().join(',') === sel) {
-                p.found = true;
-                p.ids.forEach(id => document.getElementById(`c-${id}`).classList.add('correta'));
-                document.getElementById(`img-${p.word}`).classList.add('encontrada');
+    function finalizarSelecao() {
+        if (!estaArrastando) return;
+        estaArrastando = false;
+        verificarPalavrasArrastadas();
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+    }
+
+    function verificarPalavrasArrastadas() {
+        const selecaoQuery = celulasSelecionadasAtuais.sort().join(',');
+        palavrasParaEncontrar.forEach(p => {
+            if (!p.encontrada) {
+                const palavraQuery = p.celulas.sort().join(',');
+                if (selecaoQuery === palavraQuery) {
+                    p.encontrada = true;
+                    p.celulas.forEach(id => document.getElementById(`cell-${id}`).classList.add('correta'));
+                    document.getElementById(`item-${p.nome}`).classList.add('encontrada');
+                }
             }
         });
-        document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
-        if(palavrasJogo.every(p => p.found)) { clearInterval(timer); alert("Ganhaste em " + tempo + " segundos!"); }
-    };
+        if (palavrasParaEncontrar.every(p => p.found || p.encontrada)) finalizarJogo(true);
+    }
 
-    const g = document.getElementById('grid');
-    g.addEventListener('mousedown', handleStart);
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', handleEnd);
-    g.addEventListener('touchstart', handleStart, {passive: false});
-    window.addEventListener('touchmove', handleMove, {passive: false});
-    window.addEventListener('touchend', handleEnd);
+    function iniciarCountdown() {
+        intervaloCronometro = setInterval(() => {
+            tempoRestante--;
+            let mins = Math.floor(tempoRestante / 60);
+            let segs = tempoRestante % 60;
+            document.getElementById('timer-display').textContent = 
+                `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+            
+            if (tempoRestante <= 0) {
+                finalizarJogo(false);
+            }
+        }, 1000);
+    }
+
+    function finalizarJogo(vitoria) {
+        clearInterval(intervaloCronometro);
+        const feedback = document.getElementById('feedback-final');
+        const msg = document.getElementById('msg-tempo');
+        const titulo = document.getElementById('titulo-final');
+        
+        feedback.style.display = 'flex';
+        if(vitoria) {
+            titulo.textContent = "Excelente Trabalho!";
+            msg.textContent = `Encontraste todas as palavras!`;
+        } else {
+            titulo.textContent = "O tempo acabou!";
+            msg.textContent = "Tenta ser mais rápido na próxima vez.";
+        }
+    }
 
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    window.onload = init;
+    iniciarJogo();
 </script>
 </body>
 </html>
