@@ -11,13 +11,15 @@
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-grad-topo: #bde6ff;
-            --azul-grad-base: #2e86de; /* O novo azul mais escuro e vibrante */
+            --azul-grad-esq: #bde6ff; /* Azul Mais Claro */
+            --azul-grad-dir: #2e86de; /* Azul Mais Escuro e Vibrante */
             --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
             --vermelho: #e53935;
+            /* Sombra suave para a onda */
+            --sombra-separacao: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
         body { 
@@ -31,9 +33,9 @@
             overflow: hidden; 
         }
         
-        /* HEADER COM GRADIENTE INTEGRADO - 85PX */
+        /* HEADER PADRONIZADO - 85PX COM GRADIENTE ESQUERDA -> DIREITA */
         .cabecalho { 
-            background: linear-gradient(180deg, var(--azul-grad-topo) 0%, var(--azul-grad-base) 100%); 
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
             color: var(--azul-escuro); 
             display: flex;
@@ -42,6 +44,7 @@
             height: 85px; 
             flex-shrink: 0;
             z-index: 20;
+            /* A sombra será aplicada no container da onda para cobrir a área */
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -79,11 +82,19 @@
 
         .btn-menu:hover { transform: translateY(-3px) scale(1.05); background: #f57c00; }
 
-        /* ONDA COM GRADIENTE QUE CONTINUA O HEADER */
+        /* ONDA COM GRADIENTE ESQUERDA -> DIREITA E SOMBRA DE SEPARAÇÃO */
         .onda-container {
-            height: 45px; width: 100%; overflow: hidden;
-            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            height: 45px; 
+            width: 100%; 
+            overflow: hidden;
+            margin-top: -1px; /* Para cobrir qualquer pixel branco */
+            flex-shrink: 0; 
+            z-index: 10;
+            /* A SOMBRA É APLICADA AQUI NO CONTAINER */
+            filter: drop-shadow(var(--sombra-separacao));
         }
+
+        .onda-container svg { height: 100%; width: 100%; }
 
         .status-jogo { padding: 5px; flex-shrink: 0; }
         .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
@@ -91,7 +102,7 @@
         .progresso-container {
             width: 90%; max-width: 480px; height: 20px; 
             background: white; border-radius: 15px; margin: 0 auto; 
-            overflow: hidden; border: 2.5px solid var(--azul-grad-base);
+            overflow: hidden; border: 2.5px solid var(--azul-grad-dir);
         }
         .barra-progresso {
             width: 0%; height: 100%;
@@ -131,10 +142,10 @@
 
         .caixa-silaba {
             width: 80px; height: 60px; background: white;
-            border: 3px solid var(--azul-grad-base); border-radius: 15px;
+            border: 3px solid var(--azul-grad-dir); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             font-size: 20px; font-weight: 700; color: var(--azul-escuro);
-            cursor: grab; box-shadow: 0 5px 0px var(--azul-grad-base);
+            cursor: grab; box-shadow: 0 5px 0px var(--azul-grad-dir);
             user-select: none; touch-action: none;
         }
 
@@ -173,14 +184,14 @@
 </header>
 
 <div class="onda-container">
-    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none">
         <defs>
-            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:var(--azul-grad-base); stop-opacity:1" />
-                <stop offset="100%" style="stop-color:var(--azul-grad-base); stop-opacity:0.6" />
+            <linearGradient id="grad-onda-horizontal" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
             </linearGradient>
         </defs>
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda-horizontal);"></path>
     </svg>
 </div>
 
@@ -209,7 +220,7 @@
 
 <script src="js/dados.js"></script>
 <script>
-    // A lógica JavaScript permanece robusta e funcional
+    // A lógica JavaScript permanece igual
     let indiceAtual = 0;
     let estrelas = 0;
     let listaJogo = [];
