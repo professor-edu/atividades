@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👏 Quantas Sílabas? 👏</title>
+    <title>🔢 Contar Sílabas 🔤</title>
+    
     <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-medio: #7ac7f0;
+            --azul-grad-esq: #bde6ff; 
+            --azul-grad-dir: #2e86de; 
+            --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
             --vermelho: #e53935;
         }
 
-        /* Estrutura Flexível Dinâmica para Telemóveis */
         body { 
             font-family: 'Quicksand', sans-serif; 
             text-align: center; 
@@ -25,20 +27,19 @@
             margin: 0; 
             display: flex;
             flex-direction: column;
-            min-height: 100dvh; /* Altura dinâmica para navegadores móveis */
+            height: 100vh; 
+            overflow: hidden; 
         }
         
-        /* Cabeçalho */
         .cabecalho { 
-            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 10px 20px 0 20px; 
-            color: var(--azul-escuro); 
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            padding: 0 20px; 
             display: flex;
             align-items: center; 
             justify-content: space-between;
-            position: relative;
-            z-index: 20;
+            height: 85px; 
             flex-shrink: 0;
+            z-index: 20;
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -46,118 +47,111 @@
         .header-right { justify-content: flex-end; }
 
         .cabecalho-conteudo { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 12px; 
-            flex: 2;
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 3;
         }
 
-        .icone-cabecalho { width: 70px; height: auto; filter: drop-shadow(2px 2px 0px #fff); }
-
-        /* Menu Laranja Pequeno */
-        .btn-menu {
-            background: var(--laranja);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 2rem;
             font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+            color: var(--azul-escuro);
         }
 
-        .btn-menu span { font-size: 1.2rem; }
-        .btn-menu:hover { transform: translateY(-2px); background: #e68a00; }
+        .icone-cabecalho { 
+            width: 70px !important; 
+            height: 70px !important; 
+            object-fit: contain;
+            filter: drop-shadow(2px 2px 0px rgba(255,255,255,0.4)); 
+        }
 
-        /* Onda Divisora com Sombra */
+        /* MENU: ZOOM UNIFORME */
+        .btn-menu {
+            background: var(--laranja); color: white; border: none;
+            padding: 10px 18px; border-radius: 25px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .btn-menu:hover { 
+            background: #f57c00;
+            transform: scale(1.05); 
+        }
+
         .onda-container {
-            height: 45px;
-            width: 100%;
-            overflow: hidden;
-            line-height: 0;
-            background: none;
-            margin-top: -1px;
-            filter: drop-shadow(0px 5px 4px rgba(0,0,0,0.1));
-            position: relative;
-            z-index: 10;
-            flex-shrink: 0;
+            height: 45px; width: 100%; overflow: hidden;
+            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        .onda-container svg { width: 100%; height: 100%; }
+        /* BARRA DE PROGRESSO */
+        .status-jogo { padding: 5px; flex-shrink: 0; }
+        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
 
-        /* Conteúdo Principal Centrado */
+        .progresso-container {
+            width: 90%; max-width: 480px; height: 18px; 
+            background: white; border-radius: 15px; margin: 0 auto; 
+            overflow: hidden; border: 2.5px solid var(--azul-grad-dir);
+        }
+        .barra-progresso {
+            width: 0%; height: 100%;
+            background: var(--azul-vibrante);
+            transition: width 0.5s ease;
+        }
+
         #main-content { 
-            flex: 1 0 auto; 
-            padding: 10px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; /* Centra o jogo verticalmente se houver espaço */
+            flex: 1; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center;
+            min-height: 0; padding: 10px;
         }
 
         .cartao {
-            background: white; width: 95%; max-width: 480px;
-            margin: 5px auto; padding: 25px;
-            border-radius: 30px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            border: 4px solid transparent;
-            transition: border-color 0.3s ease;
+            background: white; width: 92%; max-width: 460px;
+            padding: 25px; border-radius: 25px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
         }
-
-        /* Animações de Feedback */
-        .animar-sucesso { animation: bounce 0.5s ease; border-color: var(--verde) !important; }
-        .animar-erro { animation: shake 0.5s ease; border-color: var(--vermelho) !important; }
-
-        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
 
         .imagem-pergunta {
             height: 160px; width: 160px; object-fit: contain;
-            border: 5px solid var(--azul-claro); border-radius: 25px; padding: 10px;
-            background: #fff;
+            border: 3px solid var(--azul-claro); border-radius: 15px; padding: 10px;
         }
 
-        .btn-numero {
-            width: 65px; height: 65px;
-            font-size: 28px; font-weight: 700;
-            background: white; border: 3px solid var(--azul-medio);
-            color: var(--azul-medio); border-radius: 20px;
-            cursor: pointer; transition: all 0.2s;
-        }
-
-        .btn-numero:hover { transform: scale(1.1); background: var(--azul-medio); color: white; }
-        .btn-numero.correto { background: var(--verde) !important; color: white !important; border-color: var(--verde) !important; }
-        .btn-numero.errado { background: var(--vermelho) !important; color: white !important; border-color: var(--vermelho) !important; }
-
-        .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; padding: 10px; }
-
-        /* Footer Estático no Fundo */
-        footer {
-            flex-shrink: 0;
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border-top: 1px solid #eee;
+        .opcoes-contagem {
+            display: flex; gap: 15px; justify-content: center; 
+            margin-top: 10px; flex-wrap: wrap; padding: 20px;
+            background: white; border: 2px solid var(--azul-claro);
+            border-radius: 0; 
             width: 100%;
         }
 
+        .btn-numero {
+            width: 70px; height: 70px;
+            background: white; border: 3px solid var(--azul-grad-dir);
+            border-radius: 15px; font-size: 28px; font-weight: 700;
+            color: var(--azul-escuro); cursor: pointer;
+            box-shadow: 0 5px 0px var(--azul-grad-dir);
+            transition: all 0.2s;
+        }
+
+        .btn-numero:hover { 
+            background: var(--azul-claro);
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 0px var(--azul-grad-dir); 
+        }
+
+        .btn-numero:active { transform: translateY(4px); box-shadow: 0 1px 0px var(--azul-grad-dir); }
+
+        footer {
+            height: 50px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
+        }
+
         @media (max-width: 600px) {
-            .cabecalho { padding: 8px 10px 0 10px; }
-            .icone-cabecalho { width: 45px; }
-            h1 { font-size: 0.95rem; }
-            .cartao { padding: 20px; width: 88%; gap: 15px; }
-            .btn-numero { width: 52px; height: 52px; font-size: 20px; }
-            .onda-container { height: 30px; }
-            .estrelas { font-size: 18px; }
+            .cabecalho h1 { font-size: 1.4rem; }
+            .icone-cabecalho { width: 55px !important; height: 55px !important; }
+            .btn-numero { width: 60px; height: 60px; font-size: 22px; }
         }
     </style>
 </head>
@@ -170,106 +164,105 @@
         </button>
     </div>
     <div class="cabecalho-conteudo">
-        <img src="palmas.png" class="icone-cabecalho" alt="palmas"> 
-        <h1 style="margin:0">Quantas Sílabas?</h1>
+        <img src="puzzle.png" class="icone-cabecalho" alt="jogo"> 
+        <h1>Contar Sílabas</h1>
     </div>
     <div class="header-right"></div>
 </header>
 
 <div class="onda-container">
-    <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
         <defs>
-            <linearGradient id="gradiente-onda" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#bde6ff; stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#7ac7f0; stop-opacity:1" />
+            <linearGradient id="grad-onda-final" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
             </linearGradient>
         </defs>
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#gradiente-onda);"></path>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda-final);"></path>
     </svg>
 </div>
 
-<div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
+<div class="status-jogo">
+    <div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
+    <div class="progresso-container">
+        <div id="barra-progresso" class="barra-progresso"></div>
+    </div>
+</div>
 
 <main id="main-content">
     <div class="cartao" id="jogo-container">
-        <img id="img-pergunta" class="imagem-pergunta" src="">
-        <div style="font-size: 1.2rem; font-weight: 700; color: var(--azul-escuro);">
-            Quantas vezes bates as palmas? 👏
+        <img id="img-pergunta" class="imagem-pergunta" src="" alt="carregando...">
+        <p style="font-weight: 700; color: var(--azul-escuro); margin: 5px 0;">Quantas sílabas tem esta palavra?</p>
+        <div class="opcoes-contagem" id="botoes-numeros">
+            <button class="btn-numero" onclick="verificarResposta(1)">1</button>
+            <button class="btn-numero" onclick="verificarResposta(2)">2</button>
+            <button class="btn-numero" onclick="verificarResposta(3)">3</button>
+            <button class="btn-numero" onclick="verificarResposta(4)">4</button>
         </div>
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn-numero" onclick="verificar(1, this)">1</button>
-            <button class="btn-numero" onclick="verificar(2, this)">2</button>
-            <button class="btn-numero" onclick="verificar(3, this)">3</button>
-            <button class="btn-numero" onclick="verificar(4, this)">4</button>
-        </div>
-        <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem;"></div>
-        <div id="silabas-reveladas" style="font-size: 1.8rem; color: var(--laranja); font-weight: 700; letter-spacing: 2px;"></div>
+        <div id="feedback" style="min-height: 25px; font-weight: 700; font-size: 1.1rem; margin-top: 5px;"></div>
     </div>
 </main>
 
 <footer>
-    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.85rem;">
-        2026 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
 <script src="js/dados.js"></script>
 <script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
     let indiceAtual = 0;
     let estrelas = 0;
-    let podeClicar = true;
-    let listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+    let listaJogo = [];
+
+    if (typeof palavras !== 'undefined') {
+        listaJogo = [...palavras].sort(() => 0.5 - Math.random());
+    }
 
     function carregarPergunta() {
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
-        podeClicar = true;
+        atualizarBarra(); // ATUALIZA A BARRA NO INÍCIO DE CADA PERGUNTA
         const item = listaJogo[indiceAtual];
-        const container = document.getElementById('jogo-container');
-        
-        container.classList.remove('animar-sucesso', 'animar-erro');
-        document.getElementById('img-pergunta').src = item.imagem; 
-        document.getElementById('feedback').innerHTML = "";
-        document.getElementById('silabas-reveladas').innerText = "";
-        document.querySelectorAll('.btn-numero').forEach(btn => btn.className = 'btn-numero');
+        document.getElementById('img-pergunta').src = item.imagem;
+        document.getElementById('feedback').innerText = "";
     }
 
-    function verificar(escolha, btnCuidado) {
-        if (!podeClicar) return;
+    function verificarResposta(escolha) {
         const item = listaJogo[indiceAtual];
-        const correta = item.num;
-        const container = document.getElementById('jogo-container');
-        podeClicar = false;
+        const numCorreto = item.divisao.split('-').length;
 
-        if (escolha === correta) {
+        if (escolha === numCorreto) {
             estrelas++;
             document.getElementById('contador-estrelas').innerText = estrelas;
-            btnCuidado.classList.add('correto');
-            container.classList.add('animar-sucesso');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Muito bem! ✨</span>";
-            document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
-            setTimeout(proxima, 2000);
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Correto! ✨</span>";
+            setTimeout(() => { 
+                indiceAtual++; 
+                carregarPergunta(); 
+            }, 1000);
         } else {
-            btnCuidado.classList.add('errado');
-            container.classList.add('animar-erro');
-            document.querySelectorAll('.btn-numero')[correta - 1].classList.add('correto');
-            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Ups! Eram " + correta + " sílabas.</span>";
-            document.getElementById('silabas-reveladas').innerText = item.divisao || item.palavra.toUpperCase();
-            setTimeout(proxima, 3000);
+            document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! 🔄</span>";
         }
     }
 
-    function proxima() { indiceAtual++; carregarPergunta(); }
+    // FUNÇÃO QUE FAZ A BARRA CRESCER
+    function atualizarBarra() {
+        if (listaJogo.length === 0) return;
+        const perc = (indiceAtual / listaJogo.length) * 100;
+        document.getElementById('barra-progresso').style.width = perc + "%";
+    }
 
     function finalizarJogo() {
+        document.getElementById('barra-progresso').style.width = "100%"; // ENCHE A BARRA NO FINAL
         document.getElementById('jogo-container').innerHTML = `
-            <h2 style="color: var(--azul-escuro)">🏆 Jogo Terminado!</h2>
-            <p style="font-size: 22px;">Conseguiste <strong>${estrelas}</strong> estrelas!</p>
-            <button onclick="location.reload()" style="padding: 12px 35px; border-radius: 50px; cursor: pointer; background: var(--azul-escuro); color: white; border: none; font-weight: 700; font-size: 16px; margin-top: 20px; font-family: 'Quicksand', sans-serif;">Jogar de Novo</button>
+            <h2 style="color: var(--azul-escuro)">🏆 Muito Bem!</h2>
+            <p>Completaste o desafio das <strong>${estrelas}</strong> estrelas!</p>
+            <button onclick="location.reload()" class="btn-menu" style="margin: 10px auto;">Recomeçar</button>
         `;
     }
 
     window.onload = carregarPergunta;
 </script>
-<script src="js/componentes.js"></script>
 </body>
 </html>
