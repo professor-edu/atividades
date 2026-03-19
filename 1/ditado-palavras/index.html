@@ -3,125 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ditado de Palavras</title>
+    <title>Ditado de Palavras 🗣️</title>
+    
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-medio: #7ac7f0;
+            --azul-janela-fundo: #ebf5ff;
+            --azul-grad-esq: #bde6ff; 
+            --azul-grad-dir: #2e86de; 
+            --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
+            --laranja: #ff9800;
+            --vermelho: #e53935;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; }
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            text-align: center; 
+            background-color: var(--azul-claro); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            height: 100vh; 
+            overflow: hidden;
+        }
         
         .cabecalho { 
-            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            padding: 0 20px; 
+            display: flex;
+            align-items: center; 
+            justify-content: space-between;
+            height: 85px; 
+            flex-shrink: 0;
+            z-index: 40;
         }
 
-        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; }
-        .icone-cabecalho { width: 45px; height: auto; }
-        .titulo-cabecalho { margin: 0; font-size: 28px; font-weight: bold; }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
 
-        .config-voz { margin: 5px 0; font-size: 14px; }
-        select { padding: 5px 10px; border-radius: 10px; border: 1px solid var(--azul-medio); outline: none; background: white; cursor: pointer; }
+        .cabecalho-conteudo { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 3;
+        }
 
-        .pontos { font-size: 20px; font-weight: bold; color: #f57c00; margin: 10px 0; }
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            white-space: nowrap;
+        }
+
+        /* IMAGEM OUVIR.PNG NO CABEÇALHO */
+        .icone-cabecalho { 
+            width: 70px !important; 
+            height: 70px !important; 
+            object-fit: contain;
+            filter: drop-shadow(2px 2px 0px rgba(255,255,255,0.4)); 
+        }
+
+        .btn-menu {
+            background: var(--laranja); color: white; border: none;
+            padding: 10px 20px; border-radius: 25px; 
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            font-size: 0.95rem; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-menu:hover { transform: scale(1.05); }
+
+        .onda-container {
+            height: 45px; width: 100%; overflow: hidden;
+            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+        }
+
+        .status-jogo { 
+            padding: 5px; flex-shrink: 0; position: relative; z-index: 25;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .progresso-container {
+            width: 90%; max-width: 650px; height: 18px; 
+            background: white; border-radius: 15px; margin: 5px auto; 
+            overflow: hidden; border: 2.5px solid var(--azul-grad-dir);
+        }
+        .barra-progresso {
+            width: 0%; height: 100%;
+            background: var(--azul-vibrante);
+            transition: width 0.5s ease;
+        }
+
+        .contadores {
+            display: flex; gap: 20px; font-weight: 700; font-size: 1.1rem; margin-top: 5px;
+        }
+        .certas { color: var(--verde); }
+        .erradas { color: var(--vermelho); }
+
+        #main-content { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 0; padding: 15px; overflow-y: auto;
+        }
 
         .cartao {
-            background: white; width: 95%; max-width: 500px;
-            margin: 20px auto; padding: 30px 20px;
-            border-radius: 25px; box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            min-height: 420px;
+            background: white; width: 95%; max-width: 650px;
+            padding: 30px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: relative; z-index: 1;
         }
 
-        #revelacao { height: 160px; display: flex; align-items: center; justify-content: center; width: 100%; }
-        #imgSucesso { 
-            max-height: 100%; display: none; border-radius: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-
-        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        #revelacao { height: 150px; display: flex; align-items: center; justify-content: center; width: 100%; }
+        #imgSucesso { max-height: 100%; display: none; border-radius: 20px; border: 3px solid var(--azul-claro); padding: 5px; }
 
         .btn-ouvir {
-            width: 110px; height: 110px;
-            background: #e3f2fd; border: 3px solid var(--azul-medio);
+            width: 100px; height: 100px;
+            background: var(--azul-janela-fundo); border: 3px solid var(--azul-grad-esq);
             border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.2s;
+            box-shadow: 0 4px 0px var(--azul-grad-esq);
         }
-        .btn-ouvir:hover { transform: scale(1.1); background: #bbdefb; }
-        .btn-ouvir img { width: 55px; }
+        .btn-ouvir:hover { transform: scale(1.05); }
+        .btn-ouvir:active { transform: translateY(3px); box-shadow: 0 0px 0px; }
+        .btn-ouvir img { width: 50px; }
 
-        input {
-            font-size: 24px; padding: 12px; width: 80%;
-            border: 2px solid var(--azul-medio); border-radius: 12px;
-            text-align: center; outline: none;
+        #campoEscrita {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 26px; padding: 12px; width: 85%; max-width: 350px;
+            border: 3px solid var(--azul-grad-esq); border-radius: 15px;
+            text-align: center; outline: none; font-weight: 700;
+            background-color: var(--azul-janela-fundo); color: var(--azul-escuro);
         }
 
         #validar {
-            padding: 12px 60px; font-size: 20px; font-weight: bold;
-            background: var(--azul-escuro); color: white; border: none;
-            border-radius: 50px; cursor: pointer;
+            padding: 15px 45px; font-size: 20px; font-weight: bold;
+            background: var(--verde); color: white; border: none;
+            border-radius: 15px; cursor: pointer;
+            box-shadow: 0 4px 0px #388e3c; transition: all 0.2s;
         }
 
-        #feedback { min-height: 80px; width: 100%; font-weight: bold; }
-        .feedback-errado { background: #fff5f5; padding: 15px; border-radius: 15px; border: 1px solid #fde2e2; color: #d32f2f; }
-        .btn-continuar { margin-top: 10px; padding: 8px 25px; background: white; border: 2px solid var(--azul-medio); border-radius: 50px; cursor: pointer; font-weight: bold; color: var(--azul-escuro); }
+        footer {
+            height: 50px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .cabecalho { height: 75px; padding: 0 10px; }
+            .cabecalho h1 { font-size: 1.25rem; }
+            .icone-cabecalho { width: 45px !important; height: 45px !important; }
+            .btn-menu { padding: 8px 12px; font-size: 0.8rem; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.3s; border-color: var(--vermelho) !important; }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
+    <div class="header-left">
+        <a href="../index.html" class="btn-menu">
+            <span>🏠</span> MENU
+        </a>
+    </div>
     <div class="cabecalho-conteudo">
-        <img src="https://openmoji.org/data/color/svg/1F50A.svg" class="icone-cabecalho">
-        <h1 class="titulo-cabecalho">Ditado de Palavras</h1>
-        <img src="ouvir.png" class="icone-cabecalho">
+        <img src="ouvir.png" class="icone-cabecalho"> 
+        <h1>Ditado de Palavras</h1>
     </div>
-
-    <div class="config-voz">
-        Voz: <select id="selecaoVoz"></select>
-    </div>
-    <div class="pontos">⭐ Estrelas: <span id="valorPontos">0</span></div>
+    <div class="header-right"></div>
 </header>
 
-<div class="cartao">
-    <div id="revelacao">
-        <img id="imgSucesso" src="">
-    </div>
-
-    <button class="btn-ouvir" onclick="tocarVoz()">
-        <img src="https://openmoji.org/data/color/svg/1F50A.svg" alt="Ouvir">
-    </button>
-
-    <input type="text" id="campoEscrita" placeholder="Ouve e escreve aqui..." autocomplete="off">
-    <button id="validar" onclick="verificar()">Verificar</button>
-    <div id="feedback"></div>
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+        <defs>
+            <linearGradient id="grad-onda-final" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda-final);"></path>
+    </svg>
 </div>
+
+<div class="status-jogo">
+    <div class="progresso-container">
+        <div id="barra-progresso" class="barra-progresso"></div>
+    </div>
+    <div class="contadores">
+        <span class="certas">✅ <span id="num-certas">0</span></span>
+        <span class="erradas">❌ <span id="num-erradas">0</span></span>
+    </div>
+</div>
+
+<main id="main-content">
+    <div class="cartao" id="jogo-container">
+        <div style="font-size: 0.8rem; color: var(--azul-escuro); margin-bottom: 5px;">Voz: <select id="selecaoVoz"></select></div>
+        
+        <div id="revelacao">
+            <img id="imgSucesso" src="">
+            <button id="btnOuvir" class="btn-ouvir" onclick="tocarVoz()">
+                <img src="https://openmoji.org/data/color/svg/1F50A.svg" alt="Ouvir">
+            </button>
+        </div>
+
+        <input type="text" id="campoEscrita" placeholder="Ouve e escreve aqui..." autocomplete="off">
+        <button id="validar" onclick="verificar()">Verificar</button>
+        <div id="feedback" style="min-height: 30px; font-weight: 700; font-size: 1.3rem;"></div>
+    </div>
+</main>
+
+<footer>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    </p>
+</footer>
 
 <script src="js/dados.js"></script>
 <script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
     let indiceAtual = 0;
-    let pontos = 0;
-    let listaDitado = [...palavras].sort(() => 0.5 - Math.random());
+    let certas = 0;
+    let erradas = 0;
+    let listaDitado = [];
+    if (typeof palavras !== 'undefined') {
+        listaDitado = [...palavras].sort(() => 0.5 - Math.random());
+    }
+
     const sintetizador = window.speechSynthesis;
     let vozesPT = [];
 
     function carregarVozes() {
-        // Filtra apenas por Portugal (pt-PT)
-        vozesPT = sintetizador.getVoices().filter(v => v.lang.includes('pt-PT') || v.lang.includes('pt_PT'));
-        
+        vozesPT = sintetizador.getVoices().filter(v => v.lang.includes('pt-PT'));
         const select = document.getElementById('selecaoVoz');
         select.innerHTML = '';
-
         vozesPT.forEach((v, i) => {
             const option = document.createElement('option');
             option.value = i;
-            // Tenta dar nomes amigáveis às vozes encontradas
-            let nomeFofinho = v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('raquel') || v.name.toLowerCase().includes('joana') ? 'Voz Feminina' : 'Voz Masculina';
-            option.textContent = nomeFofinho + " (" + v.name + ")";
+            option.textContent = v.name.includes('Raquel') || v.name.includes('Joana') ? 'Voz Feminina' : 'Voz Masculina';
             select.appendChild(option);
         });
     }
@@ -133,10 +265,8 @@
 
     function tocarVoz() {
         if (sintetizador.speaking) sintetizador.cancel();
-        
         const enunciado = new SpeechSynthesisUtterance(listaDitado[indiceAtual].palavra);
         const indexVoz = document.getElementById('selecaoVoz').value;
-        
         if (vozesPT[indexVoz]) enunciado.voice = vozesPT[indexVoz];
         enunciado.lang = 'pt-PT';
         enunciado.rate = 0.8;
@@ -145,51 +275,67 @@
 
     function verificar() {
         const campo = document.getElementById('campoEscrita');
-        const resposta = campo.value.trim().toLowerCase();
-        const correta = listaDitado[indiceAtual].palavra.toLowerCase();
         const feedback = document.getElementById('feedback');
         const imgSucesso = document.getElementById('imgSucesso');
+        const btnOuvir = document.getElementById('btnOuvir');
+
+        const resposta = campo.value.trim().toLowerCase();
+        const correta = listaDitado[indiceAtual].palavra.toLowerCase();
 
         if (resposta === correta) {
-            pontos += 1;
-            document.getElementById('valorPontos').innerText = pontos;
-            
-            // CORREÇÃO: Usa o caminho exato do dados.js
+            certas++;
+            document.getElementById('num-certas').innerText = certas;
+            btnOuvir.style.display = 'none';
             imgSucesso.src = listaDitado[indiceAtual].imagem;
             imgSucesso.style.display = 'block';
-            feedback.innerHTML = "<span style='color: var(--verde); font-size: 24px;'>Excelente! ✨</span>";
-            
-            setTimeout(proximaPalavra, 2500); 
+            feedback.innerHTML = "<span style='color: var(--verde)'>Excelente! ✨</span>";
+            setTimeout(proximaPalavra, 2500);
         } else {
-            feedback.innerHTML = `
-                <div class="feedback-errado">
-                    <span>Quase! A palavra correta é: <strong>${correta}</strong></span><br>
-                    <button class="btn-continuar" onclick="proximaPalavra()">Continuar</button>
-                </div>`;
+            erradas++;
+            document.getElementById('num-erradas').innerText = erradas;
+            campo.classList.add('shake');
+            feedback.innerHTML = `<div style="background: #fff5f5; padding: 10px; border-radius: 15px; border: 1px solid #fde2e2;">
+                <span style="color: var(--vermelho)">Quase! A palavra correta é: <strong>${correta}</strong></span><br>
+                <button onclick="proximaPalavra()" style="margin-top: 8px; padding: 5px 15px; border: 2px solid var(--azul-grad-dir); border-radius: 20px; font-weight: bold; cursor: pointer;">Continuar</button>
+            </div>`;
         }
     }
 
     function proximaPalavra() {
         indiceAtual++;
-        document.getElementById('imgSucesso').style.display = 'none';
-        document.getElementById('feedback').innerHTML = "";
-        document.getElementById('campoEscrita').value = "";
-        
+        atualizarBarra();
+        const imgSucesso = document.getElementById('imgSucesso');
+        const btnOuvir = document.getElementById('btnOuvir');
+        const feedback = document.getElementById('feedback');
+        const campo = document.getElementById('campoEscrita');
+
+        imgSucesso.style.display = 'none';
+        btnOuvir.style.display = 'flex';
+        feedback.innerHTML = "";
+        campo.value = "";
+
         if (indiceAtual < listaDitado.length) {
-            document.getElementById('campoEscrita').focus();
-            // Som automático removido conforme solicitado
+            campo.focus();
         } else {
-            document.querySelector('.cartao').innerHTML = `
-                <div style="padding: 40px 0;">
-                    <h2>🏆 Parabéns!</h2>
-                    <p style="font-size: 22px; color: #f57c00; font-weight: bold;">⭐ Ganhaste ${pontos} estrelas!</p>
-                    <button class="btn-continuar" onclick="location.reload()">Jogar de Novo</button>
-                </div>`;
+            finalizarJogo();
         }
+    }
+
+    function atualizarBarra() {
+        const perc = (indiceAtual / listaDitado.length) * 100;
+        document.getElementById('barra-progresso').style.width = perc + "%";
+    }
+
+    function finalizarJogo() {
+        document.getElementById('barra-progresso').style.width = "100%";
+        document.getElementById('jogo-container').innerHTML = `
+            <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
+            <p style="font-size: 1.2rem;">Ganhaste <strong>${certas}</strong> estrelas!</p>
+            <button onclick="location.reload()" class="btn-menu" style="margin: 20px auto; padding: 15px 30px;">Jogar de Novo</button>
+        `;
     }
 
     document.getElementById('campoEscrita').addEventListener('keypress', (e) => { if(e.key === 'Enter') verificar(); });
 </script>
-<script src="js/componentes.js"></script> EB1/PE da Marinheira
 </body>
 </html>
