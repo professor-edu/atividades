@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras Divertida</title>
+    <title>Sopa de Letras ⭐</title>
+    <link rel="icon" type="image/png" href="../logo.png">
     <style>
         :root {
             --azul-claro: #f0f7ff;
@@ -11,17 +12,75 @@
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --amarelo: #ffeb3b;
+            --laranja: #ff9800;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: var(--azul-claro); margin: 0; user-select: none; /* Impede seleção de texto ao arrastar */ }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            text-align: center; 
+            background: var(--azul-claro); 
+            margin: 0; 
+            user-select: none; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
         
-        .cabecalho { background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; }
+        /* --- Header e Menu --- */
+        header {
+            padding: 20px;
+            background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
+            border-bottom: 4px solid var(--azul-medio);
+            position: relative;
+        }
+
+        .btn-menu {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--laranja);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
-        .icone-titulo { width: 50px; height: auto; }
+        .icone-titulo { width: 60px; height: auto; }
+        h1 { margin: 0; color: var(--azul-escuro); font-size: 2.2rem; }
 
-        #cronometro { font-size: 18px; font-weight: bold; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; margin: 10px 0; border: 2px solid var(--azul-medio); color: var(--azul-escuro); }
+        #cronometro { 
+            font-size: 18px; 
+            font-weight: bold; 
+            background: white; 
+            display: inline-block; 
+            padding: 5px 20px; 
+            border-radius: 20px; 
+            margin: 15px 0; 
+            border: 2px solid var(--azul-medio); 
+            color: var(--azul-escuro); 
+        }
 
-        .container { display: flex; justify-content: center; align-items: stretch; gap: 25px; padding: 20px; max-width: 1000px; margin: 0 auto; }
+        /* --- Jogo --- */
+        .container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            gap: 25px; 
+            padding: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            flex-grow: 1;
+        }
 
         #grid { 
             display: grid; 
@@ -32,7 +91,7 @@
             padding: 15px;
             border-radius: 20px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            cursor: pointer; /* Indica que é interativo */
+            touch-action: none; /* Importante para mobile */
         }
 
         .letra { 
@@ -41,49 +100,70 @@
             display: flex; align-items: center; justify-content: center; 
             font-weight: bold; font-size: 22px; 
             border-radius: 10px; background: #fff;
-            transition: background 0.1s; /* Mais rápido para o arrastamento */
+            transition: background 0.1s;
         }
 
-        /* Estilo durante o arrastamento */
         .letra.selecionando { background: #fff9c4; border-color: #fbc02d; } 
-        /* Estilo da palavra validada */
-        .letra.correta { background: var(--verde) !important; color: white; border-color: #388e3c; }
+        /* !important garante que a sobreposição não apague o verde */
+        .letra.correta { background: var(--verde) !important; color: white !important; border-color: #388e3c !important; }
 
-        #lista-palavras { display: grid; grid-template-columns: repeat(2, 170px); grid-template-rows: repeat(4, 1fr); gap: 12px; }
-        .item-palavra { background: white; padding: 5px; border-radius: 15px; border: 2px solid var(--azul-medio); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .item-palavra img { width: 65px; height: 65px; object-fit: contain; }
-        .item-palavra span { font-weight: bold; font-size: 13px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
-        .item-palavra.encontrada { opacity: 0.3; background: #e8f5e9; border-color: var(--verde); }
+        #lista-palavras { display: grid; grid-template-columns: repeat(2, 160px); gap: 10px; }
+        .item-palavra { background: white; padding: 8px; border-radius: 15px; border: 2px solid var(--azul-medio); display: flex; flex-direction: column; align-items: center; }
+        .item-palavra img { width: 50px; height: 50px; object-fit: contain; }
+        .item-palavra span { font-weight: bold; font-size: 12px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
+        .item-palavra.encontrada { opacity: 0.4; background: #e8f5e9; border-color: var(--verde); }
         .item-palavra.encontrada span { text-decoration: line-through; }
 
-        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100; }
-        .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; }
-        .btn-reiniciar { background: var(--azul-medio); color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        /* --- Footer --- */
+        footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            background: #fff;
+            margin-top: 20px;
+        }
 
+        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        @media (max-width: 850px) {
+            .container { flex-direction: column; align-items: center; }
+            .btn-menu { position: static; transform: none; margin-bottom: 10px; }
+            #grid { grid-template-columns: repeat(10, 32px); grid-template-rows: repeat(10, 32px); }
+            .letra { width: 32px; height: 32px; font-size: 16px; }
+        }
     </style>
 </head>
 <body>
 
-<header class="cabecalho">
+<header>
+    <a href="../index.html" class="btn-nav btn-menu">🏠 MENU</a>
     <div class="cabecalho-conteudo">
-        <img src="confuso.png" class="icone-titulo">
-        <h1 style="margin:0; font-size: 28px;">Sopa de Letras</h1>
+        <img src="sopa-letras.png" class="icone-titulo">
+        <h1>Sopa de Letras</h1>
     </div>
     <div id="cronometro">Tempo: 0s</div>
 </header>
 
 <div class="container">
-    <div id="grid" oncontextmenu="return false;"></div> <div id="lista-palavras"></div>
+    <div id="grid" oncontextmenu="return false;"></div> 
+    <div id="lista-palavras"></div>
 </div>
 
 <div id="feedback-final">
     <div class="painel-vitoria">
-        <img src="img/certo.png" style="width: 80px;">
+        <h1 style="font-size: 3rem;">🎉</h1>
         <h2>Excelente Trabalho!</h2>
         <p id="msg-tempo"></p>
-        <button class="btn-reiniciar" onclick="location.reload()">Jogar de Novo</button>
+        <button class="btn-reiniciar" onclick="location.reload()" style="background: var(--verde); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-weight: bold; cursor: pointer;">Jogar de Novo</button>
     </div>
 </div>
+
+<footer>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    </p>
+</footer>
 
 <script src="js/dados.js"></script>
 <script>
@@ -93,6 +173,7 @@
     const gridElement = document.getElementById('grid');
     const listaElement = document.getElementById('lista-palavras');
     
+    // Seleção de palavras
     let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
     let palavrasParaEncontrar = selecaoOriginal.map(p => ({
         nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
@@ -103,20 +184,19 @@
 
     let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
 
-    // --- Variáveis para o Arrastamento ---
     let estaArrastando = false;
-    let celulaInicial = null; // {l, c}
-    let celulasSelecionadasAtuais = []; // Lista de IDs "l-c"
+    let celulaInicial = null; 
+    let celulasSelecionadasAtuais = [];
 
     function iniciarJogo() {
-        // ... (Lógica de colocação de palavras permanece igual)
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
-            while (!colocada && tentativas < 150) {
+            while (!colocada && tentativas < 200) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
+                
                 if (verificarEspaco(pObj.nome, l, c, dir)) {
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = dir === 'V' ? l + i : l;
@@ -130,7 +210,7 @@
             }
         });
         desenharInterface();
-        configurarEventosArrastamento(); // Nova função
+        configurarEventosArrastamento();
         iniciarCronometro();
     }
 
@@ -138,6 +218,7 @@
         for (let i = 0; i < palavra.length; i++) {
             let curL = dir === 'V' ? l + i : l;
             let curC = dir === 'H' ? c + i : c;
+            // Permite sobreposição se a letra for a mesma
             if (matriz[curL][curC] !== '' && matriz[curL][curC] !== palavra[i]) return false;
         }
         return true;
@@ -145,13 +226,13 @@
 
     function desenharInterface() {
         const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        gridElement.innerHTML = "";
         for (let l = 0; l < TAMANHO; l++) {
             for (let c = 0; c < TAMANHO; c++) {
                 const div = document.createElement('div');
                 div.className = 'letra';
                 div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
                 div.id = `cell-${l}-${c}`;
-                // Guardamos as coordenadas no dataset para facilitar o acesso nos eventos
                 div.dataset.l = l;
                 div.dataset.c = c;
                 gridElement.appendChild(div);
@@ -166,31 +247,21 @@
         });
     }
 
-    // --- NOVA LÓGICA DE ARRASTAMENTO ---
-
     function configurarEventosArrastamento() {
-        // Eventos do Rato
         gridElement.addEventListener('mousedown', iniciarSelecao);
-        window.addEventListener('mousemove', enquantoArrasta); // Window para detetar fora da grelha
+        window.addEventListener('mousemove', enquantoArrasta);
         window.addEventListener('mouseup', finalizarSelecao);
 
-        // Eventos de Toque (para tablets/telemóveis)
         gridElement.addEventListener('touchstart', iniciarSelecao, {passive: false});
         window.addEventListener('touchmove', enquantoArrasta, {passive: false});
         window.addEventListener('touchend', finalizarSelecao);
     }
 
     function obterCelulaDosEventos(e) {
-        // Normaliza o evento (rato ou toque)
         const touch = e.touches ? e.touches[0] : e;
         const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
-        
-        if (elemento && elemento.classList.contains('letra') && !elemento.classList.contains('correta')) {
-            return {
-                el: elemento,
-                l: parseInt(elemento.dataset.l),
-                c: parseInt(elemento.dataset.c)
-            };
+        if (elemento && elemento.classList.contains('letra')) {
+            return { el: elemento, l: parseInt(elemento.dataset.l), c: parseInt(elemento.dataset.c) };
         }
         return null;
     }
@@ -198,58 +269,43 @@
     function iniciarSelecao(e) {
         const celula = obterCelulaDosEventos(e);
         if (!celula) return;
-
         estaArrastando = true;
         celulaInicial = { l: celula.l, c: celula.c };
-        celulasSelecionadasAtuais = [];
-        
-        // Limpa seleções anteriores visuais (que não sejam corretas)
-        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
-        
-        adicionarCelulaASelecao(celula);
-        if (e.cancelable) e.preventDefault(); // Impede scroll no toque
+        if (e.cancelable) e.preventDefault();
     }
 
     function enquantoArrasta(e) {
         if (!estaArrastando) return;
-
         const celulaAtual = obterCelulaDosEventos(e);
         if (!celulaAtual) return;
 
-        // Calcula a linha reta (Horizontal ou Vertical) a partir do início
         const lInicial = celulaInicial.l;
         const cInicial = celulaInicial.c;
         const lAtual = celulaAtual.l;
         const cAtual = celulaAtual.c;
 
-        const deltaL = lAtual - lInicial;
-        const deltaC = cAtual - cInicial;
-
-        // Determina se o arrastamento é predominantemente H ou V
         document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
         celulasSelecionadasAtuais = [];
 
-        if (Math.abs(deltaL) > Math.abs(deltaC)) {
-            // Arrastamento Vertical
-            const passo = deltaL > 0 ? 1 : -1;
+        if (Math.abs(lAtual - lInicial) > Math.abs(cAtual - cInicial)) {
+            // Vertical
+            const passo = lAtual > lInicial ? 1 : -1;
             for (let l = lInicial; l !== lAtual + passo; l += passo) {
                 if (l >= 0 && l < TAMANHO) destacarCelula(l, cInicial);
             }
         } else {
-            // Arrastamento Horizontal (ou deltaL === deltaC, assumimos H)
-            const passo = deltaC > 0 ? 1 : -1;
+            // Horizontal
+            const passo = cAtual > cInicial ? 1 : -1;
             for (let c = cInicial; c !== cAtual + passo; c += passo) {
                 if (c >= 0 && c < TAMANHO) destacarCelula(lInicial, c);
             }
         }
-        
-        if (e.cancelable) e.preventDefault();
     }
 
     function destacarCelula(l, c) {
         const id = `${l}-${c}`;
         const el = document.getElementById(`cell-${id}`);
-        if (el && !el.classList.contains('correta')) {
+        if (el) {
             el.classList.add('selecionando');
             celulasSelecionadasAtuais.push(id);
         }
@@ -258,43 +314,30 @@
     function finalizarSelecao() {
         if (!estaArrastando) return;
         estaArrastando = false;
-
         verificarPalavrasArrastadas();
-
-        // Limpa o visual da seleção temporária
         document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
-        celulasSelecionadasAtuais = [];
-        celulaInicial = null;
     }
 
     function verificarPalavrasArrastadas() {
-        // Cria uma string ordenada com os IDs selecionados para comparar
         const selecaoQuery = celulasSelecionadasAtuais.sort().join(',');
-
         palavrasParaEncontrar.forEach(p => {
             if (!p.encontrada) {
-                // Cria a string ordenada dos IDs da palavra correta
                 const palavraQuery = p.celulas.sort().join(',');
-
                 if (selecaoQuery === palavraQuery) {
                     marcarComoEncontrada(p);
                 }
             }
         });
-
         if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo();
     }
 
     function marcarComoEncontrada(p) {
         p.encontrada = true;
         p.celulas.forEach(id => {
-            const el = document.getElementById(`cell-${id}`);
-            el.classList.add('correta');
+            document.getElementById(`cell-${id}`).classList.add('correta');
         });
         document.getElementById(`item-${p.nome}`).classList.add('encontrada');
     }
-
-    // --- FIM DA NOVA LÓGICA ---
 
     function iniciarCronometro() {
         intervaloCronometro = setInterval(() => {
@@ -307,12 +350,12 @@
         clearInterval(intervaloCronometro);
         setTimeout(() => {
             document.getElementById('feedback-final').style.display = 'flex';
-            document.getElementById('msg-tempo').textContent = `Conseguiste encontrar as 8 palavras em ${tempo} segundos!`;
+            document.getElementById('msg-tempo').textContent = `Encontraste todas as palavras em ${tempo} segundos!`;
         }, 600);
     }
 
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
     iniciarJogo();
 </script>
-    <script src="js/componentes.js"></script> EB1/PE da Marinheira
 </body>
 </html>
