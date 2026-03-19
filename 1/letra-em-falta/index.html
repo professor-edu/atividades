@@ -3,104 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qual Falta?</title>
+    
+    <title>Qual Falta? 🤔</title>
+    
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-medio: #7ac7f0;
+            --azul-janela-fundo: #ebf5ff;
+            --azul-grad-esq: #bde6ff; 
+            --azul-grad-dir: #2e86de; 
+            --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
-            --vermelho: #e53935;
             --laranja: #ff9800;
+            --vermelho: #e53935;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: var(--azul-claro); margin: 0; overflow-x: hidden; }
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            text-align: center; 
+            background-color: var(--azul-claro); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            height: 100vh; 
+            overflow: hidden;
+        }
         
         .cabecalho { 
-            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
-        }
-
-        .cabecalho-principal {
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            padding: 0 20px; 
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
+            align-items: center; 
+            justify-content: space-between;
+            height: 85px; 
+            flex-shrink: 0;
+            z-index: 40;
         }
 
-        .icone-questao {
-            width: 40px;
-            height: auto;
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
+
+        .cabecalho-conteudo { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 3;
+        }
+
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            white-space: nowrap;
+        }
+
+        /* IMAGEM CONFUSO.PNG NO CABEÇALHO */
+        .icone-cabecalho { 
+            width: 70px !important; 
+            height: 70px !important; 
+            object-fit: contain;
             cursor: pointer;
+            filter: drop-shadow(2px 2px 0px rgba(255,255,255,0.4)); 
             transition: transform 0.2s;
         }
-        .icone-questao:hover { transform: scale(1.1); }
+        .icone-cabecalho:hover { transform: scale(1.1); }
 
-        .pontos { font-size: 24px; font-weight: bold; color: #f57c00; margin: 10px 0; transition: all 0.3s; }
+        .btn-menu {
+            background: var(--laranja); color: white; border: none;
+            padding: 10px 20px; border-radius: 25px; 
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            font-size: 0.95rem; display: flex; align-items: center; gap: 8px;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-menu:hover { transform: scale(1.05); }
+
+        .onda-container {
+            height: 45px; width: 100%; overflow: hidden;
+            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+        }
+
+        .status-jogo { 
+            padding: 5px; flex-shrink: 0; position: relative; z-index: 25;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .pontos { 
+            font-size: 1.5rem; font-weight: 800; color: var(--laranja); 
+            margin-top: 5px; transition: all 0.3s; 
+        }
         .perdeu-estrela { color: var(--vermelho); transform: scale(1.2); }
 
-        .cartao-xl {
-            background: white; width: 90%; max-width: 800px;
-            margin: 20px auto; padding: 40px;
-            border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            min-height: 500px;
+        #main-content { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 0; padding: 15px; overflow-y: auto;
         }
 
-        .imagem-ajuda { max-height: 250px; border-radius: 20px; }
+        /* CARTÃO XL MANTIDO */
+        .cartao-xl {
+            background: white; width: 95%; max-width: 800px;
+            padding: 30px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            position: relative; z-index: 1;
+        }
+
+        .imagem-ajuda { max-height: 220px; border-radius: 20px; border: 3px solid var(--azul-claro); }
 
         .palavra-lacuna {
-            font-size: 80px; font-weight: bold; letter-spacing: 10px;
-            color: var(--azul-escuro); text-transform: uppercase; margin: 20px 0;
+            font-size: 70px; font-weight: 800; letter-spacing: 10px;
+            color: var(--azul-escuro); text-transform: uppercase; margin: 10px 0;
         }
+        .lacuna { color: var(--laranja); border-bottom: 6px solid var(--laranja); padding: 0 10px; }
 
-        .lacuna { color: var(--laranja); border-bottom: 5px solid var(--laranja); padding: 0 10px; }
-
-        .container-opcoes { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+        .container-opcoes { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 
         .btn-letra {
-            width: 100px; height: 100px; font-size: 50px; font-weight: bold;
-            background: white; border: 4px solid var(--azul-medio);
+            width: 90px; height: 90px; font-size: 45px; font-weight: 800;
+            background: var(--azul-janela-fundo); border: 4px solid var(--azul-grad-esq);
             color: var(--azul-escuro); border-radius: 20px; cursor: pointer;
             transition: all 0.2s; text-transform: uppercase;
+            box-shadow: 0 5px 0px var(--azul-grad-esq);
+        }
+        .btn-letra:hover { transform: translateY(-3px); background: white; }
+        .btn-letra:active { transform: translateY(2px); box-shadow: 0 0px 0px; }
+        .btn-letra.correto { background: var(--verde) !important; color: white; border-color: #388e3c; box-shadow: 0 5px 0px #388e3c; }
+        .btn-letra.errado { background: var(--vermelho) !important; color: white; border-color: #b71c1c; box-shadow: 0 5px 0px #b71c1c; }
+
+        #feedback { font-size: 24px; font-weight: 800; min-height: 35px; }
+
+        footer {
+            height: 50px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
         }
 
-        .btn-letra:hover { transform: scale(1.1); background: var(--azul-claro); }
-        .btn-letra.correto { background: var(--verde); color: white; border-color: var(--verde); }
-        .btn-letra.errado { background: var(--vermelho); color: white; border-color: var(--vermelho); }
-
-        #feedback { font-size: 24px; font-weight: bold; min-height: 40px; margin-top: 20px; }
-        .btn-acao { margin-top: 15px; padding: 12px 40px; background: var(--azul-medio); border: none; border-radius: 50px; cursor: pointer; color: white; font-weight: bold; font-size: 18px; }
+        @media (max-width: 600px) {
+            .cabecalho { height: 75px; padding: 0 10px; }
+            .cabecalho h1 { font-size: 1.4rem; }
+            .icone-cabecalho { width: 45px !important; height: 45px !important; }
+            .palavra-lacuna { font-size: 40px; letter-spacing: 5px; }
+            .btn-letra { width: 70px; height: 70px; font-size: 30px; }
+        }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <div class="cabecalho-principal">
-        <h1 style="margin:0">Qual Falta?</h1>
-        <img src="questao.png" alt="Ajuda" class="icone-questao" onclick="mostrarAjuda()">
+    <div class="header-left">
+        <a href="../index.html" class="btn-menu">
+            <span>🏠</span> MENU
+        </a>
     </div>
-    <div class="pontos" id="area-pontos">⭐ Estrelas: <span id="valorPontos">10</span></div>
+    <div class="cabecalho-conteudo">
+        <h1>Qual Falta?</h1>
+        <img src="confuso.png" alt="Ajuda" class="icone-cabecalho" onclick="mostrarAjuda()">
+    </div>
+    <div class="header-right"></div>
 </header>
 
-<main class="cartao-xl" id="conteudo-jogo">
-    <img id="imagem" class="imagem-ajuda" src="">
-    
-    <div id="display-palavra" class="palavra-lacuna"></div>
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+        <defs>
+            <linearGradient id="grad-onda-final" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda-final);"></path>
+    </svg>
+</div>
 
-    <div class="container-opcoes" id="opcoes-letras"></div>
+<div class="status-jogo">
+    <div class="pontos" id="area-pontos">⭐ Estrelas: <span id="valorPontos">10</span></div>
+</div>
 
-    <div id="feedback"></div>
+<main id="main-content">
+    <div class="cartao-xl" id="conteudo-jogo">
+        <img id="imagem" class="imagem-ajuda" src="">
+        
+        <div id="display-palavra" class="palavra-lacuna"></div>
+
+        <div class="container-opcoes" id="opcoes-letras"></div>
+
+        <div id="feedback"></div>
+    </div>
 </main>
+
+<footer>
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    </p>
+</footer>
 
 <script src="js/dados.js"></script>
 
 <script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
     let indice = 0;
     let estrelas = 10;
-    // Seleciona 10 desafios aleatórios do dados.js
-    let lista = [...palavras].sort(() => 0.5 - Math.random()).slice(0, 10);
+    let lista = [];
+    
+    if (typeof palavras !== 'undefined') {
+        // Seleciona 10 desafios aleatórios do dados.js
+        lista = [...palavras].sort(() => 0.5 - Math.random()).slice(0, 10);
+    }
 
     function mostrarAjuda() {
         alert("Como jogar:\n1. Olha para a imagem e para a palavra.\n2. Falta uma letra onde está o ponto de interrogação.\n3. Clica na letra certa para ganhar! ✨\n4. Se errares, perdes uma estrela. ⭐");
@@ -169,7 +282,7 @@
 
     function gerarOpcoesAleatorias(correta) {
         let alfabeto = "abcdefghijklmnopqrstuvwxyzç";
-        let erradas = alfabeto.replace(correta, "").split("");
+        let erradas = alfabeto.replace(correta.toLowerCase(), "").split("");
         let final = [correta];
         for(let i=0; i<2; i++) {
             let rand = Math.floor(Math.random() * erradas.length);
@@ -188,13 +301,12 @@
                 <p style="font-size: 60px; margin: 10px 0;">${estrelas > 0 ? '⭐' : '☁️'}</p>
                 <p style="font-size: 24px;">Terminaste com <strong>${estrelas}</strong> estrelas!</p>
                 <p style="font-size: 20px; color: #555;">${mensagemFinal}</p>
-                <button class="btn-acao" onclick="location.reload()" style="background:var(--azul-escuro); padding: 15px 50px; font-size: 22px; margin-top: 20px;">Recomeçar</button>
+                <button class="btn-menu" onclick="location.reload()" style="margin: 20px auto; padding: 15px 30px; font-size: 22px;">Recomeçar</button>
             </div>
         `;
     }
 
     window.onload = carregar;
 </script>
-<script src="js/componentes.js"></script> EB1/PE da Marinheira
 </body>
 </html>
