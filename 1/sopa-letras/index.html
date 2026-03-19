@@ -3,177 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras Divertida ⭐</title>
+    <title>Sopa de Letras ⭐</title>
     <link rel="icon" type="image/png" href="../logo.png">
     <style>
         :root {
             --azul-claro: #f2f7ff;
             --azul-medio: #7ac7f0;
-            --azul-escuro: #0d47a1;
+            --azul-escuro: #155a8a;
             --verde: #4caf50;
             --laranja: #ff9800;
         }
 
         body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            background: var(--azul-claro); 
-            margin: 0; 
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            user-select: none;
+            margin: 0; font-family: Arial, sans-serif; background: var(--azul-claro); 
+            color: #333; display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- Header Oficial (Template) --- */
+        /* --- Header Template Oficial --- */
         header {
-            width: 100%;
-            padding: 15px 0;
+            width: 100%; padding: 15px 0;
             background: linear-gradient(to bottom, #bde6ff, #e8f7ff);
             border-bottom: 4px solid var(--azul-medio);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            gap: 15px; position: relative;
         }
 
-        .btn-menu {
-            position: absolute;
-            left: 15px;
-            background: var(--laranja);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 0.8rem;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        .nav-buttons { position: absolute; left: 15px; display: flex; gap: 10px; }
+        .btn-nav {
+            background: var(--laranja); color: white; border: none; padding: 8px 15px;
+            border-radius: 20px; font-weight: bold; text-decoration: none; font-size: 0.8rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1); cursor: pointer;
         }
 
-        header img { width: 100px; height: auto; }
+        header img { width: 80px; }
+        .titulo-jogo { font-size: 1.8rem; font-weight: bold; color: var(--azul-escuro); margin: 0; }
 
-        /* --- Seletor de Níveis --- */
-        #menu-niveis {
-            padding: 50px 20px;
-            flex-grow: 1;
+        /* --- Seletor de Dificuldade --- */
+        .difficulty-selector {
+            display: flex; justify-content: center; gap: 10px; margin: 20px 0;
+        }
+        .btn-diff {
+            padding: 10px 20px; border: none; border-radius: 20px; font-weight: bold;
+            cursor: pointer; background: white; color: var(--azul-escuro);
+            border: 2px solid var(--azul-medio); transition: 0.2s;
+        }
+        .btn-diff.active { background: var(--azul-medio); color: white; }
+
+        /* --- Cronômetro Sobressalente --- */
+        #cronometro-box {
+            background: white; padding: 10px 25px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: inline-block;
+            margin-bottom: 20px; border: 3px solid var(--laranja);
+            font-size: 1.2rem; font-weight: bold; color: var(--azul-escuro);
         }
 
-        .btn-nivel {
-            display: block;
-            width: 200px;
-            margin: 15px auto;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .btn-nivel:hover { transform: scale(1.05); }
-        .facil { background: #4caf50; }
-        .medio { background: #2196f3; }
-        .dificil { background: #f44336; }
-
-        /* --- Área de Jogo --- */
-        #game-content { display: none; flex-direction: column; align-items: center; flex-grow: 1; padding: 10px; }
-
-        .game-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
+        /* --- Container Principal --- */
+        .container {
+            max-width: 900px; margin: 0 auto; padding: 10px; flex-grow: 1;
+            display: flex; flex-direction: column; align-items: center;
         }
 
+        /* --- Lista de Palavras (Superior e Inferior) --- */
+        #lista-palavras {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 10px; margin: 15px 0; width: 100%;
+        }
+        .item-palavra {
+            background: white; padding: 8px; border-radius: 12px;
+            border: 2px solid var(--azul-medio); display: flex; flex-direction: column;
+            align-items: center; transition: 0.3s; flex: 1 1 80px; max-width: 100px;
+        }
+        .item-palavra img { width: 100%; height: auto; max-height: 60px; object-fit: contain; }
+        .item-palavra span { font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+        .item-palavra.encontrada { opacity: 0.2; background: #e6ffe6; border-color: var(--verde); }
+
+        /* --- Grelha --- */
         #grid { 
-            display: grid; 
-            grid-template-columns: repeat(10, 42px); 
-            grid-template-rows: repeat(10, 42px); 
-            gap: 4px; 
-            background: white;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            touch-action: none;
+            display: grid; grid-template-columns: repeat(10, 45px); 
+            grid-template-rows: repeat(10, 45px); gap: 5px; 
+            background: white; padding: 15px; border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); touch-action: none;
         }
-
         .letra { 
-            width: 42px; height: 42px; 
-            border: 1px solid #eee; 
+            width: 45px; height: 45px; border: 1px solid #eee; 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 20px; 
-            border-radius: 8px; background: #fff;
+            font-weight: bold; font-size: 22px; border-radius: 8px; background: #fff;
         }
-
-        .letra.selecionando { background: #fff9c4; border-color: #fbc02d; } 
-        .letra.correta { background: var(--verde) !important; color: white !important; border-color: #388e3c !important; }
-
-        #lista-palavras { 
-            display: grid; 
-            grid-template-columns: repeat(2, 130px); 
-            gap: 8px; 
-            align-content: start;
-        }
-        .item-palavra { 
-            background: white; padding: 5px; border-radius: 12px; 
-            border: 2px solid var(--azul-medio); 
-            display: flex; flex-direction: column; align-items: center; 
-        }
-        .item-palavra img { width: 50px; height: 50px; object-fit: contain; }
-        .item-palavra span { font-size: 11px; font-weight: bold; color: var(--azul-escuro); margin-top: 3px; }
-        .item-palavra.encontrada { opacity: 0.3; background: #e8f5e9; border-color: var(--verde); }
+        .letra.selecionando { background: #fff9c4 !important; border-color: #fbc02d; } 
+        .letra.correta { background: var(--verde) !important; color: white !important; }
 
         /* --- Footer --- */
-        footer {
-            padding: 15px;
-            text-align: center;
-            background: #fff;
-            border-top: 1px solid #ddd;
+        footer { padding: 20px; text-align: center; border-top: 1px solid #ddd; background: #fff; margin-top: 20px; }
+
+        #final-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100;
         }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 30px; text-align: center; }
 
-        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 100; }
-        .painel-vitoria { background: white; padding: 30px; border-radius: 20px; text-align: center; }
-
-        @media (max-width: 700px) {
-            header img { width: 70px; }
+        @media (max-width: 600px) {
+            .nav-buttons { position: static; width: 100%; justify-content: center; order: -1; margin-bottom: 10px; }
+            header { flex-direction: column; }
             #grid { grid-template-columns: repeat(10, 32px); grid-template-rows: repeat(10, 32px); }
             .letra { width: 32px; height: 32px; font-size: 16px; }
-            #lista-palavras { grid-template-columns: repeat(3, 100px); }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="../index.html" class="btn-menu">🏠 MENU</a>
+    <div class="nav-buttons">
+        <a href="../index.html" class="btn-nav">🏠 MENU</a>
+        <a href="index.html" class="btn-nav">🧩 JOGOS</a>
+    </div>
     <img src="sopa-letras.png" alt="Sopa de Letras">
+    <h1 class="titulo-jogo">Sopa de Letras</h1>
 </header>
 
-<div id="menu-niveis">
-    <h2 style="color: var(--azul-escuro);">Escolhe a Dificuldade:</h2>
-    <button class="btn-nivel facil" onclick="iniciarNivel(4)">Fácil (4 palavras)</button>
-    <button class="btn-nivel medio" onclick="iniciarNivel(6)">Médio (6 palavras)</button>
-    <button class="btn-nivel dificil" onclick="iniciarNivel(8)">Difícil (8 palavras)</button>
-</div>
-
-<div id="game-content">
-    <div id="cronometro" style="font-weight:bold; margin-bottom:10px; color:var(--azul-escuro);">Tempo: 0s</div>
-    <div class="game-container">
-        <div id="grid" oncontextmenu="return false;"></div> 
-        <div id="lista-palavras"></div>
+<div class="container">
+    <div class="difficulty-selector">
+        <button class="btn-diff active" onclick="ajustarDificuldade(4, this)">FÁCIL</button>
+        <button class="btn-diff" onclick="ajustarDificuldade(6, this)">MÉDIO</button>
+        <button class="btn-diff" onclick="ajustarDificuldade(8, this)">DIFÍCIL</button>
     </div>
+
+    <div id="cronometro-box">Tempo: <span id="tempo">0</span>s</div>
+
+    <div id="lista-palavras"></div>
+
+    <div id="grid" oncontextmenu="return false;"></div>
 </div>
 
-<div id="feedback-final">
+<div id="final-screen">
     <div class="painel-vitoria">
         <h1>🎉 Parabéns!</h1>
         <p id="msg-tempo"></p>
-        <button onclick="location.reload()" style="background:var(--verde); color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold; cursor:pointer;">Voltar ao Menu</button>
+        <button onclick="location.reload()" class="btn-nav" style="padding: 15px 30px;">Jogar Novamente</button>
     </div>
 </div>
 
@@ -186,16 +151,25 @@
 <script src="js/dados.js"></script>
 <script>
     const TAMANHO = 10;
-    let tempo = 0, intervalo;
+    let tempo = 0, intervalo, nivelAtual = 4;
     let matriz, palavrasParaEncontrar = [];
     let estaArrastando = false, celulaInicial = null, selecionadasAtuais = [];
 
-    function iniciarNivel(qtd) {
-        document.getElementById('menu-niveis').style.display = 'none';
-        document.getElementById('game-content').style.display = 'flex';
+    function ajustarDificuldade(qtd, btn) {
+        document.querySelectorAll('.btn-diff').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        nivelAtual = qtd;
+        iniciarJogo();
+    }
+
+    function iniciarJogo() {
+        clearInterval(intervalo);
+        tempo = 0;
+        document.getElementById('tempo').innerText = tempo;
+        document.getElementById('grid').innerHTML = "";
+        document.getElementById('lista-palavras').innerHTML = "";
         
-        // Seleção aleatória do banco de dados (js/dados.js)
-        let selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, qtd);
+        let selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, nivelAtual);
         palavrasParaEncontrar = selecao.map(p => ({
             nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
             imagem: p.imagem,
@@ -203,12 +177,6 @@
             celulas: []
         }));
 
-        gerarMatriz();
-        configurarEventos();
-        intervalo = setInterval(() => { tempo++; document.getElementById('cronometro').innerText = `Tempo: ${tempo}s`; }, 1000);
-    }
-
-    function gerarMatriz() {
         matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
         
         palavrasParaEncontrar.forEach(pObj => {
@@ -217,7 +185,6 @@
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
-                
                 if (verificarEspaco(pObj.nome, l, c, dir)) {
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = dir === 'V' ? l + i : l;
@@ -231,6 +198,19 @@
             }
         });
 
+        desenharInterface();
+        intervalo = setInterval(() => { tempo++; document.getElementById('tempo').innerText = tempo; }, 1000);
+    }
+
+    function verificarEspaco(pal, l, c, dir) {
+        for (let i = 0; i < pal.length; i++) {
+            let curL = dir === 'V' ? l + i : l, curC = dir === 'H' ? c + i : c;
+            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== pal[i]) return false;
+        }
+        return true;
+    }
+
+    function desenharInterface() {
         const grid = document.getElementById('grid');
         const list = document.getElementById('lista-palavras');
         const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -251,44 +231,47 @@
         });
     }
 
-    function verificarEspaco(pal, l, c, dir) {
-        for (let i = 0; i < pal.length; i++) {
-            let curL = dir === 'V' ? l + i : l, curC = dir === 'H' ? c + i : c;
-            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== pal[i]) return false;
-        }
-        return true;
+    function obterCelula(e) {
+        const t = e.touches ? e.touches[0] : e;
+        const el = document.elementFromPoint(t.clientX, t.clientY);
+        if (el && el.classList.contains('letra')) return el;
+        return null;
     }
 
-    function configurarEventos() {
-        const grid = document.getElementById('grid');
-        const mover = (e) => {
-            if (!estaArrastando) return;
-            const t = e.touches ? e.touches[0] : e;
-            const el = document.elementFromPoint(t.clientX, t.clientY);
-            if (el && el.classList.contains('letra')) {
-                const lA = parseInt(el.dataset.l), cA = parseInt(el.dataset.c);
-                document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
-                selecionadasAtuais = [];
-                if (Math.abs(lA - celulaInicial.l) > Math.abs(cA - celulaInicial.c)) {
-                    const passo = lA > celulaInicial.l ? 1 : -1;
-                    for (let i = celulaInicial.l; i !== lA + passo; i += passo) selecionar(i, celulaInicial.c);
-                } else {
-                    const passo = cA > celulaInicial.c ? 1 : -1;
-                    for (let i = celulaInicial.c; i !== cA + passo; i += passo) selecionar(celulaInicial.l, i);
-                }
+    const grid = document.getElementById('grid');
+    grid.addEventListener('mousedown', (e) => { 
+        const el = obterCelula(e);
+        if (el) { estaArrastando = true; celulaInicial = {l: parseInt(el.dataset.l), c: parseInt(el.dataset.c)}; }
+    });
+    grid.addEventListener('touchstart', (e) => { 
+        const el = obterCelula(e);
+        if (el) { estaArrastando = true; celulaInicial = {l: parseInt(el.dataset.l), c: parseInt(el.dataset.c)}; e.preventDefault(); }
+    }, {passive:false});
+
+    window.addEventListener('mousemove', (e) => {
+        if (!estaArrastando) return;
+        const el = obterCelula(e);
+        if (el) {
+            const lA = parseInt(el.dataset.l), cA = parseInt(el.dataset.c);
+            document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
+            selecionadasAtuais = [];
+            if (Math.abs(lA - celulaInicial.l) > Math.abs(cA - celulaInicial.c)) {
+                const passo = lA > celulaInicial.l ? 1 : -1;
+                for (let i = celulaInicial.l; i !== lA + passo; i += passo) selecionar(i, celulaInicial.c);
+            } else {
+                const passo = cA > celulaInicial.c ? 1 : -1;
+                for (let i = celulaInicial.c; i !== cA + passo; i += passo) selecionar(celulaInicial.l, i);
             }
-        };
+        }
+    });
 
-        const selecionar = (l, c) => {
-            const el = document.getElementById(`cell-${l}-${c}`);
-            if (el) { el.classList.add('selecionando'); selecionadasAtuais.push(`${l}-${c}`); }
-        };
-
-        grid.addEventListener('mousedown', (e) => { estaArrastando = true; const el = e.target; celulaInicial = {l: parseInt(el.dataset.l), c: parseInt(el.dataset.c)}; });
-        grid.addEventListener('touchstart', (e) => { estaArrastando = true; const el = e.targetTouches[0].target; celulaInicial = {l: parseInt(el.dataset.l), c: parseInt(el.dataset.c)}; }, {passive:false});
-        window.addEventListener('mousemove', mover); window.addEventListener('touchmove', mover, {passive:false});
-        window.addEventListener('mouseup', validar); window.addEventListener('touchend', validar);
+    function selecionar(l, c) {
+        const el = document.getElementById(`cell-${l}-${c}`);
+        if (el) { el.classList.add('selecionando'); selecionadasAtuais.push(`${l}-${c}`); }
     }
+
+    window.addEventListener('mouseup', validar);
+    window.addEventListener('touchend', validar);
 
     function validar() {
         if (!estaArrastando) return;
@@ -304,12 +287,13 @@
         document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
         if (palavrasParaEncontrar.every(p => p.encontrada)) {
             clearInterval(intervalo);
-            document.getElementById('feedback-final').style.display = 'flex';
+            document.getElementById('final-screen').style.display = 'flex';
             document.getElementById('msg-tempo').innerText = `Terminaste em ${tempo} segundos!`;
         }
     }
 
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    window.onload = iniciarJogo;
 </script>
 </body>
 </html>
