@@ -61,7 +61,6 @@
             font-size: 0.95rem; display: flex; align-items: center; gap: 8px;
             transition: transform 0.3s ease; text-decoration: none;
         }
-        .btn-menu:hover { transform: scale(1.05); }
 
         .onda-container {
             height: 45px; width: 100%; overflow: hidden;
@@ -69,20 +68,25 @@
             filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        /* COMBOIO DE ESTRELAS */
+        /* CONTADOR DE MISSÕES (ETAPAS) */
         .status-jogo { 
             padding: 10px; flex-shrink: 0; position: relative; z-index: 25;
-            display: flex; justify-content: center; gap: 8px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .estrela-vida {
-            font-size: 1.8rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+
+        .etapas-container { display: flex; gap: 10px; justify-content: center; }
+        
+        .etapa {
+            width: 35px; height: 35px; border-radius: 50%;
+            background: white; border: 3px solid var(--cinza-claro);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: var(--cinza-claro);
+            transition: all 0.4s ease;
         }
-        .estrela-apagada {
-            filter: grayscale(1) opacity(0.3);
-            transform: scale(0.8);
-        }
+        .etapa.ativa { border-color: var(--azul-vibrante); color: var(--azul-vibrante); transform: scale(1.2); box-shadow: 0 0 10px rgba(0,145,255,0.3); }
+        .etapa.concluida { background: var(--verde); border-color: var(--verde); color: white; }
+
+        .vidas-texto { font-weight: 800; color: var(--vermelho); font-size: 1.1rem; }
 
         #main-content { 
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -114,22 +118,18 @@
             box-shadow: 0 6px 0px var(--azul-grad-esq);
         }
         .btn-letra:hover { transform: translateY(-3px); background: white; }
-        .btn-letra:active { transform: translateY(2px); box-shadow: 0 0px 0px; }
         .btn-letra.correto { background: var(--verde) !important; color: white; border-color: #388e3c; box-shadow: 0 6px 0px #388e3c; }
         .btn-letra.errado { background: var(--vermelho) !important; color: white; border-color: #b71c1c; box-shadow: 0 6px 0px #b71c1c; }
 
-        #feedback { font-size: 24px; font-weight: 800; min-height: 35px; margin-top: 10px; }
+        #feedback { font-size: 24px; font-weight: 800; min-height: 35px; }
 
-        footer {
-            height: 50px; flex-shrink: 0; display: flex; align-items: center;
-            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
-        }
+        footer { height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid #eee; width: 100%; }
 
         @media (max-width: 600px) {
-            .cabecalho h1 { font-size: 1.4rem; }
-            .palavra-lacuna { font-size: 45px; letter-spacing: 6px; }
-            .btn-letra { width: 75px; height: 75px; font-size: 32px; }
-            .estrela-vida { font-size: 1.2rem; }
+            .cabecalho h1 { font-size: 1.2rem; }
+            .palavra-lacuna { font-size: 40px; letter-spacing: 5px; }
+            .btn-letra { width: 70px; height: 70px; font-size: 28px; }
+            .etapa { width: 25px; height: 25px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -159,8 +159,11 @@
     </svg>
 </div>
 
-<div class="status-jogo" id="comboio-estrelas">
-    </div>
+<div class="status-jogo">
+    <div class="etapas-container" id="missao-etapas">
+        </div>
+    <div class="vidas-texto">Vidas: <span id="vidas-restantes">10</span> ❤️</div>
+</div>
 
 <main id="main-content">
     <div class="cartao-xl" id="conteudo-jogo">
@@ -183,19 +186,18 @@
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
     let indice = 0;
-    let estrelasRestantes = 10;
+    let vidas = 10;
     let lista = [];
-    
-    // Gerar as estrelas visualmente
-    function criarEstrelas() {
-        const container = document.getElementById('comboio-estrelas');
+
+    function inicializarEtapas() {
+        const container = document.getElementById('missao-etapas');
         container.innerHTML = "";
         for (let i = 0; i < 10; i++) {
-            const span = document.createElement('span');
-            span.className = 'estrela-vida';
-            span.id = `estrela-${i}`;
-            span.innerText = "⭐";
-            container.appendChild(span);
+            const div = document.createElement('div');
+            div.className = 'etapa';
+            div.id = `etapa-${i}`;
+            div.innerText = i + 1;
+            container.appendChild(div);
         }
     }
 
@@ -203,14 +205,18 @@
         lista = [...palavras].sort(() => 0.5 - Math.random()).slice(0, 10);
     }
 
-    function mostrarAjuda() {
-        alert("Como jogar:\n1. Olha para a imagem e para a palavra.\n2. Falta uma letra onde está o ponto de interrogação.\n3. Clica na letra certa para ganhar! ✨\n4. Se errares, perdes uma estrela. ⭐");
-    }
-
     function carregar() {
-        if (indice >= lista.length || estrelasRestantes <= 0) {
+        if (indice >= lista.length || vidas <= 0) {
             finalizarJogo();
             return;
+        }
+
+        // Atualizar visual das bolinhas
+        for(let i=0; i<10; i++) {
+            const el = document.getElementById(`etapa-${i}`);
+            el.classList.remove('ativa');
+            if (i < indice) el.classList.add('concluida');
+            if (i === indice) el.classList.add('ativa');
         }
 
         const item = lista[indice];
@@ -237,30 +243,17 @@
 
     function verificar(escolha, correta, btn) {
         const feedback = document.getElementById('feedback');
-        
         if (escolha.toLowerCase() === correta.toLowerCase()) {
             btn.classList.add('correto');
-            feedback.innerHTML = "<span style='color: var(--verde)'>Excelente! ✨</span>";
+            feedback.innerHTML = "<span style='color: var(--verde)'>Boa! ✅</span>";
             document.getElementById('display-palavra').innerText = lista[indice].palavra.toUpperCase();
-            
-            setTimeout(() => {
-                indice++;
-                carregar();
-            }, 2000);
+            setTimeout(() => { indice++; carregar(); }, 1500);
         } else {
-            // Perde uma estrela
-            estrelasRestantes--;
-            const estrelaParaApagar = document.getElementById(`estrela-${estrelasRestantes}`);
-            if (estrelaParaApagar) {
-                estrelaParaApagar.classList.add('estrela-apagada');
-            }
-            
+            vidas--;
+            document.getElementById('vidas-restantes').innerText = vidas;
             btn.classList.add('errado');
-            feedback.innerHTML = "<span style='color: var(--vermelho)'>Ups! Perdeste uma estrela.</span>";
-            
-            if (estrelasRestantes <= 0) {
-                setTimeout(finalizarJogo, 1000);
-            }
+            feedback.innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! ❌</span>";
+            if (vidas <= 0) setTimeout(finalizarJogo, 1000);
         }
     }
 
@@ -277,23 +270,16 @@
 
     function finalizarJogo() {
         const cartao = document.getElementById('conteudo-jogo');
-        let mensagemFinal = estrelasRestantes >= 8 ? "És um mestre das letras! 🏆" : (estrelasRestantes > 0 ? "Muito bem! 👍" : "Tenta outra vez! 💪");
-        
         cartao.innerHTML = `
-            <div style="padding: 20px;">
-                <h2 style="color: var(--azul-escuro); font-size: 36px;">Jogo Terminado!</h2>
-                <p style="font-size: 60px; margin: 10px 0;">${estrelasRestantes > 0 ? '🎉' : '☁️'}</p>
-                <p style="font-size: 24px;">Terminaste com <strong>${estrelasRestantes}</strong> estrelas!</p>
-                <p style="font-size: 20px; color: #555;">${mensagemFinal}</p>
-                <button class="btn-menu" onclick="location.reload()" style="margin: 30px auto; padding: 15px 50px; font-size: 22px;">Recomeçar</button>
-            </div>
+            <h2 style="color: var(--azul-escuro); font-size: 32px;">${vidas > 0 ? 'Missão Cumprida! 🏆' : 'Fim de Jogo! ☁️'}</h2>
+            <p style="font-size: 20px;">Completaste <strong>${indice}</strong> de 10 palavras.</p>
+            <button class="btn-menu" onclick="location.reload()" style="margin: 20px auto; padding: 15px 40px; font-size: 1.2rem;">Recomeçar</button>
         `;
     }
 
-    window.onload = () => {
-        criarEstrelas();
-        carregar();
-    };
+    function mostrarAjuda() { alert("Olha para a imagem e clica na letra que falta para completar a missão!"); }
+
+    window.onload = () => { inicializarEtapas(); carregar(); };
 </script>
 </body>
 </html>
