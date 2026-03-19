@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escrita de Palavras ✍️</title>
+    <title>Arrastar Sílabas 🖐️</title>
     
     <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
         :root {
             --azul-claro: #f0f7ff;
             --azul-janela-fundo: #ebf5ff;
+            --azul-janela-borda: #add8e6;
             --azul-grad-esq: #bde6ff; 
             --azul-grad-dir: #2e86de; 
             --azul-vibrante: #0091ff;
@@ -87,12 +88,14 @@
             flex-shrink: 0; 
             position: relative; 
             z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .estrelas { font-size: 24px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
 
         .progresso-container {
             width: 90%; max-width: 650px; height: 18px; 
-            background: white; border-radius: 15px; margin: 0 auto; 
+            background: white; border-radius: 15px; margin: 5px auto; 
             overflow: hidden; border: 2.5px solid var(--azul-grad-dir);
         }
         .barra-progresso {
@@ -100,6 +103,16 @@
             background: var(--azul-vibrante);
             transition: width 0.5s ease;
         }
+
+        .contadores {
+            display: flex;
+            gap: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+        .certas { color: var(--verde); }
+        .erradas { color: var(--vermelho); }
 
         #main-content { 
             flex: 1; 
@@ -116,71 +129,56 @@
             background: white; 
             width: 95%; 
             max-width: 650px;
-            padding: 30px; 
+            padding: 25px; 
             border-radius: 30px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.06);
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 20px;
+            gap: 12px;
             position: relative;
             z-index: 1;
         }
 
         .imagem-pergunta {
-            height: 180px;
-            width: 180px; 
+            height: 160px;
+            width: 160px; 
             object-fit: contain;
             border: 3px solid var(--azul-claro); 
             border-radius: 20px; 
             padding: 10px;
         }
 
-        #campoEscrita {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 28px;
-            padding: 12px;
-            width: 90%;
-            max-width: 400px;
-            border: 3px solid var(--azul-grad-esq);
+        .zona-drop {
+            display: flex; gap: 15px; justify-content: center; min-height: 80px;
+            margin: 5px 0; flex-wrap: wrap; padding: 12px;
+            border-radius: 20px; background: #fdfdfd; border: 2px dashed var(--azul-janela-borda);
+        }
+
+        .caixa-silaba {
+            width: 85px; height: 60px; 
+            background: var(--azul-janela-fundo);
+            border: 2px solid var(--azul-janela-borda); 
             border-radius: 15px;
-            text-align: center;
-            outline: none;
-            color: var(--azul-escuro);
-            font-weight: 700;
-            background-color: var(--azul-janela-fundo);
-            transition: border-color 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: 700; color: var(--azul-escuro);
+            cursor: grab; 
+            box-shadow: 0 4px 0px rgba(173, 216, 230, 0.5);
+            transition: all 0.2s ease;
+            user-select: none; touch-action: none;
         }
 
-        #campoEscrita:focus {
-            border-color: var(--azul-grad-dir);
+        .caixa-vazia {
+            width: 85px; height: 60px; border: 3px dashed #cbd5e0;
+            border-radius: 15px; background: #f8fafc;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        #validar {
-            padding: 15px 45px;
-            font-size: 20px;
-            font-weight: bold;
-            background: var(--verde);
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 0px #388e3c;
-            transition: all 0.2s;
-        }
-
-        #validar:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0px #388e3c;
-        }
-
-        #feedback {
-            min-height: 40px; 
-            font-weight: 700; 
-            font-size: 1.4rem;
+        .opcoes-silabas {
+            display: flex; gap: 15px; justify-content: center; 
+            margin-top: 5px; flex-wrap: wrap; padding: 15px;
+            background: #fff; border: 2px solid var(--azul-claro);
+            border-radius: 20px; width: 100%; min-height: 90px;
         }
 
         footer {
@@ -197,17 +195,10 @@
 
         @media (max-width: 600px) {
             .cabecalho h1 { font-size: 1.4rem; }
-            .imagem-pergunta { height: 140px; width: 140px; }
-            #campoEscrita { font-size: 22px; }
+            .caixa-silaba, .caixa-vazia { width: 70px; height: 50px; font-size: 18px; }
+            .imagem-pergunta { height: 130px; width: 130px; }
+            .cartao { padding: 15px; }
         }
-
-        /* Animação de Erro */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        .shake { animation: shake 0.3s; border-color: var(--vermelho) !important; }
     </style>
 </head>
 <body>
@@ -219,8 +210,8 @@
         </button>
     </div>
     <div class="cabecalho-conteudo">
-        <img src="https://openmoji.org/data/color/svg/2328.svg" class="icone-cabecalho" alt="teclado"> 
-        <h1>Escrita de Palavras</h1>
+        <img src="puzzle.png" class="icone-cabecalho" alt="jogo"> 
+        <h1>Arrastar Sílabas</h1>
     </div>
     <div class="header-right"></div>
 </header>
@@ -238,25 +229,22 @@
 </div>
 
 <div class="status-jogo">
-    <div class="estrelas"><span id="contador-estrelas">0</span> ⭐</div>
     <div class="progresso-container">
         <div id="barra-progresso" class="barra-progresso"></div>
+    </div>
+    <div class="contadores">
+        <span class="certas">✅ <span id="num-certas">0</span></span>
+        <span class="erradas">❌ <span id="num-erradas">0</span></span>
     </div>
 </div>
 
 <main id="main-content">
     <div class="cartao" id="jogo-container">
-        <img id="imagemPalavra" src="" class="imagem-pergunta" alt="carregando...">
-        
-        <p style="font-weight: 700; color: var(--azul-escuro); margin: 0;">Como se escreve?</p>
-        
-        <input id="campoEscrita" type="text" placeholder="Escreve aqui..." autocomplete="off">
-        
-        <button id="validar">
-            <span>🔍</span> Verificar
-        </button>
-
-        <div id="feedback"></div>
+        <img id="img-pergunta" class="imagem-pergunta" src="" alt="carregando...">
+        <p style="font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; margin: 5px 0;">Organiza as sílabas:</p>
+        <div class="zona-drop" id="caixas-destino"></div>
+        <div class="opcoes-silabas" id="caixas-origem"></div>
+        <div id="feedback" style="min-height: 35px; font-weight: 700; font-size: 1.3rem; margin-top: 5px;"></div>
     </div>
 </main>
 
@@ -271,61 +259,113 @@
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
     let indiceAtual = 0;
-    let estrelas = 0;
+    let certas = 0;
+    let erradas = 0;
     let listaJogo = [];
-    
-    // Inicialização segura da lista
     if (typeof palavras !== 'undefined') {
         listaJogo = [...palavras].sort(() => 0.5 - Math.random());
     }
 
-    const campo = document.getElementById('campoEscrita');
-    const btnValidar = document.getElementById('validar');
-    const feedback = document.getElementById('feedback');
-
     function carregarPergunta() {
         if (indiceAtual >= listaJogo.length) { finalizarJogo(); return; }
-        
         atualizarBarra();
         const item = listaJogo[indiceAtual];
-        document.getElementById('imagemPalavra').src = item.imagem;
-        campo.value = "";
-        campo.classList.remove('shake');
-        feedback.innerText = "";
-        campo.focus();
+        const silabasCorretas = item.divisao.split('-');
+        document.getElementById('img-pergunta').src = item.imagem;
+        document.getElementById('feedback').innerText = "";
+        
+        const destino = document.getElementById('caixas-destino');
+        destino.innerHTML = "";
+        silabasCorretas.forEach((s) => {
+            const caixa = document.createElement('div');
+            caixa.className = 'caixa-vazia';
+            caixa.dataset.silabaCorreta = s;
+            caixa.ondragover = (e) => e.preventDefault();
+            caixa.ondrop = lidarDrop;
+            destino.appendChild(caixa);
+        });
+
+        const origem = document.getElementById('caixas-origem');
+        origem.innerHTML = "";
+        const silabasBaralhadas = [...silabasCorretas].sort(() => 0.5 - Math.random());
+        silabasBaralhadas.forEach((s, i) => origem.appendChild(criarSilaba(s, i)));
     }
 
-    function verificarResposta() {
-        const item = listaJogo[indiceAtual];
-        const respostaUsuario = campo.value.trim().toLowerCase();
-        const respostaCorreta = item.palavra.toLowerCase();
+    function criarSilaba(texto, id) {
+        const div = document.createElement('div');
+        div.className = 'caixa-silaba';
+        div.innerText = texto;
+        div.draggable = true;
+        div.id = "silaba-" + Math.random().toString(36).substr(2, 9);
+        div.ondragstart = (e) => { e.dataTransfer.setData("text", e.target.id); e.target.classList.add('dragging'); };
+        div.ondragend = (e) => e.target.classList.remove('dragging');
+        div.ontouchstart = lidarTouchStart;
+        div.ontouchmove = lidarTouchMove;
+        div.ontouchend = lidarTouchEnd;
+        return div;
+    }
 
-        if (respostaUsuario === respostaCorreta) {
-            estrelas++;
-            document.getElementById('contador-estrelas').innerText = estrelas;
-            feedback.innerHTML = "<span style='color: var(--verde)'>Muito bem! ✨</span>";
-            campo.style.borderColor = "var(--verde)";
-            
-            setTimeout(() => {
-                campo.style.borderColor = "var(--azul-grad-esq)";
-                indiceAtual++;
-                carregarPergunta();
-            }, 1200);
-        } else {
-            campo.classList.add('shake');
-            feedback.innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! 🔄</span>";
-            setTimeout(() => {
-                campo.classList.remove('shake');
-            }, 500);
+    function lidarDrop(e) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("text");
+        const elemento = document.getElementById(id);
+        const caixaDestino = e.target.closest('.caixa-vazia');
+        if (caixaDestino && !caixaDestino.hasChildNodes()) {
+            caixaDestino.appendChild(elemento);
+            verificarPalavra();
         }
     }
 
-    btnValidar.onclick = verificarResposta;
+    let touchElement = null;
+    function lidarTouchStart(e) { touchElement = e.target; }
+    function lidarTouchMove(e) {
+        e.preventDefault();
+        let touch = e.touches[0];
+        touchElement.style.position = 'fixed';
+        touchElement.style.left = touch.clientX - 45 + 'px';
+        touchElement.style.top = touch.clientY - 30 + 'px';
+        touchElement.style.zIndex = "1000";
+    }
+    function lidarTouchEnd(e) {
+        if(!touchElement) return;
+        touchElement.style.position = 'static';
+        let touch = e.changedTouches[0];
+        let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+        let caixaVazia = dropTarget ? dropTarget.closest('.caixa-vazia') : null;
+        if (caixaVazia && !caixaVazia.hasChildNodes()) {
+            caixaVazia.appendChild(touchElement);
+            verificarPalavra();
+        } else {
+            document.getElementById('caixas-origem').appendChild(touchElement);
+        }
+        touchElement = null;
+    }
 
-    // Permitir carregar no Enter para validar
-    campo.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') verificarResposta();
-    });
+    function verificarPalavra() {
+        const caixas = document.querySelectorAll('.caixa-vazia');
+        let preenchidas = 0;
+        caixas.forEach(c => { if(c.hasChildNodes()) preenchidas++; });
+        
+        if (preenchidas === caixas.length) {
+            let todasCorretas = true;
+            caixas.forEach(c => { if (c.firstChild.innerText !== c.dataset.silabaCorreta) todasCorretas = false; });
+            
+            if (todasCorretas) {
+                certas++;
+                document.getElementById('num-certas').innerText = certas;
+                document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Excelente! ✨</span>";
+                setTimeout(() => { indiceAtual++; carregarPergunta(); }, 1200);
+            } else {
+                erradas++;
+                document.getElementById('num-erradas').innerText = erradas;
+                document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Tenta de novo! 🔄</span>";
+                setTimeout(() => {
+                    caixas.forEach(c => { if (c.firstChild) document.getElementById('caixas-origem').appendChild(c.firstChild); });
+                    document.getElementById('feedback').innerText = "";
+                }, 1000);
+            }
+        }
+    }
 
     function atualizarBarra() {
         if (listaJogo.length === 0) return;
@@ -336,12 +376,11 @@
     function finalizarJogo() {
         document.getElementById('barra-progresso').style.width = "100%";
         document.getElementById('jogo-container').innerHTML = `
-            <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
-            <p style="font-size: 1.2rem;">Terminaste o desafio com <strong>${estrelas}</strong> estrelas!</p>
+            <h2 style="color: var(--azul-escuro)">🏆 Missão Cumprida!</h2>
+            <p style="font-size: 1.2rem;">Acertaste em <strong>${certas}</strong> palavras!</p>
             <button onclick="location.reload()" class="btn-menu" style="margin: 20px auto; padding: 15px 30px;">Recomeçar</button>
         `;
     }
-
     window.onload = carregarPergunta;
 </script>
 </body>
