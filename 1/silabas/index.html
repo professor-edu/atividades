@@ -11,15 +11,15 @@
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-grad-esq: #bde6ff; /* Azul Mais Claro */
-            --azul-grad-dir: #2e86de; /* Azul Mais Escuro e Vibrante */
+            --azul-grad-esq: #bde6ff; 
+            --azul-grad-dir: #2e86de; 
             --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
             --vermelho: #e53935;
-            /* Sombra suave para a onda */
-            --sombra-separacao: 0 6px 15px rgba(0, 0, 0, 0.15);
+            /* SOMBRA 3D REFORÇADA */
+            --sombra-3d: 0 8px 20px rgba(0, 0, 0, 0.25);
         }
 
         body { 
@@ -33,7 +33,6 @@
             overflow: hidden; 
         }
         
-        /* HEADER PADRONIZADO - 85PX COM GRADIENTE ESQUERDA -> DIREITA */
         .cabecalho { 
             background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
@@ -44,7 +43,6 @@
             height: 85px; 
             flex-shrink: 0;
             z-index: 20;
-            /* A sombra será aplicada no container da onda para cobrir a área */
         }
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
@@ -56,13 +54,14 @@
             gap: 15px; flex: 3;
         }
 
-        /* TÍTULO COM TAMANHO CORRIGIDO (1.5rem / 24px) */
+        /* TÍTULO REFORÇADO PARA 2REM */
         .cabecalho h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--azul-escuro);
             white-space: nowrap;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
         }
 
         .icone-cabecalho { 
@@ -80,21 +79,18 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .btn-menu:hover { transform: translateY(-3px) scale(1.05); background: #f57c00; }
+        .btn-menu:hover { transform: translateY(-3px) scale(1.05); }
 
-        /* ONDA COM GRADIENTE ESQUERDA -> DIREITA E SOMBRA DE SEPARAÇÃO */
         .onda-container {
             height: 45px; 
             width: 100%; 
             overflow: hidden;
-            margin-top: -1px; /* Para cobrir qualquer pixel branco */
+            margin-top: -1px;
             flex-shrink: 0; 
             z-index: 10;
-            /* A SOMBRA É APLICADA AQUI NO CONTAINER */
-            filter: drop-shadow(var(--sombra-separacao));
+            /* SOMBRA REFORÇADA PARA EFEITO 3D */
+            filter: drop-shadow(var(--sombra-3d));
         }
-
-        .onda-container svg { height: 100%; width: 100%; }
 
         .status-jogo { padding: 5px; flex-shrink: 0; }
         .estrelas { font-size: 22px; color: #f57c00; font-weight: 700; margin-bottom: 5px; }
@@ -149,11 +145,13 @@
             user-select: none; touch-action: none;
         }
 
+        /* CAIXA DE SÍLABAS SEM CANTOS ARREDONDADOS (BORDER-RADIUS: 0) */
         .opcoes-silabas {
             display: flex; gap: 12px; justify-content: center; 
             margin-top: 5px; flex-wrap: wrap; padding: 18px;
             background: white; border: 2px solid var(--azul-claro);
-            border-radius: 25px; width: 100%; min-height: 85px;
+            border-radius: 0; /* Removido o arredondamento */
+            width: 100%; min-height: 85px;
         }
 
         footer {
@@ -162,8 +160,8 @@
         }
 
         @media (max-width: 600px) {
-            .cabecalho h1 { font-size: 1.2rem; }
-            .icone-cabecalho { width: 60px !important; height: 60px !important; }
+            .cabecalho h1 { font-size: 1.5rem; }
+            .icone-cabecalho { width: 55px !important; height: 55px !important; }
             .caixa-silaba, .caixa-vazia { width: 68px; height: 55px; font-size: 17px; }
         }
     </style>
@@ -220,7 +218,7 @@
 
 <script src="js/dados.js"></script>
 <script>
-    // A lógica JavaScript permanece igual
+    // [Lógica JavaScript igual ao anterior]
     let indiceAtual = 0;
     let estrelas = 0;
     let listaJogo = [];
@@ -313,7 +311,7 @@
             if (todasCorretas) {
                 estrelas++;
                 document.getElementById('contador-estrelas').innerText = estrelas;
-                document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Incrível! ✨</span>";
+                document.getElementById('feedback').innerHTML = "<span style='color: var(--verde)'>Fantástico! ✨</span>";
                 setTimeout(() => { indiceAtual++; carregarPergunta(); }, 1200);
             } else {
                 document.getElementById('feedback').innerHTML = "<span style='color: var(--vermelho)'>Tenta outra vez! 🔄</span>";
@@ -327,7 +325,8 @@
 
     function atualizarBarra() {
         const perc = (indiceAtual / listaJogo.length) * 100;
-        document.getElementById('barra-progresso').style.width = perc + "%";
+        const barra = document.getElementById('barra-progresso');
+        if(barra) barra.style.width = perc + "%";
     }
 
     function finalizarJogo() {
@@ -335,7 +334,7 @@
         document.getElementById('jogo-container').innerHTML = `
             <h2 style="color: var(--azul-escuro)">🏆 Parabéns!</h2>
             <p>Conseguiste as <strong>${estrelas}</strong> estrelas!</p>
-            <button onclick="location.reload()" class="btn-menu" style="margin: 10px auto;">Recomeçar</button>
+            <button onclick="location.reload()" class="btn-menu" style="margin: 10px auto;">Jogar de Novo</button>
         `;
     }
     window.onload = carregarPergunta;
