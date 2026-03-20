@@ -2,191 +2,440 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sopa de Letras 🔎</title>
+    
+    <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --azul-claro: #f0f7ff;
+            --azul-janela-fundo: #ebf5ff;
+            --azul-janela-borda: #add8e6;
             --azul-grad-esq: #bde6ff; 
             --azul-grad-dir: #2e86de; 
+            --azul-vibrante: #0091ff;
+            --azul-escuro: #0d47a1;
+            --verde: #4caf50;
             --laranja: #ff9800;
+            --vermelho: #e53935;
         }
 
-        /* RESET PARA ELIMINAR ESPAÇOS EM BRANCO */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--azul-claro);
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            text-align: center; 
+            background-color: var(--azul-claro); 
+            margin: 0; 
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh; 
+            overflow: hidden; 
+            user-select: none;
         }
-
-        /* HEADER COM GRADIENTE REAL */
-        header {
-            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%);
-            padding: 15px 30px;
+        
+        /* CABEÇALHO TEMPLATE */
+        .cabecalho { 
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            padding: 0 20px; 
             display: flex;
-            align-items: center;
+            align-items: center; 
             justify-content: space-between;
-            height: 60px;
+            height: 85px; 
+            flex-shrink: 0;
+            z-index: 20;
         }
 
-        /* BOTÃO MENU LARGO (ESTILO PILL) */
-        .btn-menu {
-            background: var(--laranja);
-            color: white;
-            border: none;
-            width: 180px; /* Largura corrigida conforme a imagem */
-            padding: 10px;
-            border-radius: 50px;
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
+
+        .cabecalho-conteudo { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 3;
+        }
+
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 2rem;
             font-weight: 700;
-            cursor: pointer;
+            color: var(--azul-escuro);
+            white-space: nowrap;
+        }
+
+        .btn-menu {
+            background: var(--laranja); color: white; border: none;
+            padding: 10px 18px; border-radius: 25px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
         }
+        .btn-menu:hover { transform: scale(1.05); }
 
-        /* ONDA COM GRADIENTE CONTINUO */
         .onda-container {
-            width: 100%;
-            height: 60px;
-            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%);
-            clip-path: url(#wave-clip);
-            margin-bottom: 20px;
+            height: 45px; width: 100%; overflow: hidden;
+            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        .main-content {
-            flex: 1; /* Empurra o footer para baixo */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* ÁREA DE COUNTDOWN */
+        .status-jogo { padding: 10px; flex-shrink: 0; }
+        #countdown-box {
+            display: inline-block;
+            background: white;
+            padding: 8px 30px;
+            border-radius: 25px;
+            border: 3px solid var(--azul-grad-dir);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--azul-escuro);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .tempo-baixo { color: var(--vermelho) !important; border-color: var(--vermelho) !important; animation: shake 0.5s infinite; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(2px); }
+            50% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
         }
 
-        .game-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            gap: 25px;
-            padding: 20px;
-            flex-wrap: wrap;
+        .container { 
+            display: flex; justify-content: center; align-items: flex-start; 
+            gap: 30px; flex: 1; padding: 10px; overflow: hidden;
         }
 
         /* GRELHA */
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(10, 48px);
-            grid-template-rows: repeat(10, 48px);
-            gap: 6px;
-            background: white;
-            padding: 15px;
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(10, 48px); 
+            grid-template-rows: repeat(10, 48px); 
+            gap: 6px; 
+            background: white; 
+            padding: 15px; 
             border-radius: 25px;
-            border: 2px solid #add8e6;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            touch-action: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
+            border: 2px solid var(--azul-janela-borda);
+            touch-action: none; /* Crucial para mobile */
         }
 
-        /* LISTA DE PALAVRAS ALINHADA */
-        #word-list {
-            display: grid;
-            grid-template-columns: repeat(2, 160px);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 12px;
-            /* Altura sincronizada com a grelha */
+        .letra { 
+            width: 48px; height: 48px; 
+            border: 1px solid #e3efff; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 24px; 
+            border-radius: 12px; background: #fff;
+            transition: background 0.1s;
         }
 
-        .word-card {
-            background: white;
-            border: 2px solid #add8e6;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
+        /* Sobreposição: O amarelo de seleção deve ganhar do verde de correto */
+        .letra.selecionando { background: #fff9c4 !important; border-color: #fbc02d !important; color: #333 !important; } 
+        .letra.correta { background: var(--verde) !important; color: white !important; border-color: #388e3c !important; }
+
+        /* LISTA DE PALAVRAS */
+        #lista-palavras { 
+            display: grid; 
+            grid-template-columns: repeat(2, 175px); 
+            gap: 12px; 
+            align-self: flex-start; 
         }
 
-        .word-card img { width: 65px; height: 65px; object-fit: contain; }
-        .word-card span { font-weight: 700; font-size: 12px; color: #0d47a1; text-transform: uppercase; margin-top: 5px; }
+        .item-palavra { 
+            background: white; padding: 10px; border-radius: 20px; 
+            border: 2px solid var(--azul-janela-borda); 
+            display: flex; flex-direction: column; align-items: center; 
+            transition: all 0.3s ease;
+        }
 
-        /* FOOTER COLADO AO FUNDO */
+        .item-palavra img { width: 70px; height: 70px; object-fit: contain; }
+        .item-palavra span { font-weight: 700; font-size: 13px; margin-top: 8px; color: var(--azul-escuro); text-transform: uppercase; }
+        .item-palavra.encontrada { opacity: 0.3; background: #f1f9f2; border-color: var(--verde); transform: scale(0.95); }
+        .item-palavra.encontrada span { text-decoration: line-through; }
+
+        /* FEEDBACK FINAL */
+        #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 35px; text-align: center; max-width: 400px; width: 90%; }
+        .emoji-feedback { font-size: 80px; display: block; margin-bottom: 15px; }
+
+        /* FOOTER */
         footer {
-            background: white;
-            width: 100%;
-            padding: 15px 0;
-            text-align: center;
-            border-top: 1px solid #ddd;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #0d47a1;
+            height: 50px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
         }
 
-        /* SVG PARA CLIP-PATH DA ONDA */
-        .svg-defs { position: absolute; width: 0; height: 0; }
-
-        @media (max-width: 600px) {
-            .btn-menu { width: 120px; }
-            #grid { grid-template-columns: repeat(10, 32px); grid-template-rows: repeat(10, 32px); }
-            #word-list { grid-template-columns: repeat(2, 1fr); height: auto; }
+        @media (max-width: 1000px) {
+            #grid { grid-template-columns: repeat(10, 38px); grid-template-rows: repeat(10, 38px); }
+            .letra { width: 38px; height: 38px; font-size: 18px; }
+            #lista-palavras { grid-template-columns: repeat(2, 140px); }
+            .item-palavra img { width: 50px; height: 50px; }
         }
     </style>
 </head>
 <body>
 
-<svg class="svg-defs">
-    <defs>
-        <clipPath id="wave-clip" clipPathUnits="objectBoundingBox">
-            <path d="M0,0 L1,0 L1,0.6 C0.8,0.9 0.5,1 0.2,0.8 L0,0.6 Z" />
-        </clipPath>
-    </defs>
-</svg>
-
-<header>
-    <a href="#" class="btn-menu">🏠 MENU</a>
-    <div style="display: flex; align-items: center; gap: 10px; color: #0d47a1;">
-        <img src="logo.png" style="height: 45px;">
-        <h1 style="margin: 0; font-size: 1.6rem;">Sopa de Letras</h1>
+<header class="cabecalho">
+    <div class="header-left">
+        <a href="../index.html" class="btn-menu">
+            <span>🏠</span> MENU
+        </a>
     </div>
-    <div style="width: 180px;"></div>
+    <div class="cabecalho-conteudo">
+        <img src="sopa-letras.png" style="width:70px" alt="ícone">
+        <h1>Sopa de Letras</h1>
+    </div>
+    <div class="header-right"></div>
 </header>
 
-<div class="onda-container"></div>
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+        <defs>
+            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+    </svg>
+</div>
 
-<div class="main-content">
-    <div style="margin-bottom: 20px;">
-        <div style="background: white; padding: 10px 30px; border-radius: 30px; border: 3px solid var(--azul-grad-dir); font-weight: bold; font-size: 1.4rem;">
-            ⏱️ 02:54
-        </div>
-    </div>
+<div class="status-jogo">
+    <div id="countdown-box">⏱️ <span id="timer-display">03:00</span></div>
+</div>
 
-    <div class="game-wrapper">
-        <div id="grid">
-            </div>
-        <div id="word-list">
-            <div class="word-card"><img src="baleia.png"><span>Baleia</span></div>
-            <div class="word-card"><img src="piano.png"><span>Piano</span></div>
-            <div class="word-card"><img src="mota.png"><span>Mota</span></div>
-            <div class="word-card"><img src="limao.png"><span>Limão</span></div>
-            <div class="word-card"><img src="papagaio.png"><span>Papagaio</span></div>
-            <div class="word-card"><img src="vaca.png"><span>Vaca</span></div>
-            <div class="word-card"><img src="amarelo.png"><span>Amarelo</span></div>
-            <div class="word-card"><img src="tomate.png"><span>Tomate</span></div>
-        </div>
+<div class="container">
+    <div id="grid" oncontextmenu="return false;"></div> 
+    <div id="lista-palavras"></div>
+</div>
+
+<div id="feedback-final">
+    <div class="painel-vitoria">
+        <span class="emoji-feedback" id="feedback-emoji">🥳</span>
+        <h2 id="feedback-titulo">Excelente Trabalho!</h2>
+        <p id="msg-tempo" style="font-size: 1.2rem; color: var(--azul-escuro); font-weight: 500;"></p>
+        <button class="btn-menu" style="margin: 20px auto 0; padding: 15px 30px; font-size: 1.1rem;" onclick="location.reload()">Jogar de Novo</button>
     </div>
 </div>
 
 <footer>
-    2026 🏫 EB1/PE da Marinheira
+    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    </p>
 </footer>
 
+<script src="js/dados.js"></script>
+<script>
+    const TAMANHO = 10;
+    const TEMPO_LIMITE = 180; // 3 minutos
+    let tempoRestante = TEMPO_LIMITE;
+    let intervaloCountdown;
+    
+    const gridElement = document.getElementById('grid');
+    const listaElement = document.getElementById('lista-palavras');
+    
+    let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
+    let palavrasParaEncontrar = selecaoOriginal.map(p => ({
+        nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+        imagem: p.imagem,
+        encontrada: false,
+        celulas: []
+    }));
+
+    let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(''));
+    let estaArrastando = false;
+    let celulaInicial = null;
+    let celulasSelecionadasAtuais = [];
+
+    function iniciarJogo() {
+        // Lógica de posicionamento das palavras
+        palavrasParaEncontrar.forEach(pObj => {
+            let colocada = false;
+            let tentativas = 0;
+            while (!colocada && tentativas < 200) {
+                let dir = Math.random() > 0.5 ? 'H' : 'V';
+                let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
+                let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
+                
+                if (verificarEspaco(pObj.nome, l, c, dir)) {
+                    for (let i = 0; i < pObj.nome.length; i++) {
+                        let curL = dir === 'V' ? l + i : l;
+                        let curC = dir === 'H' ? c + i : c;
+                        matriz[curL][curC] = pObj.nome[i];
+                        pObj.celulas.push(`${curL}-${curC}`);
+                    }
+                    colocada = true;
+                }
+                tentativas++;
+            }
+        });
+
+        desenharInterface();
+        configurarEventosArrastamento();
+        iniciarCountdown();
+    }
+
+    function verificarEspaco(palavra, l, c, dir) {
+        for (let i = 0; i < palavra.length; i++) {
+            let curL = dir === 'V' ? l + i : l;
+            let curC = dir === 'H' ? c + i : c;
+            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== palavra[i]) return false;
+        }
+        return true;
+    }
+
+    function desenharInterface() {
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let l = 0; l < TAMANHO; l++) {
+            for (let c = 0; c < TAMANHO; c++) {
+                const div = document.createElement('div');
+                div.className = 'letra';
+                div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
+                div.id = `cell-${l}-${c}`;
+                div.dataset.l = l;
+                div.dataset.c = c;
+                gridElement.appendChild(div);
+            }
+        }
+        palavrasParaEncontrar.forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'item-palavra';
+            item.id = `item-${p.nome}`;
+            item.innerHTML = `<img src="${p.imagem}"><span>${p.nome}</span>`;
+            listaElement.appendChild(item);
+        });
+    }
+
+    function configurarEventosArrastamento() {
+        gridElement.addEventListener('mousedown', iniciarSelecao);
+        window.addEventListener('mousemove', enquantoArrasta);
+        window.addEventListener('mouseup', finalizarSelecao);
+        gridElement.addEventListener('touchstart', iniciarSelecao, {passive: false});
+        window.addEventListener('touchmove', enquantoArrasta, {passive: false});
+        window.addEventListener('touchend', finalizarSelecao);
+    }
+
+    function obterCelulaDosEventos(e) {
+        const touch = e.touches ? e.touches[0] : e;
+        const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
+        // NOTA: Removido "!elemento.classList.contains('correta')" para permitir seleção sobreposta
+        if (elemento && elemento.classList.contains('letra')) {
+            return {
+                el: elemento,
+                l: parseInt(elemento.dataset.l),
+                c: parseInt(elemento.dataset.c)
+            };
+        }
+        return null;
+    }
+
+    function iniciarSelecao(e) {
+        const celula = obterCelulaDosEventos(e);
+        if (!celula) return;
+        estaArrastando = true;
+        celulaInicial = { l: celula.l, c: celula.c };
+        celulasSelecionadasAtuais = [];
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        destacarCelula(celula.l, celula.c);
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function enquantoArrasta(e) {
+        if (!estaArrastando) return;
+        const celulaAtual = obterCelulaDosEventos(e);
+        if (!celulaAtual) return;
+
+        const lI = celulaInicial.l;
+        const cI = celulaInicial.c;
+        const lA = celulaAtual.l;
+        const cA = celulaAtual.c;
+
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        celulasSelecionadasAtuais = [];
+
+        if (Math.abs(lA - lI) > Math.abs(cA - cI)) {
+            const passo = lA > lI ? 1 : -1;
+            for (let l = lI; l !== lA + passo; l += passo) destacarCelula(l, cI);
+        } else {
+            const passo = cA > cI ? 1 : -1;
+            for (let c = cI; c !== cA + passo; c += passo) destacarCelula(lI, c);
+        }
+        if (e.cancelable) e.preventDefault();
+    }
+
+    function destacarCelula(l, c) {
+        if (l < 0 || l >= TAMANHO || c < 0 || c >= TAMANHO) return;
+        const id = `${l}-${c}`;
+        const el = document.getElementById(`cell-${id}`);
+        if (el) {
+            el.classList.add('selecionando');
+            celulasSelecionadasAtuais.push(id);
+        }
+    }
+
+    function finalizarSelecao() {
+        if (!estaArrastando) return;
+        estaArrastando = false;
+        
+        const selecaoQuery = celulasSelecionadasAtuais.sort().join(',');
+        palavrasParaEncontrar.forEach(p => {
+            if (!p.encontrada) {
+                const palavraQuery = p.celulas.sort().join(',');
+                if (selecaoQuery === palavraQuery) {
+                    p.encontrada = true;
+                    p.celulas.forEach(id => document.getElementById(`cell-${id}`).classList.add('correta'));
+                    document.getElementById(`item-${p.nome}`).classList.add('encontrada');
+                }
+            }
+        });
+
+        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
+        if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo(true);
+    }
+
+    function iniciarCountdown() {
+        intervaloCountdown = setInterval(() => {
+            tempoRestante--;
+            atualizarRelogio();
+            if (tempoRestante <= 10) document.getElementById('countdown-box').classList.add('tempo-baixo');
+            if (tempoRestante <= 0) finalizarJogo(false);
+        }, 1000);
+    }
+
+    function atualizarRelogio() {
+        let mins = Math.floor(tempoRestante / 60);
+        let segs = tempoRestante % 60;
+        document.getElementById('timer-display').textContent = 
+            `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+    }
+
+    function finalizarJogo(vitoria) {
+        clearInterval(intervaloCountdown);
+        const feedback = document.getElementById('feedback-final');
+        const msg = document.getElementById('msg-tempo');
+        const titulo = document.getElementById('feedback-titulo');
+        const emoji = document.getElementById('feedback-emoji');
+
+        if (vitoria) {
+            const tempoGasto = TEMPO_LIMITE - tempoRestante;
+            const m = Math.floor(tempoGasto / 60);
+            const s = tempoGasto % 60;
+            let textoTempo = m > 0 ? `${m} minuto(s) e ${s} segundo(s)` : `${s} segundos`;
+            
+            emoji.textContent = "🥳";
+            titulo.textContent = "Excelente Trabalho!";
+            msg.innerHTML = `Descobriste todas as palavras em <strong>${textoTempo}</strong>!`;
+        } else {
+            emoji.textContent = "😢";
+            titulo.textContent = "O tempo acabou!";
+            msg.textContent = "Não conseguiste encontrar todas as palavras a tempo. Tenta outra vez!";
+        }
+        
+        feedback.style.display = 'flex';
+    }
+
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    iniciarJogo();
+</script>
 </body>
 </html>
