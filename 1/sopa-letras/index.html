@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras 🔎</title>
+    <title>🧩 Sopa de Letras 🧩</title>
     
     <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -15,7 +15,6 @@
             --azul-janela-borda: #add8e6;
             --azul-grad-esq: #bde6ff; 
             --azul-grad-dir: #2e86de; 
-            --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
             --laranja: #ff9800;
@@ -29,12 +28,11 @@
             margin: 0; 
             display: flex;
             flex-direction: column;
-            height: 100vh; 
-            overflow: hidden; 
+            min-height: 100vh;
+            overflow-x: hidden; /* Evita scroll lateral horizontal */
             user-select: none;
         }
         
-        /* CABEÇALHO TEMPLATE */
         .cabecalho { 
             background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
@@ -46,65 +44,34 @@
             z-index: 20;
         }
 
-        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
-        .header-left { justify-content: flex-start; }
-        .header-right { justify-content: flex-end; }
-
-        .cabecalho-conteudo { 
-            display: flex; justify-content: center; align-items: center; 
-            gap: 15px; flex: 3;
-        }
-
-        .cabecalho h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--azul-escuro);
-            white-space: nowrap;
-        }
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; flex: 3; }
+        .cabecalho h1 { font-size: 1.8rem; color: var(--azul-escuro); margin: 0; }
 
         .btn-menu {
             background: var(--laranja); color: white; border: none;
             padding: 10px 18px; border-radius: 25px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
-            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
-            text-decoration: none;
-            transition: transform 0.3s ease;
+            cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            text-decoration: none; transition: transform 0.3s ease;
         }
         .btn-menu:hover { transform: scale(1.05); }
 
-        .onda-container {
-            height: 45px; width: 100%; overflow: hidden;
-            margin-top: -1px; flex-shrink: 0; z-index: 10;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
-        }
+        .onda-container { height: 45px; width: 100%; flex-shrink: 0; filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.1)); }
 
-        /* ÁREA DE COUNTDOWN */
-        .status-jogo { padding: 10px; flex-shrink: 0; }
+        .status-jogo { padding: 15px; }
         #countdown-box {
-            display: inline-block;
-            background: white;
-            padding: 8px 30px;
-            border-radius: 25px;
-            border: 3px solid var(--azul-grad-dir);
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--azul-escuro);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .tempo-baixo { color: var(--vermelho) !important; border-color: var(--vermelho) !important; animation: shake 0.5s infinite; }
-
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(2px); }
-            50% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-            100% { transform: translateX(0); }
+            display: inline-block; background: white; padding: 8px 30px;
+            border-radius: 25px; border: 3px solid var(--azul-grad-dir);
+            font-weight: 700; font-size: 1.4rem; color: var(--azul-escuro);
         }
 
+        /* CONTENTOR PRINCIPAL RESPONSIVO */
         .container { 
-            display: flex; justify-content: center; align-items: flex-start; 
-            gap: 30px; flex: 1; padding: 10px; overflow: hidden;
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            gap: 20px; 
+            padding: 10px 20px 40px; 
+            flex-wrap: wrap; /* Faz a lista ir para baixo no telemóvel */
         }
 
         /* GRELHA */
@@ -116,87 +83,83 @@
             background: white; 
             padding: 15px; 
             border-radius: 25px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05); 
             border: 2px solid var(--azul-janela-borda);
-            touch-action: none; /* Crucial para mobile */
+            touch-action: none; /* Bloqueia scroll APENAS ao tocar na grelha para poder jogar */
         }
 
         .letra { 
-            width: 48px; height: 48px; 
-            border: 1px solid #e3efff; 
+            width: 48px; height: 48px; border: 1px solid #e3efff; 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: 24px; 
-            border-radius: 12px; background: #fff;
-            transition: background 0.1s;
+            font-weight: 700; font-size: 22px; border-radius: 10px; background: #fff;
         }
 
-        /* Sobreposição: O amarelo de seleção deve ganhar do verde de correto */
-        .letra.selecionando { background: #fff9c4 !important; border-color: #fbc02d !important; color: #333 !important; } 
+        .letra.selecionando { background: #fff9c4 !important; border-color: #fbc02d !important; } 
         .letra.correta { background: var(--verde) !important; color: white !important; border-color: #388e3c !important; }
 
-        /* LISTA DE PALAVRAS */
+        /* LISTA DE PALAVRAS ALINHADA */
         #lista-palavras { 
             display: grid; 
-            grid-template-columns: repeat(2, 175px); 
+            grid-template-columns: repeat(2, 160px); 
             gap: 12px; 
-            align-self: flex-start; 
+            /* Altura total calculada para bater com a grelha: (48*10) + (6*9) + (15*2) padding */
+            height: 564px; 
         }
 
         .item-palavra { 
-            background: white; padding: 10px; border-radius: 20px; 
+            background: white; 
+            border-radius: 20px; 
             border: 2px solid var(--azul-janela-borda); 
-            display: flex; flex-direction: column; align-items: center; 
-            transition: all 0.3s ease;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            height: 100%; /* Ocupa o espaço distribuído pelo grid */
         }
 
-        .item-palavra img { width: 70px; height: 70px; object-fit: contain; }
-        .item-palavra span { font-weight: 700; font-size: 13px; margin-top: 8px; color: var(--azul-escuro); text-transform: uppercase; }
-        .item-palavra.encontrada { opacity: 0.3; background: #f1f9f2; border-color: var(--verde); transform: scale(0.95); }
-        .item-palavra.encontrada span { text-decoration: line-through; }
+        .item-palavra img { width: 65px; height: 65px; object-fit: contain; }
+        .item-palavra span { font-weight: 700; font-size: 11px; margin-top: 5px; color: var(--azul-escuro); text-transform: uppercase; }
+        .item-palavra.encontrada { opacity: 0.3; background: #f1f9f2; border-color: var(--verde); }
 
-        /* FEEDBACK FINAL */
+        /* FEEDBACK */
         #feedback-final { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100; }
-        .painel-vitoria { background: white; padding: 40px; border-radius: 35px; text-align: center; max-width: 400px; width: 90%; }
-        .emoji-feedback { font-size: 80px; display: block; margin-bottom: 15px; }
+        .painel-vitoria { background: white; padding: 40px; border-radius: 35px; text-align: center; max-width: 350px; }
 
-        /* FOOTER */
-        footer {
-            height: 50px; flex-shrink: 0; display: flex; align-items: center;
-            justify-content: center; background: white; border-top: 1px solid #eee; width: 100%;
-        }
+        footer { height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-        @media (max-width: 1000px) {
-            #grid { grid-template-columns: repeat(10, 38px); grid-template-rows: repeat(10, 38px); }
-            .letra { width: 38px; height: 38px; font-size: 18px; }
-            #lista-palavras { grid-template-columns: repeat(2, 140px); }
-            .item-palavra img { width: 50px; height: 50px; }
+        /* AJUSTES PARA TELEMÓVEL */
+        @media (max-width: 600px) {
+            #grid { 
+                grid-template-columns: repeat(10, 32px); 
+                grid-template-rows: repeat(10, 32px); 
+                padding: 10px;
+            }
+            .letra { width: 32px; height: 32px; font-size: 16px; }
+            #lista-palavras { 
+                height: auto; /* No telemóvel a altura fixa é removida */
+                grid-template-columns: repeat(2, 1fr); 
+                width: 100%;
+                max-width: 350px;
+            }
+            .item-palavra { padding: 10px; }
+            .cabecalho h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <div class="header-left">
-        <a href="../index.html" class="btn-menu">
-            <span>🏠</span> MENU
-        </a>
-    </div>
+    <div style="flex:1"><a href="../index.html" class="btn-menu"><span>🏠</span> MENU</a></div>
     <div class="cabecalho-conteudo">
-        <img src="sopa-letras.png" style="width:55px" alt="ícone">
+        <img src="sopa-letras.png" style="width:45px">
         <h1>Sopa de Letras</h1>
     </div>
-    <div class="header-right"></div>
+    <div style="flex:1"></div>
 </header>
 
 <div class="onda-container">
     <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
-        <defs>
-            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
-                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
-            </linearGradient>
-        </defs>
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="fill: var(--azul-grad-dir);"></path>
     </svg>
 </div>
 
@@ -205,37 +168,35 @@
 </div>
 
 <div class="container">
-    <div id="grid" oncontextmenu="return false;"></div> 
+    <div id="grid"></div> 
     <div id="lista-palavras"></div>
 </div>
 
 <div id="feedback-final">
     <div class="painel-vitoria">
-        <span class="emoji-feedback" id="feedback-emoji">🥳</span>
-        <h2 id="feedback-titulo">Excelente Trabalho!</h2>
-        <p id="msg-tempo" style="font-size: 1.2rem; color: var(--azul-escuro); font-weight: 500;"></p>
-        <button class="btn-menu" style="margin: 20px auto 0; padding: 15px 30px; font-size: 1.1rem;" onclick="location.reload()">Jogar de Novo</button>
+        <span style="font-size: 60px;" id="fb-emoji">🥳</span>
+        <h2 id="fb-titulo">Excelente!</h2>
+        <p id="msg-tempo"></p>
+        <button class="btn-menu" style="margin: 0 auto; padding: 12px 25px;" onclick="location.reload()">Jogar de Novo</button>
     </div>
 </div>
 
 <footer>
     <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.8rem;">
-        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
 <script src="js/dados.js"></script>
 <script>
     const TAMANHO = 10;
-    const TEMPO_LIMITE = 180; // 3 minutos
+    const TEMPO_LIMITE = 180;
     let tempoRestante = TEMPO_LIMITE;
-    let intervaloCountdown;
+    let intervalo;
     
-    const gridElement = document.getElementById('grid');
-    const listaElement = document.getElementById('lista-palavras');
-    
-    let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
-    let palavrasParaEncontrar = selecaoOriginal.map(p => ({
+    // Filtra e prepara palavras
+    let selecao = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
+    let palavrasParaEncontrar = selecao.map(p => ({
         nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
         imagem: p.imagem,
         encontrada: false,
@@ -248,16 +209,13 @@
     let celulasSelecionadasAtuais = [];
 
     function iniciarJogo() {
-        // Lógica de posicionamento das palavras
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
-            let tentativas = 0;
-            while (!colocada && tentativas < 200) {
+            while (!colocada) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l = Math.floor(Math.random() * (dir === 'V' ? TAMANHO - pObj.nome.length : TAMANHO));
                 let c = Math.floor(Math.random() * (dir === 'H' ? TAMANHO - pObj.nome.length : TAMANHO));
-                
-                if (verificarEspaco(pObj.nome, l, c, dir)) {
+                if (validarEspaco(pObj.nome, l, c, dir)) {
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = dir === 'V' ? l + i : l;
                         let curC = dir === 'H' ? c + i : c;
@@ -266,172 +224,126 @@
                     }
                     colocada = true;
                 }
-                tentativas++;
             }
         });
 
-        desenharInterface();
-        configurarEventosArrastamento();
-        iniciarCountdown();
-    }
-
-    function verificarEspaco(palavra, l, c, dir) {
-        for (let i = 0; i < palavra.length; i++) {
-            let curL = dir === 'V' ? l + i : l;
-            let curC = dir === 'H' ? c + i : c;
-            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== palavra[i]) return false;
-        }
-        return true;
-    }
-
-    function desenharInterface() {
-        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const grid = document.getElementById('grid');
+        const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (let l = 0; l < TAMANHO; l++) {
             for (let c = 0; c < TAMANHO; c++) {
                 const div = document.createElement('div');
                 div.className = 'letra';
-                div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
                 div.id = `cell-${l}-${c}`;
-                div.dataset.l = l;
-                div.dataset.c = c;
-                gridElement.appendChild(div);
+                div.dataset.l = l; div.dataset.c = c;
+                div.textContent = matriz[l][c] || abc[Math.floor(Math.random() * 26)];
+                grid.appendChild(div);
             }
         }
+
         palavrasParaEncontrar.forEach(p => {
-            const item = document.createElement('div');
-            item.className = 'item-palavra';
-            item.id = `item-${p.nome}`;
-            item.innerHTML = `<img src="${p.imagem}"><span>${p.nome}</span>`;
-            listaElement.appendChild(item);
+            document.getElementById('lista-palavras').innerHTML += `
+                <div class="item-palavra" id="item-${p.nome}">
+                    <img src="${p.imagem}"><span>${p.nome}</span>
+                </div>`;
         });
+
+        ativarEventos();
+        intervalo = setInterval(contagem, 1000);
     }
 
-    function configurarEventosArrastamento() {
-        gridElement.addEventListener('mousedown', iniciarSelecao);
-        window.addEventListener('mousemove', enquantoArrasta);
-        window.addEventListener('mouseup', finalizarSelecao);
-        gridElement.addEventListener('touchstart', iniciarSelecao, {passive: false});
-        window.addEventListener('touchmove', enquantoArrasta, {passive: false});
-        window.addEventListener('touchend', finalizarSelecao);
-    }
-
-    function obterCelulaDosEventos(e) {
-        const touch = e.touches ? e.touches[0] : e;
-        const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
-        // NOTA: Removido "!elemento.classList.contains('correta')" para permitir seleção sobreposta
-        if (elemento && elemento.classList.contains('letra')) {
-            return {
-                el: elemento,
-                l: parseInt(elemento.dataset.l),
-                c: parseInt(elemento.dataset.c)
-            };
+    function validarEspaco(pal, l, c, dir) {
+        for (let i = 0; i < pal.length; i++) {
+            let curL = dir === 'V' ? l + i : l;
+            let curC = dir === 'H' ? c + i : c;
+            if (matriz[curL][curC] !== '' && matriz[curL][curC] !== pal[i]) return false;
         }
-        return null;
+        return true;
     }
 
-    function iniciarSelecao(e) {
-        const celula = obterCelulaDosEventos(e);
-        if (!celula) return;
-        estaArrastando = true;
-        celulaInicial = { l: celula.l, c: celula.c };
-        celulasSelecionadasAtuais = [];
-        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
-        destacarCelula(celula.l, celula.c);
-        if (e.cancelable) e.preventDefault();
-    }
+    function ativarEventos() {
+        const grid = document.getElementById('grid');
+        const getCell = (e) => {
+            const t = e.touches ? e.touches[0] : e;
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            return el && el.classList.contains('letra') ? el : null;
+        };
 
-    function enquantoArrasta(e) {
-        if (!estaArrastando) return;
-        const celulaAtual = obterCelulaDosEventos(e);
-        if (!celulaAtual) return;
+        const start = (e) => {
+            const el = getCell(e);
+            if (el) {
+                estaArrastando = true;
+                celulaInicial = { l: parseInt(el.dataset.l), c: parseInt(el.dataset.c) };
+            }
+        };
 
-        const lI = celulaInicial.l;
-        const cI = celulaInicial.c;
-        const lA = celulaAtual.l;
-        const cA = celulaAtual.c;
+        const move = (e) => {
+            if (!estaArrastando) return;
+            const el = getCell(e);
+            if (el) {
+                const lA = parseInt(el.dataset.l), cA = parseInt(el.dataset.c);
+                document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
+                celulasSelecionadasAtuais = [];
+                if (Math.abs(lA - celulaInicial.l) > Math.abs(cA - celulaInicial.c)) {
+                    const step = lA > celulaInicial.l ? 1 : -1;
+                    for (let i = celulaInicial.l; i !== lA + step; i += step) marcar(i, celulaInicial.c);
+                } else {
+                    const step = cA > celulaInicial.c ? 1 : -1;
+                    for (let i = celulaInicial.c; i !== cA + step; i += step) marcar(celulaInicial.l, i);
+                }
+            }
+            if (e.cancelable) e.preventDefault();
+        };
 
-        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
-        celulasSelecionadasAtuais = [];
-
-        if (Math.abs(lA - lI) > Math.abs(cA - cI)) {
-            const passo = lA > lI ? 1 : -1;
-            for (let l = lI; l !== lA + passo; l += passo) destacarCelula(l, cI);
-        } else {
-            const passo = cA > cI ? 1 : -1;
-            for (let c = cI; c !== cA + passo; c += passo) destacarCelula(lI, c);
-        }
-        if (e.cancelable) e.preventDefault();
-    }
-
-    function destacarCelula(l, c) {
-        if (l < 0 || l >= TAMANHO || c < 0 || c >= TAMANHO) return;
-        const id = `${l}-${c}`;
-        const el = document.getElementById(`cell-${id}`);
-        if (el) {
-            el.classList.add('selecionando');
-            celulasSelecionadasAtuais.push(id);
-        }
-    }
-
-    function finalizarSelecao() {
-        if (!estaArrastando) return;
-        estaArrastando = false;
-        
-        const selecaoQuery = celulasSelecionadasAtuais.sort().join(',');
-        palavrasParaEncontrar.forEach(p => {
-            if (!p.encontrada) {
-                const palavraQuery = p.celulas.sort().join(',');
-                if (selecaoQuery === palavraQuery) {
+        const end = () => {
+            if (!estaArrastando) return;
+            estaArrastando = false;
+            const sel = celulasSelecionadasAtuais.sort().join(',');
+            palavrasParaEncontrar.forEach(p => {
+                if (!p.encontrada && p.celulas.sort().join(',') === sel) {
                     p.encontrada = true;
                     p.celulas.forEach(id => document.getElementById(`cell-${id}`).classList.add('correta'));
                     document.getElementById(`item-${p.nome}`).classList.add('encontrada');
                 }
-            }
-        });
+            });
+            document.querySelectorAll('.letra.selecionando').forEach(x => x.classList.remove('selecionando'));
+            if (palavrasParaEncontrar.every(p => p.encontrada)) finalizar(true);
+        };
 
-        document.querySelectorAll('.letra.selecionando').forEach(el => el.classList.remove('selecionando'));
-        if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo(true);
+        grid.addEventListener('mousedown', start);
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', end);
+        grid.addEventListener('touchstart', start, {passive: false});
+        window.addEventListener('touchmove', move, {passive: false});
+        window.addEventListener('touchend', end);
     }
 
-    function iniciarCountdown() {
-        intervaloCountdown = setInterval(() => {
-            tempoRestante--;
-            atualizarRelogio();
-            if (tempoRestante <= 10) document.getElementById('countdown-box').classList.add('tempo-baixo');
-            if (tempoRestante <= 0) finalizarJogo(false);
-        }, 1000);
+    function marcar(l, c) {
+        const el = document.getElementById(`cell-${l}-${c}`);
+        if (el) { el.classList.add('selecionando'); celulasSelecionadasAtuais.push(`${l}-${c}`); }
     }
 
-    function atualizarRelogio() {
-        let mins = Math.floor(tempoRestante / 60);
-        let segs = tempoRestante % 60;
-        document.getElementById('timer-display').textContent = 
-            `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
+    function contagem() {
+        tempoRestante--;
+        const m = Math.floor(tempoRestante / 60), s = tempoRestante % 60;
+        document.getElementById('timer-display').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        if (tempoRestante <= 0) finalizar(false);
     }
 
-    function finalizarJogo(vitoria) {
-        clearInterval(intervaloCountdown);
-        const feedback = document.getElementById('feedback-final');
+    function finalizar(vitoria) {
+        clearInterval(intervalo);
+        document.getElementById('feedback-final').style.display = 'flex';
         const msg = document.getElementById('msg-tempo');
-        const titulo = document.getElementById('feedback-titulo');
-        const emoji = document.getElementById('feedback-emoji');
-
         if (vitoria) {
-            const tempoGasto = TEMPO_LIMITE - tempoRestante;
-            const m = Math.floor(tempoGasto / 60);
-            const s = tempoGasto % 60;
-            let textoTempo = m > 0 ? `${m} minuto(s) e ${s} segundo(s)` : `${s} segundos`;
-            
-            emoji.textContent = "🥳";
-            titulo.textContent = "Excelente Trabalho!";
-            msg.innerHTML = `Descobriste todas as palavras em <strong>${textoTempo}</strong>!`;
+            const gasto = TEMPO_LIMITE - tempoRestante;
+            const m = Math.floor(gasto / 60), s = gasto % 60;
+            document.getElementById('fb-emoji').textContent = "🥳";
+            document.getElementById('fb-titulo').textContent = "Excelente!";
+            msg.innerHTML = `Resolvido em <b>${m > 0 ? m + 'm ' + s + 's' : s + ' segundos'}</b>!`;
         } else {
-            emoji.textContent = "😢";
-            titulo.textContent = "O tempo acabou!";
-            msg.textContent = "Não conseguiste encontrar todas as palavras a tempo. Tenta outra vez!";
+            document.getElementById('fb-emoji').textContent = "😢";
+            document.getElementById('fb-titulo').textContent = "O tempo acabou!";
+            msg.textContent = "Tenta novamente!";
         }
-        
-        feedback.style.display = 'flex';
     }
 
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
