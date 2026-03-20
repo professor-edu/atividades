@@ -1,1 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sopa de Letras 🔎</title>
 
+    <link rel="icon" type="image/png" href="../logo.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+
+    <style>
+    :root {
+        --azul-claro: #f0f7ff;
+        --azul-janela-fundo: #ebf5ff;
+        --azul-janela-borda: #add8e6;
+        --azul-grad-esq: #bde6ff;
+        --azul-grad-dir: #2e86de;
+        --azul-vibrante: #0091ff;
+        --azul-escuro: #0d47a1;
+        --verde: #4caf50;
+        --laranja: #ff9800;
+        --vermelho: #e53935;
+
+        /* NOVAS CORES DOS BOTÕES DE DIFICULDADE */
+        --dif-facil-bg: #4caf50;
+        --dif-facil-borda: #2e7d32;
+
+        --dif-medio-bg: #ffca28;
+        --dif-medio-borda: #ffb300;
+
+        --dif-dificil-bg: #e53935;
+        --dif-dificil-borda: #b71c1c;
+    }
+
+    body {
+        font-family: "Quicksand", sans-serif;
+        text-align: center;
+        background-color: var(--azul-claro);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        user-select: none;
+    }
+
+    /* CABEÇALHO (INALTERADO) */
+    .cabecalho {
+        background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 85px;
+        flex-shrink: 0;
+        z-index: 20;
+    }
+    .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+    .header-left { justify-content: flex-start; }
+    .header-right { justify-content: flex-end; }
+
+    .cabecalho-conteudo {
+        display: flex; justify-content: center; align-items: center;
+        gap: 15px; flex: 3;
+    }
+
+    .cabecalho h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--azul-escuro);
+        white-space: nowrap;
+    }
+
+    .btn-menu {
+        background: var(--laranja);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center; gap: 8px;
+        text-decoration: none;
+        transition: transform .3s ease;
+    }
+    .btn-menu:hover { transform: scale(1.05); }
+
+    .onda-container {
+        height: 45px; width: 100%; overflow: hidden;
+        margin-top: -1px; flex-shrink: 0; z-index: 10;
+        filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+    }
+
+    /* COUNTDOWN */
+    .status-jogo { padding: 10px; flex-shrink: 0; }
+
+    #countdown-box {
+        display: inline-block;
+        background: white;
+        padding: 8px 30px;
+        border-radius: 25px;
+        border: 3px solid var(--azul-grad-dir);
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--azul-escuro);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .tempo-baixo { 
+        color: var(--vermelho) !important; 
+        border-color: var(--vermelho) !important;
+        animation: shake .5s infinite;
+    }
+
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(2px); }
+        50% { transform: translateX(-2px); }
+        75% { transform: translateX(2px); }
+        100% { transform: translateX(0); }
+    }
+
+    .container {
+        display: flex; justify-content: center; align-items: flex-start;
+        gap: 30px; flex: 1; padding: 10px; overflow: visible;
+        flex-wrap: wrap;
+    }
+
+    /* GRELHA */
+    #grid {
+        display: grid;
+        grid-template-columns: repeat(10, 48px);
+        grid-template-rows: repeat(10, 48px);
+        gap: 6px;
+        background: white;
+        padding: 15px;
+        border-radius: 25px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border: 2px solid var(--azul-janela-borda);
+        touch-action: none;
+    }
+
+    .letra {
+        width: 48px; height: 48px;
+        border: 1px solid #e3efff;
+        display: flex; justify-content: center; align-items: center;
+        font-weight: 700; font-size: 24px;
+        border-radius: 12px; background: #fff;
+        transition: background .1s;
+    }
+
+    .letra.selecionando {
+        background: #fff9c4 !important;
+        border-color: #fbc02d !important;
+        color: #333 !important;
+    }
+    .letra.correta {
+        background: var(--verde) !important;
+        color: white !important;
+        border-color: #388e3c !important;
+    }
+
+    /* LISTA DE PALAVRAS */
+    #lista-palavras { 
+        display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    .item-palavra {
+        background: white; padding: 10px; border-radius: 20px;
+        border: 2px solid var(--azul-janela-borda);
+        display: flex; flex-direction: column;
+        align-items: center;
+        transition: all .3s ease;
+    }
+
+    .item-palavra img {
+        width: 70px; height: 70px; object-fit: contain;
+    }
+
+    .item-palavra span {
+        font-weight: 700; font-size: 13px;
+        margin-top: 8px; color: var(--azul-escuro);
+        text-transform: uppercase;
+    }
+
+    .item-palavra.encontrada {
+        opacity: .3; background: #f1f9f2;
+        border-color: var(--verde);
+        transform: scale(.95);
+    }
+
+    .item-palavra.encontrada span { text-decoration: line-through; }
+
+    /* NOVO — BOTÕES DE DIFICULDADE */
+    #dificuldades {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+    }
+
+    .btn-dif {
+        padding: 10px 22px;
+        border-radius: 20px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        font-size: .95rem;
+        color: #08304a;
+        transition: transform .15s ease, box-shadow .2s ease;
+        box-shadow: 0 3px 6px rgba(0,0,0,.18);
+    }
+
+    .btn-dif:hover {
+        transform: scale(1.07);
+        box-shadow: 0 5px 10px rgba(0,0,0,.22);
+    }
+
+    .btn-dif.selecionada {
+        outline: 3px solid #004aad;
+        animation: pop .25s ease;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+        100% { transform: scale(1); }
+    }
+
+    /* FOOTER (INALTERADO) */
+    footer {
+        height: 50px; flex-shrink: 0;
+        display: flex; justify-content: center; align-items: center;
+        background: white; border-top: 1px solid #eee; width: 100%;
+    }
+
+    @media (max-width: 1000px) {
+        #grid { grid-template-columns: repeat(10, 38px); grid-template-rows: repeat(10, 38px); }
+        .letra { width: 38px; height: 38px; font-size: 18px; }
+        #lista-palavras { grid-template-columns: repeat(2, 140px); }
+        .item-palavra img { width: 50px; height: 50px; }
+    }
+
+    @media (max-width: 700px) {
+        #grid { transform: scale(.95); }
+    }
+    </style>
+</head>
+<body>
+
+<header class="cabecalho">
+    <div class="header-left">
+        <a href="../index.html" class="btn-menu">
+            <span>🏠</span> MENU
+        </a>
+    </div>
+
+    <div class="cabecalho-conteudo">
+        <img src="sopa-letras.png" style="width:70px" alt="ícone">
+        <h1>Sopa de Letras</h1>
+    </div>
+
+    <div class="header-right"></div>
+</header>
+
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+        <defs>
+            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path 
+            d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" 
+            style="stroke: none; fill: url(#grad-onda);">
+        </path>
+    </svg>
+</div>
+
+<!-- COUNTDOWN -->
+<div class="status-jogo">
+    <div id="countdown-box">⏱️ <span id="timer-display">03:00</span></div>
+</div>
+
+<!-- NOVA SECÇÃO: BOTÕES DE DIFICULDADE -->
+<div id="dificuldades">
+    <button class="btn-dif" data-tempo="180" 
+        style="background: var(--dif-facil-bg); border: 2px solid var(--dif-facil-borda); color:white;">
+        FÁCIL (3 min)
+    </button>
+
+    <button class="btn-dif" data-tempo="240" 
+        style="background: var(--dif-medio-bg); border: 2px solid var(--dif-medio-borda);">
+        MÉDIO (4 min)
+    </button>
+
+    <button class="btn-dif" data-tempo="300" 
+        style="background: var(--dif-dificil-bg); border: 2px solid var(--dif-dificil-borda); color:white;">
+        DIFÍCIL (5 min)
+    </button>
+</div>
+
+<!-- INÍCIO DA ZONA PRINCIPAL (continua na Parte 3) -->
+<div class="container">
+  <!-- GRELHA PRINCIPAL -->
+    <div id="grid" oncontextmenu="return false;"></div>
+
+    <!-- LISTA DE PALAVRAS -->
+    <div id="lista-palavras"></div>
+
+</div> <!-- fecha .container -->
+
+<!-- FEEDBACK FINAL -->
+<div id="feedback-final" style="display:none;">
+    <div class="painel-vitoria">
+        <span class="emoji-feedback" id="feedback-emoji">🥳</span>
+        <h2 id="feedback-titulo">Excelente Trabalho!</h2>
+        <p id="msg-tempo" 
+           style="font-size:1.2rem; color: var(--azul-escuro); font-weight:500;">
+        </p>
+
+        <button class="btn-menu" 
+                style="margin:20px auto 0; padding:15px 30px; font-size:1.1rem;"
+                onclick="location.reload()">
+            Jogar de Novo
+        </button>
+    </div>
+</div>
+
+<!-- FOOTER (INALTERADO) -->
+<footer>
+    <p style="margin:0; color:var(--azul-escuro); font-weight:700; font-size:0.8rem;">
+        <span id="ano-atual"></span> 🏫 
+        <a href="https://eb1pemarinheira.pt/" 
+           target="_blank" 
+           style="color: inherit; text-decoration:none;">
+            EB1/PE da Marinheira
+        </a>
+    </p>
+</footer>
+<script src="js/dados.js"></script>
+
+<script>
+// ==========================
+// VARIÁVEIS GLOBAIS
+// ==========================
+const TAMANHO = 10;
+let TEMPO_LIMITE = 180;          // atualizado pelos botões
+let tempoRestante = TEMPO_LIMITE;
+let intervaloCountdown;
+
+const gridElement = document.getElementById("grid");
+const listaElement = document.getElementById("lista-palavras");
+
+let selecaoOriginal = palavras.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+let palavrasParaEncontrar = selecaoOriginal.map(p => ({
+    nome: p.palavra.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+    imagem: p.imagem,
+    encontrada: false,
+    celulas: []
+}));
+
+let matriz = Array(TAMANHO).fill().map(() => Array(TAMANHO).fill(""));
+
+let estaArrastando = false;
+let celulaInicial = null;
+let celulasSelecionadasAtuais = [];
+
+
+// ==========================
+// INICIAR JOGO
+// ==========================
+function iniciarJogo() {
+
+    // posicionamento das palavras
+    palavrasParaEncontrar.forEach(pObj => {
+        let colocada = false;
+        let tentativas = 0;
+
+        while (!colocada && tentativas < 200) {
+            let dir = Math.random() > 0.5 ? "H" : "V";
+            let l = Math.floor(Math.random() * (dir === "V" ? TAMANHO - pObj.nome.length : TAMANHO));
+            let c = Math.floor(Math.random() * (dir === "H" ? TAMANHO - pObj.nome.length : TAMANHO));
+
+            if (verificarEspaco(pObj.nome, l, c, dir)) {
+                for (let i = 0; i < pObj.nome.length; i++) {
+                    let curL = dir === "V" ? l + i : l;
+                    let curC = dir === "H" ? c + i : c;
+                    matriz[curL][curC] = pObj.nome[i];
+                    pObj.celulas.push(`${curL}-${curC}`);
+                }
+                colocada = true;
+            }
+            tentativas++;
+        }
+    });
+
+    desenharInterface();
+    configurarEventosArrastamento();
+    iniciarCountdown();
+}
+
+
+
+// ==========================
+// VERIFICAR ESPAÇO
+// ==========================
+function verificarEspaco(palavra, l, c, dir) {
+    for (let i = 0; i < palavra.length; i++) {
+        let curL = dir === "V" ? l + i : l;
+        let curC = dir === "H" ? c + i : c;
+
+        if (matriz[curL][curC] !== "" && matriz[curL][curC] !== palavra[i]) return false;
+    }
+    return true;
+}
+
+
+
+// ==========================
+// DESENHAR GRELHA E LISTA
+// ==========================
+function desenharInterface() {
+    const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    // desenhar grelha
+    for (let l = 0; l < TAMANHO; l++) {
+        for (let c = 0; c < TAMANHO; c++) {
+            const div = document.createElement("div");
+            div.className = "letra";
+            div.textContent = matriz[l][c] || alfabeto[Math.floor(Math.random() * alfabeto.length)];
+            div.id = `cell-${l}-${c}`;
+            div.dataset.l = l;
+            div.dataset.c = c;
+            gridElement.appendChild(div);
+        }
+    }
+
+    // lista de palavras
+    palavrasParaEncontrar.forEach(p => {
+        const item = document.createElement("div");
+        item.className = "item-palavra";
+        item.id = `item-${p.nome}`;
+        item.innerHTML = `<img src="${p.imagem}"><span>${p.nome}</span>`;
+        listaElement.appendChild(item);
+    });
+}
+
+
+
+// ==========================
+// EVENTOS DE ARRASTAR
+// ==========================
+function configurarEventosArrastamento() {
+
+    gridElement.addEventListener("mousedown", iniciarSelecao);
+    window.addEventListener("mousemove", enquantoArrasta);
+    window.addEventListener("mouseup", finalizarSelecao);
+
+    gridElement.addEventListener("touchstart", iniciarSelecao, { passive: false });
+    window.addEventListener("touchmove", enquantoArrasta, { passive: false });
+    window.addEventListener("touchend", finalizarSelecao);
+}
+
+function obterCelulaDosEventos(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    if (elemento && elemento.classList.contains("letra")) {
+        return {
+            el: elemento,
+            l: parseInt(elemento.dataset.l),
+            c: parseInt(elemento.dataset.c)
+        };
+    }
+    return null;
+}
+
+function iniciarSelecao(e) {
+    const celula = obterCelulaDosEventos(e);
+    if (!celula) return;
+
+    estaArrastando = true;
+    celulaInicial = { l: celula.l, c: celula.c };
+    celulasSelecionadasAtuais = [];
+
+    document.querySelectorAll(".letra.selecionando").forEach(el => el.classList.remove("selecionando"));
+
+    destacarCelula(celula.l, celula.c);
+
+    if (e.cancelable) e.preventDefault();
+}
+
+function enquantoArrasta(e) {
+    if (!estaArrastando) return;
+
+    const celulaAtual = obterCelulaDosEventos(e);
+    if (!celulaAtual) return;
+
+    const lI = celulaInicial.l;
+    const cI = celulaInicial.c;
+    const lA = celulaAtual.l;
+    const cA = celulaAtual.c;
+
+    document.querySelectorAll(".letra.selecionando").forEach(el => el.classList.remove("selecionando"));
+    celulasSelecionadasAtuais = [];
+
+    if (Math.abs(lA - lI) > Math.abs(cA - cI)) {
+        const passo = lA > lI ? 1 : -1;
+        for (let l = lI; l !== lA + passo; l += passo) {
+            destacarCelula(l, cI);
+        }
+    } else {
+        const passo = cA > cI ? 1 : -1;
+        for (let c = cI; c !== cA + passo; c += passo) {
+            destacarCelula(lI, c);
+        }
+    }
+
+    if (e.cancelable) e.preventDefault();
+}
+
+function destacarCelula(l, c) {
+    if (l < 0 || l >= TAMANHO || c < 0 || c >= TAMANHO) return;
+
+    const id = `${l}-${c}`;
+    const el = document.getElementById(`cell-${id}`);
+
+    if (el) {
+        el.classList.add("selecionando");
+        celulasSelecionadasAtuais.push(id);
+    }
+}
+
+function finalizarSelecao() {
+    if (!estaArrastando) return;
+    estaArrastando = false;
+
+    const selecaoQuery = celulasSelecionadasAtuais.sort().join(",");
+
+    palavrasParaEncontrar.forEach(p => {
+        if (!p.encontrada) {
+            const palavraQuery = p.celulas.sort().join(",");
+            if (selecaoQuery === palavraQuery) {
+
+                p.encontrada = true;
+
+                p.celulas.forEach(id => {
+                    document.getElementById(`cell-${id}`).classList.add("correta");
+                });
+
+                document.getElementById(`item-${p.nome}`).classList.add("encontrada");
+            }
+        }
+    });
+
+    document.querySelectorAll(".letra.selecionando").forEach(el =>
+        el.classList.remove("selecionando")
+    );
+
+    if (palavrasParaEncontrar.every(p => p.encontrada)) finalizarJogo(true);
+}
+
+
+
+// ==========================
+// CONTADOR
+// ==========================
+function iniciarCountdown() {
+
+    intervaloCountdown = setInterval(() => {
+        tempoRestante--;
+        atualizarRelogio();
+
+        if (tempoRestante <= 10) {
+            document.getElementById("countdown-box").classList.add("tempo-baixo");
+        }
+
+        if (tempoRestante <= 0) finalizarJogo(false);
+
+    }, 1000);
+}
+
+function atualizarRelogio() {
+    let mins = Math.floor(tempoRestante / 60);
+    let segs = tempoRestante % 60;
+
+    document.getElementById("timer-display").textContent =
+        `${mins.toString().padStart(2, "0")}:${segs.toString().padStart(2, "0")}`;
+}
+
+
+
+// ==========================
+// FINAL DO JOGO
+// ==========================
+function finalizarJogo(vitoria) {
+
+    clearInterval(intervaloCountdown);
+
+    const feedback = document.getElementById("feedback-final");
+    const msg = document.getElementById("msg-tempo");
+    const titulo = document.getElementById("feedback-titulo");
+    const emoji = document.getElementById("feedback-emoji");
+
+    if (vitoria) {
+        const tempoGasto = TEMPO_LIMITE - tempoRestante;
+        const m = Math.floor(tempoGasto / 60);
+        const s = tempoGasto % 60;
+
+        const textoTempo = m > 0 
+            ? `${m} minuto(s) e ${s} segundo(s)`
+            : `${s} segundos`;
+
+        emoji.textContent = "🥳";
+        titulo.textContent = "Excelente Trabalho!";
+        msg.innerHTML = `Descobriste todas as palavras em <strong>${textoTempo}</strong>!`;
+
+    } else {
+        emoji.textContent = "😢";
+        titulo.textContent = "O tempo acabou!";
+        msg.textContent = "Não conseguiste encontrar todas as palavras a tempo. Tenta outra vez!";
+    }
+
+    feedback.style.display = "flex";
+}
+
+
+
+// ==========================
+// BOTÕES DE DIFICULDADE
+// ==========================
+document.querySelectorAll(".btn-dif").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        // limpar seleção
+        document.querySelectorAll(".btn-dif").forEach(b => b.classList.remove("selecionada"));
+
+        // destacar selecionado
+        btn.classList.add("selecionada");
+
+        // alterar tempo
+        TEMPO_LIMITE = parseInt(btn.dataset.tempo);
+        tempoRestante = TEMPO_LIMITE;
+
+        atualizarRelogio();
+    });
+
+});
+
+
+// selecionar automaticamente "Fácil", e só DEPOIS iniciar o jogo
+document.querySelector(".btn-dif[data-tempo='180']").click();
+document.getElementById("ano-atual").innerText = new Date().getFullYear();
+
+iniciarJogo();
+</script>
+</body>
+</html>
