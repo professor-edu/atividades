@@ -6,15 +6,15 @@
     <title>Escrever Sílabas ✍️</title>
     
     <link rel="icon" type="image/png" href="../logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-body: #f0f4f8; /* Cor do fundo do body */
+            --bg-body: #f0f4f8;
             --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --grad-header: linear-gradient(90deg, #bde6ff 0%, #2e86de 100%);
-            --text-main: #2c3e50;
+            --text-main: #455a64; /* Cor de texto mais suave que o preto */
             --accent: #ff9800;
         }
 
@@ -27,9 +27,9 @@
             flex-direction: column;
             height: 100vh; 
             overflow: hidden; 
+            color: var(--text-main);
         }
         
-        /* HEADER COM 3 COLUNAS PARA CENTRAMENTO PERFEITO */
         .cabecalho { 
             background: var(--grad-header); 
             padding: 0 20px; 
@@ -40,110 +40,113 @@
             flex-shrink: 0;
             z-index: 100;
             position: relative;
+            /* Sombra no gradiente do header solicitada */
+            filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.15));
         }
 
-        /* Colunas laterais e central */
-        .header-left, .header-right { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-        }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; gap: 12px; }
         .header-right { justify-content: flex-end; }
 
         .cabecalho-conteudo { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px; 
-            flex: 2; /* Espaço central maior para o título */
+            display: flex; justify-content: center; align-items: center; 
+            gap: 15px; flex: 2;
         }
 
         .cabecalho h1 {
             margin: 0;
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 500; /* Menos carregado */
             color: var(--azul-escuro);
-            white-space: nowrap;
         }
 
         .img-titulo { width: 70px; height: auto; }
 
-        /* BOTÕES DO HEADER */
+        /* BOTÃO VOLTAR COM ANIMAÇÃO HOVER */
         .btn-header {
             background: var(--accent); color: white; border: none;
-            padding: 8px 15px; border-radius: 20px; font-weight: 700;
+            padding: 8px 18px; border-radius: 20px; font-weight: 500;
             cursor: pointer; box-shadow: 0 4px 0px #e68a00;
-            font-size: 0.9rem; display: flex; align-items: center; gap: 5px;
-            transition: 0.2s;
+            font-size: 0.9rem; display: flex; align-items: center; gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .btn-header:hover {
+            transform: scale(1.05);
+            background: #ffa726;
+            filter: brightness(1.1);
         }
         .btn-header:active { transform: translateY(3px); box-shadow: 0 1px 0px #e68a00; }
 
-        /* HAMBURGUER */
         .hamburger {
-            cursor: pointer; background: none; border: none;
-            display: flex; flex-direction: column; gap: 4px; padding: 5px;
+            cursor: pointer; background: rgba(255,255,255,0.3); border: none;
+            display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 8px;
+            transition: 0.3s;
         }
-        .hamburger span {
-            display: block; width: 25px; height: 3px; 
-            background: var(--azul-escuro); border-radius: 2px;
-        }
+        .hamburger:hover { background: rgba(255,255,255,0.5); }
+        .hamburger span { display: block; width: 22px; height: 2px; background: var(--azul-escuro); }
 
-        /* ONDA INTEGRADA - SEM SHADOWS */
+        /* ONDA INTEGRADA */
         .onda-container {
             position: absolute;
-            bottom: -1px; /* Evita frestas de 1px entre div e svg */
-            left: 0;
-            width: 100%;
-            height: 40px;
-            pointer-events: none;
-            z-index: 10;
+            bottom: -1px;
+            left: 0; width: 100%; height: 40px;
+            pointer-events: none; z-index: 10;
         }
-        .onda-container svg { width: 100%; height: 100%; display: block; }
-        .onda-fill { fill: var(--bg-body); } /* Cor exata do body */
+        .onda-fill { fill: var(--bg-body); }
 
-        /* CARTÃO DO JOGO */
-        #main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        /* SIDEBAR ATUALIZADA */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; z-index: 200; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        
+        /* Botão Fechar no Menu */
+        .sidebar .btn-fechar {
+            background: #f8f9fa; color: #ff4757; padding: 20px 25px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            font-weight: 600; border-bottom: 1px solid #eee; transition: 0.3s;
+        }
+        .sidebar .btn-fechar:hover { background: #fff1f2; }
+
+        .sidebar li a {
+            display: block; padding: 16px 25px; text-decoration: none;
+            color: var(--text-main); font-weight: 400; border-bottom: 1px solid #f9f9f9;
+        }
+        .sidebar li a:hover { background: var(--bg-body); color: var(--azul-vibrante); padding-left: 30px; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 199; backdrop-filter: blur(2px);
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DE JOGO */
         .cartao {
-            background: white; width: 95%; max-width: 650px; 
+            background: white; width: 90%; max-width: 600px; 
             padding: 40px; border-radius: 35px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
 
-        /* FOOTER ORIGINAL COM AJUSTE DE BORDA */
+        /* FOOTER COM BORDER 1PX E TEXTO LEVE */
         footer {
             height: 50px; flex-shrink: 0; display: flex; align-items: center;
             justify-content: center; background: white; 
-            border-top: 2px solid var(--azul-vibrante); /* 2px e cor do template */
+            border-top: 1px solid var(--azul-vibrante); 
             width: 100%;
         }
-
-        /* SIDEBAR (MENU LATERAL) */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; z-index: 200; transition: 0.3s ease;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding-top: 20px;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar ul { list-style: none; padding: 0; margin-top: 20px; }
-        .sidebar li a {
-            display: block; padding: 15px 25px; text-decoration: none;
-            color: var(--text-main); font-weight: 600; border-bottom: 1px solid #eee;
-        }
-        .sidebar li a:hover { background: var(--bg-body); color: var(--azul-vibrante); }
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 199;
-        }
-        .overlay.active { display: block; }
+        footer p { font-weight: 400; color: #78909c; } /* Texto menos carregado */
     </style>
 </head>
 <body>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <nav class="sidebar" id="sidebar">
-    <h2 style="padding: 0 25px; color: var(--azul-escuro);">Menu</h2>
+    <div class="btn-fechar" onclick="toggleMenu()">
+        <span>✕</span> Fechar
+    </div>
     <ul>
         <li><a href="#">🏠 Início</a></li>
         <li><a href="#">📝 Atividades</a></li>
@@ -160,7 +163,7 @@
             <span></span><span></span><span></span>
         </button>
         <button class="btn-header" onclick="window.location.href='../index.html'">
-            🏠 Voltar
+            <span>🏠</span> Voltar
         </button>
     </div>
 
@@ -169,8 +172,7 @@
         <h1>Escrever Sílabas</h1>
     </div>
 
-    <div class="header-right">
-        </div>
+    <div class="header-right"></div>
 
     <div class="onda-container">
         <svg viewBox="0 0 500 150" preserveAspectRatio="none">
@@ -179,39 +181,31 @@
     </div>
 </header>
 
-<div class="status-jogo" style="margin-top: 10px;">
-    <div class="contadores" style="display:flex; justify-content:center; gap:30px; font-weight:700; font-size:1.2rem; margin-bottom:8px;">
-        <span id="certas" style="color:#4caf50;">0</span>
-        <span id="erros" style="color:#e53935;">0</span>
-    </div>
-    <div style="width:80%; max-width:600px; height:12px; background:white; border-radius:10px; margin:0 auto; overflow:hidden; border:2px solid #2e86de;">
-        <div id="progressoInterno" style="width:0%; height:100%; background:var(--azul-vibrante); transition:0.5s;"></div>
+<div class="status-jogo" style="margin-top: 15px;">
+    <div style="width:70%; max-width:500px; height:8px; background:#e0e0e0; border-radius:10px; margin:10px auto; overflow:hidden;">
+        <div id="progressoInterno" style="width:30%; height:100%; background:var(--azul-vibrante);"></div>
     </div>
 </div>
 
-<main id="main-content">
+<main id="main-content" style="flex: 1; display: flex; align-items: center; justify-content: center;">
     <div class="cartao">
-        <img id="imagemPalavra" src="" alt="" style="height:180px; object-fit:contain;">
-        <div id="silabas" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;"></div>
-        <input id="campoEscrita" type="text" placeholder="Escreve aqui..." style="width:80%; padding:15px; border:3px solid #add8e6; border-radius:20px; font-size:1.6rem; text-align:center; font-family:'Fredoka'; outline:none;">
-        <button id="validar" style="background:var(--azul-vibrante); color:white; border:none; padding:15px 40px; border-radius:30px; font-weight:700; cursor:pointer; font-size:1.2rem;">Verificar</button>
-        <div id="feedback" style="min-height:30px; font-weight:700;"></div>
+        <p>Área do Jogo</p>
     </div>
 </main>
 
 <footer>
-    <p style="margin: 0; color: var(--azul-escuro); font-weight: 700; font-size: 0.9rem;">
-        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
+    <p style="margin: 0; font-size: 0.85rem;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: var(--azul-vibrante); text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
-<script src="js/dados.js"></script>
-<script src="js/jogo.js"></script>
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
     function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('overlay').classList.toggle('active');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
     }
 </script>
 </body>
