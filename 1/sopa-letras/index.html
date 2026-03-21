@@ -25,18 +25,12 @@
             --cinza-claro-borda: #ccc; 
             --cinza-claro-fundo: #f0f0f0;
 
-            /* Variáveis base para o tamanho visual da grelha */
-            --base-grid-width-desktop: 520px; /* Largura total da grelha 10x10 no desktop */
-            --base-grid-width-mobile: 330px; /* Largura total da grelha 10x10 no mobile */
-            --base-grid-width-small-mobile: 270px; /* Largura total da grelha 10x10 no mobile pequeno */
-
-            /* Gap entre células da grelha (ajustável por breakpoint) */
+            /* Configurações base para a grelha (ajustadas no JS) */
             --grid-gap-desktop: 6px; 
             --grid-gap-mobile: 3px;
             --grid-gap-small-mobile: 2px;
-
-            /* Tamanho da imagem na lista de palavras (ajustável por dificuldade/breakpoint) */
-            --list-item-image-size: 60px; 
+            --grid-padding: 15px; /* Padding da grelha */
+            --grid-border: 2px; /* Borda da grelha */
         }
 
         body { 
@@ -170,30 +164,30 @@
         .container { 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; 
+            /* Para alinhar a grelha e a lista no centro verticalmente */
+            align-items: center; 
             gap: 30px; 
             padding: 10px 20px 40px; 
             flex-wrap: wrap;
             flex-grow: 1; 
         }
 
-        /* GRELHA DINÂMICA (mas mantém a largura total) */
+        /* GRELHA */
         #grid { 
             display: grid; 
-            /* --grid-size e --cell-size serão definidos pelo JS */
             grid-template-columns: repeat(var(--grid-size), var(--cell-size)); 
             grid-template-rows: repeat(var(--grid-size), var(--cell-size)); 
             gap: var(--grid-gap-dynamic); 
             background: white; 
-            padding: 15px; 
+            padding: var(--grid-padding); 
             border-radius: 25px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
-            border: 2px solid var(--azul-janela-borda);
+            border: var(--grid-border) solid var(--azul-janela-borda);
             touch-action: none; 
 
-            /* A largura da grelha é fixa para cada breakpoint */
-            width: var(--base-grid-width-desktop); 
-            max-width: var(--base-grid-width-desktop); /* Impede que seja maior */
+            /* Largura e altura da grelha serão definidas via JS para preencher o espaço */
+            width: var(--grid-computed-width); 
+            height: var(--grid-computed-height);
         }
 
         .letra { 
@@ -221,21 +215,20 @@
             transform: scale(1.05); 
         }
 
-        /* LISTA DE PALAVRAS - Alinhada com a grelha */
+        /* LISTA DE PALAVRAS - SEM BORDA NO CONTÊINER GERAL, sempre 2 colunas */
         #lista-palavras {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            grid-auto-rows: minmax(100px, auto); 
+            grid-template-columns: repeat(2, 1fr); /* Sempre 2 colunas */
+            grid-auto-rows: minmax(auto, auto); /* Ajusta altura conforme conteúdo */
             gap: 12px;
             padding: 0; 
-            width: 100%; 
-            /* A largura máxima da lista é a mesma da grelha */
-            max-width: var(--grid-width-dynamic); 
+            width: var(--list-width-dynamic); /* Largura dinâmica para alinhar com a grelha */
+            /* max-width: 350px; Remove o max-width fixo, agora é dinâmico */
         }
 
         .item-palavra { 
             background: white; 
-            padding: 8px; 
+            padding: var(--item-padding); /* Padding dinâmico */
             border-radius: 18px; 
             border: 2px solid var(--azul-janela-borda); 
             display: flex; 
@@ -286,19 +279,16 @@
             .botoes-dificuldade { gap: 10px; }
             .btn-dificuldade { padding: 8px 15px; font-size: 0.85rem; }
 
+            /* Grid em mobile: largura será calculada no JS */
             #grid { 
-                width: var(--base-grid-width-mobile); 
-                max-width: var(--base-grid-width-mobile);
                 padding: 10px;
+                /* Removido width/max-width fixos, agora o JS calcula */
             }
 
             #lista-palavras { 
-                max-width: var(--base-grid-width-mobile); /* Adapta largura */
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                grid-auto-rows: minmax(80px, auto); 
-                gap: 8px; 
+                gap: 8px; /* Reduz o gap entre palavras */
             }
-            .item-palavra { padding: 5px; border-radius: 12px; }
+            .item-palavra { padding: var(--item-padding); border-radius: 12px; } /* Usa var para padding */
             .item-palavra span { font-size: 10px; }
         }
 
@@ -313,18 +303,14 @@
             .btn-dificuldade { padding: 6px 12px; font-size: 0.8rem; }
 
             #grid { 
-                width: var(--base-grid-width-small-mobile); 
-                max-width: var(--base-grid-width-small-mobile);
                 padding: 8px;
+                /* Removido width/max-width fixos, agora o JS calcula */
             }
 
             #lista-palavras {
-                max-width: var(--base-grid-width-small-mobile); /* Adapta largura */
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                grid-auto-rows: minmax(70px, auto);
                 gap: 6px;
             }
-            .item-palavra { padding: 5px; border-radius: 12px; }
+            .item-palavra { padding: var(--item-padding); border-radius: 10px; } /* Usa var para padding */
             .item-palavra span { font-size: 9px; }
         }
 
@@ -386,7 +372,8 @@
                 <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
             </linearGradient>
         </defs>
-        <path d="M0.00,99.98 C160.00,190.00 340.00,9.98 500.00,99.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+        <!-- O path original que fornece a continuidade -->
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
     </svg>
 </div>
 
@@ -428,23 +415,26 @@
         facil: {
             tempo: 180, // 3 minutos
             numPalavras: 6,
-            tamanhoGrelha: 10, // Fácil: Grelha 10x10
-            tamanhoFonteLetra: 24, // px
-            tamanhoImagemPalavra: 60 // px
+            tamanhoGrelha: 10, 
+            tamanhoFonteLetra: 24, // px (será o mesmo para Fácil/Médio)
+            tamanhoImagemPalavra: 60, // px
+            itemPadding: 8 // px
         },
         medio: {
             tempo: 240, // 4 minutos
             numPalavras: 8,
-            tamanhoGrelha: 10, // Médio: Grelha 10x10
-            tamanhoFonteLetra: 20, // px
-            tamanhoImagemPalavra: 55 // px
+            tamanhoGrelha: 10, 
+            tamanhoFonteLetra: 24, // px (igual ao Fácil)
+            tamanhoImagemPalavra: 55, // px
+            itemPadding: 8 // px
         },
         dificil: {
             tempo: 300, // 5 minutos
             numPalavras: 10,
             tamanhoGrelha: 12, // Difícil: Grelha 12x12
-            tamanhoFonteLetra: 18, // px
-            tamanhoImagemPalavra: 50 // px
+            tamanhoFonteLetra: 16, // px (reduzido para 12x12)
+            tamanhoImagemPalavra: 45, // px (reduzido para caber mais)
+            itemPadding: 6 // px (reduzido para caber mais)
         }
     };
 
@@ -507,51 +497,80 @@
 
     /**
      * Aplica os estilos CSS da grelha e da lista de palavras com base na dificuldade atual e no tamanho da janela.
+     * Garante que a grelha e a lista têm larguras alinhadas.
      */
     function aplicarEstilosGrelha() {
-        let currentGridGap, currentFontSizeLetra, currentImageSize, baseGridWidth;
+        let currentGridGap, currentFontSizeLetra, currentImageSize, currentItemPadding;
 
-        // Determina o gap e a largura base da grelha com base no ecrã
+        // Determina o gap e as propriedades específicas para mobile
         if (window.innerWidth <= 480) { // Mobile muito pequeno
-            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-small-mobile').trim();
-            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-small-mobile'));
-            currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra * 0.5 + 'px'; 
-            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.6 + 'px'; 
-        } else if (window.innerWidth <= 768) { // Mobile/Tablet
-            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-mobile').trim();
-            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-mobile'));
+            currentGridGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-small-mobile'));
             currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra * 0.7 + 'px'; 
-            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.75 + 'px'; 
+            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.7 + 'px'; 
+            currentItemPadding = dificuldadeAtual.itemPadding * 0.7 + 'px';
+        } else if (window.innerWidth <= 768) { // Mobile/Tablet
+            currentGridGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-mobile'));
+            currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra * 0.85 + 'px'; 
+            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.85 + 'px'; 
+            currentItemPadding = dificuldadeAtual.itemPadding * 0.85 + 'px';
         } else { // Desktop
-            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-desktop').trim();
-            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-desktop'));
+            currentGridGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-desktop'));
             currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra + 'px';
             currentImageSize = dificuldadeAtual.tamanhoImagemPalavra + 'px';
+            currentItemPadding = dificuldadeAtual.itemPadding + 'px';
         }
 
-        const parsedGridGap = parseFloat(currentGridGap);
+        const gridPadding = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-padding'));
+        const gridBorder = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-border'));
+        const totalGridChrome = (gridPadding * 2) + (gridBorder * 2); // Padding e borda total da grelha
 
-        // Calcula o tamanho da célula para que a grelha tenha a largura base
-        // largura_grelha = (num_celulas * tamanho_celula) + (num_gaps * tamanho_gap) + padding_grelha_total + borda_grelha_total
-        // baseGridWidth = (dificuldadeAtual.tamanhoGrelha * cellSize) + ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) + 30 + 4;
-        // cellSize = (baseGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) - 30 - 4) / dificuldadeAtual.tamanhoGrelha;
+        // Calculamos a largura do container para a grelha + lista (100% - gaps laterais, se houver)
+        // Vamos definir uma largura máxima para o conjunto (grelha + lista) no desktop para evitar que fique demasiado largo
+        const maxContentWidthDesktop = 900; // Por exemplo, 900px para desktop
+        const maxContentWidthMobile = window.innerWidth * 0.9 - 60; // 90% da largura - padding do container
         
-        // Simplificado, considerando que padding (30px) e borda (4px) da #grid são constantes
-        const paddingAndBorder = 30 + 4; 
-        const cellSize = (baseGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) - paddingAndBorder) / dificuldadeAtual.tamanhoGrelha;
+        let targetContentWidth;
+        if (window.innerWidth <= 768) {
+            targetContentWidth = maxContentWidthMobile;
+        } else {
+            targetContentWidth = maxContentWidthDesktop;
+        }
 
+        // Calcula o tamanho da célula para preencher o espaço disponível pela grelha
+        // Assumindo que a grelha ocupará ~60% da largura total do conteúdo em desktop, e mais em mobile
+        // A proporção entre a grelha e a lista pode variar, mas para manter o alinhamento, 
+        // a largura da grelha deve ser calculada primeiro e a lista segue.
 
+        // Vamos tentar fazer a grelha ocupar uma % da largura total disponível ou uma largura fixa max
+        // Definir uma largura desejada para a grelha em desktop, e deixar o JS calcular o resto
+        const desiredGridWidthDesktop = 520; // Por exemplo
+        const desiredGridWidthMobile = Math.min(window.innerWidth * 0.85, 330); // Max 330px, ou 85% do ecrã
+        const desiredGridWidthSmallMobile = Math.min(window.innerWidth * 0.9, 270); // Max 270px, ou 90% do ecrã
+
+        let targetGridWidth;
+        if (window.innerWidth <= 480) {
+            targetGridWidth = desiredGridWidthSmallMobile;
+        } else if (window.innerWidth <= 768) {
+            targetGridWidth = desiredGridWidthMobile;
+        } else {
+            targetGridWidth = desiredGridWidthDesktop;
+        }
+
+        // Agora calculamos o tamanho da célula para esta targetGridWidth
+        const cellSize = (targetGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * currentGridGap) - totalGridChrome) / dificuldadeAtual.tamanhoGrelha;
+        
         // Aplica as variáveis CSS à grelha e lista
         gridElement.style.setProperty('--grid-size', dificuldadeAtual.tamanhoGrelha);
         gridElement.style.setProperty('--cell-size', `${cellSize}px`);
-        gridElement.style.setProperty('--grid-gap-dynamic', currentGridGap);
+        gridElement.style.setProperty('--grid-gap-dynamic', `${currentGridGap}px`);
         gridElement.style.setProperty('--font-size-letra', currentFontSizeLetra);
-        gridElement.style.setProperty('width', `${baseGridWidth}px`); /* Fixa a largura visual da grelha */
-        gridElement.style.setProperty('max-width', `${baseGridWidth}px`); /* Garante que não excede */
+        gridElement.style.setProperty('--grid-computed-width', `${targetGridWidth}px`);
+        gridElement.style.setProperty('--grid-computed-height', `${targetGridWidth}px`); /* Grelha quadrada */
 
-
-        listaElement.style.setProperty('max-width', `${baseGridWidth}px`);
+        // A largura da lista será baseada na largura da grelha (para alinhamento)
+        listaElement.style.setProperty('--list-width-dynamic', `${targetGridWidth}px`); 
         document.documentElement.style.setProperty('--list-item-image-size', currentImageSize);
+        document.documentElement.style.setProperty('--item-padding', currentItemPadding);
     }
 
     /**
@@ -574,25 +593,28 @@
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
-            const MAX_TENTATIVAS = 1000; // Aumentado para dar mais chances, especialmente com grelhas 12x12 e mais palavras
+            const MAX_TENTATIVAS = 1500; // Aumentado para dar mais chances
 
             while (!colocada && tentativas < MAX_TENTATIVAS) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l, c;
 
-                // Ajusta o limite superior para a posição inicial para que a palavra caiba
-                const maxL = dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1;
-                const maxC = dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1;
+                const maxL = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; // Max index, não +1
+                const maxC = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; // Max index, não +1
 
                 if (dir === 'V') {
-                    l = Math.floor(Math.random() * maxL);
+                    l = Math.floor(Math.random() * (maxL + 1)); // Gera de 0 a maxL
                     c = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
-                } else { // dir === 'H'
+                } else { 
                     l = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
-                    c = Math.floor(Math.random() * maxC);
+                    c = Math.floor(Math.random() * (maxC + 1)); // Gera de 0 a maxC
                 }
                 
-                if (l >= 0 && c >= 0 && verificarEspaco(pObj.nome, l, c, dir)) { // Verifica limites novamente
+                // Verifica se a posição inicial está dentro dos limites antes de verificar o espaço
+                if (l >= 0 && l < dificuldadeAtual.tamanhoGrelha && 
+                    c >= 0 && c < dificuldadeAtual.tamanhoGrelha && 
+                    verificarEspaco(pObj.nome, l, c, dir)) {
+                    
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = (dir === 'V') ? l + i : l;
                         let curC = (dir === 'H') ? c + i : c;
@@ -605,8 +627,6 @@
             }
             if (!colocada) {
                 console.warn(`Não foi possível colocar a palavra "${pObj.nome}" na grelha após ${MAX_TENTATIVAS} tentativas.`);
-                // Se uma palavra não puder ser colocada, o jogo pode continuar sem ela ou pode ser necessário um tratamento de erro.
-                // Para este caso, vamos apenas avisar e deixar que as outras palavras sejam colocadas.
             }
         });
         desenharInterface();
@@ -622,7 +642,6 @@
             let curL = (dir === 'V') ? l + i : l;
             let curC = (dir === 'H') ? c + i : c;
 
-            // Verifica os limites da grelha atual (dificuldadeAtual.tamanhoGrelha)
             if (curL >= dificuldadeAtual.tamanhoGrelha || curC >= dificuldadeAtual.tamanhoGrelha || curL < 0 || curC < 0) {
                 return false;
             }
