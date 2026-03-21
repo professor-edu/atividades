@@ -31,7 +31,7 @@
             user-select: none;
         }
         
-        /* HEADER BLINDADO */
+        /* CABEÇALHO BLINDADO */
         .cabecalho { 
             background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
@@ -56,14 +56,15 @@
         }
         .btn-menu:hover { transform: scale(1.05); }
 
-        /* ONDA IMUTÁVEL */
+        /* ONDA COM FUSÃO PERFEITA */
         .onda-container {
             height: 45px; width: 100%; overflow: hidden;
-            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            margin-top: -2px; flex-shrink: 0; z-index: 10;
             filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
+        .onda-svg { height: 100%; width: 100%; fill: var(--azul-grad-dir); }
 
-        /* NÍVEIS */
+        /* NÍVEIS COM CORES CORRIGIDAS */
         .menu-niveis { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn-nivel { padding: 10px 20px; border: 2px solid #ccc; border-radius: 20px; cursor: pointer; font-weight: bold; background: white; transition: 0.3s; }
         #btn-4.ativo { background: var(--verde); border-color: var(--verde); color: white; }
@@ -74,17 +75,18 @@
         .stats { font-size: 1.2rem; margin-bottom: 10px; display: flex; justify-content: center; gap: 20px; }
         .stat-item { font-weight: 700; display: flex; align-items: center; gap: 5px; }
 
-        /* TABULEIRO E CARTAS CORRIGIDAS */
+        /* TABULEIRO E CARTAS (VISIBILIDADE CORRIGIDA) */
         .tabuleiro { display: grid; gap: 12px; max-width: 900px; margin: 10px auto 30px; padding: 15px; justify-content: center; }
         .carta { width: 120px; aspect-ratio: 1/1; border-radius: 15px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+        
         .carta.virada { transform: rotateY(180deg); }
         .carta.par-encontrado { opacity: 0.4; pointer-events: none; transform: rotateY(180deg) !important; }
 
         .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; background: white; border: 3px solid var(--azul-janela-borda); box-sizing: border-box; }
-        .verso { background-color: var(--azul-escuro); color: white; font-size: 2.5rem; font-weight: 700; z-index: 2; }
-        .frente { transform: rotateY(180deg); padding: 10px; z-index: 1; }
-        .frente img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
-        .frente span { font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; text-align: center; }
+        .verso { background-color: var(--azul-escuro); color: white; font-size: 2.5rem; font-weight: 700; }
+        .frente { transform: rotateY(180deg); padding: 10px; }
+        .frente img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .frente span { font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; }
 
         #final-screen { display: none; padding: 40px; }
         footer { height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; margin-top: auto; font-weight: 700; color: var(--azul-escuro); font-size: 0.8rem; }
@@ -104,8 +106,8 @@
 </header>
 
 <div class="onda-container">
-    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="fill: var(--azul-grad-dir);"></path>
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" class="onda-svg">
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z"></path>
     </svg>
 </div>
 
@@ -175,7 +177,7 @@
             tabuleiro.appendChild(carta);
         });
 
-        // REVELAÇÃO INICIAL (Génio e Difícil)
+        // Revelação inicial para níveis superiores
         if(numPares >= 8) {
             document.querySelectorAll('.carta').forEach(c => c.classList.add('virada'));
             setTimeout(() => {
@@ -202,7 +204,7 @@
         if (c1.dataset.id === c2.dataset.id) {
             nAcertos++; paresDescobertos++;
             document.getElementById('v-acertos').innerText = nAcertos;
-            document.getElementById('som-acerto').play().catch(e => console.log("Erro áudio"));
+            document.getElementById('som-acerto').play().catch(() => {});
             setTimeout(() => {
                 c1.classList.add('par-encontrado'); c2.classList.add('par-encontrado');
                 cartasViradas = []; podeJogar = true;
