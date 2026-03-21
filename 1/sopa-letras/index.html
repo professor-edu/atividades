@@ -25,12 +25,15 @@
             --cinza-claro-borda: #ccc; 
             --cinza-claro-fundo: #f0f0f0;
 
-            /* Configurações base para a grelha (ajustadas no JS) */
+            /* Configurações base para a grelha e padding/border */
             --grid-gap-desktop: 6px; 
             --grid-gap-mobile: 3px;
             --grid-gap-small-mobile: 2px;
             --grid-padding: 15px; /* Padding da grelha */
             --grid-border: 2px; /* Borda da grelha */
+
+            /* Largura mínima do item da lista para o calculo do auto-fit */
+            --list-item-min-width: 140px; 
         }
 
         body { 
@@ -164,12 +167,14 @@
         .container { 
             display: flex; 
             justify-content: center; 
-            /* Para alinhar a grelha e a lista no centro verticalmente */
-            align-items: center; 
+            align-items: flex-start; /* Alinha no topo */
             gap: 30px; 
             padding: 10px 20px 40px; 
             flex-wrap: wrap;
             flex-grow: 1; 
+            /* Largura máxima para o conjunto grelha + lista, para evitar que fiquem muito largos em ecrãs grandes */
+            max-width: 1200px; 
+            margin: 0 auto; /* Centraliza o container */
         }
 
         /* GRELHA */
@@ -185,9 +190,10 @@
             border: var(--grid-border) solid var(--azul-janela-borda);
             touch-action: none; 
 
-            /* Largura e altura da grelha serão definidas via JS para preencher o espaço */
-            width: var(--grid-computed-width); 
-            height: var(--grid-computed-height);
+            /* A largura e altura serão definidas dinamicamente pelo JS */
+            width: var(--grid-computed-size); 
+            height: var(--grid-computed-size);
+            flex-shrink: 0; /* Impede que a grelha encolha em flexbox */
         }
 
         .letra { 
@@ -219,16 +225,19 @@
         #lista-palavras {
             display: grid;
             grid-template-columns: repeat(2, 1fr); /* Sempre 2 colunas */
-            grid-auto-rows: minmax(auto, auto); /* Ajusta altura conforme conteúdo */
+            grid-auto-rows: minmax(auto, auto); 
             gap: 12px;
             padding: 0; 
-            width: var(--list-width-dynamic); /* Largura dinâmica para alinhar com a grelha */
-            /* max-width: 350px; Remove o max-width fixo, agora é dinâmico */
+            /* A largura da lista será baseada no tamanho da grelha, ajustada para caber */
+            width: var(--list-computed-width); 
+            flex-grow: 1; /* Permite que a lista cresça para preencher o espaço restante */
+            /* Garante que a lista não fique excessivamente larga em desktop se houver muito espaço */
+            max-width: 500px; 
         }
 
         .item-palavra { 
             background: white; 
-            padding: var(--item-padding); /* Padding dinâmico */
+            padding: var(--item-padding); 
             border-radius: 18px; 
             border: 2px solid var(--azul-janela-borda); 
             display: flex; 
@@ -238,6 +247,9 @@
             transition: all 0.3s ease;
             cursor: default; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            /* Define uma proporção para os cartões */
+            aspect-ratio: 1 / 1; 
+            min-width: 0; /* Para flex/grid itens não transbordarem */
         }
 
         .item-palavra img { 
@@ -279,16 +291,20 @@
             .botoes-dificuldade { gap: 10px; }
             .btn-dificuldade { padding: 8px 15px; font-size: 0.85rem; }
 
-            /* Grid em mobile: largura será calculada no JS */
+            .container { 
+                gap: 20px; 
+                padding: 10px 10px 30px; 
+            }
+
             #grid { 
                 padding: 10px;
-                /* Removido width/max-width fixos, agora o JS calcula */
             }
 
             #lista-palavras { 
-                gap: 8px; /* Reduz o gap entre palavras */
+                gap: 8px; 
+                max-width: 400px; /* Limita a largura da lista em mobile */
             }
-            .item-palavra { padding: var(--item-padding); border-radius: 12px; } /* Usa var para padding */
+            .item-palavra { border-radius: 12px; }
             .item-palavra span { font-size: 10px; }
         }
 
@@ -304,13 +320,13 @@
 
             #grid { 
                 padding: 8px;
-                /* Removido width/max-width fixos, agora o JS calcula */
             }
 
             #lista-palavras {
                 gap: 6px;
+                max-width: 300px; /* Mais restrito para small mobile */
             }
-            .item-palavra { padding: var(--item-padding); border-radius: 10px; } /* Usa var para padding */
+            .item-palavra { border-radius: 10px; }
             .item-palavra span { font-size: 9px; }
         }
 
@@ -372,8 +388,8 @@
                 <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
             </linearGradient>
         </defs>
-        <!-- O path original que fornece a continuidade -->
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+        <!-- Novo path simplificado para uma onda suave e contínua -->
+        <path d="M0,0 C160,0 340,150 500,0 L500,150 L0,150 Z" style="stroke: none; fill: url(#grad-onda);"></path>
     </svg>
 </div>
 
@@ -418,7 +434,7 @@
             tamanhoGrelha: 10, 
             tamanhoFonteLetra: 24, // px (será o mesmo para Fácil/Médio)
             tamanhoImagemPalavra: 60, // px
-            itemPadding: 8 // px
+            itemPadding: 10 // px
         },
         medio: {
             tempo: 240, // 4 minutos
@@ -522,53 +538,50 @@
 
         const gridPadding = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-padding'));
         const gridBorder = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-border'));
-        const totalGridChrome = (gridPadding * 2) + (gridBorder * 2); // Padding e borda total da grelha
+        const totalGridChrome = (gridPadding * 2) + (gridBorder * 2); 
 
-        // Calculamos a largura do container para a grelha + lista (100% - gaps laterais, se houver)
-        // Vamos definir uma largura máxima para o conjunto (grelha + lista) no desktop para evitar que fique demasiado largo
-        const maxContentWidthDesktop = 900; // Por exemplo, 900px para desktop
-        const maxContentWidthMobile = window.innerWidth * 0.9 - 60; // 90% da largura - padding do container
-        
-        let targetContentWidth;
-        if (window.innerWidth <= 768) {
-            targetContentWidth = maxContentWidthMobile;
-        } else {
-            targetContentWidth = maxContentWidthDesktop;
+        // Largura máxima desejada para o conjunto grelha + lista (aproximadamente 1000-1100px para desktop)
+        const maxContentAreaWidth = window.innerWidth * 0.95; // Use 95% da largura da janela, até um máximo
+        const preferredGridSize = 520; // Largura preferida da grelha em desktop
+
+        // Calcula a largura da grelha: tenta usar a largura preferida, mas adapta-se se não houver espaço
+        let targetGridWidth = Math.min(preferredGridSize, maxContentAreaWidth * 0.6); // Grelha ocupa ~60% do espaço disponível
+
+        if (window.innerWidth <= 768) { // Mobile/Tablet
+            targetGridWidth = Math.min(window.innerWidth * 0.8, 400); // 80% do ecrã, máx 400px
+        }
+        if (window.innerWidth <= 480) { // Small Mobile
+            targetGridWidth = Math.min(window.innerWidth * 0.9, 300); // 90% do ecrã, máx 300px
         }
 
-        // Calcula o tamanho da célula para preencher o espaço disponível pela grelha
-        // Assumindo que a grelha ocupará ~60% da largura total do conteúdo em desktop, e mais em mobile
-        // A proporção entre a grelha e a lista pode variar, mas para manter o alinhamento, 
-        // a largura da grelha deve ser calculada primeiro e a lista segue.
-
-        // Vamos tentar fazer a grelha ocupar uma % da largura total disponível ou uma largura fixa max
-        // Definir uma largura desejada para a grelha em desktop, e deixar o JS calcular o resto
-        const desiredGridWidthDesktop = 520; // Por exemplo
-        const desiredGridWidthMobile = Math.min(window.innerWidth * 0.85, 330); // Max 330px, ou 85% do ecrã
-        const desiredGridWidthSmallMobile = Math.min(window.innerWidth * 0.9, 270); // Max 270px, ou 90% do ecrã
-
-        let targetGridWidth;
-        if (window.innerWidth <= 480) {
-            targetGridWidth = desiredGridWidthSmallMobile;
-        } else if (window.innerWidth <= 768) {
-            targetGridWidth = desiredGridWidthMobile;
-        } else {
-            targetGridWidth = desiredGridWidthDesktop;
-        }
-
-        // Agora calculamos o tamanho da célula para esta targetGridWidth
+        // Calcula o tamanho da célula para a grelha
         const cellSize = (targetGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * currentGridGap) - totalGridChrome) / dificuldadeAtual.tamanhoGrelha;
         
-        // Aplica as variáveis CSS à grelha e lista
+        // Aplica as variáveis CSS à grelha
         gridElement.style.setProperty('--grid-size', dificuldadeAtual.tamanhoGrelha);
         gridElement.style.setProperty('--cell-size', `${cellSize}px`);
         gridElement.style.setProperty('--grid-gap-dynamic', `${currentGridGap}px`);
         gridElement.style.setProperty('--font-size-letra', currentFontSizeLetra);
-        gridElement.style.setProperty('--grid-computed-width', `${targetGridWidth}px`);
-        gridElement.style.setProperty('--grid-computed-height', `${targetGridWidth}px`); /* Grelha quadrada */
+        gridElement.style.setProperty('--grid-computed-size', `${targetGridWidth}px`); // Define a largura e altura totais da grelha
 
-        // A largura da lista será baseada na largura da grelha (para alinhamento)
-        listaElement.style.setProperty('--list-width-dynamic', `${targetGridWidth}px`); 
+        // A largura da lista de palavras:
+        // Queremos que ela seja compacta e em 2 colunas. 
+        // Vamos dar um max-width para cada coluna e deixar o grid auto-fit fazer o resto
+        const listColumnItemMinWidth = 120; // Largura mínima para cada item da lista (para 2 colunas)
+        const listTotalGap = 12; // Gap entre as 2 colunas
+        const listComputedWidth = (listColumnItemMinWidth * 2) + listTotalGap;
+
+        // Limita a largura da lista para não ficar maior que a grelha (desktop) ou um tamanho razoável (mobile)
+        let finalListWidth = Math.min(listComputedWidth, targetGridWidth);
+        if (window.innerWidth <= 768) {
+            finalListWidth = Math.min(finalListWidth, targetGridWidth);
+            listaElement.style.setProperty('--list-item-min-width', '100px'); // Min width para items em mobile
+        } else {
+            listaElement.style.setProperty('--list-item-min-width', '140px'); // Min width para items em desktop
+        }
+
+
+        listaElement.style.setProperty('--list-computed-width', `${finalListWidth}px`); 
         document.documentElement.style.setProperty('--list-item-image-size', currentImageSize);
         document.documentElement.style.setProperty('--item-padding', currentItemPadding);
     }
@@ -593,24 +606,23 @@
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
-            const MAX_TENTATIVAS = 1500; // Aumentado para dar mais chances
+            const MAX_TENTATIVAS = 1500; 
 
             while (!colocada && tentativas < MAX_TENTATIVAS) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l, c;
 
-                const maxL = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; // Max index, não +1
-                const maxC = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; // Max index, não +1
+                const maxL = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; 
+                const maxC = dificuldadeAtual.tamanhoGrelha - pObj.nome.length; 
 
                 if (dir === 'V') {
-                    l = Math.floor(Math.random() * (maxL + 1)); // Gera de 0 a maxL
+                    l = Math.floor(Math.random() * (maxL + 1)); 
                     c = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
                 } else { 
                     l = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
-                    c = Math.floor(Math.random() * (maxC + 1)); // Gera de 0 a maxC
+                    c = Math.floor(Math.random() * (maxC + 1)); 
                 }
                 
-                // Verifica se a posição inicial está dentro dos limites antes de verificar o espaço
                 if (l >= 0 && l < dificuldadeAtual.tamanhoGrelha && 
                     c >= 0 && c < dificuldadeAtual.tamanhoGrelha && 
                     verificarEspaco(pObj.nome, l, c, dir)) {
