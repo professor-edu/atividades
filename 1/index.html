@@ -11,9 +11,11 @@
     <style>
         :root {
             --bg-body: #f0f4f8;
-            --azul-vibrante: #0091ff;
+            --azul-vibrante: #0091ff; /* Cor fixa e também temática do 1º ano */
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    /* Azul muito suave para o fundo do cabeçalho */
             --azul-escuro: #0d47a1;
-            --bg-header-1ano: #baddf9; 
             --text-main: #455a64;
         }
 
@@ -28,15 +30,14 @@
             overflow-x: hidden;
         }
 
-        /* HEADER COM BORDER 1PX CONFORME PEDIDO */
+        /* HEADER COM BORDER AZUL FIXA */
         header {
-            background-color: var(--bg-header-1ano);
+            background-color: var(--bg-header);
             padding: 25px 20px;
             border-bottom: 1px solid var(--azul-vibrante);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             position: relative;
-            flex-shrink: 0;
-            z-index: 100; /* Garante que o header fica por cima do conteúdo */
+            z-index: 100;
         }
 
         .header-content {
@@ -48,48 +49,48 @@
             align-items: center;
         }
 
-        /* DESKTOP: Hamburger à Esquerda e Botão Início ao lado */
         .nav-container {
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* Alinhado à esquerda no desktop */
+            justify-content: flex-start;
             gap: 15px;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 10; /* Garante clique nos botões no desktop */
+            z-index: 10;
         }
 
-        /* BOTÃO HAMBURGER COM ANIMAÇÕES FIXADAS */
+        /* HAMBURGER COM HOVER SUAVE AMARELO (CONFORME PEDIDO) */
         .hamburger {
             cursor: pointer;
-            background: rgba(255,255,255,0.6);
+            background: rgba(255, 255, 255, 0.4);
             border: none;
             display: flex;
             flex-direction: column;
             gap: 4px;
             padding: 10px;
             border-radius: 8px;
-            transition: background 0.2s;
+            transition: background 0.4s ease;
         }
-        .hamburger:hover { background: rgba(255,255,255,0.9); }
+        .hamburger:hover {
+            background: #fff9c4; 
+        }
 
         .hamburger span { 
             display: block; width: 20px; height: 2px; 
             background: var(--azul-escuro); 
-            transition: 0.3s cubic-bezier(0.215, 0.610, 0.355, 1.000); /* Animação mais suave */
+            transition: 0.3s;
             transform-origin: center;
         }
         
-        /* Estado Ativo do Hamburger (Transforma em X) */
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-        /* BOTÃO VOLTAR À ESQUERDA */
+        /* BOTÃO VOLTAR COM SETA E AZUL DO 1º ANO */
         .btn-voltar {
-            background: var(--azul-vibrante);
+            background: var(--cor-1ano);
             color: white;
             border: none;
             padding: 8px 20px;
@@ -97,26 +98,17 @@
             font-weight: 700;
             text-decoration: none;
             font-size: 0.9rem;
-            box-shadow: 0 3px 0 #0070c4;
+            box-shadow: 0 3px 0 var(--cor-1ano-dark);
             display: flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.2s ease;
+            gap: 8px;
+            transition: 0.2s;
         }
-        .btn-voltar:hover { transform: scale(1.05); filter: brightness(1.1); }
-        .btn-voltar:active { transform: translateY(2px); box-shadow: 0 1px 0 #0070c4; }
+        .btn-voltar:hover { transform: scale(1.05); }
 
-        /* TÍTULO E SUBTÍTULO */
-        h1 { 
-            color: var(--azul-escuro); 
-            font-size: clamp(1.4rem, 5vw, 2.2rem); 
-            margin: 0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px; 
-            position: relative; /* z-index automático inferior ao nav-container */
-        }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        
+        /* SUBTÍTULO ATUALIZADO (CLAMP E MARGEM DE 15PX) */
         .subtitulo { 
             color: var(--azul-escuro); 
             font-size: clamp(0.85rem, 3vw, 1.1rem); 
@@ -125,82 +117,48 @@
             margin-top: 15px; 
         }
 
-        /* MOBILE: Correção das Animações e Hover usando Grid */
         @media (max-width: 768px) {
-            header { padding: 10px; }
-
-            .header-content {
-                display: grid;
-                /* Cria 3 colunas: Esquerda (hamburger), Centro (Título), Direita (Vazia para equilíbrio) */
-                grid-template-columns: 50px 1fr 50px; 
-                grid-template-rows: auto auto; /* Linha 1: Botões, Linha 2: Título */
-                gap: 10px;
-                align-items: center;
-            }
-
-            /* Container de navegação flui para o grid */
-            .nav-container {
-                position: static; /* Remove o absoluto que quebrava o hover */
-                transform: none;
-                grid-column: 1 / -1; /* Ocupa todas as colunas na linha 1 */
-                display: grid;
-                grid-template-columns: 50px 1fr 50px; /* Recria a estrutura interna */
-                align-items: center;
-                justify-items: center; /* Centra o conteúdo de cada célula */
-                width: 100%;
-            }
-
-            .hamburger {
-                grid-column: 1; /* Força o hamburger para a célula da esquerda */
-                justify-self: start; /* Alinha à esquerda da célula */
-                position: static;
-            }
-
-            .btn-voltar {
-                grid-column: 2; /* Força o botão para a célula central */
-                position: static;
-                transform: none;
-                width: fit-content;
-                /* Removemos o translate mobile anterior que causava conflito */
-            }
-            .btn-voltar:hover { transform: scale(1.05); } /* Reativa hover limpo */
-
-            /* Título e Subtítulo vão para a linha 2 */
-            h1, .subtitulo {
-                grid-column: 2; /* Centrados na coluna central */
-                margin-top: 0;
-            }
-            h1 { font-size: 1.6rem; }
-            .subtitulo { margin-bottom: 5px; }
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; }
         }
 
-        /* SIDEBAR E GRID DE DISCIPLINAS (Mantidos iguais) */
+        /* SIDEBAR COM HOVER AZUL DO ANO */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
-        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; transition: 0.3s; }
-        .sidebar li a:hover { background: #e3f2fd; color: var(--azul-vibrante); transform: translateX(8px); }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); transform: translateX(8px); color: white; }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
         main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .grid-disciplinas { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; max-width: 1000px; width: 100%; }
-        .cartao-disciplina { background: white; flex: 0 1 220px; aspect-ratio: 1/1; border-radius: 30px; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 1px solid #eee; border-top: 8px solid var(--azul-vibrante); }
-        .cartao-disciplina:hover { transform: translateY(-10px) scale(1.02); }
+        
+        /* CARTÕES DAS DISCIPLINAS COM BORDERS DIFERENTES */
+        .cartao-disciplina { 
+            background: white; flex: 0 1 220px; aspect-ratio: 1/1; border-radius: 30px; 
+            text-decoration: none; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; gap: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
+            border: 1px solid #eee; transition: 0.3s;
+        }
+        .cartao-disciplina:hover { transform: translateY(-10px); }
+        
+        .c-port { border-top: 8px solid #ff6b6b; }  /* Português: Vermelho */
+        .c-mat { border-top: 8px solid #4dabf7; }   /* Matemática: Azul */
+        .c-estudo { border-top: 8px solid #51cf66; } /* Estudo do Meio: Verde */
+
         .icone-wrapper { font-size: 4rem; }
         .nome-disciplina { color: var(--azul-escuro); font-weight: 700; font-size: 1.3rem; }
-        .c-port { border-top-color: #ff6b6b; } .c-mat { border-top-color: #4dabf7; } .c-estudo { border-top-color: #51cf66; }
 
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        /* FOOTER COM BORDER AZUL FIXA */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
-
-        @media (max-width: 600px) {
-            .grid-disciplinas { gap: 15px; }
-            .cartao-disciplina { flex: 0 1 150px; }
-            .icone-wrapper { font-size: 3rem; }
-            .nome-disciplina { font-size: 1.1rem; }
-        }
     </style>
 </head>
 <body>
@@ -244,7 +202,8 @@
             <span class="nome-disciplina">Matemática</span>
         </a>
         <a href="estudo-meio/index.html" class="cartao-disciplina c-estudo">
-            <div class="icone-wrapper">🌍</div> <span class="nome-disciplina">Estudo do Meio</span>
+            <div class="icone-wrapper">🌍</div>
+            <span class="nome-disciplina">Estudo do Meio</span>
         </a>
     </div>
 </main>
@@ -259,7 +218,6 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const hamburger = document.getElementById('hamburgerBtn');
-        
         sidebar.classList.toggle('active');
         overlay.classList.toggle('active');
         hamburger.classList.toggle('open');
