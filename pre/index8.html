@@ -3,30 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ordenar e Escrever Sílabas ✍️</title>
+    <title>Escrever Sílabas ✍️</title>
     
-    <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --azul-claro: #f0f7ff;
-            --azul-janela-fundo: #ebf5ff;
-            --azul-janela-borda: #add8e6;
-            --azul-grad-esq: #bde6ff; 
-            --azul-grad-dir: #2e86de; 
+            --bg-body: #f0f4f8;
             --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
-            --verde: #4caf50;
-            --laranja: #ff9800;
-            --vermelho: #e53935;
+            --grad-header: linear-gradient(90deg, #bde6ff 0%, #2e86de 100%);
             --text-main: #455a64;
+            --accent: #ff9800;
         }
 
         body { 
-            font-family: 'Quicksand', sans-serif; 
+            font-family: 'Fredoka', sans-serif; 
             text-align: center; 
-            background-color: var(--azul-claro); 
+            background-color: var(--bg-body); 
             margin: 0; 
             display: flex;
             flex-direction: column;
@@ -34,56 +29,87 @@
             overflow: hidden; 
         }
         
-        /* CABEÇALHO OTIMIZADO (5px topo / 30px fundo) */
+        /* CABEÇALHO OTIMIZADO - REDUÇÃO DE ESPAÇO */
         .cabecalho { 
-            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            background: var(--grad-header); 
+            /* Ajustado conforme o teu pedido: Top 5px | Bottom 30px */
             padding: 5px 20px 30px 20px; 
             display: flex;
             align-items: center; 
             justify-content: space-between;
-            height: 80px; 
+            height: 80px; /* Altura reduzida para ganhar área de jogo */
             flex-shrink: 0;
             z-index: 100;
             position: relative;
         }
 
-        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
-        .header-left { justify-content: flex-start; gap: 12px; }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; gap: 12px; }
         .header-right { justify-content: flex-end; }
 
         .cabecalho-conteudo { 
             display: flex; justify-content: center; align-items: center; 
-            gap: 15px; flex: 3;
+            gap: 15px; flex: 2;
         }
 
         .cabecalho h1 {
             margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.8rem; /* Ligeiramente menor para caber no novo espaço */
+            font-weight: 500;
             color: var(--azul-escuro);
-            white-space: nowrap;
         }
 
-        /* MENU HAMBURGER E BOTÃO VOLTAR */
+        .img-titulo { width: 60px; height: auto; } /* Ajustado de 70px para 60px */
+
+        .btn-header {
+            background: var(--accent); color: white; border: none;
+            padding: 6px 15px; border-radius: 20px; font-weight: 500;
+            cursor: pointer; box-shadow: 0 4px 0px #e68a00;
+            font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-header:hover { transform: scale(1.05); filter: brightness(1.1); }
+
         .hamburger {
             cursor: pointer; background: rgba(255,255,255,0.3); border: none;
             display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 8px;
-            transition: 0.3s;
         }
-        .hamburger:hover { background: rgba(255,255,255,0.5); }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); }
 
-        .btn-menu {
-            background: var(--laranja); color: white; border: none;
-            padding: 8px 16px; border-radius: 20px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 0px #e68a00;
-            font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
-            transition: all 0.2s ease;
+        /* ONDA AJUSTADA PARA O NOVO TAMANHO */
+        .onda-container {
+            position: absolute;
+            bottom: -1px;
+            left: 0; width: 100%; height: 50px;
+            pointer-events: none; z-index: 10;
+            filter: drop-shadow(0px -4px 3px rgba(0,0,0,0.08));
         }
-        .btn-menu:hover { transform: scale(1.05); filter: brightness(1.1); }
-        .btn-menu:active { transform: translateY(3px); box-shadow: 0 1px 0px #e68a00; }
+        .onda-container svg { width: 100%; height: 100%; display: block; }
+        .onda-fill { fill: var(--bg-body); }
 
-        /* SIDEBAR */
+        /* ÁREA DE JOGO MAXIMIZADA */
+        #main-content { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px; /* Reduzi o padding para o cartão poder crescer mais */
+        }
+
+        .cartao {
+            background: white; 
+            width: 92%; 
+            max-width: 620px; 
+            padding: 30px; /* Padding interno ligeiramente menor para ganhar espaço */
+            border-radius: 35px; 
+            border: 1.5px solid rgba(0, 145, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px;
+        }
+
+        /* SIDEBAR E RESTANTES ESTILOS IGUAIS */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; z-index: 200; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -100,10 +126,10 @@
         .sidebar li a {
             display: flex; align-items: center; gap: 12px;
             padding: 12px 15px; text-decoration: none;
-            color: var(--text-main); font-weight: 500; 
+            color: var(--text-main); font-weight: 400; 
             background: #f8fafc; border-radius: 12px; transition: 0.3s;
         }
-        .sidebar li a:hover { background: var(--azul-claro); color: var(--azul-vibrante); transform: translateX(5px); }
+        .sidebar li a:hover { background: var(--bg-body); color: var(--azul-vibrante); transform: translateX(5px); }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -111,83 +137,14 @@
         }
         .overlay.active { display: block; }
 
-        /* ONDA SEM A LINHA HORIZONTAL INDESEJADA */
-        .onda-container {
-            position: absolute;
-            bottom: -1px;
-            left: 0; width: 100%; height: 50px;
-            pointer-events: none; z-index: 10;
-            /* Sombra realçada apenas na curvatura */
-            filter: drop-shadow(0px -4px 5px rgba(0,0,0,0.25));
-        }
-        .onda-container svg { width: 100%; height: 100%; display: block; }
-
-        /* STATUS E PROGRESSO */
-        .status-jogo { padding: 10px; flex-shrink: 0; margin-top: 20px; }
-        .contadores { 
-            display: flex; justify-content: center; gap: 30px; 
-            font-weight: 700; margin-bottom: 8px; font-size: 1.2rem;
-        }
-        .icone-contador { width: 24px; vertical-align: middle; margin-right: 5px; }
-        #certas { color: var(--verde); }
-        #erros { color: var(--vermelho); }
-
-        .progresso-container {
-            width: 85%; max-width: 500px; height: 12px; 
-            background: white; border-radius: 10px; margin: 0 auto; 
-            overflow: hidden; border: 2px solid rgba(46, 134, 222, 0.3);
-        }
-        .barra-progresso {
-            width: 20%; height: 100%;
-            background: var(--azul-vibrante);
-            transition: width 0.5s ease;
-        }
-
-        #main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; }
-
-        /* CARTÃO COM LINHA E SOMBRA REALÇADA */
-        .cartao {
-            background: white; width: 92%; max-width: 620px; padding: 30px; border-radius: 35px; 
-            border: 1.5px solid rgba(0, 145, 255, 0.15);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
-        }
-
-        .imagem-palavra { height: 180px; width: 180px; object-fit: contain; border-radius: 20px; }
-
-        /* INPUT E BOTÕES */
-        #campoEscrita {
-            width: 100%; max-width: 400px; padding: 15px; 
-            border: 3px solid var(--azul-janela-borda);
-            border-radius: 20px; font-size: 1.6rem; text-align: center;
-            font-family: 'Quicksand', sans-serif; font-weight: 700;
-            color: var(--azul-escuro); outline: none;
-        }
-
-        #validar {
-            background: var(--azul-vibrante); color: white; border: none;
-            padding: 12px 35px; border-radius: 30px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; gap: 10px;
-            font-size: 1.2rem; box-shadow: 0 5px 0px var(--azul-escuro);
-            transition: 0.2s;
-        }
-        #validar:active { transform: translateY(3px); box-shadow: 0 1px 0px var(--azul-escuro); }
-
-        /* FOOTER REFINADO (BORDA 1PX) */
         footer {
             height: 45px; flex-shrink: 0; display: flex; align-items: center;
             justify-content: center; background: white; 
             border-top: 1px solid var(--azul-vibrante); 
             width: 100%;
         }
-        footer p { font-size: 0.85rem; font-weight: 700; color: var(--azul-vibrante); }
-        footer a { color: var(--azul-vibrante); text-decoration: none; }
-
-        @media (max-width: 650px) {
-            .cabecalho h1 { font-size: 1.2rem; }
-            .img-titulo { width: 50px; }
-            .cartao { padding: 20px; }
-        }
+        footer p { font-size: 0.8rem; font-weight: 400; color: var(--azul-vibrante); }
+        footer a { color: var(--azul-vibrante); text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -212,56 +169,40 @@
         <button class="hamburger" onclick="toggleMenu()">
             <span></span><span></span><span></span>
         </button>
-        <button class="btn-menu" onclick="window.location.href='../index.html'">
+        <button class="btn-header" onclick="window.location.href='../index.html'">
             <span>🏠</span> Voltar
         </button>
     </div>
     <div class="cabecalho-conteudo">
-        <img src="memoria.png" style="width:60px" alt="ícone">
+        <img src="https://openmoji.org/data/color/svg/1F4DD.svg" class="img-titulo" alt="ícone">
         <h1>Escrever Sílabas</h1>
     </div>
     <div class="header-right"></div>
     <div class="onda-container">
         <svg viewBox="0 0 500 150" preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
-                </linearGradient>
-            </defs>
-            <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+            <path d="M0,80 C150,150 350,0 500,80 L500,150 L0,150 Z" class="onda-fill"></path>
         </svg>
     </div>
 </header>
 
-<div class="status-jogo">
-    <div class="contadores">
-        <span id="certas"><img src="img/certo.png" class="icone-contador"> 0</span>
-        <span id="erros"><img src="img/errado.png" class="icone-contador"> 0</span>
-    </div>
-    <div class="progresso-container">
-        <div id="progressoInterno" class="barra-progresso"></div>
+<div class="status-jogo" style="margin-top: 25px;">
+    <div style="width:70%; max-width:500px; height:8px; background:#e0e0e0; border-radius:10px; margin:10px auto; overflow:hidden;">
+        <div id="progressoInterno" style="width:20%; height:100%; background:var(--azul-vibrante);"></div>
     </div>
 </div>
 
 <main id="main-content">
-    <div id="areaJogo" class="cartao">
-        <img id="imagemPalavra" src="" alt="imagem da palavra" class="imagem-palavra">
-        <div id="silabas" class="silabas-disponiveis"></div>
-        <input id="campoEscrita" type="text" placeholder="Escreve aqui..." autocomplete="off">
-        <button id="validar">Verificar</button>
-        <div id="feedback" style="min-height: 35px; font-weight: 700;"></div>
+    <div class="cartao">
+        <p>A carregar jogo...</p>
     </div>
 </main>
 
 <footer>
-    <p style="margin: 0;">
+    <p>
         <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
-<script src="js/dados.js"></script>
-<script src="js/jogo.js"></script>
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
     function toggleMenu() {
