@@ -7,11 +7,11 @@
     
     <link rel="icon" type="image/png" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-janela-fundo: #ebf5ff;
             --azul-janela-borda: #add8e6;
             --azul-grad-esq: #bde6ff; 
             --azul-grad-dir: #2e86de; 
@@ -31,7 +31,6 @@
             user-select: none;
         }
         
-        /* CABEÇALHO PADRÃO 85PX */
         .cabecalho { 
             background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
             padding: 0 20px; 
@@ -39,13 +38,13 @@
             height: 85px; flex-shrink: 0; z-index: 20;
         }
 
+        /* LARGURA DA IMAGEM DO HEADER FIXA EM 70PX */
+        .cabecalho-conteudo img { width: 70px; }
+
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
-        .header-right { justify-content: flex-end; }
+        .header-right { justify-content: flex-end; width: 180px; }
 
-        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; flex: 3; }
-        .cabecalho h1 { font-size: 2rem; color: var(--azul-escuro); margin: 0; font-weight: 700; }
-
-        /* NOVO BOTÃO MENU ATUALIZADO */
+        /* BOTÃO MENU IMUTÁVEL */
         .btn-menu {
             background: var(--laranja); color: white; border: none;
             padding: 10px 18px; border-radius: 25px; font-weight: 700;
@@ -55,18 +54,15 @@
         }
         .btn-menu:hover { transform: scale(1.05); }
 
-        /* ONDA */
+        /* ONDA IMUTÁVEL */
         .onda-container {
-            height: 45px; width: 100%; overflow: hidden; margin-top: -1px;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3)); z-index: 10;
+            height: 45px; width: 100%; overflow: hidden;
+            margin-top: -1px; flex-shrink: 0; z-index: 10;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
         }
 
-        /* NÍVEIS COM CORES PROGRESSIVAS */
         .menu-niveis { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn-nivel { 
-            padding: 10px 20px; border: 2px solid #ccc; border-radius: 20px; cursor: pointer; 
-            font-weight: bold; background: white; color: #666; transition: 0.3s;
-        }
+        .btn-nivel { padding: 10px 20px; border: 2px solid #ccc; border-radius: 20px; cursor: pointer; font-weight: bold; background: white; transition: 0.3s; }
         
         #btn-4.ativo { background: var(--verde); border-color: var(--verde); color: white; }
         #btn-6.ativo { background: #ffc107; border-color: #ffc107; color: #333; }
@@ -74,69 +70,34 @@
         #btn-10.ativo { background: var(--roxo); border-color: var(--roxo); color: white; }
 
         .stats { font-size: 1.2rem; margin-bottom: 10px; display: flex; justify-content: center; gap: 20px; }
-        .stat-item { font-weight: 700; }
+        .stat-item { font-weight: 700; display: flex; align-items: center; gap: 5px; }
 
-        /* TABULEIRO E CARTAS */
-        .tabuleiro {
-            display: grid; gap: 12px; max-width: 900px; margin: 10px auto 30px;
-            padding: 15px; justify-content: center;
-        }
+        .tabuleiro { display: grid; gap: 12px; max-width: 900px; margin: 10px auto 30px; padding: 15px; justify-content: center; }
 
-        .carta {
-            width: 120px; aspect-ratio: 1/1; border-radius: 15px;
-            cursor: pointer; position: relative; transform-style: preserve-3d;
-            transition: transform 0.5s;
-        }
-
+        .carta { width: 120px; aspect-ratio: 1/1; border-radius: 15px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
         .carta.virada { transform: rotateY(180deg); }
+        
+        /* PAR ENCONTRADO: VISÍVEL E ESBATIDO */
+        .carta.par-encontrado { opacity: 0.4; pointer-events: none; transform: rotateY(180deg) !important; }
 
-        /* PARES ENCONTRADOS: VISÍVEIS E ESBATIDOS */
-        .carta.par-encontrado { 
-            opacity: 0.4; 
-            cursor: default; 
-            pointer-events: none; 
-            transform: rotateY(180deg) !important; 
-        }
-
-        .face {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden; display: flex; align-items: center; justify-content: center;
-            border-radius: 15px; background: white; border: 3px solid var(--azul-janela-borda);
-            box-sizing: border-box;
-        }
-
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; background: white; border: 3px solid var(--azul-janela-borda); box-sizing: border-box; }
         .verso { background-color: var(--azul-escuro); color: white; font-size: 2.5rem; font-weight: 700; }
         .frente { transform: rotateY(180deg); padding: 10px; }
         .frente img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .frente span { font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; }
 
         #final-screen { display: none; padding: 40px; }
-
-        footer {
-            height: 50px; background: white; border-top: 1px solid #eee;
-            display: flex; align-items: center; justify-content: center; margin-top: auto;
-            font-weight: 700; color: var(--azul-escuro); font-size: 0.8rem;
-        }
-
-        @media (max-width: 600px) {
-            .carta { width: 85px; }
-            .cabecalho h1 { font-size: 1.3rem; }
-        }
+        footer { height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; margin-top: auto; font-weight: 700; color: var(--azul-escuro); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<audio id="som-acerto" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
-
 <header class="cabecalho">
-    <div class="header-left">
-        <a href="../index.html" class="btn-menu"><span>🏠</span> MENU</a>
-    </div>
+    <div class="header-left"><a href="../index.html" class="btn-menu"><span>🏠</span> MENU</a></div>
     <div class="cabecalho-conteudo">
-        <img src="memoria.png" style="width:60px"> 
+        <img src="memoria.png" alt="Logótipo"> 
         <h1>Jogo da Memória</h1>
     </div>
-    <div class="header-right" style="width:180px"></div>
+    <div class="header-right"></div>
 </header>
 
 <div class="onda-container">
@@ -155,6 +116,7 @@
 <div class="stats">
     <span class="stat-item" style="color: var(--verde);">✅ Acertos: <span id="v-acertos">0</span></span>
     <span class="stat-item" style="color: var(--vermelho);">❌ Erros: <span id="v-erros">0</span></span>
+    <span class="stat-item" style="color: var(--azul-escuro);">⏱️ Tempo: <span id="v-tempo">0</span>s</span>
 </div>
 
 <div class="tabuleiro" id="tabuleiro"></div>
@@ -162,44 +124,33 @@
 <div id="final-screen">
     <div style="background:white; padding:40px; border-radius:30px; display:inline-block; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
         <h2 style="color:var(--azul-escuro); margin-bottom:20px;">🏆 Parabéns! 🏆</h2>
+        <p id="resumo-final" style="font-weight:700; margin-bottom:20px;"></p>
         <button class="btn-menu" style="margin:0 auto;" onclick="location.reload()">Jogar de Novo</button>
     </div>
 </div>
 
-<footer>
-    <p style="margin:0;">
-        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
-    </p>
-</footer>
+<footer><p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a></p></footer>
 
 <script src="js/dados.js"></script>
 <script>
     document.getElementById('ano-atual').textContent = new Date().getFullYear();
-
-    let cartasViradas = [];
-    let paresDescobertos = 0;
-    let totalPares = 0;
-    let nAcertos = 0;
-    let nErros = 0;
-    let podeJogar = true;
+    let cartasViradas = [], paresDescobertos = 0, totalPares = 0, nAcertos = 0, nErros = 0, podeJogar = false;
+    let tempo = 0, intervaloTempo;
 
     function iniciarJogo(numPares) {
+        clearInterval(intervaloTempo);
+        tempo = 0; document.getElementById('v-tempo').innerText = "0";
         const tabuleiro = document.getElementById('tabuleiro');
-        tabuleiro.innerHTML = "";
-        tabuleiro.style.display = "grid";
+        tabuleiro.innerHTML = ""; tabuleiro.style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
-        
         tabuleiro.style.gridTemplateColumns = numPares >= 10 ? "repeat(5, 1fr)" : "repeat(4, 1fr)";
-
+        
         document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
         document.getElementById('btn-' + numPares).classList.add('ativo');
 
-        paresDescobertos = 0;
-        totalPares = numPares;
-        nAcertos = 0; nErros = 0;
-        atualizarStats();
+        paresDescobertos = 0; totalPares = numPares; nAcertos = 0; nErros = 0;
+        document.getElementById('v-acertos').innerText = "0"; document.getElementById('v-erros').innerText = "0";
 
-        // Embaralhar e selecionar pares
         const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
         let baralho = [];
         selecao.forEach(item => {
@@ -215,12 +166,26 @@
             carta.innerHTML = `
                 <div class="face verso">?</div>
                 <div class="face frente">
-                    ${info.tipo === 'img' ? `<img src="${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
-                </div>
-            `;
+                    ${info.tipo === 'img' ? `<img src="${info.conteudo}">` : `<span style="font-weight:700; color:var(--azul-escuro);">${info.conteudo.toUpperCase()}</span>`}
+                </div>`;
             carta.onclick = function() { virarCarta(this); };
             tabuleiro.appendChild(carta);
         });
+
+        // MODO GÉNIO/DIFÍCIL: Revelar cartas no início
+        let tempoRevelacao = numPares >= 8 ? 3000 : 0;
+        if(tempoRevelacao > 0) {
+            document.querySelectorAll('.carta').forEach(c => c.classList.add('virada'));
+            setTimeout(() => {
+                document.querySelectorAll('.carta').forEach(c => c.classList.remove('virada'));
+                começarCronometro();
+            }, tempoRevelacao);
+        } else { começarCronometro(); }
+    }
+
+    function começarCronometro() {
+        podeJogar = true;
+        intervaloTempo = setInterval(() => { tempo++; document.getElementById('v-tempo').innerText = tempo; }, 1000);
     }
 
     function virarCarta(carta) {
@@ -233,35 +198,29 @@
     function verificarPar() {
         podeJogar = false;
         const [c1, c2] = cartasViradas;
-        
         if (c1.dataset.id === c2.dataset.id) {
             nAcertos++; paresDescobertos++;
-            document.getElementById('som-acerto').play();
-            
+            document.getElementById('v-acertos').innerText = nAcertos;
             setTimeout(() => {
-                c1.classList.add('par-encontrado');
-                c2.classList.add('par-encontrado');
+                c1.classList.add('par-encontrado'); c2.classList.add('par-encontrado');
                 cartasViradas = []; podeJogar = true;
                 if (paresDescobertos === totalPares) finalizar();
             }, 600);
         } else {
-            nErros++;
+            nErros++; document.getElementById('v-erros').innerText = nErros;
             setTimeout(() => {
-                c1.classList.remove('virada');
-                c2.classList.remove('virada');
+                c1.classList.remove('virada'); c2.classList.remove('virada');
                 cartasViradas = []; podeJogar = true;
             }, 1000);
         }
-        atualizarStats();
-    }
-
-    function atualizarStats() {
-        document.getElementById('v-acertos').innerText = nAcertos;
-        document.getElementById('v-erros').innerText = nErros;
     }
 
     function finalizar() {
+        clearInterval(intervaloTempo);
+        podeJogar = false;
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); // CONFETIS
         document.getElementById('tabuleiro').style.display = "none";
+        document.getElementById('resumo-final').innerText = `Completaste em ${tempo} segundos com ${nErros} erros!`;
         document.getElementById('final-screen').style.display = "block";
     }
 
