@@ -11,13 +11,14 @@
     <style>
         :root {
             --bg-page: #f0f7ff;
-            --bg-header-pre: #f0fdfa; 
+            --bg-header-pre: #e1f5f2; 
             --bg-footer: #ffffff;
             --azul-vibrante: #0091ff;
             --azul-escuro: #0d47a1;
             --cor-pre-forte: #4fd1c5;
         }
 
+        /* Estrutura Flex para o Body: Garante que o footer nunca quebra */
         body { 
             font-family: 'Roboto', sans-serif; 
             text-align: center; 
@@ -32,10 +33,15 @@
             background-color: var(--bg-header-pre);
             padding: 25px 15px;
             border-bottom: 2px solid var(--azul-vibrante);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
 
-        .header-content { max-width: 1100px; margin: 0 auto; position: relative; }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
 
         .btn-voltar {
             position: absolute; left: 0; top: 50%; transform: translateY(-50%);
@@ -44,30 +50,34 @@
             text-decoration: none; font-size: 0.85rem; box-shadow: 0 3px 0 #38a89d;
             transition: 0.2s;
         }
-        .btn-voltar:active { transform: translateY(-48%); box-shadow: none; }
+        .btn-voltar:hover { transform: translateY(-50%) scale(1.05); filter: brightness(1.1); }
 
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.9rem, 3vw, 1.1rem); font-weight: 500; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.9; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.9rem, 3vw, 1.1rem); font-weight: 500; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.8; }
 
-        /* --- SOLUÇÃO DE EQUILÍBRIO (FLEXBOX) --- */
-        .grid-jogos {
-            flex: 1;
+        /* CONTENTOR FLEXÍVEL: O segredo para qualquer número de cartões */
+        main {
+            flex: 1 0 auto;
             display: flex;
-            flex-wrap: wrap; /* Permite que os cartões saltem para a linha seguinte */
-            justify-content: center; /* ESTA É A MÁGICA: Centra os cartões na linha, mesmo os últimos */
-            gap: 20px;
-            padding: 30px 20px;
-            max-width: 1100px;
-            margin: 0 auto;
+            justify-content: center; /* Centra o bloco de cartões */
+            padding: 40px 20px;
+        }
+
+        .grid-jogos {
+            display: flex;
+            flex-wrap: wrap; /* Permite que os cartões saltem de linha */
+            justify-content: center; /* Centra os cartões orfãos na última linha */
+            gap: 25px;
+            max-width: 1200px; /* Largura máxima para caberem 4 ou 5 colunas largas */
             width: 100%;
-            box-sizing: border-box;
         }
 
         .cartao-jogo {
             background: white;
-            flex: 0 1 200px; /* Não estica, não encolhe abaixo de 200px, base de 200px */
+            /* Flex-basis define o tamanho ideal. O 1fr do grid é substituído por flex-grow: 0 */
+            flex: 0 1 200px; 
             aspect-ratio: 1 / 1;
-            border-radius: 15px;
+            border-radius: 20px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -80,25 +90,42 @@
             border-top: 6px solid var(--azul-vibrante);
         }
 
-        .cartao-jogo:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-        .cartao-jogo .icone-wrapper { font-size: clamp(2.5rem, 6vw, 3.5rem); }
-        .cartao-jogo span.nome-jogo { color: var(--azul-escuro); font-weight: 700; font-size: clamp(0.9rem, 2.5vw, 1.1rem); }
+        /* Animação Hover do Template */
+        .cartao-jogo:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
 
-        /* Cores de topo conforme o estilo da imagem */
-        .c1 { border-top-color: #ff6b6b; } .c2 { border-top-color: #4dabf7; }
-        .c3 { border-top-color: #51cf66; } .c4 { border-top-color: #fcc419; }
-        .c5 { border-top-color: #cc5de8; } .c6 { border-top-color: #ff922b; }
-        .c7 { border-top-color: #20c997; } .c8 { border-top-color: #845ef7; }
-        .c9 { border-top-color: #ff8787; } .c10 { border-top-color: #339af0; }
-        .c11 { border-top-color: #94d82d; } .c12 { border-top-color: #f06595; }
+        .cartao-jogo .icone-wrapper { font-size: 3.5rem; transition: transform 0.3s ease; }
+        .cartao-jogo:hover .icone-wrapper { transform: scale(1.1); }
+        .cartao-jogo span.nome-jogo { color: var(--azul-escuro); font-weight: 700; font-size: 1.1rem; }
 
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: var(--bg-footer); border-top: 1px solid var(--azul-vibrante); width: 100%; }
+        /* Cores Dinâmicas (adicionadas via classes reutilizáveis) */
+        .c-red { border-top-color: #ff6b6b; } .c-blue { border-top-color: #4dabf7; }
+        .c-green { border-top-color: #51cf66; } .c-yellow { border-top-color: #fcc419; }
+        .c-purple { border-top-color: #cc5de8; } .c-orange { border-top-color: #ff922b; }
+        .c-teal { border-top-color: #20c997; } .c-indigo { border-top-color: #845ef7; }
+
+        footer {
+            flex-shrink: 0;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-footer);
+            border-top: 1px solid var(--azul-vibrante);
+            width: 100%;
+        }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
         footer a { color: var(--azul-vibrante); text-decoration: none; font-weight: 700; }
 
-        @media (max-width: 500px) {
+        /* Adaptação para ecrãs pequenos */
+        @media (max-width: 600px) {
             .btn-voltar { position: static; transform: none; margin-bottom: 15px; display: inline-block; }
-            .cartao-jogo { flex: 0 1 45%; /* Garante 2 por linha em telemóveis pequenos */ }
+            .cartao-jogo { flex: 0 1 140px; border-top-width: 4px; }
+            .cartao-jogo .icone-wrapper { font-size: 2.5rem; }
+            .cartao-jogo span.nome-jogo { font-size: 0.9rem; }
+            .grid-jogos { gap: 15px; }
         }
     </style>
 </head>
@@ -112,22 +139,24 @@
     </div>
 </header>
 
-<main class="grid-jogos">
-    <a href="#" class="cartao-jogo c1"><div class="icone-wrapper">🔢</div><span class="nome-jogo">Contagens</span></a>
-    <a href="#" class="cartao-jogo c2"><div class="icone-wrapper">🧩</div><span class="nome-jogo">Sílabas</span></a>
-    <a href="#" class="cartao-jogo c3"><div class="icone-wrapper">🔍</div><span class="nome-jogo">Diferenças</span></a>
-    <a href="#" class="cartao-jogo c4"><div class="icone-wrapper">🎨</div><span class="nome-jogo">Cores</span></a>
-    <a href="#" class="cartao-jogo c5"><div class="icone-wrapper">🦒</div><span class="nome-jogo">Animais</span></a>
-    <a href="#" class="cartao-jogo c6"><div class="icone-wrapper">🔺</div><span class="nome-jogo">Formas</span></a>
-    <a href="#" class="cartao-jogo c7"><div class="icone-wrapper">🍎</div><span class="nome-jogo">Alimentos</span></a>
-    <a href="#" class="cartao-jogo c8"><div class="icone-wrapper">🎹</div><span class="nome-jogo">Sons</span></a>
-    <a href="#" class="cartao-jogo c9"><div class="icone-wrapper">🕰️</div><span class="nome-jogo">Rotinas</span></a>
-    <a href="#" class="cartao-jogo c10"><div class="icone-wrapper">🌱</div><span class="nome-jogo">Natureza</span></a>
-    <a href="#" class="cartao-jogo c11"><div class="icone-wrapper">🧸</div><span class="nome-jogo">Brinquedos</span></a>
-    <a href="#" class="cartao-jogo c12"><div class="icone-wrapper">❓</div><span class="nome-jogo">Mistério</span></a>
-    <a href="#" class="cartao-jogo c1"><div class="icone-wrapper">🔢</div><span class="nome-jogo">Contagens</span></a>
-    <a href="#" class="cartao-jogo c2"><div class="icone-wrapper">🧩</div><span class="nome-jogo">Sílabas</span></a>
-    <a href="#" class="cartao-jogo c3"><div class="icone-wrapper">🔍</div><span class="nome-jogo">Diferenças</span></a
+<main>
+    <div class="grid-jogos">
+        <a href="#" class="cartao-jogo c-red"><div class="icone-wrapper">🔢</div><span class="nome-jogo">Contagens</span></a>
+        <a href="#" class="cartao-jogo c-blue"><div class="icone-wrapper">🧩</div><span class="nome-jogo">Sílabas</span></a>
+        <a href="#" class="cartao-jogo c-green"><div class="icone-wrapper">🔍</div><span class="nome-jogo">Diferenças</span></a>
+        <a href="#" class="cartao-jogo c-yellow"><div class="icone-wrapper">🎨</div><span class="nome-jogo">Cores</span></a>
+        <a href="#" class="cartao-jogo c-purple"><div class="icone-wrapper">🦒</div><span class="nome-jogo">Animais</span></a>
+        <a href="#" class="cartao-jogo c-orange"><div class="icone-wrapper">🔺</div><span class="nome-jogo">Formas</span></a>
+        <a href="#" class="cartao-jogo c-teal"><div class="icone-wrapper">🍎</div><span class="nome-jogo">Alimentos</span></a>
+        <a href="#" class="cartao-jogo c-indigo"><div class="icone-wrapper">🎹</div><span class="nome-jogo">Sons</span></a>
+        <a href="#" class="cartao-jogo c-red"><div class="icone-wrapper">🕰️</div><span class="nome-jogo">Rotinas</span></a>
+        <a href="#" class="cartao-jogo c-blue"><div class="icone-wrapper">🌱</div><span class="nome-jogo">Natureza</span></a>
+        <a href="#" class="cartao-jogo c-green"><div class="icone-wrapper">🧸</div><span class="nome-jogo">Brinquedos</span></a>
+        <a href="#" class="cartao-jogo c-yellow"><div class="icone-wrapper">❓</div><span class="nome-jogo">Mistério</span></a>
+        <a href="#" class="cartao-jogo c-purple"><div class="icone-wrapper">🚀</div><span class="nome-jogo">Espaço</span></a>
+        <a href="#" class="cartao-jogo c-orange"><div class="icone-wrapper">🧼</div><span class="nome-jogo">Higiene</span></a>
+        <a href="#" class="cartao-jogo c-teal"><div class="icone-wrapper">👫</div><span class="nome-jogo">Amigos</span></a>
+    </div>
 </main>
 
 <footer>
