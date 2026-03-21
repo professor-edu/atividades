@@ -3,118 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⭐ Jogo da Memória ⭐</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+    <title>Jogo da Memória - EB1/PE da Marinheira 🧠</title>
+    
+    <link rel="icon" type="image/png" href="../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --azul-claro: #f0f7ff;
-            --azul-medio: #7ac7f0;
+            --azul-janela-fundo: #ebf5ff;
+            --azul-janela-borda: #add8e6;
+            --azul-grad-esq: #bde6ff; 
+            --azul-grad-dir: #2e86de; 
             --azul-escuro: #0d47a1;
             --verde: #4caf50;
+            --laranja: #ff9800;
             --vermelho: #e53935;
         }
 
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Quicksand', sans-serif; 
             text-align: center; 
             background-color: var(--azul-claro); 
             margin: 0; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
+            display: flex; flex-direction: column; min-height: 100vh;
+            user-select: none;
         }
         
+        /* CABEÇALHO PADRÃO 85PX */
         .cabecalho { 
-            background: linear-gradient(135deg, #bde6ff, var(--azul-medio)); 
-            padding: 15px; color: var(--azul-escuro); border-bottom: 3px solid #fff; 
+            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
+            padding: 0 20px; 
+            display: flex; align-items: center; justify-content: space-between;
+            height: 85px; flex-shrink: 0; z-index: 20;
         }
 
-        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; }
-        .icone-titulo { width: 50px; height: auto; }
+        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+        .header-right { justify-content: flex-end; width: 180px; }
 
-        .menu-niveis { margin: 20px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; flex: 3; }
+        .cabecalho h1 { font-size: 2rem; color: var(--azul-escuro); margin: 0; font-weight: 700; }
+
+        /* MENU PILL 180PX COM ZOOM */
+        .btn-menu {
+            background: var(--laranja); color: white; border: none;
+            width: 180px; height: 45px; border-radius: 50px; 
+            font-weight: 700; cursor: pointer; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .btn-menu:hover { transform: scale(1.05); }
+
+        /* ONDA */
+        .onda-container {
+            height: 45px; width: 100%; overflow: hidden; margin-top: -1px;
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3)); z-index: 10;
+        }
+
+        /* NÍVEIS E STATS */
+        .menu-niveis { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn-nivel { 
-            padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer; 
-            font-weight: bold; background: white; color: var(--azul-escuro); 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
+            padding: 10px 20px; border: 2px solid var(--azul-grad-dir); border-radius: 20px; cursor: pointer; 
+            font-weight: bold; background: white; color: var(--azul-grad-dir); transition: 0.2s;
         }
-        .btn-nivel.ativo { background: var(--azul-escuro); color: white; }
+        .btn-nivel.ativo { background: var(--azul-grad-dir); color: white; }
 
-        .stats { font-size: 1.2rem; margin: 10px 0; }
-        .stat-item { margin: 0 15px; font-weight: bold; }
+        .stats { font-size: 1.2rem; margin-bottom: 10px; display: flex; justify-content: center; gap: 20px; }
+        .stat-item { font-weight: 700; }
 
+        /* TABULEIRO E CARTAS */
         .tabuleiro {
-            display: grid;
-            gap: 12px;
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 15px;
-            justify-content: center;
+            display: grid; gap: 12px; max-width: 900px; margin: 10px auto 30px;
+            padding: 15px; justify-content: center;
         }
 
         .carta {
-            width: 130px;
-            aspect-ratio: 1/1;
-            background-color: var(--azul-medio);
-            border-radius: 12px;
-            cursor: pointer;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.5s, opacity 0.8s;
+            width: 120px; aspect-ratio: 1/1; border-radius: 15px;
+            cursor: pointer; position: relative; transform-style: preserve-3d;
+            transition: transform 0.5s;
         }
 
-        /* ESTADO VIRADO */
         .carta.virada { transform: rotateY(180deg); }
-
-        /* ESTADO ESBATIDO (ACERTO) */
-        .carta.par-encontrado { 
-            opacity: 0.4 !important; 
-            cursor: default;
-            pointer-events: none;
-            transform: rotateY(180deg) !important; 
-        }
+        .carta.par-encontrado { opacity: 0.4; cursor: default; pointer-events: none; transform: rotateY(180deg); }
 
         .face {
-            position: absolute;
-            width: 100%; height: 100%;
-            backface-visibility: hidden;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; font-weight: bold; padding: 10px; box-sizing: border-box;
-            background: white; border: 3px solid var(--azul-medio);
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex; align-items: center; justify-content: center;
+            border-radius: 15px; background: white; border: 3px solid var(--azul-janela-borda);
+            box-sizing: border-box;
         }
 
-        .verso { background-color: var(--azul-escuro); color: white; font-size: 2rem; }
-        
-        .frente { 
-            transform: rotateY(180deg); 
-            color: var(--azul-escuro); 
-        }
+        .verso { background-color: var(--azul-escuro); color: white; font-size: 2.5rem; font-weight: 700; }
+        .frente { transform: rotateY(180deg); padding: 10px; }
+        .frente img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .frente span { font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; }
 
-        /* Garante que a frente continua visível após o esbatimento */
-        .par-encontrado .frente { backface-visibility: visible; }
+        #final-screen { display: none; padding: 40px; }
 
-        .frente img { max-width: 90%; max-height: 90%; object-fit: contain; }
-
-        #final-screen { display: none; padding: 30px; flex-grow: 1; }
-
+        /* FOOTER DINÂMICO */
         footer {
-            margin-top: auto;
-            padding: 25px;
-            text-align: center;
-            border-top: 1px solid #ddd;
+            height: 50px; background: white; border-top: 1px solid #eee;
+            display: flex; align-items: center; justify-content: center; margin-top: auto;
+            font-weight: 700; color: var(--azul-escuro); font-size: 0.8rem;
         }
-        .footer-link, .footer-ano { color: #0d47a1; text-decoration: none; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .carta { width: 80px; }
+            .cabecalho h1 { font-size: 1.4rem; }
+            .btn-menu { width: 140px; }
+        }
     </style>
 </head>
 <body>
 
 <header class="cabecalho">
-    <div class="cabecalho-conteudo">
-        <img src="memoria.png" class="icone-titulo"> 
-        <h1 style="margin:0">Jogo da Memória</h1>
+    <div class="header-left">
+        <a href="../index.html" class="btn-menu"><span>🏠</span> MENU</a>
     </div>
+    <div class="cabecalho-conteudo">
+        <img src="memoria.png" style="width:55px"> 
+        <h1>Jogo da Memória</h1>
+    </div>
+    <div class="header-right"></div>
 </header>
+
+<div class="onda-container">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+        <defs>
+            <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
+                <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="fill: url(#grad-onda);"></path>
+    </svg>
+</div>
 
 <div class="menu-niveis">
     <button class="btn-nivel" id="btn-4" onclick="iniciarJogo(4)">Fácil (8)</button>
@@ -131,19 +155,22 @@
 <div class="tabuleiro" id="tabuleiro"></div>
 
 <div id="final-screen">
-    <h2>🏆 Parabéns 🏆</h2>
-    <button class="btn-nivel" style="background: var(--azul-escuro); color: white; padding: 15px 30px;" onclick="location.reload()">Jogar de Novo</button>
+    <div style="background:white; padding:40px; border-radius:30px; display:inline-block; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+        <h2 style="color:var(--azul-escuro); margin-bottom:20px;">🏆 Parabéns! 🏆</h2>
+        <button class="btn-menu" style="margin:0 auto;" onclick="location.reload()">Jogar de Novo</button>
+    </div>
 </div>
 
 <footer>
-    <p>
-        <span class="footer-ano">2026</span> 🏫 
-        <a href="https://eb1pemarinheira.pt/" target="_blank" class="footer-link">EB1/PE da Marinheira</a>
+    <p style="margin:0;">
+        <span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a>
     </p>
 </footer>
 
 <script src="js/dados.js"></script>
 <script>
+    document.getElementById('ano-atual').textContent = new Date().getFullYear();
+
     let cartasViradas = [];
     let paresDescobertos = 0;
     let totalPares = 0;
@@ -157,10 +184,7 @@
         tabuleiro.style.display = "grid";
         document.getElementById('final-screen').style.display = "none";
         
-        if(numPares === 4) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
-        else if(numPares === 6) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
-        else if(numPares === 8) tabuleiro.style.gridTemplateColumns = "repeat(4, 1fr)";
-        else if(numPares === 10) tabuleiro.style.gridTemplateColumns = "repeat(5, 1fr)";
+        tabuleiro.style.gridTemplateColumns = numPares >= 10 ? "repeat(5, 1fr)" : "repeat(4, 1fr)";
 
         document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
         document.getElementById('btn-' + numPares).classList.add('ativo');
@@ -206,7 +230,6 @@
         if (c1.dataset.id === c2.dataset.id) {
             nAcertos++; paresDescobertos++;
             setTimeout(() => {
-                // Adicionamos a classe sem remover a classe 'virada'
                 c1.classList.add('par-encontrado');
                 c2.classList.add('par-encontrado');
                 cartasViradas = []; podeJogar = true;
@@ -235,6 +258,5 @@
 
     window.onload = () => iniciarJogo(4);
 </script>
-<script src="js/componentes.js"></script>
 </body>
 </html>
