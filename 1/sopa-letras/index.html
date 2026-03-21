@@ -22,8 +22,21 @@
             --vermelho: #e53935;
             --amarelo-selecao: #fff9c4;
             --borda-amarela-selecao: #fbc02d;
-            --cinza-claro-borda: #ccc; /* Para botões não selecionados */
+            --cinza-claro-borda: #ccc; 
             --cinza-claro-fundo: #f0f0f0;
+
+            /* Variáveis base para o tamanho visual da grelha */
+            --base-grid-width-desktop: 520px; /* Largura total da grelha 10x10 no desktop */
+            --base-grid-width-mobile: 330px; /* Largura total da grelha 10x10 no mobile */
+            --base-grid-width-small-mobile: 270px; /* Largura total da grelha 10x10 no mobile pequeno */
+
+            /* Gap entre células da grelha (ajustável por breakpoint) */
+            --grid-gap-desktop: 6px; 
+            --grid-gap-mobile: 3px;
+            --grid-gap-small-mobile: 2px;
+
+            /* Tamanho da imagem na lista de palavras (ajustável por dificuldade/breakpoint) */
+            --list-item-image-size: 60px; 
         }
 
         body { 
@@ -55,7 +68,7 @@
 
         .header-left, .header-right { flex: 1; display: flex; align-items: center; }
         .header-left { justify-content: flex-start; }
-        .header-right { justify-content: flex-end; }
+        .header-right { justify: flex-end; }
 
         .cabecalho-conteudo { 
             display: flex; justify-content: center; align-items: center; 
@@ -86,18 +99,21 @@
         .onda-container {
             height: 45px; width: 100%; overflow: hidden;
             margin-top: -1px; flex-shrink: 0; z-index: 10;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
+        }
+
+        .onda-container svg path {
+            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3)); 
         }
 
         /* NÍVEIS DE DIFICULDADE e STATUS DO JOGO */
         .status-jogo { 
-            padding: 15px 10px 10px; /* Ajuste do padding */
+            padding: 15px 10px 10px; 
             flex-shrink: 0; 
             background-color: var(--azul-claro); 
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px; /* Espaço entre o contador e os botões */
+            gap: 15px; 
         }
         #countdown-box {
             display: inline-flex;
@@ -116,9 +132,9 @@
 
         .botoes-dificuldade {
             display: flex;
-            gap: 15px; /* Espaço entre os botões */
+            gap: 15px; 
             justify-content: center;
-            flex-wrap: wrap; /* Para quebrar linha em mobile */
+            flex-wrap: wrap; 
         }
 
         .btn-dificuldade {
@@ -132,7 +148,7 @@
             font-size: 0.95rem;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            white-space: nowrap; /* Previne que o texto do botão quebre */
+            white-space: nowrap; 
         }
 
         .btn-dificuldade:hover:not(.selected) {
@@ -146,7 +162,7 @@
             color: white;
             border-color: var(--azul-grad-dir);
             box-shadow: 0 5px 15px rgba(46, 134, 222, 0.4);
-            cursor: default; /* Indica que não pode ser clicado novamente */
+            cursor: default; 
         }
 
 
@@ -161,23 +177,23 @@
             flex-grow: 1; 
         }
 
-        /* GRELHA - Tamanho inicial ajustado, será sobrescrito pelo JS */
+        /* GRELHA DINÂMICA (mas mantém a largura total) */
         #grid { 
             display: grid; 
-            grid-template-columns: repeat(var(--grid-cols), var(--cell-size)); 
-            grid-template-rows: repeat(var(--grid-rows), var(--cell-size)); 
-            gap: var(--grid-gap); 
+            /* --grid-size e --cell-size serão definidos pelo JS */
+            grid-template-columns: repeat(var(--grid-size), var(--cell-size)); 
+            grid-template-rows: repeat(var(--grid-size), var(--cell-size)); 
+            gap: var(--grid-gap-dynamic); 
             background: white; 
             padding: 15px; 
             border-radius: 25px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
             border: 2px solid var(--azul-janela-borda);
             touch-action: none; 
-            /* Variáveis CSS para tamanho da grelha */
-            --cell-size: 48px;
-            --grid-gap: 6px;
-            --grid-cols: 10;
-            --grid-rows: 10;
+
+            /* A largura da grelha é fixa para cada breakpoint */
+            width: var(--base-grid-width-desktop); 
+            max-width: var(--base-grid-width-desktop); /* Impede que seja maior */
         }
 
         .letra { 
@@ -185,7 +201,7 @@
             border: 1px solid #e3efff; 
             display: flex; align-items: center; justify-content: center; 
             font-weight: 700; 
-            font-size: calc(var(--cell-size) * 0.5); /* Tamanho da fonte relativo ao tamanho da célula */
+            font-size: var(--font-size-letra); 
             border-radius: 12px; background: #fff;
             color: var(--azul-escuro); 
             transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
@@ -202,30 +218,26 @@
             color: white !important; 
             border-color: #388e3c !important; 
             box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-            transform: scale(1.05); /* Animação sutil ao encontrar */
+            transform: scale(1.05); 
         }
 
-        /* LISTA DE PALAVRAS - SEM BORDA NO CONTÊINER GERAL */
+        /* LISTA DE PALAVRAS - Alinhada com a grelha */
         #lista-palavras {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Mais flexível */
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
             grid-auto-rows: minmax(100px, auto); 
             gap: 12px;
-            padding: 0; /* REMOVE o padding geral */
-            /* REMOVE O FUNDO E A BORDA DO CONTÊINER GERAL */
-            /* background: white; */ 
-            /* border-radius: 25px; */
-            /* box-shadow: 0 8px 30px rgba(0,0,0,0.08); */ 
-            /* border: 2px solid var(--azul-janela-borda); */ 
-            width: 100%; /* Ocupa a largura total em mobile */
-            max-width: 350px; /* Limita a largura em desktop para não ficar muito larga */
+            padding: 0; 
+            width: 100%; 
+            /* A largura máxima da lista é a mesma da grelha */
+            max-width: var(--grid-width-dynamic); 
         }
 
         .item-palavra { 
             background: white; 
             padding: 8px; 
             border-radius: 18px; 
-            border: 2px solid var(--azul-janela-borda); /* Borda individual mantida */
+            border: 2px solid var(--azul-janela-borda); 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -236,10 +248,11 @@
         }
 
         .item-palavra img { 
-            width: 60px; 
-            height: 60px; 
+            width: var(--list-item-image-size); 
+            height: var(--list-item-image-size); 
             object-fit: contain; 
             margin-bottom: 5px; 
+            transition: width 0.3s ease, height 0.3s ease;
         }
         .item-palavra span { 
             font-weight: 700; 
@@ -267,39 +280,29 @@
             .btn-menu { padding: 8px 15px; font-size: 0.85rem; }
             .cabecalho-conteudo img { width: 45px !important; }
 
-            .status-jogo { gap: 10px; } /* Ajusta o gap em mobile */
+            .status-jogo { gap: 10px; } 
             #countdown-box { font-size: 1.3rem; padding: 8px 20px; }
 
             .botoes-dificuldade { gap: 10px; }
             .btn-dificuldade { padding: 8px 15px; font-size: 0.85rem; }
 
-            .container { 
-                flex-direction: column; 
-                align-items: center; 
-                gap: 20px; 
-                padding: 10px 10px 30px; 
-            }
-
-            /* Tamanhos da grelha em mobile */
             #grid { 
-                --cell-size: 30px; 
-                --grid-gap: 3px;
+                width: var(--base-grid-width-mobile); 
+                max-width: var(--base-grid-width-mobile);
                 padding: 10px;
             }
-            .letra { border-radius: 8px; }
 
             #lista-palavras { 
+                max-width: var(--base-grid-width-mobile); /* Adapta largura */
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                max-width: 300px; /* Adapta-se melhor a ecrãs mais pequenos */
-                grid-auto-rows: minmax(80px, auto); /* Ajusta altura min das palavras */
-                gap: 8px; /* Reduz o gap entre palavras */
+                grid-auto-rows: minmax(80px, auto); 
+                gap: 8px; 
             }
             .item-palavra { padding: 5px; border-radius: 12px; }
-            .item-palavra img { width: 40px; height: 40px; margin-bottom: 3px; }
             .item-palavra span { font-size: 10px; }
         }
 
-        @media (max-width: 480px) { /* Para telemóveis mais pequenos */
+        @media (max-width: 480px) { /* Para telemóveis muito pequenos */
             .cabecalho h1 { font-size: 1.4rem; }
             .cabecalho-conteudo img { width: 40px !important; }
 
@@ -310,19 +313,18 @@
             .btn-dificuldade { padding: 6px 12px; font-size: 0.8rem; }
 
             #grid { 
-                --cell-size: 26px; 
-                --grid-gap: 2px;
+                width: var(--base-grid-width-small-mobile); 
+                max-width: var(--base-grid-width-small-mobile);
                 padding: 8px;
             }
-            .letra { border-radius: 6px; }
 
             #lista-palavras {
+                max-width: var(--base-grid-width-small-mobile); /* Adapta largura */
                 grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                max-width: 250px;
                 grid-auto-rows: minmax(70px, auto);
                 gap: 6px;
             }
-            .item-palavra img { width: 35px; height: 35px; }
+            .item-palavra { padding: 5px; border-radius: 12px; }
             .item-palavra span { font-size: 9px; }
         }
 
@@ -377,14 +379,14 @@
 </header>
 
 <div class="onda-container">
-    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;" aria-hidden="true">
+    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
         <defs>
             <linearGradient id="grad-onda" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:var(--azul-grad-esq); stop-opacity:1" />
                 <stop offset="100%" style="stop-color:var(--azul-grad-dir); stop-opacity:1" />
             </linearGradient>
         </defs>
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
+        <path d="M0.00,99.98 C160.00,190.00 340.00,9.98 500.00,99.98 L500.00,0.00 L0.00,0.00 Z" style="stroke: none; fill: url(#grad-onda);"></path>
     </svg>
 </div>
 
@@ -426,60 +428,27 @@
         facil: {
             tempo: 180, // 3 minutos
             numPalavras: 6,
-            tamanhoGrelha: 10,
-            tamanhoCelula: 48,
-            gapGrelha: 6,
-            fontSizeCelula: 24,
-            mobile: {
-                tamanhoCelula: 30,
-                gapGrelha: 3,
-                fontSizeCelula: 15
-            },
-            mobileSmall: {
-                tamanhoCelula: 26,
-                gapGrelha: 2,
-                fontSizeCelula: 13
-            }
+            tamanhoGrelha: 10, // Fácil: Grelha 10x10
+            tamanhoFonteLetra: 24, // px
+            tamanhoImagemPalavra: 60 // px
         },
         medio: {
             tempo: 240, // 4 minutos
             numPalavras: 8,
-            tamanhoGrelha: 12,
-            tamanhoCelula: 42, // Células um pouco menores para caber mais
-            gapGrelha: 5,
-            fontSizeCelula: 20,
-            mobile: {
-                tamanhoCelula: 28,
-                gapGrelha: 2,
-                fontSizeCelula: 14
-            },
-            mobileSmall: {
-                tamanhoCelula: 24,
-                gapGrelha: 2,
-                fontSizeCelula: 12
-            }
+            tamanhoGrelha: 10, // Médio: Grelha 10x10
+            tamanhoFonteLetra: 20, // px
+            tamanhoImagemPalavra: 55 // px
         },
         dificil: {
             tempo: 300, // 5 minutos
             numPalavras: 10,
-            tamanhoGrelha: 14,
-            tamanhoCelula: 38, // Células ainda menores
-            gapGrelha: 4,
-            fontSizeCelula: 18,
-            mobile: {
-                tamanhoCelula: 26,
-                gapGrelha: 2,
-                fontSizeCelula: 13
-            },
-            mobileSmall: {
-                tamanhoCelula: 22,
-                gapGrelha: 1,
-                fontSizeCelula: 11
-            }
+            tamanhoGrelha: 12, // Difícil: Grelha 12x12
+            tamanhoFonteLetra: 18, // px
+            tamanhoImagemPalavra: 50 // px
         }
     };
 
-    let dificuldadeAtual = DIFICULDADES.facil; // Dificuldade padrão inicial
+    let dificuldadeAtual; 
     let tempoRestante;
     let intervaloCountdown;
     
@@ -489,7 +458,7 @@
     const botoesDificuldade = document.querySelectorAll('.btn-dificuldade');
 
     let palavrasParaEncontrar;
-    let matriz; // A matriz da grelha, definida após escolher a dificuldade
+    let matriz; 
 
     let estaArrastando = false;
     let celulaInicial = null;
@@ -505,7 +474,7 @@
     function setDificuldade(nivel) {
         dificuldadeAtual = DIFICULDADES[nivel];
         tempoRestante = dificuldadeAtual.tempo;
-        clearInterval(intervaloCountdown); // Limpa qualquer contador anterior
+        clearInterval(intervaloCountdown); 
         reiniciarJogo();
         atualizarBotoesDificuldade(nivel);
     }
@@ -514,14 +483,11 @@
      * Reinicia o jogo com a dificuldade atual.
      */
     function reiniciarJogo() {
-        // Limpa a grelha e a lista de palavras
         gridElement.innerHTML = '';
         listaElement.innerHTML = '';
         
-        // Esconde o feedback final
         document.getElementById('feedback-final').style.display = 'none';
 
-        // Seleciona palavras aleatoriamente
         palavrasParaEncontrar = palavras
             .sort(() => 0.5 - Math.random())
             .slice(0, dificuldadeAtual.numPalavras)
@@ -533,37 +499,59 @@
                 celulas: []
             }));
 
-        // Inicializa a matriz da grelha
         matriz = Array(dificuldadeAtual.tamanhoGrelha).fill().map(() => Array(dificuldadeAtual.tamanhoGrelha).fill(''));
         
-        // Ajusta as variáveis CSS para a grelha
-        aplicarEstilosGrelha(dificuldadeAtual);
-
-        iniciarJogo();
+        aplicarEstilosGrelha(); 
+        iniciarJogoCore(); 
     }
 
     /**
-     * Aplica os estilos CSS da grelha com base na dificuldade atual.
-     * Ajusta para mobile se necessário.
+     * Aplica os estilos CSS da grelha e da lista de palavras com base na dificuldade atual e no tamanho da janela.
      */
-    function aplicarEstilosGrelha(config) {
-        let currentConfig = config;
-        // Verifica se é mobile e aplica configurações específicas
-        if (window.innerWidth <= 480) { // Mobile pequeno
-            currentConfig = config.mobileSmall || config;
+    function aplicarEstilosGrelha() {
+        let currentGridGap, currentFontSizeLetra, currentImageSize, baseGridWidth;
+
+        // Determina o gap e a largura base da grelha com base no ecrã
+        if (window.innerWidth <= 480) { // Mobile muito pequeno
+            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-small-mobile').trim();
+            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-small-mobile'));
+            currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra * 0.5 + 'px'; 
+            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.6 + 'px'; 
         } else if (window.innerWidth <= 768) { // Mobile/Tablet
-            currentConfig = config.mobile || config;
+            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-mobile').trim();
+            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-mobile'));
+            currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra * 0.7 + 'px'; 
+            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra * 0.75 + 'px'; 
+        } else { // Desktop
+            currentGridGap = getComputedStyle(document.documentElement).getPropertyValue('--grid-gap-desktop').trim();
+            baseGridWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--base-grid-width-desktop'));
+            currentFontSizeLetra = dificuldadeAtual.tamanhoFonteLetra + 'px';
+            currentImageSize = dificuldadeAtual.tamanhoImagemPalavra + 'px';
         }
 
-        gridElement.style.setProperty('--grid-cols', config.tamanhoGrelha);
-        gridElement.style.setProperty('--grid-rows', config.tamanhoGrelha);
-        gridElement.style.setProperty('--cell-size', `${currentConfig.tamanhoCelula}px`);
-        gridElement.style.setProperty('--grid-gap', `${currentConfig.gapGrelha}px`);
-        document.documentElement.style.setProperty('--font-size-celula', `${currentConfig.fontSizeCelula}px`); // Variável para a fonte
-        // Atualiza a font-size das letras existentes, se houver
-        document.querySelectorAll('.letra').forEach(letra => {
-            letra.style.fontSize = `calc(var(--cell-size) * 0.5)`;
-        });
+        const parsedGridGap = parseFloat(currentGridGap);
+
+        // Calcula o tamanho da célula para que a grelha tenha a largura base
+        // largura_grelha = (num_celulas * tamanho_celula) + (num_gaps * tamanho_gap) + padding_grelha_total + borda_grelha_total
+        // baseGridWidth = (dificuldadeAtual.tamanhoGrelha * cellSize) + ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) + 30 + 4;
+        // cellSize = (baseGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) - 30 - 4) / dificuldadeAtual.tamanhoGrelha;
+        
+        // Simplificado, considerando que padding (30px) e borda (4px) da #grid são constantes
+        const paddingAndBorder = 30 + 4; 
+        const cellSize = (baseGridWidth - ((dificuldadeAtual.tamanhoGrelha - 1) * parsedGridGap) - paddingAndBorder) / dificuldadeAtual.tamanhoGrelha;
+
+
+        // Aplica as variáveis CSS à grelha e lista
+        gridElement.style.setProperty('--grid-size', dificuldadeAtual.tamanhoGrelha);
+        gridElement.style.setProperty('--cell-size', `${cellSize}px`);
+        gridElement.style.setProperty('--grid-gap-dynamic', currentGridGap);
+        gridElement.style.setProperty('--font-size-letra', currentFontSizeLetra);
+        gridElement.style.setProperty('width', `${baseGridWidth}px`); /* Fixa a largura visual da grelha */
+        gridElement.style.setProperty('max-width', `${baseGridWidth}px`); /* Garante que não excede */
+
+
+        listaElement.style.setProperty('max-width', `${baseGridWidth}px`);
+        document.documentElement.style.setProperty('--list-item-image-size', currentImageSize);
     }
 
     /**
@@ -580,29 +568,31 @@
     }
 
     /**
-     * Inicia o jogo, colocando palavras na grelha e configurando a UI.
+     * Inicia o jogo principal: coloca palavras na grelha e configura a UI.
      */
-    function iniciarJogo() {
-        // Tenta colocar cada palavra na grelha
+    function iniciarJogoCore() {
         palavrasParaEncontrar.forEach(pObj => {
             let colocada = false;
             let tentativas = 0;
-            const MAX_TENTATIVAS = 500; // Aumentado para grelhas maiores
+            const MAX_TENTATIVAS = 1000; // Aumentado para dar mais chances, especialmente com grelhas 12x12 e mais palavras
 
-            // Tenta colocar horizontalmente ou verticalmente em posições aleatórias
             while (!colocada && tentativas < MAX_TENTATIVAS) {
                 let dir = Math.random() > 0.5 ? 'H' : 'V';
                 let l, c;
 
+                // Ajusta o limite superior para a posição inicial para que a palavra caiba
+                const maxL = dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1;
+                const maxC = dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1;
+
                 if (dir === 'V') {
-                    l = Math.floor(Math.random() * (dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1));
+                    l = Math.floor(Math.random() * maxL);
                     c = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
                 } else { // dir === 'H'
                     l = Math.floor(Math.random() * dificuldadeAtual.tamanhoGrelha);
-                    c = Math.floor(Math.random() * (dificuldadeAtual.tamanhoGrelha - pObj.nome.length + 1));
+                    c = Math.floor(Math.random() * maxC);
                 }
                 
-                if (verificarEspaco(pObj.nome, l, c, dir)) {
+                if (l >= 0 && c >= 0 && verificarEspaco(pObj.nome, l, c, dir)) { // Verifica limites novamente
                     for (let i = 0; i < pObj.nome.length; i++) {
                         let curL = (dir === 'V') ? l + i : l;
                         let curC = (dir === 'H') ? c + i : c;
@@ -613,10 +603,10 @@
                 }
                 tentativas++;
             }
-            // Fallback caso a palavra não consiga ser colocada
             if (!colocada) {
                 console.warn(`Não foi possível colocar a palavra "${pObj.nome}" na grelha após ${MAX_TENTATIVAS} tentativas.`);
-                // Poderíamos adicionar a palavra a uma lista de palavras não colocadas ou tentar uma abordagem diferente.
+                // Se uma palavra não puder ser colocada, o jogo pode continuar sem ela ou pode ser necessário um tratamento de erro.
+                // Para este caso, vamos apenas avisar e deixar que as outras palavras sejam colocadas.
             }
         });
         desenharInterface();
@@ -632,6 +622,7 @@
             let curL = (dir === 'V') ? l + i : l;
             let curC = (dir === 'H') ? c + i : c;
 
+            // Verifica os limites da grelha atual (dificuldadeAtual.tamanhoGrelha)
             if (curL >= dificuldadeAtual.tamanhoGrelha || curC >= dificuldadeAtual.tamanhoGrelha || curL < 0 || curC < 0) {
                 return false;
             }
@@ -674,10 +665,6 @@
     }
 
     // --- Funções de Eventos da Grelha ---
-
-    /**
-     * Configura os event listeners para arrastar e selecionar células.
-     */
     function configurarEventosArrastamento() {
         gridElement.addEventListener('mousedown', iniciarSelecao);
         window.addEventListener('mousemove', enquantoArrasta);
@@ -687,9 +674,6 @@
         window.addEventListener('touchend', finalizarSelecao);
     }
 
-    /**
-     * Obtém o elemento da célula a partir de um evento (rato ou toque).
-     */
     function obterCelulaDosEventos(e) {
         const touch = e.touches ? e.touches[0] : e;
         const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -699,9 +683,6 @@
         return null;
     }
 
-    /**
-     * Inicia o processo de seleção de células.
-     */
     function iniciarSelecao(e) {
         if (e.button === 2) return; 
 
@@ -717,9 +698,6 @@
         if (e.cancelable) e.preventDefault(); 
     }
 
-    /**
-     * Atualiza a seleção de células enquanto o utilizador arrasta.
-     */
     function enquantoArrasta(e) {
         if (!estaArrastando) return;
 
@@ -763,9 +741,6 @@
         if (e.cancelable) e.preventDefault();
     }
 
-    /**
-     * Adiciona a classe 'selecionando' a uma célula.
-     */
     function destacarCelula(l, c) {
         if (l < 0 || l >= dificuldadeAtual.tamanhoGrelha || c < 0 || c >= dificuldadeAtual.tamanhoGrelha) return;
         const id = `${l}-${c}`;
@@ -776,9 +751,6 @@
         }
     }
 
-    /**
-     * Finaliza a seleção e verifica se uma palavra foi encontrada.
-     */
     function finalizarSelecao() {
         if (!estaArrastando) return;
         estaArrastando = false;
@@ -825,11 +797,7 @@
 
     // --- Funções de Tempo e Fim de Jogo ---
 
-    /**
-     * Inicia o contador regressivo do jogo.
-     */
     function iniciarCountdown() {
-        // Assegura que o display do tempo é atualizado imediatamente ao iniciar
         atualizarDisplayTempo(); 
         intervaloCountdown = setInterval(() => {
             tempoRestante--;
@@ -840,9 +808,6 @@
         }, 1000);
     }
 
-    /**
-     * Atualiza o display do tempo no HTML.
-     */
     function atualizarDisplayTempo() {
         let mins = Math.floor(tempoRestante / 60);
         let segs = tempoRestante % 60;
@@ -850,9 +815,6 @@
             `${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
     }
 
-    /**
-     * Finaliza o jogo, parando o contador e mostrando o painel de feedback.
-     */
     function finalizarJogo(vitoria) {
         clearInterval(intervaloCountdown);
         const feedback = document.getElementById('feedback-final');
@@ -864,7 +826,7 @@
             const tempoGasto = dificuldadeAtual.tempo - tempoRestante;
             const minutosGasto = Math.floor(tempoGasto / 60);
             const segundosGasto = tempoGasto % 60;
-            msg.innerHTML = `Resolvido em <strong>${minutosGasto}m ${segundosGasto.toString().padStart(2, '0')}s</strong>!`;
+            msg.innerHTML = `Resolvido em <strong>${minutosGasto}m ${segundosGasto.toString().padStart(2, '0')}s</strong>!`; 
             feedbackEmoji.textContent = "🥳";
             feedbackEmoji.setAttribute('aria-label', 'Emoji de celebração');
             feedbackTitulo.textContent = "Excelente Trabalho!";
@@ -880,23 +842,19 @@
 
     // --- Event Listeners Globais ---
 
-    // Define o ano atual no footer
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
-    // Event listeners para os botões de dificuldade
     botoesDificuldade.forEach(btn => {
         btn.addEventListener('click', () => {
             setDificuldade(btn.dataset.dificuldade);
         });
     });
 
-    // Event listener para redimensionamento da janela
     window.addEventListener('resize', () => {
-        aplicarEstilosGrelha(dificuldadeAtual);
+        aplicarEstilosGrelha(); 
     });
 
     // --- Início do Jogo ---
-    // Inicia o jogo com a dificuldade padrão ao carregar a página
     setDificuldade('facil'); 
 </script>
 </body>
