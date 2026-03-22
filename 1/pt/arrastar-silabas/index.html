@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
+    <script src="dados.js"></script>
+
     <style>
         :root {
             --bg-body: #f0f4f8;
@@ -17,255 +19,218 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --sucesso: #48bb78;
+            --erro: #e53e3e;
         }
 
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            text-align: center; 
-            background-color: var(--bg-body); 
-            margin: 0; 
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; 
-            overflow-x: hidden;
-        }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        header {
-            background-color: var(--bg-header);
-            padding: 25px 20px;
-            border-bottom: 1px solid var(--azul-vibrante);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative;
-            flex-shrink: 0;
-            z-index: 100;
-        }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); position: relative; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); }
+        
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 3px 0 var(--cor-1ano-dark); }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        h1 { color: var(--azul-escuro); margin: 0; font-size: 1.8rem; }
+        .subtitulo { color: var(--azul-escuro); font-size: 1rem; opacity: 0.8; margin-top: 10px; }
 
-        .nav-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-        }
+        /* SISTEMA DE ESTRELAS */
+        .progresso-container { margin: 20px auto; width: 90%; max-width: 450px; }
+        .estrelas { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 1.5rem; }
+        .estrela { color: #cbd5e0; transition: 0.3s; }
+        .estrela.vitoria { color: #f6e05e; } /* Amarela se acertou */
+        .estrela.derrota { color: #e53e3e; text-decoration: line-through; opacity: 0.5; } /* Vermelha e riscada se errou */
 
-        .hamburger {
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.4);
-            border: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        .hamburger:hover { background: #d0e8ff; }
-        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
-        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-        .btn-voltar {
-            background: var(--cor-1ano);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            text-decoration: none;
-            font-size: 0.9rem;
-            box-shadow: 0 3px 0 var(--cor-1ano-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-voltar:hover { transform: scale(1.05); }
-
-        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
-
-        /* SIDEBAR */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
-        .sidebar.active { left: 0; }
-        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
-        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
-        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white !important; transform: translateX(8px); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
-        .overlay.active { display: block; }
-
-        /* ÁREA DO JOGO */
-        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .cartao-jogo-container {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            min-height: 450px;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            border-top: 8px solid var(--cor-1ano);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: white; width: 100%; max-width: 750px; min-height: 480px;
+            padding: 30px; border-radius: 30px; border-top: 8px solid var(--cor-1ano);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; position: relative;
         }
 
-        /* LÓGICA DO JOGO */
-        .palavra-imagem { font-size: 5rem; margin-bottom: 20px; }
-        .drop-zone-container { display: flex; gap: 15px; margin-bottom: 30px; }
+        .imagem-pergunta { width: 180px; height: 180px; object-fit: contain; margin-bottom: 25px; }
+        
+        .drop-zone-container { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center; }
         .drop-zone {
-            width: 80px; height: 80px;
-            border: 3px dashed #cbd5e0;
-            border-radius: 15px;
+            width: 85px; height: 85px; border: 3px dashed #cbd5e0; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: bold; color: var(--azul-escuro);
-            background: #fdfdfd;
+            font-size: 1.6rem; font-weight: 800; color: var(--azul-escuro); background: #fdfdfd;
         }
-        .options-container { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+
+        .options-container { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
         .silaba-drag {
-            padding: 15px 25px;
-            background: var(--cor-1ano);
-            color: white;
-            border-radius: 12px;
-            cursor: grab;
-            font-weight: bold;
-            font-size: 1.4rem;
-            box-shadow: 0 4px 0 var(--cor-1ano-dark);
+            padding: 15px 25px; background: var(--cor-1ano); color: white; border-radius: 12px;
+            cursor: grab; font-weight: bold; font-size: 1.5rem; box-shadow: 0 4px 0 var(--cor-1ano-dark);
             user-select: none;
         }
-        .silaba-drag:active { cursor: grabbing; transform: translateY(2px); box-shadow: none; }
+        .silaba-drag.dragging { opacity: 0.4; }
 
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        #feedback { margin-top: 25px; font-weight: 700; font-size: 1.3rem; min-height: 1.5rem; transition: 0.3s; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: 20px; }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
-
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; }
-            .nav-container { position: static; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; margin-bottom: 10px; }
-            .hamburger { grid-column: 1; }
-            .btn-voltar { grid-column: 2; justify-self: center; }
-            h1, .subtitulo { grid-column: 2; }
-        }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-<nav class="sidebar" id="sidebar">
-    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
-    <ul>
-        <li><a href="../../index.html">🏠 Início</a></li>
-        <li><a href="../../pre/index.html">🎨 Pré-Escolar</a></li>
-        <li><a href="../index.html">🎒 Menu 1º Ano</a></li>
-        <li><a href="../../2/index.html">💡 2º Ano</a></li>
-        <li><a href="../../3/index.html">🔍 3º Ano</a></li>
-        <li><a href="../../4/index.html">🚀 4º Ano</a></li>
-    </ul>
-</nav>
-
 <header>
     <div class="header-content">
         <div class="nav-container">
-            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
-                <span></span><span></span><span></span>
-            </button>
-            <a href="index.html" class="btn-voltar">⬅️ Voltar</a>
+            <button class="hamburger"><span></span><span></span><span></span></button>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        
         <h1>Arrastar Sílabas 🖐️</h1>
-        <div class="subtitulo">Arrasta as sílabas para os espaços corretos para formar a palavra.</div>
+        <div class="subtitulo">Forma a palavra correta arrastando as sílabas.</div>
     </div>
 </header>
 
-<main>
-    <div class="cartao-jogo-container">
-        <div class="palavra-imagem">🐱</div>
-        
-        <div class="drop-zone-container">
-            <div class="drop-zone" data-expected="GA"></div>
-            <div class="drop-zone" data-expected="TO"></div>
-        </div>
+<div class="progresso-container">
+    <div class="estrelas" id="estrelas-box"></div>
+</div>
 
-        <div class="options-container">
-            <div class="silaba-drag" draggable="true">TO</div>
-            <div class="silaba-drag" draggable="true">BA</div>
-            <div class="silaba-drag" draggable="true">GA</div>
-            <div class="silaba-drag" draggable="true">LI</div>
-        </div>
+<main>
+    <div class="cartao-jogo-container" id="game-container">
+        <img src="" id="imagem-palavra" class="imagem-pergunta">
+        <div class="drop-zone-container" id="drop-zones"></div>
+        <div class="options-container" id="options"></div>
+        <div id="feedback"></div>
     </div>
 </main>
 
 <footer>
-    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+    <p><span id="ano-atual"></span> 🏫 <b>EB1/PE da Marinheira</b></p>
 </footer>
 
 <script>
-    document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    
-    function toggleMenu() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const hamburger = document.getElementById('hamburgerBtn');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        hamburger.classList.toggle('open');
+    let indiceAtual = 0;
+    const totalJogadas = 10;
+    let palavrasSelecionadas = [];
+    let errouNestaPalavra = false;
+
+    function iniciarJogo() {
+        indiceAtual = 0;
+        // Baralhar todas as palavras do dados.js e escolher 10
+        palavrasSelecionadas = [...palavras].sort(() => Math.random() - 0.5).slice(0, totalJogadas);
+        
+        desenharEstrelas();
+        carregarQuestao();
     }
 
-    // Lógica simples de Drag and Drop
-    const draggables = document.querySelectorAll('.silaba-drag');
-    const dropZones = document.querySelectorAll('.drop-zone');
-
-    draggables.forEach(draggable => {
-        draggable.addEventListener('dragstart', () => {
-            draggable.classList.add('dragging');
-        });
-
-        draggable.addEventListener('dragend', () => {
-            draggable.classList.remove('dragging');
-        });
-    });
-
-    dropZones.forEach(zone => {
-        zone.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-
-        zone.addEventListener('drop', e => {
-            const dragging = document.querySelector('.dragging');
-            if (dragging.innerText === zone.getAttribute('data-expected')) {
-                zone.innerText = dragging.innerText;
-                zone.style.border = "3px solid #48bb78";
-                zone.style.background = "#f0fff4";
-                dragging.style.visibility = "hidden";
-                checkWin();
-            } else {
-                alert("Tenta outra vez! 🤔");
-            }
-        });
-    });
-
-    function checkWin() {
-        const allFilled = Array.from(dropZones).every(zone => zone.innerText !== "");
-        if (allFilled) {
-            alert("Parabéns! Formaste a palavra GATO! 🎉");
-            location.reload(); 
+    function desenharEstrelas() {
+        const box = document.getElementById('estrelas-box');
+        box.innerHTML = '';
+        for (let i = 0; i < totalJogadas; i++) {
+            box.innerHTML += `<span class="estrela" id="star-${i}">★</span>`;
         }
     }
+
+    function carregarQuestao() {
+        const item = palavrasSelecionadas[indiceAtual];
+        const imgElement = document.getElementById('imagem-palavra');
+        const dropZonesBox = document.getElementById('drop-zones');
+        const optionsBox = document.getElementById('options');
+        const feedbackBox = document.getElementById('feedback');
+
+        errouNestaPalavra = false;
+        feedbackBox.innerHTML = "";
+        dropZonesBox.innerHTML = "";
+        optionsBox.innerHTML = "";
+        
+        // Caminho da imagem (ajustado para ../img/ baseado na tua estrutura)
+        imgElement.src = `../img/${item.imagem.split('/').pop()}`;
+
+        // Criar zonas baseadas na divisão (ex: "PA-TO")
+        const silabasCorretas = item.divisao.split('-');
+        silabasCorretas.forEach(s => {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.dataset.expected = s;
+            dropZonesBox.appendChild(zone);
+        });
+
+        // Criar opções (as corretas + 2 aleatórias de outras palavras para baralhar)
+        let opcoes = [...silabasCorretas];
+        while(opcoes.length < silabasCorretas.length + 2) {
+            let randSill = palavras[Math.floor(Math.random()*palavras.length)].divisao.split('-')[0];
+            if(!opcoes.includes(randSill)) opcoes.push(randSill);
+        }
+        
+        opcoes.sort(() => Math.random() - 0.5).forEach(s => {
+            const drag = document.createElement('div');
+            drag.className = 'silaba-drag';
+            drag.draggable = true;
+            drag.innerText = s;
+            drag.addEventListener('dragstart', () => drag.classList.add('dragging'));
+            drag.addEventListener('dragend', () => drag.classList.remove('dragging'));
+            optionsBox.appendChild(drag);
+        });
+
+        configurarEventosDrag();
+    }
+
+    function configurarEventosDrag() {
+        const zones = document.querySelectorAll('.drop-zone');
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', () => {
+                const dragging = document.querySelector('.dragging');
+                const feedbackBox = document.getElementById('feedback');
+
+                if (dragging.innerText === zone.dataset.expected) {
+                    zone.innerText = dragging.innerText;
+                    zone.style.borderColor = "var(--sucesso)";
+                    zone.style.background = "#f0fff4";
+                    dragging.style.visibility = "hidden";
+                    feedbackBox.innerHTML = "<span style='color:var(--sucesso)'>Muito bem! ✨</span>";
+                    verificarPalavraCompleta();
+                } else {
+                    errouNestaPalavra = true;
+                    feedbackBox.innerHTML = "<span style='color:var(--erro)'>Tenta outra vez! 🤔</span>";
+                }
+            });
+        });
+    }
+
+    function verificarPalavraCompleta() {
+        const zones = document.querySelectorAll('.drop-zone');
+        const todasPreenchidas = Array.from(zones).every(z => z.innerText !== "");
+
+        if (todasPreenchidas) {
+            const estrela = document.getElementById(`star-${indiceAtual}`);
+            if (errouNestaPalavra) {
+                estrela.classList.add('derrota');
+            } else {
+                estrela.classList.add('vitoria');
+            }
+
+            indiceAtual++;
+            setTimeout(() => {
+                if (indiceAtual < totalJogadas) {
+                    carregarQuestao();
+                } else {
+                    mostrarFimJogo();
+                }
+            }, 1200);
+        }
+    }
+
+    function mostrarFimJogo() {
+        const container = document.getElementById('game-container');
+        const vitorias = document.querySelectorAll('.estrela.vitoria').length;
+        
+        container.innerHTML = `
+            <h2 style="color: var(--azul-escuro); font-size: 2.2rem; margin-top:0;">Fim do Jogo!</h2>
+            <div style="font-size: 5rem; margin: 20px;">🏆</div>
+            <p style="font-size: 1.4rem; color: var(--text-main);">Acertaste <b>${vitorias}</b> de 10 palavras sem errar!</p>
+            <button onclick="location.reload()" class="btn-voltar" style="padding: 15px 40px; font-size: 1.2rem; cursor:pointer; margin-top:20px;">Jogar Novamente 🔄</button>
+        `;
+    }
+
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    window.onload = iniciarJogo;
 </script>
+
 </body>
 </html>
