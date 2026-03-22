@@ -5,93 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1º Ano - Jogo da Memória 👀</title>
     
-    <link rel="icon" type="image/png" href="../../../logo.png">
+    <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script src="dados.js"></script>
 
     <style>
         :root {
-            --bg-body: #f8fafc;
+            --bg-body: #f0f4f8;
             --azul-vibrante: #0091ff; 
             --cor-1ano: #0091ff;     
             --cor-1ano-dark: #0070c5;
-            --bg-header: #ffffff;    
-            --azul-escuro: #1e293b;
-            --text-main: #475569;
-            --sucesso: #22c55e;
-            --bg-footer: #e3f2fd;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --sucesso: #28a745;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
 
-        /* HEADER */
-        header { background-color: var(--bg-header); padding: 20px; border-bottom: 2px solid #e2e8f0; position: relative; z-index: 100; }
-        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); }
-        .hamburger { cursor: pointer; background: #f1f5f9; border: none; display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 10px; transition: 0.3s; }
-        .hamburger span { display: block; width: 22px; height: 2px; background: var(--azul-escuro); }
-        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 4px 0 var(--cor-1ano-dark); transition: 0.3s; }
-        .btn-voltar:hover { transform: translateY(-3px); box-shadow: 0 6px 0 var(--cor-1ano-dark); }
+        /* HEADER FIEL AO TEMPLATE */
+        header {
+            background-color: var(--bg-header);
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--azul-vibrante);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
+            flex-shrink: 0;
+            z-index: 100;
+        }
 
-        /* SIDEBAR HOVER CORRIGIDO */
-        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 2000; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.05); text-align: left; }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        /* HAMBURGER ANIMADO */
+        .hamburger {
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.4s ease;
+        }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        .btn-voltar {
+            background: var(--cor-1ano);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 0 var(--cor-1ano-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        /* SIDEBAR E OVERLAY */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
-        .sidebar ul { list-style: none; padding: 20px; margin: 0; }
-        .sidebar li a { display: block; padding: 14px 18px; text-decoration: none; color: var(--text-main); border-radius: 12px; margin-bottom: 10px; transition: 0.2s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); display: none; z-index: 1500; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        /* JOGO */
-        main { flex: 1; display: flex; justify-content: center; padding: 30px 20px; }
-        .cartao-jogo-container { background: white; width: 100%; max-width: 1000px; padding: 30px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; border: 1px solid #e2e8f0; }
+        /* ÁREA DO JOGO */
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        .cartao-jogo-container {
+            background: white; width: 100%; max-width: 900px; min-height: 500px;
+            padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center;
+        }
 
-        .btn-nivel { padding: 12px 24px; font-size: 0.9rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; color: white; transition: 0.3s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); margin: 5px; }
-        .btn-nivel:hover { transform: translateY(-3px); box-shadow: 0 6px 0 rgba(0,0,0,0.1); }
+        /* SELEÇÃO DE DIFICULDADE COM ANIMAÇÃO */
+        .menu-niveis { display: flex; gap: 12px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+        .btn-nivel { 
+            padding: 12px 20px; font-size: 0.9rem; font-weight: 700; border: none; border-radius: 15px; 
+            cursor: pointer; color: white; transition: all 0.3s ease; box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+        }
+        .btn-nivel:hover { transform: translateY(-3px); filter: brightness(1.1); box-shadow: 0 6px 0 rgba(0,0,0,0.15); }
+        .btn-nivel:active { transform: translateY(2px); box-shadow: none; }
 
-        /* GRELHA SEM SOBREPOSIÇÃO */
-        .memory-grid { display: none; gap: 15px; margin: 0 auto; justify-content: center; width: max-content; }
-        .memory-card { width: 130px; height: 130px; position: relative; transform-style: preserve-3d; transition: transform 0.4s; cursor: pointer; box-sizing: border-box; }
+        /* ELEMENTOS DO JOGO DA MEMÓRIA */
+        .info-bar { display: none; gap: 30px; margin-bottom: 25px; font-weight: 700; color: var(--azul-escuro); font-size: 1.3rem; }
+        .memory-grid { display: none; gap: 15px; margin: 0 auto; perspective: 1000px; }
+        
+        .memory-card { 
+            width: 130px; height: 130px; position: relative; 
+            transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; 
+            box-sizing: border-box; /* Impede sobreposição ao adicionar bordas */
+        }
         .memory-card.flipped { transform: rotateY(180deg); }
+        
+        /* PAR DESCOBERTO: VISÍVEL E ESBATIDO */
         .memory-card.matched { pointer-events: none; }
-        .memory-card.matched .card-front { background-color: #f8fafc; opacity: 0.6; border: 3px solid var(--sucesso) !important; }
+        .memory-card.matched .card-front { 
+            opacity: 0.6; 
+            border: 4px solid var(--sucesso) !important;
+            background: #fdfdfd;
+        }
 
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; box-sizing: border-box; }
+        .card-front, .card-back { 
+            position: absolute; width: 100%; height: 100%; 
+            backface-visibility: hidden; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #e2e8f0; 
+            box-sizing: border-box;
+        }
         .card-back { background: var(--cor-1ano); color: white; font-size: 3rem; font-weight: 800; border: none; }
         .card-front { background: white; transform: rotateY(180deg); padding: 10px; }
         .card-front img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .card-front.texto { font-size: 1.1rem; font-weight: 700; color: var(--azul-escuro); text-transform: uppercase; }
 
-        /* FOOTER - FIEL AO TEMPLATE ORIGINAL */
-        footer {
-            background-color: var(--bg-footer);
-            padding: 20px;
-            border-top: 2px solid var(--azul-vibrante);
-            margin-top: auto;
-        }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 100px 1fr 100px;
-            align-items: center;
-        }
-        .footer-logo img {
-            width: 50px;
-            transition: transform 0.3s ease;
-        }
-        .footer-logo img:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-        .footer-text {
-            color: var(--azul-escuro);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
+        /* FOOTER DO TEMPLATE */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
-        @media (max-width: 650px) {
-            .footer-content { grid-template-columns: 1fr; gap: 10px; }
-            .memory-card { width: 85px; height: 85px; }
+        @media (max-width: 768px) {
+            .memory-card { width: 90px; height: 90px; }
+            .card-back { font-size: 2rem; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; }
         }
     </style>
 </head>
@@ -100,101 +177,99 @@
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="btn-fechar" onclick="toggleMenu()">✕ FECHAR</div>
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
-        <li><a href="../../../index.html">🏠 Início</a></li>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
-        <li><a href="../../index.html">🎒 1º Ano</a></li>
-        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
-        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
-        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+        <li><a href="../../index.html">🏠 Início</a></li>
+        <li><a href="../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/index.html">🎒 1º Ano</a></li>
+        <li><a href="../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../4/index.html">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
 <header>
     <div class="header-content">
         <div class="nav-container">
-            <div class="hamburger" onclick="toggleMenu()">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
-            </div>
-            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+            </button>
+            <a href="index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        <h1>Jogo da Memória 👀</h1>
+        
+        <h1>👀 Jogo da Memória 👀</h1>
+        <div class="subtitulo">Encontra o par correto ligando a imagem à palavra!</div>
     </div>
 </header>
 
 <main>
     <div class="cartao-jogo-container">
-        <div class="menu-niveis">
-            <button class="btn-nivel" style="background:#22c55e" onclick="iniciarJogo(8, 120, this, 4)">Fácil (8 cartas - 2 min)</button>
-            <button class="btn-nivel" style="background:#f59e0b" onclick="iniciarJogo(12, 180, this, 4)">Médio (12 cartas - 3 min)</button>
-            <button class="btn-nivel" style="background:#ef4444" onclick="iniciarJogo(16, 240, this, 4)">Difícil (16 cartas - 4 min)</button>
-            <button class="btn-nivel" style="background:#8b5cf6" onclick="iniciarJogo(20, 300, this, 5)">Génio (20 cartas - 5 min)</button>
+        <div class="menu-niveis" id="menu-niveis">
+            <button class="btn-nivel" style="background: #4caf50;" onclick="iniciarJogo(8, 120, this, 4)">Fácil (8 cartas - 2 min)</button>
+            <button class="btn-nivel" style="background: #ff9800;" onclick="iniciarJogo(12, 180, this, 4)">Médio (12 cartas - 3 min)</button>
+            <button class="btn-nivel" style="background: #f44336;" onclick="iniciarJogo(16, 240, this, 4)">Difícil (16 cartas - 4 min)</button>
+            <button class="btn-nivel" style="background: #9c27b0;" onclick="iniciarJogo(20, 300, this, 5)">Génio (20 cartas - 5 min)</button>
         </div>
-        <div class="info-bar" id="game-info" style="display:none; gap:30px; margin-bottom:20px; font-size:1.4rem; font-weight:bold;">
+
+        <div class="info-bar" id="game-info">
             <span>⏱️ <span id="timer">00:00</span></span>
             <span>✅ <span id="certas">0</span></span>
         </div>
-        <div id="game-area" style="width:100%">
-            <div id="placeholder" style="margin-top:40px; color:#94a3b8;"><h2>Escolhe a dificuldade!</h2></div>
-            <div class="memory-grid" id="memory-grid"></div>
-        </div>
-        <div id="resultado-final" style="display:none; padding:40px;"></div>
+
+        <div id="memory-grid" class="memory-grid"></div>
+        <div id="final-msg" style="display:none; text-align:center;"></div>
     </div>
 </main>
 
 <footer>
-    <div class="footer-content">
-        <div class="footer-logo">
-            <a href="../../../index.html">
-                <img src="../../../logo.png" alt="Logo">
-            </a>
-        </div>
-        <div class="footer-text">
-            🏫 EB1/PE da Marinheira — 1º Ano
-        </div>
-        <div class="footer-spacer"></div>
-    </div>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
 <script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
     let flippedCards = [];
-    let matchedCount = 0;
-    let certas = 0;
-    let timerId = null;
-    let lockBoard = false;
+    let matchedPairs = 0;
+    let timerInterval;
+    let canFlip = true;
 
     function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('overlay').classList.toggle('active');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
     }
 
-    function iniciarJogo(numTotal, tempo, btn, colunas) {
-        document.getElementById('placeholder').style.display = 'none';
-        document.getElementById('resultado-final').style.display = 'none';
+    function iniciarJogo(numCartas, tempoSegundos, btn, colunas) {
+        // Reset da UI
+        document.getElementById('menu-niveis').style.display = 'none';
         document.getElementById('game-info').style.display = 'flex';
+        document.getElementById('final-msg').style.display = 'none';
+        
         const grid = document.getElementById('memory-grid');
         grid.style.display = 'grid';
         grid.style.gridTemplateColumns = `repeat(${colunas}, 1fr)`;
         grid.innerHTML = '';
 
-        matchedCount = 0; certas = 0;
-        let timeLeft = tempo;
-        document.getElementById('certas').innerText = certas;
-
-        const selecionadas = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numTotal / 2);
+        matchedPairs = 0;
+        document.getElementById('certas').innerText = '0';
+        
+        // Preparar baralho (Metade imagem, Metade texto)
+        const selecionadas = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numCartas / 2);
         let deck = [];
         selecionadas.forEach(p => {
-            deck.push({ tipo: 'img', valor: p.imagem, id: p.palavra });
-            deck.push({ tipo: 'txt', valor: p.palavra, id: p.palavra });
+            deck.push({ tipo: 'img', valor: p.imagem, parId: p.palavra });
+            deck.push({ tipo: 'txt', valor: p.palavra, parId: p.palavra });
         });
         deck.sort(() => 0.5 - Math.random());
 
+        // Criar cartas
         deck.forEach(item => {
             const card = document.createElement('div');
             card.className = 'memory-card';
-            card.dataset.id = item.id;
+            card.dataset.id = item.parId;
             card.innerHTML = `
                 <div class="card-back">?</div>
                 <div class="card-front ${item.tipo === 'txt' ? 'texto' : ''}">
@@ -204,49 +279,65 @@
             grid.appendChild(card);
         });
 
-        if(timerId) clearInterval(timerId);
-        timerId = setInterval(() => {
+        // Timer
+        let timeLeft = tempoSegundos;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
             timeLeft--;
             const min = Math.floor(timeLeft / 60);
             const seg = timeLeft % 60;
             document.getElementById('timer').innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
-            if(timeLeft <= 0) finalizar("Tempo esgotado! ⏱️");
+            if(timeLeft <= 0) finalizar(false);
         }, 1000);
     }
 
     function flipCard() {
-        if (lockBoard || this === flippedCards[0] || this.classList.contains('flipped')) return;
+        if (!canFlip || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+
         this.classList.add('flipped');
         flippedCards.push(this);
+
         if (flippedCards.length === 2) {
-            lockBoard = true;
-            if (flippedCards[0].dataset.id === flippedCards[1].dataset.id) {
-                certas++; matchedCount += 2;
-                const par = [...flippedCards];
-                setTimeout(() => {
-                    par.forEach(c => c.classList.add('matched'));
-                    lockBoard = false;
-                }, 400);
-                flippedCards = [];
-                document.getElementById('certas').innerText = certas;
-                if (matchedCount === document.querySelectorAll('.memory-card').length) setTimeout(() => finalizar("Parabéns! 🏆"), 800);
-            } else {
-                setTimeout(() => {
-                    flippedCards.forEach(c => c.classList.remove('flipped'));
-                    flippedCards = [];
-                    lockBoard = false;
-                }, 1000);
-            }
+            canFlip = false;
+            verificarPar();
         }
     }
 
-    function finalizar(msg) {
-        clearInterval(timerId);
+    function verificarPar() {
+        const [card1, card2] = flippedCards;
+        const isMatch = card1.dataset.id === card2.dataset.id;
+
+        if (isMatch) {
+            matchedPairs++;
+            document.getElementById('certas').innerText = matchedPairs;
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            flippedCards = [];
+            canFlip = true;
+            
+            if (matchedPairs === document.querySelectorAll('.memory-card').length / 2) {
+                finalizar(true);
+            }
+        } else {
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                flippedCards = [];
+                canFlip = true;
+            }, 1000);
+        }
+    }
+
+    function finalizar(vitoria) {
+        clearInterval(timerInterval);
         document.getElementById('memory-grid').style.display = 'none';
         document.getElementById('game-info').style.display = 'none';
-        const res = document.getElementById('resultado-final');
-        res.style.display = 'block';
-        res.innerHTML = `<h1>${msg}</h1><button onclick="location.reload()" class="btn-voltar">Reiniciar</button>`;
+        const msgArea = document.getElementById('final-msg');
+        msgArea.style.display = 'block';
+        msgArea.innerHTML = `
+            <h2 style="color:var(--azul-escuro)">${vitoria ? '🎉 Parabéns! Completaste o desafio!' : '⏰ O tempo acabou! Tenta outra vez.'}</h2>
+            <button class="btn-voltar" style="margin: 20px auto;" onclick="location.reload()">Jogar Novamente</button>
+        `;
     }
 </script>
 </body>
