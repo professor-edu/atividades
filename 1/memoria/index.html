@@ -3,231 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Memória 🧠</title>
+    <title>1º Ano - Jogo da Memória 👀</title>
     
-    <link rel="icon" type="image/png" href="../logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="icon" type="image/png" href="../../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
+    <script src="dados.js"></script>
+
     <style>
         :root {
-            --azul-claro: #f0f7ff;
-            --azul-janela-borda: #add8e6;
-            --azul-grad-esq: #bde6ff; 
-            --azul-grad-dir: #2e86de; 
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
-            --verde: #4caf50;
-            --laranja: #ff9800;
-            --vermelho: #e53935;
-            --roxo: #673ab7;
+            --text-main: #455a64;
+            --sucesso: #48bb78;
+            --erro: #e53e3e;
         }
 
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            text-align: center; 
-            background-color: var(--azul-claro); 
-            margin: 0; 
-            display: flex; flex-direction: column; min-height: 100vh;
-            user-select: none;
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); }
+
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; gap: 10px; justify-content: center; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white !important; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* ÁREA DE JOGO */
+        main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+        .cartao-jogo-container {
+            background: white; width: 100%; max-width: 1000px; min-height: 600px;
+            padding: 25px; border-radius: 30px; border-top: 8px solid var(--cor-1ano);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* NÍVEIS NA HORIZONTAL (Barra Superior) */
+        .menu-niveis { 
+            display: flex; 
+            flex-direction: row; 
+            gap: 10px; 
+            width: 100%; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+        }
+        .btn-nivel { 
+            padding: 10px 15px; 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            color: white; 
+            transition: 0.2s; 
+            box-shadow: 0 3px 0 rgba(0,0,0,0.1); 
+        }
+        .n-facil { background: #48bb78; }
+        .n-medio { background: #ed8936; }
+        .n-dificil { background: #e53e3e; }
+        .n-genio { background: #805ad5; }
+        .btn-nivel:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .btn-nivel.active { transform: translateY(2px); box-shadow: none; outline: 3px solid var(--azul-vibrante); }
+
+        /* BARRA DE INFO (Tempo e Pontos) */
+        .info-bar { 
+            display: none; 
+            justify-content: center; 
+            gap: 25px; 
+            margin-bottom: 20px; 
+            font-weight: 700; 
+            color: var(--azul-escuro); 
+            font-size: 1.1rem; 
+        }
+        .tempo-critico { color: var(--erro); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* TABULEIRO (Área que altera) */
+        .memory-grid { 
+            display: grid; 
+            gap: 12px; 
+            perspective: 1000px; 
+            width: 100%; 
+            justify-content: center; 
+            align-content: center;
         }
         
-        /* CABEÇALHO BLINDADO */
-        .cabecalho { 
-            background: linear-gradient(90deg, var(--azul-grad-esq) 0%, var(--azul-grad-dir) 100%); 
-            padding: 0 20px; 
-            display: flex; align-items: center; justify-content: space-between;
-            height: 85px; flex-shrink: 0; z-index: 20;
+        .memory-card { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
+        .memory-card.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .card-back { background: var(--cor-1ano); color: white; font-size: 2.2rem; font-weight: 800; border: 3px solid white; }
+        .card-front { background: white; transform: rotateY(180deg); border: 2px solid #e3f2fd; padding: 10px; }
+        .card-front img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 600px) {
+            .memory-card { width: 75px; height: 75px; }
+            .card-back { font-size: 1.5rem; }
+            .btn-nivel { padding: 8px 10px; font-size: 0.8rem; }
         }
-
-        .header-left, .header-right { flex: 0 0 180px; display: flex; align-items: center; }
-        .header-right { justify-content: flex-end; }
-
-        .cabecalho-conteudo { display: flex; justify-content: center; align-items: center; gap: 15px; flex: 1; }
-        .cabecalho-conteudo img { width: 70px; } /* LARGURA IMUTÁVEL */
-        .cabecalho h1 { font-size: 1.8rem; color: var(--azul-escuro); margin: 0; font-weight: 700; }
-
-        /* BOTÃO MENU IMUTÁVEL */
-        .btn-menu {
-            background: var(--laranja); color: white; border: none;
-            padding: 10px 18px; border-radius: 25px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
-            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
-            text-decoration: none; transition: transform 0.3s ease;
-        }
-        .btn-menu:hover { transform: scale(1.05); }
-
-        /* ONDA COM FUSÃO PERFEITA */
-        .onda-container {
-            height: 45px; width: 100%; overflow: hidden;
-            margin-top: -2px; flex-shrink: 0; z-index: 10;
-            filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.3));
-        }
-        .onda-svg { height: 100%; width: 100%; fill: var(--azul-grad-dir); }
-
-        /* NÍVEIS COM CORES CORRIGIDAS */
-        .menu-niveis { margin: 15px 0; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn-nivel { padding: 10px 20px; border: 2px solid #ccc; border-radius: 20px; cursor: pointer; font-weight: bold; background: white; transition: 0.3s; }
-        #btn-4.ativo { background: var(--verde); border-color: var(--verde); color: white; }
-        #btn-6.ativo { background: #ffc107; border-color: #ffc107; color: #333; }
-        #btn-8.ativo { background: var(--vermelho); border-color: var(--vermelho); color: white; }
-        #btn-10.ativo { background: var(--roxo); border-color: var(--roxo); color: white; }
-
-        .stats { font-size: 1.2rem; margin-bottom: 10px; display: flex; justify-content: center; gap: 20px; }
-        .stat-item { font-weight: 700; display: flex; align-items: center; gap: 5px; }
-
-        /* TABULEIRO E CARTAS (VISIBILIDADE CORRIGIDA) */
-        .tabuleiro { display: grid; gap: 12px; max-width: 900px; margin: 10px auto 30px; padding: 15px; justify-content: center; }
-        .carta { width: 120px; aspect-ratio: 1/1; border-radius: 15px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
-        
-        .carta.virada { transform: rotateY(180deg); }
-        .carta.par-encontrado { opacity: 0.4; pointer-events: none; transform: rotateY(180deg) !important; }
-
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; background: white; border: 3px solid var(--azul-janela-borda); box-sizing: border-box; }
-        .verso { background-color: var(--azul-escuro); color: white; font-size: 2.5rem; font-weight: 700; }
-        .frente { transform: rotateY(180deg); padding: 10px; }
-        .frente img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .frente span { font-weight: 700; color: var(--azul-escuro); font-size: 1.1rem; }
-
-        #final-screen { display: none; padding: 40px; }
-        footer { height: 50px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; margin-top: auto; font-weight: 700; color: var(--azul-escuro); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<audio id="som-acerto" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<header class="cabecalho">
-    <div class="header-left"><a href="../index.html" class="btn-menu"><span>🏠</span> MENU</a></div>
-    <div class="cabecalho-conteudo">
-        <img src="memoria.png" alt="Logótipo"> 
-        <h1>Jogo da Memória</h1>
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Jogo da Memória 👀</h1>
     </div>
-    <div class="header-right"></div>
 </header>
 
-<div class="onda-container">
-    <svg viewBox="0 0 500 150" preserveAspectRatio="none" class="onda-svg">
-        <path d="M0.00,49.98 C150.00,150.00 349.20,-49.98 500.00,49.98 L500.00,0.00 L0.00,0.00 Z"></path>
-    </svg>
-</div>
-
-<div class="menu-niveis">
-    <button class="btn-nivel" id="btn-4" onclick="iniciarJogo(4)">Fácil (8)</button>
-    <button class="btn-nivel" id="btn-6" onclick="iniciarJogo(6)">Médio (12)</button>
-    <button class="btn-nivel" id="btn-8" onclick="iniciarJogo(8)">Difícil (16)</button>
-    <button class="btn-nivel" id="btn-10" onclick="iniciarJogo(10)">Génio (20)</button>
-</div>
-
-<div class="stats">
-    <span class="stat-item" style="color: var(--verde);">✅ Acertos: <span id="v-acertos">0</span></span>
-    <span class="stat-item" style="color: var(--vermelho);">❌ Erros: <span id="v-erros">0</span></span>
-    <span class="stat-item" style="color: var(--azul-escuro);">⏱️ Tempo: <span id="v-tempo">0</span>s</span>
-</div>
-
-<div class="tabuleiro" id="tabuleiro"></div>
-
-<div id="final-screen">
-    <div style="background:white; padding:40px; border-radius:30px; display:inline-block; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
-        <h2 style="color:var(--azul-escuro); margin-bottom:20px;">🏆 Parabéns! 🏆</h2>
-        <p id="resumo-final" style="font-weight:700; margin-bottom:20px;"></p>
-        <button class="btn-menu" style="margin:0 auto;" onclick="location.reload()">Jogar de Novo</button>
-    </div>
-</div>
-
-<footer><p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color: inherit; text-decoration: none;">EB1/PE da Marinheira</a></p></footer>
-
-<script src="js/dados.js"></script>
-<script>
-    document.getElementById('ano-atual').textContent = new Date().getFullYear();
-    let cartasViradas = [], paresDescobertos = 0, totalPares = 0, nAcertos = 0, nErros = 0, podeJogar = false;
-    let tempo = 0, intervaloTempo;
-
-    function iniciarJogo(numPares) {
-        clearInterval(intervaloTempo);
-        tempo = 0; document.getElementById('v-tempo').innerText = "0";
-        const tabuleiro = document.getElementById('tabuleiro');
-        tabuleiro.innerHTML = ""; tabuleiro.style.display = "grid";
-        document.getElementById('final-screen').style.display = "none";
-        tabuleiro.style.gridTemplateColumns = numPares >= 10 ? "repeat(5, 1fr)" : "repeat(4, 1fr)";
+<main>
+    <div class="cartao-jogo-container">
         
-        document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
-        document.getElementById('btn-' + numPares).classList.add('ativo');
+        <div class="menu-niveis" id="menu-niveis">
+            <button class="btn-nivel n-facil" onclick="iniciarJogo(8, 120, this)">Fácil (8)</button>
+            <button class="btn-nivel n-medio" onclick="iniciarJogo(12, 180, this)">Médio (12)</button>
+            <button class="btn-nivel n-dificil" onclick="iniciarJogo(16, 240, this)">Difícil (16)</button>
+            <button class="btn-nivel n-genio" onclick="iniciarJogo(20, 300, this)">Génio (20)</button>
+        </div>
 
-        paresDescobertos = 0; totalPares = numPares; nAcertos = 0; nErros = 0;
-        document.getElementById('v-acertos').innerText = "0"; document.getElementById('v-erros').innerText = "0";
+        <div class="info-bar" id="game-info">
+            <div>⏱️ <span id="timer">00:00</span></div>
+            <div>✅ <span id="certas">0</span></div>
+            <div>❌ <span id="erradas">0</span></div>
+        </div>
 
-        const selecao = [...palavras].sort(() => 0.5 - Math.random()).slice(0, numPares);
-        let baralho = [];
-        selecao.forEach(item => {
-            baralho.push({ id: item.palavra, tipo: 'img', conteudo: item.imagem });
-            baralho.push({ id: item.palavra, tipo: 'txt', conteudo: item.palavra });
+        <div id="game-content" style="width: 100%;">
+            <div id="placeholder-msg" style="color: var(--text-main); margin-top: 50px;">
+                <h3>Escolhe um nível acima para começar! 👀</h3>
+            </div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <div id="resultado-final" style="display:none; text-align:center; padding: 40px 0;"></div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <b>EB1/PE da Marinheira</b></p>
+</footer>
+
+<script>
+    let flippedCards = [];
+    let matchedCount = 0;
+    let certasCount = 0;
+    let erradasCount = 0;
+    let timeLeft = 0;
+    let timerId = null;
+    let lockBoard = false;
+
+    function iniciarJogo(numCartas, tempoSegundos, btn) {
+        // UI Reset
+        document.getElementById('placeholder-msg').style.display = 'none';
+        document.getElementById('resultado-final').style.display = 'none';
+        document.getElementById('game-info').style.display = 'flex';
+        document.getElementById('memory-grid').style.display = 'grid';
+        
+        // Destacar botão ativo
+        document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const grid = document.getElementById('memory-grid');
+        grid.innerHTML = '';
+        
+        matchedCount = 0; certasCount = 0; erradasCount = 0;
+        timeLeft = tempoSegundos;
+        updateInfo();
+
+        const cols = window.innerWidth < 600 ? 3 : (numCartas <= 12 ? 4 : 5);
+        grid.style.gridTemplateColumns = `repeat(${cols}, auto)`;
+
+        const selecionadas = [...palavras].sort(() => Math.random() - 0.5).slice(0, numCartas / 2);
+        const deck = [...selecionadas, ...selecionadas].sort(() => Math.random() - 0.5);
+
+        deck.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.name = item.palavra;
+            card.innerHTML = `
+                <div class="card-back">?</div>
+                <div class="card-front"><img src="../${item.imagem}"></div>
+            `;
+            card.addEventListener('click', flipCard);
+            grid.appendChild(card);
         });
-        baralho.sort(() => 0.5 - Math.random());
 
-        baralho.forEach(info => {
-            const carta = document.createElement('div');
-            carta.className = 'carta';
-            carta.dataset.id = info.id;
-            carta.innerHTML = `
-                <div class="face verso">?</div>
-                <div class="face frente">
-                    ${info.tipo === 'img' ? `<img src="${info.conteudo}">` : `<span>${info.conteudo.toUpperCase()}</span>`}
-                </div>`;
-            carta.onclick = function() { virarCarta(this); };
-            tabuleiro.appendChild(carta);
-        });
-
-        // Revelação inicial para níveis superiores
-        if(numPares >= 8) {
-            document.querySelectorAll('.carta').forEach(c => c.classList.add('virada'));
-            setTimeout(() => {
-                document.querySelectorAll('.carta').forEach(c => c.classList.remove('virada'));
-                podeJogar = true;
-                intervaloTempo = setInterval(() => { tempo++; document.getElementById('v-tempo').innerText = tempo; }, 1000);
-            }, 3000);
-        } else {
-            podeJogar = true;
-            intervaloTempo = setInterval(() => { tempo++; document.getElementById('v-tempo').innerText = tempo; }, 1000);
-        }
+        startTimer();
     }
 
-    function virarCarta(carta) {
-        if (!podeJogar || carta.classList.contains('virada') || carta.classList.contains('par-encontrado')) return;
-        carta.classList.add('virada');
-        cartasViradas.push(carta);
-        if (cartasViradas.length === 2) verificarPar();
+    function flipCard() {
+        if (lockBoard || this === flippedCards[0] || this.classList.contains('flipped')) return;
+        this.classList.add('flipped');
+        flippedCards.push(this);
+        if (flippedCards.length === 2) checkMatch();
     }
 
-    function verificarPar() {
-        podeJogar = false;
-        const [c1, c2] = cartasViradas;
-        if (c1.dataset.id === c2.dataset.id) {
-            nAcertos++; paresDescobertos++;
-            document.getElementById('v-acertos').innerText = nAcertos;
-            document.getElementById('som-acerto').play().catch(() => {});
-            setTimeout(() => {
-                c1.classList.add('par-encontrado'); c2.classList.add('par-encontrado');
-                cartasViradas = []; podeJogar = true;
-                if (paresDescobertos === totalPares) finalizar();
-            }, 600);
+    function checkMatch() {
+        lockBoard = true;
+        if (flippedCards[0].dataset.name === flippedCards[1].dataset.name) {
+            certasCount++; matchedCount += 2;
+            flippedCards = []; lockBoard = false;
+            if (matchedCount === document.querySelectorAll('.memory-card').length) finalizar("Vitória! 🏆");
         } else {
-            nErros++; document.getElementById('v-erros').innerText = nErros;
+            erradasCount++;
             setTimeout(() => {
-                c1.classList.remove('virada'); c2.classList.remove('virada');
-                cartasViradas = []; podeJogar = true;
+                flippedCards.forEach(c => c.classList.remove('flipped'));
+                flippedCards = []; lockBoard = false;
             }, 1000);
         }
+        updateInfo();
     }
 
-    function finalizar() {
-        clearInterval(intervaloTempo);
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        document.getElementById('tabuleiro').style.display = "none";
-        document.getElementById('resumo-final').innerText = `Completaste em ${tempo} segundos com ${nErros} erros!`;
-        document.getElementById('final-screen').style.display = "block";
-    }
-
-    window.onload = () => iniciarJogo(4);
-</script>
-</body>
-</html>
+    function startTimer() {
+        if(timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+            timeLeft--;
+            const min = Math.floor(timeLeft / 60);
+            const seg = timeLeft % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.innerText = `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+            if(timeLeft <= 10) timerEl.classList.add('tempo-crit
