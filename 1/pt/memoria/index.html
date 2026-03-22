@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Jogo da Memória 👀</title>
+    
+    <link rel="icon" type="image/png" href="../../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="dados.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --sucesso: #48bb78;
+            --erro: #e53e3e;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+        /* HEADER & NAV (Template Original) */
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 3px 0 var(--cor-1ano-dark); transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; }
+        .subtitulo { color: var(--azul-escuro); font-size: 1rem; opacity: 0.8; margin-top: 10px; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white !important; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* INFO BAR (Tempo e Pontos) */
+        .info-bar { display: flex; justify-content: center; gap: 30px; margin: 15px 0; font-weight: 700; color: var(--azul-escuro); font-size: 1.2rem; }
+        .tempo-critico { color: var(--erro); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        /* JOGO */
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .cartao-jogo-container {
+            background: white; width: 100%; max-width: 900px; min-height: 500px;
+            padding: 30px; border-radius: 30px; border-top: 8px solid var(--cor-1ano);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* GRID DO JOGO */
+        .memory-grid {
+            display: grid;
+            gap: 15px;
+            perspective: 1000px;
+            margin-top: 20px;
+        }
+
+        .memory-card {
+            width: 100px; height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+
+        .memory-card.flipped { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-back { background: var(--cor-1ano); color: white; font-size: 2rem; font-weight: 700; }
+        .card-front { 
+            background: white; 
+            transform: rotateY(180deg); 
+            border: 2px solid #eee;
+            padding: 5px;
+        }
+        .card-front img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+        /* NÍVEIS */
+        .menu-niveis { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 50px; }
+        .btn-nivel {
+            padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border: none; border-radius: 15px;
+            cursor: pointer; color: white; transition: 0.3s; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        .n-facil { background: #48bb78; }
+        .n-medio { background: #ed8936; }
+        .n-dificil { background: #e53e3e; }
+        .n-genio { background: #805ad5; }
+        .btn-nivel:hover { transform: translateY(-3px); }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 600px) {
+            .memory-card { width: 70px; height: 70px; }
+            .memory-grid { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Jogo da Memória 👀</h1>
+        <div class="subtitulo" id="instrucao">Escolhe um nível para começar a treinar a tua memória!</div>
+    </div>
+</header>
+
+<div class="info-bar" id="game-info" style="display: none;">
+    <div>⏱️ <span id="timer">00:00</span></div>
+    <div>✅ Certas: <span id="certas">0</span></div>
+    <div>❌ Erradas: <span id="erradas">0</span></div>
+</div>
+
+<main>
+    <div class="cartao-jogo-container" id="game-canvas">
+        <div class="menu-niveis" id="menu-niveis">
+            <button class="btn-nivel n-facil" onclick="iniciarJogo(8, 120)">Fácil (8 cartas)</button>
+            <button class="btn-nivel n-medio" onclick="iniciarJogo(12, 180)">Médio (12 cartas)</button>
+            <button class="btn-nivel n-dificil" onclick="iniciarJogo(16, 240)">Difícil (16 cartas)</button>
+            <button class="btn-nivel n-genio" onclick="iniciarJogo(20, 300)">Génio (20 cartas)</button>
+        </div>
+        <div class="memory-grid" id="memory-grid"></div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <b>EB1/PE da Marinheira</b></p>
+</footer>
+
+<script>
+    let cards = [];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let certas = 0;
+    let erradas = 0;
+    let timeLeft = 0;
+    let timerId = null;
+    let lockBoard = false;
+
+    function iniciarJogo(numCartas, tempoSegundos) {
+        // Limpar estados
+        document.getElementById('menu-niveis').style.display = 'none';
+        document.getElementById('game-info').style.display = 'flex';
+        document.getElementById('instrucao').innerText = "Encontra os pares de imagens iguais!";
+        
+        const grid = document.getElementById('memory-grid');
+        grid.innerHTML = '';
+        matchedCount = 0;
+        certas = 0;
+        erradas = 0;
+        timeLeft = tempoSegundos;
+        updateInfo();
+
+        // Configurar Grid CSS dinâmico
+        const cols = numCartas <= 8 ? 4 : (numCartas <= 12 ? 4 : 5);
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+        // Selecionar palavras aleatórias e duplicar
+        const selecionadas = [...palavras].sort(() => Math.random() - 0.5).slice(0, numCartas / 2);
+        const deck = [...selecionadas, ...selecionadas].sort(() => Math.random() - 0.5);
+
+        deck.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.name = item.palavra;
+            card.innerHTML = `
+                <div class="card-back">?</div>
+                <div class="card-front">
+                    <img src="../${item.imagem}" alt="${item.palavra}">
+                </div>
+            `;
+            card.addEventListener('click', flipCard);
+            grid.appendChild(card);
+        });
+
+        startTimer();
+    }
+
+    function flipCard() {
+        if (lockBoard || this === flippedCards[0] || this.classList.contains('flipped')) return;
+
+        this.classList.add('flipped');
+        flippedCards.push(this);
+
+        if (flippedCards.length === 2) {
+            checkMatch();
+        }
+    }
+
+    function checkMatch() {
+        lockBoard = true;
+        const isMatch = flippedCards[0].dataset.name === flippedCards[1].dataset.name;
+
+        if (isMatch) {
+            certas++;
+            matchedCount += 2;
+            resetTurn(true);
+            if (matchedCount === document.querySelectorAll('.memory-card').length) {
+                finalizar("Vitória! 🌟");
+            }
+        } else {
+            erradas++;
+            setTimeout(() => {
+                flippedCards[0].classList.remove('flipped');
+                flippedCards[1].classList.remove('flipped');
+                resetTurn(false);
+            }, 1000);
+        }
+        updateInfo();
+    }
+
+    function resetTurn(match) {
+        flippedCards = [];
+        lockBoard = false;
+    }
+
+    function startTimer() {
+        if(timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+            timeLeft--;
+            const min = Math.floor(timeLeft / 60);
+            const seg = timeLeft % 60;
+            const display = `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
+            const timerEl = document.getElementById('timer');
+            timerEl.innerText = display;
+
+            if (timeLeft <= 10) timerEl.classList.add('tempo-critico');
+            if (timeLeft <= 0) finalizar("O tempo acabou! ⌛");
+        }, 1000);
+    }
+
+    function updateInfo() {
+        document.getElementById('certas').innerText = certas;
+        document.getElementById('erradas').innerText = erradas;
+    }
+
+    function finalizar(mensagem) {
+        clearInterval(timerId);
+        const grid = document.getElementById('memory-grid');
+        grid.style.display = 'none';
+        document.getElementById('game-info').style.display = 'none';
+        
+        const canvas = document.getElementById('game-canvas');
+        canvas.innerHTML = `
+            <h2 style="color:var(--azul-escuro); font-size:2.2rem; margin-bottom:10px;">${mensagem}</h2>
+            <div style="font-size:5rem; margin:20px;">${matchedCount > 0 ? '🏆' : '❌'}</div>
+            <p style="font-size:1.3rem;">Acertaste <b>${certas}</b> pares e cometeste <b>${erradas}</b> erros.</p>
+            <button onclick="location.reload()" class="btn-voltar" style="padding:15px 40px; font-size:1.2rem; cursor:pointer; margin-top:20px;">Jogar Novamente 🔄</button>
+        `;
+    }
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+</script>
+</body>
+</html>
