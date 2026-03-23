@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Copiar Frases 💻</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS BASE DO TEMPLATE DO JOGO
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* MENU LATERAL */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        /* =========================================
+           CSS ESPECÍFICO: COPIAR FRASES
+           ========================================= */
+
+        /* Ecrãs */
+        #ecra-selecao, #ecra-jogo, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; }
+        #ecra-selecao { display: flex; } /* Visível por defeito */
+
+        /* Grelha de Seleção de Letras */
+        .letters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 15px; width: 100%; max-width: 700px; margin-top: 20px; }
+        .letter-card { background: linear-gradient(to bottom, #ffffff, #f0f4f8); border: 2px solid #e3f2fd; padding: 15px; border-radius: 15px; font-size: 2.2rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; }
+        .letter-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--azul-vibrante); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.2); }
+
+        /* Jogo: Crachá da Letra e Imagem */
+        .header-jogo-controles { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; max-width: 600px; }
+        .btn-mudar-letra { background: #f0f4f8; color: var(--text-main); border: none; padding: 8px 15px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn-mudar-letra:hover { background: #e3f2fd; color: var(--azul-escuro); }
+        
+        .cracha-letra { display: flex; align-items: center; gap: 15px; background: white; padding: 10px 25px; border-radius: 50px; border: 3px solid #e3f2fd; box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .cracha-img { width: 60px; height: 60px; object-fit: contain; }
+        .cracha-texto { font-size: 2.5rem; font-weight: bold; color: var(--azul-escuro); }
+
+        /* Jogo: Progresso */
+        .progress-bg { background-color: #e3f2fd; border-radius: 10px; height: 12px; width: 100%; max-width: 600px; overflow: hidden; margin-bottom: 30px; }
+        .progress-fill { background-color: #2ed573; height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Jogo: Frases */
+        #sentences-container { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 20px; }
+        .sentence-box { background: linear-gradient(to bottom, #ffffff, #f9fcff); border-radius: 15px; padding: 20px; border: 2px solid #e3f2fd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); opacity: 0; transform: translateY(20px); animation: slideUpFade 0.5s forwards ease-out; text-align: left; }
+        
+        .sentence-text { font-size: 1.4rem; margin-bottom: 12px; font-weight: bold; color: var(--azul-escuro); }
+        
+        .sentence-input { width: 100%; padding: 15px; font-size: 1.4rem; border-radius: 10px; border: 2px solid #ced6e0; box-sizing: border-box; outline: none; background: white; color: var(--text-main); font-family: 'Roboto', sans-serif; transition: all 0.3s; }
+        .sentence-input:focus { border-color: var(--azul-vibrante); box-shadow: 0 0 10px rgba(0, 145, 255, 0.1); }
+        
+        /* Feedbacks Visuais Suaves */
+        .correct { background: #eafff0 !important; border-color: #2ed573 !important; color: #219d53 !important; font-weight: bold; }
+        .wrong { background: #fff0f0 !important; border-color: #ff6b6b !important; }
+
+        /* Ecrã Final */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #219d53; margin-top: 20px; transition: 0.2s; text-decoration: none; display: inline-block;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 #219d53; }
+        .btn-acao:hover { background-color: #28c76a; }
+
+        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
+        
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            .cartao-jogo-container { padding: 25px 15px; }
+            .letters-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+            .letter-card { font-size: 1.8rem; padding: 10px; }
+            .cracha-texto { font-size: 2rem; }
+            .sentence-text, .sentence-input { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Copiar Frases 💻</h1>
+        <div class="subtitulo">Lê e copia as frases com atenção!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: SELEÇÃO DE LETRA -->
+        <div id="ecra-selecao">
+            <h2 style="color: var(--azul-escuro); margin-bottom: 5px;">Escolhe uma Letra</h2>
+            <div id="letters-grid" class="letters-grid">
+                <!-- Letras geradas por JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: ÁREA DE JOGO -->
+        <div id="ecra-jogo">
+            <div class="header-jogo-controles">
+                <button class="btn-mudar-letra" onclick="voltarParaSelecao()">🔄 Escolher outra letra</button>
+                <span style="font-weight: bold; color: var(--text-main); font-size: 0.9rem;">Progresso: <span id="contador-progresso">0/3</span></span>
+            </div>
+
+            <div class="cracha-letra">
+                <img id="cracha-img" class="cracha-img" src="" alt="Emoji">
+                <div id="cracha-texto" class="cracha-texto"></div>
+            </div>
+
+            <div class="progress-bg">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+
+            <div id="sentences-container">
+                <!-- Frases aparecem aqui gradualmente -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: FIM DO DESAFIO -->
+        <div id="ecra-fim">
+            <h2 class="end-title">Parabéns! 🎉</h2>
+            <p style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 20px;">Cenciaste todas as frases desta letra na perfeição!</p>
+            <img src="https://openmoji.org/data/color/svg/1F3C6.svg" style="width:120px; margin-bottom: 20px;">
+            <br>
+            <button id="btn-proxima" class="btn-acao">Avançar para a próxima ➔</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // ==========================================
+    // DADOS DO JOGO (Fusão do teu letra.html)
+    // ==========================================
+    const imageFor = {
+        "P": "https://openmoji.org/data/color/svg/1F986.svg", "T": "https://openmoji.org/data/color/svg/1F578.svg",
+        "L": "https://openmoji.org/data/color/svg/1F319.svg", "D": "https://openmoji.org/data/color/svg/1F3B2.svg",
+        "M": "https://openmoji.org/data/color/svg/1F412.svg", "V": "https://openmoji.org/data/color/svg/1F404.svg",
+        "N": "https://openmoji.org/data/color/svg/2601.svg", "R": "https://openmoji.org/data/color/svg/1F42D.svg",
+        "C": "https://openmoji.org/data/color/svg/1F415.svg", "Q": "https://openmoji.org/data/color/svg/1F95D.svg",
+        "B": "https://openmoji.org/data/color/svg/26BD.svg", "G": "https://openmoji.org/data/color/svg/1F408.svg",
+        "J": "https://openmoji.org/data/color/svg/1FA9F.svg", "F": "https://openmoji.org/data/color/svg/1F9DA.svg",
+        "S": "https://openmoji.org/data/color/svg/1F438.svg", "Z": "https://openmoji.org/data/color/svg/1F993.svg",
+        "H": "https://openmoji.org/data/color/svg/1F99B.svg", "X": "https://openmoji.org/data/color/svg/1F4AE.svg", 
+        "K": "https://openmoji.org/data/color/svg/1F3CE.svg", "W": "https://openmoji.org/data/color/svg/1F310.svg",
+        "Y": "https://openmoji.org/data/color/svg/1F9D8.svg"
+    };
+
+    const pages =[
+        {letter:"P",sentences:["O pai papa o pão.","É o Pepe e o pau.","É o pote e o pai."]},
+        {letter:"T",sentences:["É o tapete e o Tó.","A tia tapa o pote.","É o tapete e o tio."]},
+        {letter:"L",sentences:["É a Lili e o leite.","O Paulo pula.","É a lula e a lua."]},
+        {letter:"D",sentences:["O dedo da Dalila dói muito.","A dália é da Didi.","É dia de ditado."]},
+        {letter:"M",sentences:["A mãe mede a mala.","É a mala e a moeda da Mimi.","A Milu deu o mapa à Ema."]},
+        {letter:"V",sentences:["A Violeta vê a vela.","O avô leva o vitelo até à vila.","A vaca teve medo do leão."]},
+        {letter:"N",sentences:["A Nena é a neta do avô Nuno.","O Nito dá a nota ao Paulo.","A Diana nada muito."]},
+        {letter:"R",sentences:["O Rui roda a roda do carro.","A Rita vê o ramo.","O rato roeu a rede e a roupa toda."]},
+        {letter:"C",sentences:["A Cátia come a comida.","O cão vê o camião e corre na rua.","O Caio colou o copo."]},
+        {letter:"Q",sentences:["O Quico comeu um quivi no piquenique.","A Quina queima o papel.","O Aquilino é do Quénia."]},
+        {letter:"B",sentences:["O Beto bebe água.","A Bela dá a boneca à Bárbara.","O bolo é de banana."]},
+        {letter:"G",sentences:["O Gugu come o gelado.","A Gabi cuida do gato.","O cágado vive na água do lago."]},
+        {letter:"J",sentences:["A Júlia joga à bola.","O João leva areia no jipe.","A Joana vai ao judo."]},
+        {letter:"F",sentences:["A faca é da Fátima.","O Filipe teve fome e comeu o figo.","A fada Fifó fala."]},
+        {letter:"S",sentences:["A Sara sapateia na sala.","O Simão salta no sofá.","A Sofia vai no passeio."]},
+        {letter:"Z",sentences:["A zebra zune no zoo.","O búzio é do Zeca.","A baliza é azul."]},
+        {letter:"H",sentences:["O Hugo há-de voltar.","Na horta há hortelã.","A Helena humedece o pano."]},
+        {letter:"X",sentences:["O Xico toca xilofone.","A Xana come o peixe.","O Aleixo toca xilofone no xalé."]},
+        {letter:"K",sentences:["A Filipa vê o karaté na TV.","A Kika faz kung-fu.","A Kiara vai ao kart."]},
+        {letter:"W",sentences:["A Wanda vê a webcam.","O Wilson come waffles.","O wifi da sala é muito rápido."]},
+        {letter:"Y",sentences:["O Yuri faz yoga.","A Yara come iogurte.","É o Yuki e a Yara."]}
+    ];
+
+    // Variáveis de Estado
+    let indiceLetraAtual = 0;
+    let indiceFraseAtual = 0;
+    let totalFrases = 0;
+
+    // Elementos DOM
+    const ecraSelecao = document.getElementById('ecra-selecao');
+    const ecraJogo = document.getElementById('ecra-jogo');
+    const ecraFim = document.getElementById('ecra-fim');
+    const containerFrases = document.getElementById('sentences-container');
+    const progressBar = document.getElementById('progress-fill');
+    const progressText = document.getElementById('contador-progresso');
+    const btnProxima = document.getElementById('btn-proxima');
+
+    // Inicialização
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function inicializarGrelha() {
+        const grid = document.getElementById('letters-grid');
+        grid.innerHTML = '';
+        pages.forEach((page, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'letter-card';
+            btn.textContent = page.letter;
+            btn.onclick = () => iniciarJogoDaLetra(index);
+            grid.appendChild(btn);
+        });
+
+        // Verificar se há uma letra no URL (para compatibilidade com links antigos)
+        const urlParams = new URLSearchParams(window.location.search);
+        const letraEscolhida = urlParams.get("letra");
+        if (letraEscolhida) {
+            const pos = pages.findIndex(p => p.letter.toUpperCase() === letraEscolhida.toUpperCase());
+            if (pos !== -1) iniciarJogoDaLetra(pos);
+        }
+    }
+
+    // ==========================================
+    // LÓGICA DO JOGO
+    // ==========================================
+
+    function mostrarEcra(ecraID) {
+        ecraSelecao.style.display = 'none';
+        ecraJogo.style.display = 'none';
+        ecraFim.style.display = 'none';
+        document.getElementById(ecraID).style.display = 'flex';
+    }
+
+    function voltarParaSelecao() {
+        // Atualizar URL sem recarregar a página (limpar parametro)
+        window.history.pushState({}, document.title, window.location.pathname);
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function iniciarJogoDaLetra(index) {
+        // Necessário para permitir áudio (interação do utilizador)
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        indiceLetraAtual = index;
+        indiceFraseAtual = 0;
+        const page = pages[index];
+        totalFrases = page.sentences.length;
+
+        // Atualizar URL (opcional, para partilha)
+        const url = new URL(window.location);
+        url.searchParams.set('letra', page.letter);
+        window.history.pushState({}, '', url);
+
+        // Preencher Crachá
+        document.getElementById('cracha-img').src = imageFor[page.letter];
+        document.getElementById('cracha-texto').textContent = page.letter.toLowerCase() + " - " + page.letter;
+
+        // Reset Interface
+        containerFrases.innerHTML = '';
+        atualizarProgresso();
+        mostrarEcra('ecra-jogo');
+
+        // Mostrar primeira frase
+        renderizarFrase(0);
+    }
+
+    function renderizarFrase(index) {
+        const page = pages[indiceLetraAtual];
+        const textoAlvo = page.sentences[index];
+
+        const div = document.createElement("div");
+        div.className = "sentence-box";
+        div.innerHTML = `
+            <div class="sentence-text">${textoAlvo}</div>
+            <input type="text" id="inp${index}" class="sentence-input" placeholder="Escreve aqui..." autocomplete="off" spellcheck="false">
+        `;
+        containerFrases.appendChild(div);
+
+        const inputEl = document.getElementById(`inp${index}`);
+        
+        // Focar no novo input com um ligeiro delay para a animação
+        setTimeout(() => inputEl.focus(), 100);
+
+        // Validar em tempo real
+        inputEl.addEventListener('input', function() {
+            verificarEscrita(this, textoAlvo, index);
+        });
+    }
+
+    function verificarEscrita(input, textoAlvo, index) {
+        const val = input.value;
+
+        if (val === "") {
+            input.classList.remove("wrong");
+        } 
+        else if (val === textoAlvo) {
+            // Frase totalmente correta!
+            input.classList.remove("wrong");
+            input.classList.add("correct");
+            input.disabled = true; // Trancar caixa
+            tocarSom('acerto');
+            
+            indiceFraseAtual++;
+            atualizarProgresso();
+
+            if (indiceFraseAtual < totalFrases) {
+                // Lançar próxima frase
+                renderizarFrase(indiceFraseAtual);
+            } else {
+                // Terminou a letra
+                setTimeout(finalizarNivel, 600);
+            }
+        } 
+        else if (textoAlvo.startsWith(val)) {
+            // Caminho certo (suave)
+            input.classList.remove("wrong");
+        } 
+        else {
+            // Erro (vermelho suave, sem som para não ser chato)
+            input.classList.add("wrong");
+        }
+    }
+
+    function atualizarProgresso() {
+        const percent = (indiceFraseAtual / totalFrases) * 100;
+        progressBar.style.width = percent + "%";
+        progressText.textContent = `${indiceFraseAtual}/${totalFrases}`;
+    }
+
+    function finalizarNivel() {
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        dispararConfetis();
+
+        if (indiceLetraAtual < pages.length - 1) {
+            const proximaLetra = pages[indiceLetraAtual + 1].letter;
+            btnProxima.textContent = "Avançar para a letra " + proximaLetra + " ➔";
+            btnProxima.onclick = () => iniciarJogoDaLetra(indiceLetraAtual + 1);
+        } else {
+            btnProxima.textContent = "🏆 Terminar Jogo Inteiro";
+            btnProxima.onclick = voltarParaSelecao;
+        }
+    }
+
+    // ==========================================
+    // SONS E CONFETIS (Do teu Template)
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis = [];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2,
+                velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360,
+                velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+
+        confetis.forEach(c => {
+            c.y += c.velY;
+            c.x += c.velX;
+            c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y);
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor;
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arrancar a App
+    window.onload = inicializarGrelha;
+
+</script>
+</body>
+</html>
