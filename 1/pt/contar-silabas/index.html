@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Contar Sílabas 👏</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE ORIGINAL
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; }
+            .cartao-jogo-container { padding: 25px 15px; }
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: CONTAR SÍLABAS
+           ========================================= */
+        
+        /* PLACAR E BARRA DE PROGRESSO */
+        .status-bar { width: 100%; max-width: 400px; margin-bottom: 25px; }
+        .score-container { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; }
+        .score-certas { color: #2ed573; }
+        .score-erradas { color: #ff4757; }
+        .progress-bg { background-color: #e3f2fd; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease-out; }
+
+        /* IMAGEM E PALAVRA */
+        .game-image {
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 3px solid #e3f2fd;
+            box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
+        }
+
+        .word-display {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--azul-escuro);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            min-height: 40px; /* Evita que o layout salte */
+            transition: color 0.3s;
+        }
+
+        /* BOTÕES DE NÚMEROS */
+        .numbers-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .num-btn {
+            background-color: white;
+            color: var(--azul-vibrante);
+            border: 3px solid var(--azul-vibrante);
+            width: 65px;
+            height: 65px;
+            font-size: 2rem;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #b1dcfb;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .num-btn:hover { background-color: #e3f2fd; }
+        .num-btn:active { transform: translateY(5px); box-shadow: 0 0px 0 #b1dcfb; }
+
+        /* ECRÃ FINAL */
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 300px; animation: fadeIn 0.5s ease; }
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; }
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); }
+
+        /* ANIMAÇÕES DE FEEDBACK */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-3deg); }
+            50% { transform: translateX(8px) rotate(3deg); }
+            75% { transform: translateX(-8px) rotate(-3deg); }
+        }
+        
+        .error-shake { animation: shake 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; box-shadow: 0 4px 0 #ffc1c1 !important; }
+        .success-bounce { border-color: #2ed573 !important; background-color: #2ed573 !important; color: white !important; box-shadow: 0 4px 0 #219d53 !important; transform: scale(1.1); }
+        .word-success { color: #2ed573 !important; transform: scale(1.1); transition: 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+         <li><a href="../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <!-- Título Adaptado -->
+        <h1>Quantas Sílabas? 👏</h1>
+        <div class="subtitulo">Quantas vezes bates as palmas?</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ DO JOGO ATIVO -->
+        <div id="game-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            
+            <div class="status-bar">
+                <div class="score-container">
+                    <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
+                    <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <img id="game-image" class="game-image" src="" alt="Imagem secreta">
+            <div id="word-display" class="word-display">PALAVRA</div>
+            
+            <!-- Botões de Contagem -->
+            <div class="numbers-container">
+                <button class="num-btn" onclick="verificarResposta(1, this)">1</button>
+                <button class="num-btn" onclick="verificarResposta(2, this)">2</button>
+                <button class="num-btn" onclick="verificarResposta(3, this)">3</button>
+                <button class="num-btn" onclick="verificarResposta(4, this)">4</button>
+                <button class="num-btn" onclick="verificarResposta(5, this)">5</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ FINAL -->
+        <div id="end-screen">
+            <h2 class="end-title" id="end-title-text">Fim do Jogo! 🎉</h2>
+            <div class="end-stats">
+                Acertaste <strong id="final-certas" style="color:#2ed573">0</strong> palavras<br>
+                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> tentativas erradas.
+            </div>
+            <button class="btn-reiniciar" onclick="iniciarJogo()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script src="dados.js"></script>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    const MAX_PALAVRAS = 10;
+    let palavrasDoJogo = [];
+    let palavraAtualIndex = 0;
+    let certas = 0;
+    let erradas = 0;
+    let isVerificando = false;
+
+    const elGameScreen = document.getElementById('game-screen');
+    const elEndScreen = document.getElementById('end-screen');
+    const elValCertas = document.getElementById('val-certas');
+    const elValErradas = document.getElementById('val-erradas');
+    const elProgressFill = document.getElementById('progress-fill');
+    const elImage = document.getElementById('game-image');
+    const elWordDisplay = document.getElementById('word-display');
+    const botoes = document.querySelectorAll('.num-btn');
+
+    function getImagePath(imgPath) {
+        return imgPath.replace('img/', '../../../1/pt/img/');
+    }
+
+    function iniciarJogo() {
+        certas = 0; erradas = 0; palavraAtualIndex = 0; isVerificando = false;
+        atualizarPlacar();
+        
+        elEndScreen.style.display = 'none';
+        elGameScreen.style.display = 'flex';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        // Baralha e escolhe 10
+        let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
+        palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
+        carregarPalavra();
+    }
+
+    function carregarPalavra() {
+        isVerificando = false;
+        const palavraObj = palavrasDoJogo[palavraAtualIndex];
+        
+        elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
+        elImage.src = getImagePath(palavraObj.imagem);
+        
+        // Mostra a palavra normal (sem divisão)
+        elWordDisplay.textContent = palavraObj.palavra;
+        elWordDisplay.classList.remove('word-success');
+
+        // Limpa classes de sucesso/erro dos botões
+        botoes.forEach(btn => {
+            btn.classList.remove('success-bounce', 'error-shake');
+        });
+    }
+
+    function verificarResposta(palpite, btnElement) {
+        if (isVerificando) return;
+        
+        const palavraObj = palavrasDoJogo[palavraAtualIndex];
+        const respostaCorreta = palavraObj.num;
+
+        isVerificando = true;
+
+        if (palpite === respostaCorreta) {
+            // ACERTOU
+            certas++; 
+            atualizarPlacar(); 
+            tocarSom('acerto');
+            
+            btnElement.classList.add('success-bounce');
+            
+            // Toque Pedagógico: Mostra a divisão silábica quando acerta! (ex: PA-TO)
+            elWordDisplay.textContent = palavraObj.divisao;
+            elWordDisplay.classList.add('word-success');
+
+            setTimeout(() => {
+                palavraAtualIndex++;
+                if (palavraAtualIndex < MAX_PALAVRAS) carregarPalavra();
+                else finalizarJogo();
+            }, 1500); // 1.5s de pausa para a criança ler as sílabas separadas
+
+        } else {
+            // ERROU
+            erradas++; 
+            atualizarPlacar(); 
+            tocarSom('erro');
+            
+            btnElement.classList.add('error-shake');
+            
+            setTimeout(() => {
+                btnElement.classList.remove('error-shake');
+                isVerificando = false;
+            }, 500);
+        }
+    }
+
+    function atualizarPlacar() {
+        elValCertas.textContent = certas;
+        elValErradas.textContent = erradas;
+    }
+
+    function finalizarJogo() {
+        elProgressFill.style.width = `100%`;
+        setTimeout(() => {
+            elGameScreen.style.display = 'none';
+            elEndScreen.style.display = 'flex';
+            document.getElementById('final-certas').textContent = certas;
+            document.getElementById('final-erradas').textContent = erradas;
+
+            if (erradas === 0) {
+                document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
+                tocarSom('vitoria'); dispararConfetis();
+            } else if (erradas <= 3) {
+                document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+                tocarSom('vitoria'); dispararConfetis();
+            } else {
+                document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+                tocarSom('acerto'); 
+            }
+        }, 500);
+    }
+
+    // SISTEMA DE SOM SINTETIZADO (Igual ao anterior)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        }
+        else if (tipo === 'vitoria') {
+            const notas = [523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    // SISTEMA DE CONFETIS
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis = [];
+        const cores = ['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2,
+                velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360,
+                velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+
+        confetis.forEach(c => {
+            c.y += c.velY;
+            c.x += c.velX;
+            c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y);
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor;
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    window.onload = iniciarJogo;
+
+</script>
+</body>
+</html>
