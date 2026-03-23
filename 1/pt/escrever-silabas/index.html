@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1º Ano - Escrever Sílabas ✍️</title>
+    <title>1º Ano - Escrita de Sílabas 🎒</title>
     
-    <link rel="icon" type="image/png" href="../../../logo.png">
+    <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="dados.js"></script>
-
     <style>
+        /* CSS DO TEMPLATE ORIGINAL */
         :root {
             --bg-body: #f0f4f8;
             --azul-vibrante: #0091ff; 
@@ -20,8 +18,6 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
-            --sucesso: #48bb78;
-            --erro: #e53e3e;
         }
 
         body { 
@@ -35,13 +31,13 @@
             overflow-x: hidden;
         }
 
-        /* HEADER - ESTRUTURA ORIGINAL DO TEMPLATE */
         header {
             background-color: var(--bg-header);
             padding: 25px 20px;
             border-bottom: 1px solid var(--azul-vibrante);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             position: relative;
+            flex-shrink: 0;
             z-index: 100;
         }
 
@@ -49,9 +45,13 @@
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .nav-container {
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -59,23 +59,9 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            left: 0;
+            z-index: 10;
         }
 
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .nav-container {
-                position: static;
-                transform: none;
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            h1 { font-size: 1.6rem !important; }
-        }
-
-        /* HAMBURGER E ANIMAÇÃO FECHAR (X) */
         .hamburger {
             cursor: pointer;
             background: rgba(255, 255, 255, 0.4);
@@ -85,24 +71,14 @@
             gap: 4px;
             padding: 10px;
             border-radius: 8px;
-            transition: 0.3s;
-            z-index: 1001;
+            transition: background 0.4s ease;
         }
-        .hamburger:hover { background: rgba(255, 255, 255, 0.8); }
-        .hamburger span { 
-            display: block; 
-            width: 20px; 
-            height: 2px; 
-            background: var(--azul-escuro); 
-            transition: 0.3s; 
-        }
-
-        /* Transformação para o X */
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-        /* BOTÃO VOLTAR */
         .btn-voltar {
             background: var(--cor-1ano);
             color: white;
@@ -118,62 +94,183 @@
             gap: 8px;
             transition: 0.2s;
         }
-        .btn-voltar:hover { background-color: var(--cor-1ano-dark); transform: translateY(-2px); }
+        .btn-voltar:hover { transform: scale(1.05); }
 
-        h1 { color: var(--azul-escuro); font-size: 2.2rem; margin: 0; }
-        .subtitulo { color: var(--azul-escuro); font-size: 1.1rem; font-weight: 500; opacity: 0.8; margin-top: 10px; }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        
+        .subtitulo { 
+            color: var(--azul-escuro); 
+            font-size: clamp(0.85rem, 3vw, 1.1rem); 
+            font-weight: 500; 
+            opacity: 0.8; 
+            margin-top: 15px; 
+        }
 
-        /* SIDEBAR E LINKS */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
-        .sidebar ul { list-style: none; padding: 20px; margin: 0; }
-        .sidebar li a { 
-            display: block; padding: 12px; text-decoration: none; color: var(--text-main); 
-            background: #f8fafc; border-radius: 8px; margin-bottom: 8px; transition: 0.3s; 
-        }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; padding-left: 20px; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        /* JOGO */
-        .game-status { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px auto; width: 90%; max-width: 600px; }
-        .progress-bar-bg { width: 100%; height: 24px; background: #e2e8f0; border-radius: 12px; border: 2px solid #cbd5e0; overflow: hidden; }
-        .progress-bar-fill { width: 0%; height: 100%; background: var(--cor-1ano); transition: 0.4s; }
-
-        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        
         .cartao-jogo-container {
-            background: white; width: 95%; max-width: 800px; padding: 30px; border-radius: 30px; 
-            border-top: 8px solid var(--cor-1ano); box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center;
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            min-height: 450px;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            border-top: 8px solid var(--cor-1ano);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
-        .img-wrapper { 
-            padding: 10px; background: white; border: 2px solid #eef2f7; 
-            border-radius: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.03); margin-bottom: 15px; 
-        }
-        .img-wrapper img { max-width: 220px; height: 180px; object-fit: contain; }
-
-        .hint-box { background: #f0f9ff; color: var(--azul-escuro); padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 1.4rem; border: 2px solid #d0e4ff; margin: 4px; display: inline-block; }
-
-        .input-escrita {
-            width: 85%; max-width: 280px; padding: 15px; border: 3px solid var(--azul-vibrante); border-radius: 15px;
-            font-size: 1.8rem; font-weight: 700; text-align: center; color: var(--azul-escuro);
-            outline: none; margin-bottom: 20px; text-transform: lowercase;
-        }
-
-        .btn-verificar {
-            background: var(--cor-1ano); color: white; border: none; padding: 15px 50px; border-radius: 50px;
-            font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark);
-            transition: 0.1s;
-        }
-        .btn-verificar:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--cor-1ano-dark); }
-        .btn-verificar:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--cor-1ano-dark); }
-
-        #feedback-msg { margin-top: 15px; font-weight: 700; font-size: 1.4rem; min-height: 1.6em; }
-
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; }
+            .cartao-jogo-container { padding: 20px; }
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO DESTE JOGO (ADICIONADO)
+           ========================================= */
+        .game-image {
+            height: 160px;
+            object-fit: contain;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            /* Se a imagem for transparente, este fundo ajuda no contraste */
+            background-color: #f8fafc; 
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .game-image:hover { transform: scale(1.05); }
+
+        .slots-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .slot {
+            width: 70px;
+            height: 70px;
+            border: 3px dashed var(--azul-vibrante);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+            background-color: transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+
+        .slot.filled {
+            border-style: solid;
+            background-color: #e3f2fd;
+            border-color: var(--azul-vibrante);
+            box-shadow: 0 4px 0 #b1dcfb;
+            transform: translateY(-2px);
+        }
+
+        .pool-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            padding-top: 20px;
+            border-top: 2px solid #f0f4f8;
+        }
+
+        .syllable-btn {
+            background-color: var(--cor-1ano);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--cor-1ano-dark);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .syllable-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0px 0 var(--cor-1ano-dark);
+        }
+
+        .syllable-btn.hidden {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* Animações de Sucesso e Erro */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-3deg); }
+            50% { transform: translateX(8px) rotate(3deg); }
+            75% { transform: translateX(-8px) rotate(-3deg); }
+        }
+        
+        .error-shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: #ff4757 !important;
+            background-color: #ffefef !important;
+            color: #ff4757 !important;
+            box-shadow: 0 4px 0 #ffc1c1 !important;
+        }
+
+        .success-bounce {
+            background-color: #2ed573 !important;
+            border-color: #26b360 !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #219d53 !important;
+            transform: scale(1.1);
+        }
+
+        /* Confete super simples para quando acerta */
+        .victory-msg {
+            color: #2ed573;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+            animation: bounceIn 0.5s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -181,8 +278,9 @@
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 <nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
-        <li><a href="../../../index.html">🏠 Início</a></li>
+         <li><a href="../../../index.html">🏠 Início</a></li>
         <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
         <li><a href="../../index.html">🎒 1º Ano</a></li>
         <li><a href="../../../2/index.html">💡 2º Ano</a></li>
@@ -197,26 +295,28 @@
             <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
-            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+            <a href="index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        <h1>Escrever Sílabas ✍️</h1>
-        <div class="subtitulo">Ordena as sílabas e escreve a palavra correta.</div>
+        
+        <!-- Títulos atualizados -->
+        <h1>Escrita de Sílabas ✍️</h1>
+        <div class="subtitulo">Clica nas sílabas em baixo para formar o nome da imagem!</div>
     </div>
 </header>
 
-<div class="game-status">
-    <div style="font-weight:700;">✅ <span id="acertos">0</span> | ❌ <span id="erros">0</span></div>
-    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
-</div>
-
 <main>
-    <div class="cartao-jogo-container" id="game-canvas">
-        <div class="img-wrapper"><img src="" id="img-pergunta"></div>
-        <div id="silabas-dica" style="margin-bottom: 15px;"></div>
-        <input type="text" class="input-escrita" id="entrada-texto" placeholder="..." autocomplete="off">
-        <br>
-        <button class="btn-verificar" onclick="validar()">🔍 Verificar</button>
-        <div id="feedback-msg"></div>
+    <div class="cartao-jogo-container" id="area-jogo">
+        <!-- ESTRUTURA DO JOGO -->
+        <img id="game-image" class="game-image" src="" alt="Imagem secreta">
+        
+        <!-- Quadradinhos vazios -->
+        <div id="slots-container" class="slots-container"></div>
+        
+        <!-- Mensagem de Vitória -->
+        <div id="victory-msg" class="victory-msg">MUITO BEM! 🎉</div>
+
+        <!-- Botões com as sílabas -->
+        <div id="pool-container" class="pool-container"></div>
     </div>
 </main>
 
@@ -225,78 +325,257 @@
 </footer>
 
 <script>
-    let indice = 0, total = 10, selecionadas = [], certos = 0, errados = 0, bloqueio = false;
-    const somSucesso = new Audio('https://actions.google.com/sounds/v1/cartoon/clime_up_tone.ogg');
-
-    function iniciar() {
-        selecionadas = [...palavras].sort(() => 0.5 - Math.random()).slice(0, total);
-        proxima();
-    }
-
-    function proxima() {
-        if (indice >= total) return finalizar();
-        bloqueio = false;
-        const item = selecionadas[indice];
-        document.getElementById('img-pergunta').src = `../img/${item.imagem.split('/').pop()}`;
-        document.getElementById('feedback-msg').innerHTML = "";
-        const entrada = document.getElementById('entrada-texto');
-        entrada.value = ""; entrada.disabled = false; entrada.focus();
-        
-        const dicas = document.getElementById('silabas-dica');
-        dicas.innerHTML = "";
-        item.divisao.split('-').sort(() => 0.5 - Math.random()).forEach(s => {
-            dicas.innerHTML += `<div class="hint-box">${s.toLowerCase()}</div>`;
-        });
-        document.getElementById('progress-fill').style.width = `${(indice / total) * 100}%`;
-    }
-
-    function validar() {
-        if (bloqueio) return;
-        bloqueio = true;
-        const entrada = document.getElementById('entrada-texto');
-        const item = selecionadas[indice];
-        const feedback = document.getElementById('feedback-msg');
-
-        if (entrada.value.trim().toLowerCase() === item.palavra.toLowerCase()) {
-            certos++;
-            document.getElementById('acertos').innerText = certos;
-            feedback.innerHTML = "<span style='color:var(--sucesso)'>Muito bem! 🌟</span>";
-            indice++;
-            setTimeout(proxima, 1200);
-        } else {
-            errados++;
-            document.getElementById('erros').innerText = errados;
-            feedback.innerHTML = `<span style='color:var(--erro)'>A palavra era: ${item.palavra.toLowerCase()}</span>`;
-            indice++;
-            setTimeout(proxima, 2500);
-        }
-    }
-
-    function finalizar() {
-        document.getElementById('progress-fill').style.width = "100%";
-        somSucesso.play();
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        document.getElementById('game-canvas').innerHTML = `
-            <h2>Parabéns! 🎉</h2>
-            <p>Concluíste as ${total} palavras!</p>
-            <button onclick="location.reload()" class="btn-voltar" style="margin:20px auto; justify-content:center;">🔄 Jogar de Novo</button>
-        `;
-    }
-
-    // FUNÇÃO TOGGLE COM ANIMAÇÃO DO BOTÃO (X)
+    // Configurações Básicas do Template
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
     function toggleMenu() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const hamburger = document.getElementById('hamburgerBtn');
-        
         sidebar.classList.toggle('active');
         overlay.classList.toggle('active');
         hamburger.classList.toggle('open');
     }
 
-    document.getElementById('entrada-texto').addEventListener('keypress', (e) => { if(e.key==='Enter') validar(); });
-    document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    window.onload = iniciar;
+    // ==========================================
+    // LÓGICA DO JOGO "ESCRITA DE SÍLABAS"
+    // ==========================================
+
+    const palavras = [
+        { palavra: "pato", imagem: "img/pato.png", num: 2, divisao: "PA-TO" },
+        { palavra: "gato", imagem: "img/gato.png", num: 2, divisao: "GA-TO" },
+        { palavra: "bola", imagem: "img/bola.png", num: 2, divisao: "BO-LA" },
+        { palavra: "vaca", imagem: "img/vaca.png", num: 2, divisao: "VA-CA" },
+        { palavra: "rato", imagem: "img/rato.png", num: 2, divisao: "RA-TO" },
+        { palavra: "violino", imagem: "img/violino.png", num: 4, divisao: "VI-O-LI-NO" },
+        { palavra: "melão", imagem: "img/melao.png", num: 2, divisao: "ME-LÃO" },
+        { palavra: "mota", imagem: "img/mota.png", num: 2, divisao: "MO-TA" },
+        { palavra: "janela", imagem: "img/janela.png", num: 3, divisao: "JA-NE-LA" },
+        { palavra: "jipe", imagem: "img/jipe.png", num: 2, divisao: "JI-PE" },
+        { palavra: "cama", imagem: "img/cama.png", num: 2, divisao: "CA-MA" },
+        { palavra: "tartaruga", imagem: "img/tartaruga.png", num: 4, divisao: "TAR-TA-RU-GA" },
+        { palavra: "dado", imagem: "img/dado.png", num: 2, divisao: "DA-DO" },
+        { palavra: "baleia", imagem: "img/baleia.png", num: 3, divisao: "BA-LEI-A" },
+        { palavra: "vela", imagem: "img/vela.png", num: 2, divisao: "VE-LA" },
+        { palavra: "abelha", imagem: "img/abelha.png", num: 3, divisao: "A-BE-LHA" },
+        { palavra: "bicicleta", imagem: "img/bicicleta.png", num: 4, divisao: "BI-CI-CLE-TA" },
+        { palavra: "cenoura", imagem: "img/cenoura.png", num: 3, divisao: "CE-NOU-RA" },
+        { palavra: "maçã", imagem: "img/maca.png", num: 2, divisao: "MA-ÇÃ" },
+        { palavra: "livro", imagem: "img/livro.png", num: 2, divisao: "LI-VRO" },
+        { palavra: "queijo", imagem: "img/queijo.png", num: 2, divisao: "QUEI-JO" },
+        { palavra: "óculos", imagem: "img/oculos.png", num: 3, divisao: "Ó-CU-LOS" },
+        { palavra: "casaco", imagem: "img/casaco.png", num: 3, divisao: "CA-SA-CO" },
+        { palavra: "tesoura", imagem: "img/tesoura.png", num: 3, divisao: "TE-SOU-RA" },
+        { palavra: "palhaço", imagem: "img/palhaco.png", num: 3, divisao: "PA-LHA-ÇO" },
+        { palavra: "ovelha", imagem: "img/ovelha.png", num: 3, divisao: "O-VE-LHA" },
+        { palavra: "mala", imagem: "img/mala.png", num: 2, divisao: "MA-LA" },
+        { palavra: "macaco", imagem: "img/macaco.png", num: 3, divisao: "MA-CA-CO" },
+        { palavra: "dedo", imagem: "img/dedo.png", num: 2, divisao: "DE-DO" },
+        { palavra: "cavalo", imagem: "img/cavalo.png", num: 3, divisao: "CA-VA-LO" },
+        { palavra: "limão", imagem: "img/limao.png", num: 2, divisao: "LI-MÃO" },
+        { palavra: "foca", imagem: "img/foca.png", num: 2, divisao: "FO-CA" },
+        { palavra: "papagaio", imagem: "img/papagaio.png", num: 4, divisao: "PA-PA-GAI-O" },
+        { palavra: "avião", imagem: "img/aviao.png", num: 3, divisao: "A-VI-ÃO" },
+        { palavra: "pote", imagem: "img/pote.png", num: 2, divisao: "PO-TE" },
+        { palavra: "tomate", imagem: "img/tomate.png", num: 3, divisao: "TO-MA-TE" },
+        { palavra: "banana", imagem: "img/banana.png", num: 3, divisao: "BA-NA-NA" },
+        { palavra: "amarelo", imagem: "img/amarelo.png", num: 4, divisao: "A-MA-RE-LO" },
+        { palavra: "roda", imagem: "img/roda.png", num: 2, divisao: "RO-DA" },
+        { palavra: "bota", imagem: "img/bota.png", num: 2, divisao: "BO-TA" },
+        { palavra: "mapa", imagem: "img/mapa.png", num: 2, divisao: "MA-PA" },
+        { palavra: "fada", imagem: "img/fada.png", num: 2, divisao: "FA-DA" },
+        { palavra: "boneca", imagem: "img/boneca.png", num: 3, divisao: "BO-NE-CA" },
+        { palavra: "batata", imagem: "img/batata.png", num: 3, divisao: "BA-TA-TA" },
+        { palavra: "girafa", imagem: "img/girafa.png", num: 3, divisao: "GI-RA-FA" },
+        { palavra: "cadeira", imagem: "img/cadeira.png", num: 3, divisao: "CA-DEI-RA" },
+        { palavra: "caracol", imagem: "img/caracol.png", num: 3, divisao: "CA-RA-COL" },
+        { palavra: "piano", imagem: "img/piano.png", num: 3, divisao: "PI-A-NO" }
+    ];
+
+    // Criação de um banco com TODAS as sílabas possíveis para usar como distratores
+    let todasAsSilabas = [];
+    palavras.forEach(p => {
+        todasAsSilabas.push(...p.divisao.split('-'));
+    });
+    todasAsSilabas = [...new Set(todasAsSilabas)]; // Remove duplicadas
+
+    // Variáveis de Estado do Jogo
+    let palavraAtualObj = null;
+    let silabasCorretas = [];
+    let silabasNoTabuleiro = []; // Array que representa as posições preenchidas
+    let poolDeSilabas = []; // Botões gerados
+    let isAnimating = false;
+
+    // Elementos DOM
+    const imgEl = document.getElementById('game-image');
+    const slotsContainer = document.getElementById('slots-container');
+    const poolContainer = document.getElementById('pool-container');
+    const victoryMsg = document.getElementById('victory-msg');
+
+    // Função que formata o caminho da imagem. 
+    // Como pediste, as imagens estão em "raiz/1/pt/img". Se o index do jogo estiver noutra pasta, isto ajusta o caminho.
+    function getImagePath(imgPath) {
+        // Altera 'img/pato.png' para a estrutura que indicaste
+        return imgPath.replace('img/', '../../../1/pt/img/');
+    }
+
+    function iniciarNovaPalavra() {
+        // Limpar feedback
+        victoryMsg.style.display = 'none';
+        isAnimating = false;
+
+        // Escolher palavra aleatória
+        const randomIndex = Math.floor(Math.random() * palavras.length);
+        palavraAtualObj = palavras[randomIndex];
+        silabasCorretas = palavraAtualObj.divisao.split('-');
+        
+        // Preparar array vazio para os slots (ex: [null, null] para PATO)
+        silabasNoTabuleiro = new Array(silabasCorretas.length).fill(null);
+
+        // Atualizar Imagem
+        imgEl.src = getImagePath(palavraAtualObj.imagem);
+
+        gerarPoolDeSilabas();
+        renderizarTabuleiro();
+    }
+
+    function gerarPoolDeSilabas() {
+        // Sílabas corretas
+        poolDeSilabas = silabasCorretas.map(silaba => ({ id: Math.random().toString(), texto: silaba, usada: false }));
+        
+        // Adicionar 3 a 4 sílabas intrusas (distratores)
+        let numIntrusas = silabasCorretas.length > 2 ? 3 : 4; 
+        let intrusasAdicionadas = 0;
+
+        while (intrusasAdicionadas < numIntrusas) {
+            let aleatoria = todasAsSilabas[Math.floor(Math.random() * todasAsSilabas.length)];
+            // Garantir que a intrusa não faz parte da palavra atual
+            if (!silabasCorretas.includes(aleatoria)) {
+                poolDeSilabas.push({ id: Math.random().toString(), texto: aleatoria, usada: false });
+                intrusasAdicionadas++;
+            }
+        }
+
+        // Baralhar os botões
+        poolDeSilabas.sort(() => Math.random() - 0.5);
+    }
+
+    function renderizarTabuleiro() {
+        // Renderizar Slots Vazios/Preenchidos
+        slotsContainer.innerHTML = '';
+        silabasNoTabuleiro.forEach((item, index) => {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            
+            if (item !== null) {
+                slot.textContent = item.texto;
+                slot.classList.add('filled');
+                // Se clicar na sílaba preenchida, remove-a e devolve-a ao pool
+                slot.onclick = () => devolverSilabaAoPool(index);
+            }
+
+            slotsContainer.appendChild(slot);
+        });
+
+        // Renderizar Botões (Pool)
+        poolContainer.innerHTML = '';
+        poolDeSilabas.forEach(silabaObj => {
+            const btn = document.createElement('button');
+            btn.className = 'syllable-btn';
+            btn.textContent = silabaObj.texto;
+            
+            if (silabaObj.usada) {
+                btn.classList.add('hidden'); // Esconde mas mantém o espaço
+            } else {
+                btn.onclick = () => enviarSilabaParaSlot(silabaObj.id);
+            }
+            
+            poolContainer.appendChild(btn);
+        });
+    }
+
+    function enviarSilabaParaSlot(id) {
+        if(isAnimating) return;
+
+        // Encontrar primeiro slot vazio
+        const emptyIndex = silabasNoTabuleiro.findIndex(item => item === null);
+        
+        if (emptyIndex !== -1) {
+            // Marcar sílaba como usada
+            const silabaIndex = poolDeSilabas.findIndex(s => s.id === id);
+            poolDeSilabas[silabaIndex].usada = true;
+            
+            // Colocar no tabuleiro
+            silabasNoTabuleiro[emptyIndex] = poolDeSilabas[silabaIndex];
+            
+            renderizarTabuleiro();
+            verificarVitoria();
+        }
+    }
+
+    function devolverSilabaAoPool(slotIndex) {
+        if(isAnimating) return;
+
+        const silabaObj = silabasNoTabuleiro[slotIndex];
+        
+        // Marcar como não usada no pool
+        const poolIndex = poolDeSilabas.findIndex(s => s.id === silabaObj.id);
+        poolDeSilabas[poolIndex].usada = false;
+        
+        // Esvaziar o slot
+        silabasNoTabuleiro[slotIndex] = null;
+        
+        renderizarTabuleiro();
+    }
+
+    function verificarVitoria() {
+        // Verifica se ainda há slots vazios
+        if (silabasNoTabuleiro.includes(null)) return;
+
+        // Compor a palavra escrita pela criança
+        const palavraEscrita = silabasNoTabuleiro.map(s => s.texto).join('-');
+        
+        if (palavraEscrita === palavraAtualObj.divisao) {
+            // ACERTOU!
+            isAnimating = true;
+            
+            // Pinta os slots de verde e faz animação
+            const slotsDOM = document.querySelectorAll('.slot');
+            slotsDOM.forEach(s => s.classList.add('success-bounce'));
+            
+            poolContainer.style.display = 'none'; // Esconde os botões restantes
+            victoryMsg.style.display = 'block';
+
+            // Aguarda 2.5 segundos e carrega nova palavra
+            setTimeout(() => {
+                poolContainer.style.display = 'flex';
+                iniciarNovaPalavra();
+            }, 2500);
+
+        } else {
+            // ERROU!
+            isAnimating = true;
+            const slotsDOM = document.querySelectorAll('.slot');
+            
+            // Faz os slots tremerem e ficarem vermelhos
+            slotsDOM.forEach(s => s.classList.add('error-shake'));
+            
+            setTimeout(() => {
+                // Tira o vermelho e devolve tudo ao sítio
+                slotsDOM.forEach(s => s.classList.remove('error-shake'));
+                
+                // Devolve as sílabas automaticamente (ajuda a evitar frustração)
+                silabasNoTabuleiro.forEach((item, idx) => {
+                    if(item !== null) devolverSilabaAoPool(idx);
+                });
+                
+                isAnimating = false;
+            }, 600);
+        }
+    }
+
+    // Inicializar o jogo quando a página carrega
+    window.onload = iniciarNovaPalavra;
+
 </script>
 </body>
 </html>
