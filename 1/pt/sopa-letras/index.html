@@ -1,1 +1,733 @@
-aaa
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Sopa de Letras 🔎</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        /* =========================================
+           LAYOUT MEIO TERMO ESTRUTURAL
+           ========================================= */
+        main { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 20px;
+            gap: 25px;
+        }
+
+        .cartao-jogo-container { 
+            background: white; 
+            width: 100%; 
+            max-width: 1000px; /* Ligeiramente mais largo para caber a grelha */
+            min-height: 450px; 
+            padding: 30px 20px; 
+            border-radius: 30px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        /* =========================================
+           BARRA DE STATUS SUPERIOR
+           ========================================= */
+        .status-bar { width: 100%; max-width: 900px; display: none; }
+        .score-container { 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; font-weight: bold; font-size: 1.4rem; padding: 0 15px;
+        }
+        .score-certas { color: #219d53; display: flex; align-items: center; gap: 8px;}
+        
+        /* Relógio Animado */
+        .timer-container { color: var(--azul-escuro); background: #f0f4f8; padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 8px;}
+        .timer-flash { animation: flashRed 1s infinite; color: #ff4757 !important; background: #ffefef; border: 2px solid #ff4757;}
+        @keyframes flashRed {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        /* =========================================
+           ECRÃ DE DIFICULDADE E BOTÕES
+           ========================================= */
+        #difficulty-screen { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; }
+        #difficulty-screen h2 { color: var(--azul-escuro); font-size: 2rem; margin-bottom: 10px; }
+        
+        .btn-diff {
+            width: 100%; max-width: 350px;
+            padding: 18px; font-size: 1.2rem; font-weight: bold; color: white;
+            border: none; border-radius: 15px; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+        }
+        .btn-diff:hover { transform: translateY(-3px); }
+        .btn-diff:active { transform: translateY(2px); }
+        .btn-diff span { font-size: 0.9rem; font-weight: 400; opacity: 0.9; }
+        
+        .btn-facil { background-color: #2ed573; box-shadow: 0 6px 0 #219d53; }
+        .btn-medio { background-color: #ffa502; box-shadow: 0 6px 0 #d35400; }
+        .btn-dificil { background-color: #ff4757; box-shadow: 0 6px 0 #c0392b; }
+
+        /* =========================================
+           SOPA DE LETRAS (GRELHA + CARTÕES)
+           ========================================= */
+        .game-layout {
+            display: flex; gap: 40px; align-items: flex-start; justify-content: center;
+            width: 100%; flex-wrap: wrap; margin-top: 10px;
+        }
+
+        .grid-wrapper { touch-action: none; /* Previne scroll ao arrastar no touch */ }
+        .word-grid {
+            display: grid; gap: 4px; background: var(--bg-header); padding: 12px;
+            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none;
+        }
+        .grid-cell {
+            width: 40px; height: 40px; background: white; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: bold; color: var(--text-main);
+            cursor: pointer; transition: 0.1s; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        /* Estados das Letras */
+        .grid-cell.selected { background-color: #fff9c4; color: #f39c12; transform: scale(1.1); z-index: 10; border: 2px solid #f39c12; }
+        .grid-cell.found { background-color: #2ed573; color: white; transform: scale(1.05); border: none; box-shadow: 0 0 10px rgba(46, 213, 115, 0.5); z-index: 5; }
+
+        /* Cartões de Palavras ao lado */
+        .words-list {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; flex: 1; min-width: 250px; max-width: 400px;
+        }
+        .word-card {
+            display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px;
+            border-radius: 12px; border: 2px solid #e3f2fd; transition: 0.3s;
+        }
+        .word-card.found { opacity: 0.4; filter: grayscale(1); border-color: #2ed573; background: #f0fff4; }
+        .word-card.found span { text-decoration: line-through; color: #219d53; }
+        
+        .word-card img { width: 45px; height: 45px; object-fit: contain; }
+        .word-card span { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; color: var(--azul-escuro); letter-spacing: 1px; }
+
+        /* =========================================
+           ECRÃ FINAL
+           ========================================= */
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; }
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; }
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); }
+        .btn-reiniciar:active { transform: translateY(5px); box-shadow: 0 0px 0 var(--cor-1ano-dark); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            
+            main { padding: 20px 15px; gap: 15px; } 
+            .cartao-jogo-container { padding: 20px 15px; }
+            
+            .game-layout { gap: 25px; flex-direction: column; align-items: center; }
+            
+            /* Ajusta o tamanho da grelha no telemóvel para caber no ecrã */
+            .grid-cell { width: clamp(22px, 7vw, 35px); height: clamp(22px, 7vw, 35px); font-size: clamp(0.9rem, 4vw, 1.2rem); border-radius: 5px; }
+            .word-grid { gap: 2px; padding: 8px; }
+            
+            .words-list { grid-template-columns: repeat(2, 1fr); width: 100%; min-width: auto; gap: 8px;}
+            .word-card { padding: 6px; gap: 8px; }
+            .word-card img { width: 30px; height: 30px; }
+            .word-card span { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../4/index.html">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Sopa de Letras 🔎</h1>
+        <div class="subtitulo">Encontra as palavras escondidas!</div>
+    </div>
+</header>
+
+<main>
+    <div id="status-bar" class="status-bar">
+        <div class="score-container">
+            <span class="score-certas">✔️ Encontradas: <span id="val-certas">0</span>/<span id="val-total">0</span></span>
+            <div id="timer-box" class="timer-container">
+                ⏳ <span id="timer-val">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ INICIAL DE DIFICULDADE -->
+        <div id="difficulty-screen">
+            <h2>Escolhe a Dificuldade</h2>
+            <button class="btn-diff btn-facil" onclick="iniciarJogo('facil')">
+                Fácil <span>6 palavras • 3 minutos</span>
+            </button>
+            <button class="btn-diff btn-medio" onclick="iniciarJogo('medio')">
+                Médio <span>8 palavras • 4 minutos</span>
+            </button>
+            <button class="btn-diff btn-dificil" onclick="iniciarJogo('dificil')">
+                Difícil <span>10 palavras • 5 minutos</span>
+            </button>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="game-screen" style="display: none; width: 100%;">
+            <div class="game-layout">
+                <div class="grid-wrapper">
+                    <div id="word-grid" class="word-grid"></div>
+                </div>
+                <div id="words-list" class="words-list"></div>
+            </div>
+        </div>
+
+        <!-- ECRÃ FINAL -->
+        <div id="end-screen">
+            <h2 class="end-title" id="end-title-text">Fim do Jogo! 🎉</h2>
+            <div class="end-stats" id="end-stats-text"></div>
+            <button class="btn-reiniciar" onclick="voltarAoMenu()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script src="dados.js"></script>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    // Variáveis Globais
+    let palavrasDoJogo = [];
+    let grelha =[];
+    let tamanhoGrelha = 10;
+    let palavrasEncontradas = 0;
+    
+    let tempoRestante = 0;
+    let timerInterval = null;
+
+    let isDragging = false;
+    let startCell = null;
+    let currentPath =[];
+
+    // Referências do DOM
+    const elDiffScreen = document.getElementById('difficulty-screen');
+    const elGameScreen = document.getElementById('game-screen');
+    const elEndScreen = document.getElementById('end-screen');
+    const elStatusBar = document.getElementById('status-bar');
+    
+    const gridContainer = document.getElementById('word-grid');
+    const wordsListContainer = document.getElementById('words-list');
+    const elValCertas = document.getElementById('val-certas');
+    const elValTotal = document.getElementById('val-total');
+    const elTimerVal = document.getElementById('timer-val');
+    const elTimerBox = document.getElementById('timer-box');
+
+    function getImagePath(imgPath) {
+        return imgPath.replace('img/', '../img/');
+    }
+
+    function voltarAoMenu() {
+        pararTimer();
+        elEndScreen.style.display = 'none';
+        elGameScreen.style.display = 'none';
+        elStatusBar.style.display = 'none';
+        elDiffScreen.style.display = 'flex';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+
+    function iniciarJogo(dificuldade) {
+        palavrasEncontradas = 0;
+        let numPalavras = 6;
+        let minutos = 3;
+        
+        if (dificuldade === 'facil') { numPalavras = 6; minutos = 3; tamanhoGrelha = 10; }
+        else if (dificuldade === 'medio') { numPalavras = 8; minutos = 4; tamanhoGrelha = 12; }
+        else if (dificuldade === 'dificil') { numPalavras = 10; minutos = 5; tamanhoGrelha = 14; }
+
+        tempoRestante = minutos * 60;
+        
+        // Configuração Inicial de UI
+        elDiffScreen.style.display = 'none';
+        elEndScreen.style.display = 'none';
+        elGameScreen.style.display = 'block';
+        elStatusBar.style.display = 'block';
+        elTimerBox.classList.remove('timer-flash');
+
+        elValTotal.textContent = numPalavras;
+        atualizarPlacar();
+
+        // Escolhe palavras aleatórias
+        let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
+        palavrasDoJogo = baralhadas.slice(0, numPalavras).map(obj => ({
+            ...obj, 
+            palavraLimpa: obj.palavra.toUpperCase(), // Mantém os acentos visíveis na grelha
+            encontrada: false 
+        }));
+
+        gerarGrelhaLogica(dificuldade);
+        desenharGrelha();
+        desenharListaPalavras();
+        
+        iniciarTimer();
+    }
+
+    // =========================================
+    // LÓGICA DA GRELHA (GERAÇÃO)
+    // =========================================
+    function gerarGrelhaLogica(dificuldade) {
+        // Inicializa grelha vazia
+        grelha = Array(tamanhoGrelha).fill(null).map(() => Array(tamanhoGrelha).fill(''));
+
+        // Direções (0: Horizontal, 1: Vertical, 2: Diagonal Direita-Baixo)
+        const direcoesPermitidas = dificuldade === 'dificil' ?[0, 1, 2] : [0, 1];
+
+        palavrasDoJogo.forEach(item => {
+            let colocada = false;
+            let tentativas = 0;
+            const word = item.palavraLimpa;
+
+            while (!colocada && tentativas < 200) {
+                tentativas++;
+                let dir = direcoesPermitidas[Math.floor(Math.random() * direcoesPermitidas.length)];
+                let startR = Math.floor(Math.random() * tamanhoGrelha);
+                let startC = Math.floor(Math.random() * tamanhoGrelha);
+
+                // Verifica se cabe
+                let cabe = true;
+                for (let i = 0; i < word.length; i++) {
+                    let r = startR + (dir === 1 || dir === 2 ? i : 0);
+                    let c = startC + (dir === 0 || dir === 2 ? i : 0);
+                    
+                    if (r >= tamanhoGrelha || c >= tamanhoGrelha || (grelha[r][c] !== '' && grelha[r][c] !== word[i])) {
+                        cabe = false; break;
+                    }
+                }
+
+                // Se cabe, preenche
+                if (cabe) {
+                    for (let i = 0; i < word.length; i++) {
+                        let r = startR + (dir === 1 || dir === 2 ? i : 0);
+                        let c = startC + (dir === 0 || dir === 2 ? i : 0);
+                        grelha[r][c] = word[i];
+                    }
+                    colocada = true;
+                }
+            }
+        });
+
+        // Preenche espaços vazios
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let r = 0; r < tamanhoGrelha; r++) {
+            for (let c = 0; c < tamanhoGrelha; c++) {
+                if (grelha[r][c] === '') {
+                    grelha[r][c] = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // DESENHO NO DOM
+    // =========================================
+    function desenharGrelha() {
+        gridContainer.innerHTML = '';
+        gridContainer.style.gridTemplateColumns = `repeat(${tamanhoGrelha}, 1fr)`;
+        
+        for (let r = 0; r < tamanhoGrelha; r++) {
+            for (let c = 0; c < tamanhoGrelha; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.textContent = grelha[r][c];
+                cell.dataset.r = r;
+                cell.dataset.c = c;
+                
+                // Eventos Mouse
+                cell.addEventListener('mousedown', iniciarSelecao);
+                cell.addEventListener('mouseenter', arrastarSelecao);
+                cell.addEventListener('mouseup', terminarSelecao);
+                
+                gridContainer.appendChild(cell);
+            }
+        }
+    }
+
+    function desenharListaPalavras() {
+        wordsListContainer.innerHTML = '';
+        palavrasDoJogo.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.id = `word-card-${index}`;
+            
+            card.innerHTML = `
+                <img src="${getImagePath(item.imagem)}" alt="${item.palavra}">
+                <span>${item.palavra}</span>
+            `;
+            wordsListContainer.appendChild(card);
+        });
+    }
+
+    // =========================================
+    // LÓGICA DE INTERAÇÃO (SELEÇÃO)
+    // =========================================
+
+    // Prevenir comportamentos indesejados globais ao arrastar
+    document.addEventListener('mouseup', () => { if(isDragging) terminarSelecao(); });
+
+    // Suporte a TOUCH para Mobile
+    gridContainer.addEventListener('touchstart', e => {
+        if (e.target.classList.contains('grid-cell')) {
+            e.preventDefault(); 
+            iniciarSelecao({ target: e.target });
+        }
+    }, {passive: false});
+
+    gridContainer.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (elem && elem.classList.contains('grid-cell')) {
+            arrastarSelecao({ target: elem });
+        }
+    }, {passive: false});
+
+    gridContainer.addEventListener('touchend', e => {
+        if (isDragging) terminarSelecao();
+    });
+
+    function iniciarSelecao(e) {
+        const r = parseInt(e.target.dataset.r);
+        const c = parseInt(e.target.dataset.c);
+        isDragging = true;
+        startCell = { r, c };
+        
+        limparSelecaoVisual();
+        currentPath = [{r, c}];
+        e.target.classList.add('selected');
+    }
+
+    function arrastarSelecao(e) {
+        if (!isDragging || !startCell) return;
+        const currentR = parseInt(e.target.dataset.r);
+        const currentC = parseInt(e.target.dataset.c);
+
+        const dr = currentR - startCell.r;
+        const dc = currentC - startCell.c;
+
+        // Limpa visual selecionado anterior
+        limparSelecaoVisual();
+        currentPath =[];
+
+        // Verifica se é uma linha reta válida (Horiz, Vert, Diag)
+        if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
+            const passos = Math.max(Math.abs(dr), Math.abs(dc));
+            const passoR = dr === 0 ? 0 : (dr > 0 ? 1 : -1);
+            const passoC = dc === 0 ? 0 : (dc > 0 ? 1 : -1);
+
+            for (let i = 0; i <= passos; i++) {
+                const row = startCell.r + i * passoR;
+                const col = startCell.c + i * passoC;
+                currentPath.push({r: row, c: col});
+                
+                const cellEl = document.querySelector(`.grid-cell[data-r="${row}"][data-c="${col}"]`);
+                if (cellEl) cellEl.classList.add('selected');
+            }
+        } else {
+            // Se o utilizador arrastou para uma posição torta, marca só o início e fim (ou nada)
+            // Aqui marcamos apenas a current cell para feedback
+            const cellEl = document.querySelector(`.grid-cell[data-r="${currentR}"][data-c="${currentC}"]`);
+            if (cellEl) cellEl.classList.add('selected');
+        }
+    }
+
+    function terminarSelecao() {
+        if (!isDragging) return;
+        isDragging = false;
+
+        if (currentPath.length < 2) {
+            limparSelecaoVisual();
+            return;
+        }
+
+        // Lê a palavra formada (e a invertida)
+        let palavraLida = currentPath.map(p => grelha[p.r][p.c]).join('');
+        let palavraLidaRev = palavraLida.split('').reverse().join('');
+
+        let encontrou = false;
+        
+        palavrasDoJogo.forEach((item, idx) => {
+            if (!item.encontrada && (item.palavraLimpa === palavraLida || item.palavraLimpa === palavraLidaRev)) {
+                encontrou = true;
+                item.encontrada = true;
+                palavrasEncontradas++;
+                
+                // Pinta as letras definitivamente
+                currentPath.forEach(p => {
+                    const cellEl = document.querySelector(`.grid-cell[data-r="${p.r}"][data-c="${p.c}"]`);
+                    cellEl.classList.remove('selected');
+                    cellEl.classList.add('found');
+                });
+                
+                // Risa o cartão
+                document.getElementById(`word-card-${idx}`).classList.add('found');
+            }
+        });
+
+        limparSelecaoVisual(); // Remove "selected" de letras que não serviram
+
+        if (encontrou) {
+            tocarSom('acerto');
+            atualizarPlacar();
+            if (palavrasEncontradas === palavrasDoJogo.length) {
+                finalizarJogo(true);
+            }
+        } else {
+            // Som opcional de erro leve, ou silêncio para não chatear
+        }
+    }
+
+    function limparSelecaoVisual() {
+        document.querySelectorAll('.grid-cell.selected').forEach(el => el.classList.remove('selected'));
+    }
+
+    // =========================================
+    // TEMPO E PONTUAÇÃO
+    // =========================================
+    function atualizarPlacar() {
+        elValCertas.textContent = palavrasEncontradas;
+    }
+
+    function formatarTempo(segs) {
+        let m = Math.floor(segs / 60);
+        let s = segs % 60;
+        return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    }
+
+    function iniciarTimer() {
+        pararTimer();
+        elTimerVal.textContent = formatarTempo(tempoRestante);
+        
+        timerInterval = setInterval(() => {
+            tempoRestante--;
+            elTimerVal.textContent = formatarTempo(tempoRestante);
+            
+            if (tempoRestante <= 10 && tempoRestante > 0) {
+                elTimerBox.classList.add('timer-flash');
+            }
+            
+            if (tempoRestante <= 0) {
+                finalizarJogo(false);
+            }
+        }, 1000);
+    }
+
+    function pararTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function finalizarJogo(vitoria) {
+        pararTimer();
+        
+        setTimeout(() => {
+            elGameScreen.style.display = 'none';
+            elStatusBar.style.display = 'none';
+            elEndScreen.style.display = 'flex';
+            
+            document.getElementById('end-stats-text').innerHTML = 
+                `Encontraste <strong style="color:#2ed573">${palavrasEncontradas}</strong> de ${palavrasDoJogo.length} palavras!`;
+
+            if (vitoria) {
+                document.getElementById('end-title-text').textContent = "MUITO BEM! 🏆";
+                tocarSom('vitoria'); 
+                dispararConfetis();
+            } else {
+                document.getElementById('end-title-text').textContent = "TEMPO ESGOTADO! ⏰";
+                tocarSom('erro'); 
+            }
+        }, 500);
+    }
+
+    // =========================================
+    // EFEITOS DE SOM E CONFETIS (MANTIDOS)
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis =[];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2,
+                velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360,
+                velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+
+        confetis.forEach(c => {
+            c.y += c.velY;
+            c.x += c.velX;
+            c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y);
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor;
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+</script>
+</body>
+</html>
