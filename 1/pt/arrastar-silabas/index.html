@@ -8,6 +8,10 @@
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
+    <!-- Este script faz com que o Arrastar funcione em ecrãs táteis (Tablets/Telemóveis) -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
     <style>
         /* =========================================
            CSS DO TEMPLATE ORIGINAL
@@ -62,7 +66,6 @@
            CSS ESPECÍFICO: ORDENAR SÍLABAS
            ========================================= */
         
-        /* PLACAR E PROGRESSO */
         .status-bar { width: 100%; max-width: 400px; margin-bottom: 25px; }
         .score-container { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; }
         .score-certas { color: #2ed573; }
@@ -70,7 +73,6 @@
         .progress-bg { background-color: #e3f2fd; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; }
         .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease-out; }
 
-        /* IMAGEM */
         .game-image {
             height: 140px;
             object-fit: contain;
@@ -82,7 +84,7 @@
             box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
         }
 
-        /* ZONA DOS SLOTS (Onde se larga as sílabas) */
+        /* ZONAS DE ARRASTAR */
         .dropzone-container {
             display: flex;
             gap: 15px;
@@ -90,6 +92,7 @@
             flex-wrap: wrap;
             margin-bottom: 30px;
             min-height: 75px;
+            width: 100%;
         }
 
         .slot {
@@ -104,13 +107,8 @@
             transition: all 0.3s;
         }
 
-        .slot.drag-over {
-            border-color: var(--azul-vibrante);
-            background-color: #e3f2fd;
-            transform: scale(1.05);
-        }
+        .slot.drag-over { border-color: var(--azul-vibrante); background-color: #e3f2fd; transform: scale(1.05); }
 
-        /* ZONA DA PISCINA DE SÍLABAS (Onde estão baralhadas) */
         .pool-container {
             display: flex;
             gap: 15px;
@@ -121,8 +119,9 @@
             border-top: 2px solid #f0f4f8;
             min-height: 80px;
         }
+        
+        .pool-container.drag-over { background-color: #f0f8ff; border-radius: 15px; }
 
-        /* CARTÃO DA SÍLABA */
         .syllable-card {
             background-color: var(--cor-1ano);
             color: white;
@@ -138,34 +137,20 @@
             box-shadow: 0 5px 0 var(--cor-1ano-dark);
             text-transform: uppercase;
             user-select: none;
-            touch-action: none; /* Melhora o toque no mobile */
+            /* touch-action none bloqueia o scroll ao tentar arrastar no ecrã */
+            touch-action: none; 
             transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        .syllable-card:active {
-            cursor: grabbing;
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 var(--cor-1ano-dark);
-        }
+        .syllable-card:active { cursor: grabbing; transform: translateY(4px); box-shadow: 0 1px 0 var(--cor-1ano-dark); }
+        .syllable-card.dragging { opacity: 0.4; transform: scale(0.95); }
 
-        .syllable-card.dragging {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-
-        /* ECRÃ FINAL */
         #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 300px; animation: fadeIn 0.5s ease; }
         .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
         .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; }
         .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); }
 
-        /* ANIMAÇÕES DE FEEDBACK */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px) rotate(-3deg); }
-            50% { transform: translateX(8px) rotate(3deg); }
-            75% { transform: translateX(-8px) rotate(-3deg); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 50% { transform: translateX(8px) rotate(3deg); } 75% { transform: translateX(-8px) rotate(-3deg); } }
         
         .error-shake { animation: shake 0.4s ease-in-out; }
         .slot-error .syllable-card { background-color: #ff4757 !important; box-shadow: 0 5px 0 #d0303f !important; }
@@ -197,11 +182,11 @@
             <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
-            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
+            <a href="index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
         
         <h1>Ordenar Sílabas 🖐️</h1>
-        <div class="subtitulo">Arrasta ou clica nas sílabas para as colocar na ordem correta!</div>
+        <div class="subtitulo">Arrasta as sílabas para os quadrados na ordem certa!</div>
     </div>
 </header>
 
@@ -221,10 +206,8 @@
 
             <img id="game-image" class="game-image" src="" alt="Imagem secreta">
             
-            <!-- Zona onde se constrói a palavra -->
             <div id="dropzone-container" class="dropzone-container"></div>
             
-            <!-- Zona de onde as sílabas vêm -->
             <div id="pool-container" class="pool-container"></div>
         </div>
 
@@ -245,10 +228,12 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<!-- CARREGAR OS DADOS -->
 <script src="dados.js"></script>
 
 <script>
+    // Inicializar Polyfill para o Arrastar funcionar em Tablets/Smartphones
+    MobileDragDrop.polyfill({ holdToDrag: 0 }); // holdToDrag: 0 faz com que arraste imediatamente ao tocar
+
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
     function toggleMenu() {
         const sidebar = document.getElementById('sidebar');
@@ -258,10 +243,6 @@
         overlay.classList.toggle('active');
         hamburger.classList.toggle('open');
     }
-
-    // ==========================================
-    // LÓGICA DO JOGO "ORDENAR/ARRASTAR SÍLABAS"
-    // ==========================================
 
     const MAX_PALAVRAS = 10;
     let palavrasDoJogo = [];
@@ -279,11 +260,10 @@
     const dropzoneContainer = document.getElementById('dropzone-container');
     const poolContainer = document.getElementById('pool-container');
 
-    // Elemento atualmente a ser arrastado
     let draggedElement = null;
 
     function getImagePath(imgPath) {
-        return imgPath.replace('img/', '../../../1/pt/img/');
+        return imgPath.replace('img/', '../../1/pt/img/');
     }
 
     function iniciarJogo() {
@@ -306,34 +286,22 @@
         elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
         elImage.src = getImagePath(palavraObj.imagem);
 
-        // Limpar zonas
         dropzoneContainer.innerHTML = '';
         poolContainer.innerHTML = '';
 
         const silabasCorretas = palavraObj.divisao.split('-');
         
-        // Criar os Slots vazios
+        // Criar Slots (quadrados vazios)
         for (let i = 0; i < silabasCorretas.length; i++) {
             const slot = document.createElement('div');
             slot.className = 'slot';
-            slot.dataset.index = i;
-            
-            // Eventos de Drop (Computador)
             slot.addEventListener('dragover', handleDragOver);
             slot.addEventListener('dragleave', handleDragLeave);
-            slot.addEventListener('drop', handleDrop);
-            
-            // Evento de Clique para retornar à pool
-            slot.addEventListener('click', () => {
-                if (slot.firstChild && !isVerificando) {
-                    poolContainer.appendChild(slot.firstChild);
-                }
-            });
-
+            slot.addEventListener('drop', handleDropSlot);
             dropzoneContainer.appendChild(slot);
         }
 
-        // Criar os Cartões (Sílabas) e baralhá-los
+        // Criar Cartões
         let silabasBaralhadas = [...silabasCorretas].sort(() => Math.random() - 0.5);
         
         silabasBaralhadas.forEach((silaba, index) => {
@@ -341,45 +309,28 @@
             card.className = 'syllable-card';
             card.textContent = silaba;
             card.draggable = true;
-            card.id = `card-${index}`; // ID único
+            card.id = `card-${index}`;
 
-            // Eventos de Drag (Computador)
             card.addEventListener('dragstart', handleDragStart);
             card.addEventListener('dragend', handleDragEnd);
-
-            // Evento de Clique (Para mover automaticamente sem arrastar - Mobile friendly)
-            card.addEventListener('click', () => {
-                if (isVerificando) return;
-                // Se está na pool, vai para o primeiro slot vazio
-                if (card.parentElement.id === 'pool-container') {
-                    const primeiroSlotVazio = Array.from(dropzoneContainer.children).find(slot => !slot.firstChild);
-                    if (primeiroSlotVazio) {
-                        primeiroSlotVazio.appendChild(card);
-                        verificarCompletude();
-                    }
-                }
-            });
 
             poolContainer.appendChild(card);
         });
 
-        // A própria pool também deve aceitar drops caso o aluno desista de uma sílaba
-        poolContainer.addEventListener('dragover', handleDragOver);
+        // A pool também recebe peças (se a criança quiser devolver)
+        poolContainer.addEventListener('dragover', handleDragOverPool);
+        poolContainer.addEventListener('dragleave', handleDragLeavePool);
         poolContainer.addEventListener('drop', handleDropPool);
     }
 
     // ==========================================
-    // FUNÇÕES DE DRAG & DROP
+    // FUNÇÕES DE ARRASTAR (DRAG & DROP)
     // ==========================================
 
     function handleDragStart(e) {
-        if (isVerificando) {
-            e.preventDefault();
-            return;
-        }
+        if (isVerificando) { e.preventDefault(); return; }
         draggedElement = e.target;
         e.target.classList.add('dragging');
-        // Necessário para o Firefox
         e.dataTransfer.setData('text/plain', e.target.id);
         e.dataTransfer.effectAllowed = 'move';
     }
@@ -387,39 +338,45 @@
     function handleDragEnd(e) {
         e.target.classList.remove('dragging');
         draggedElement = null;
-        verificarCompletude();
     }
 
+    // SLOTS (Quadrados vazios)
     function handleDragOver(e) {
-        e.preventDefault(); // Permite o drop
-        e.dataTransfer.dropEffect = 'move';
-        // Adiciona classe visual se for um slot vazio
-        if (e.target.classList.contains('slot') && !e.target.firstChild) {
+        e.preventDefault(); 
+        if (!e.target.firstChild && e.target.classList.contains('slot')) {
             e.target.classList.add('drag-over');
         }
     }
-
+    
     function handleDragLeave(e) {
-        if (e.target.classList.contains('slot')) {
-            e.target.classList.remove('drag-over');
-        }
+        if (e.target.classList.contains('slot')) e.target.classList.remove('drag-over');
     }
 
-    function handleDrop(e) {
+    function handleDropSlot(e) {
         e.preventDefault();
-        const slot = e.target.closest('.slot'); // Garante que pega no slot mesmo se largar nas bordas
-        
+        const slot = e.target.closest('.slot');
         if (slot) {
             slot.classList.remove('drag-over');
-            // Só permite largar se o slot estiver vazio
             if (!slot.firstChild && draggedElement) {
                 slot.appendChild(draggedElement);
+                verificarCompletude();
             }
         }
     }
 
+    // POOL (Zona de baixo)
+    function handleDragOverPool(e) {
+        e.preventDefault();
+        poolContainer.classList.add('drag-over');
+    }
+
+    function handleDragLeavePool(e) {
+        poolContainer.classList.remove('drag-over');
+    }
+
     function handleDropPool(e) {
         e.preventDefault();
+        poolContainer.classList.remove('drag-over');
         if (draggedElement && draggedElement.parentElement !== poolContainer) {
             poolContainer.appendChild(draggedElement);
         }
@@ -430,23 +387,18 @@
     // ==========================================
 
     function verificarCompletude() {
-        // Verifica se todos os slots têm filhos (sílabas)
         const slots = Array.from(dropzoneContainer.children);
         const todasPreenchidas = slots.every(slot => slot.firstChild !== null);
 
         if (todasPreenchidas && !isVerificando) {
             isVerificando = true;
             
-            // Constrói a palavra formada pelo aluno
             const palavraFormada = slots.map(slot => slot.firstChild.textContent).join('-');
             const palavraCorreta = palavrasDoJogo[palavraAtualIndex].divisao;
 
             if (palavraFormada === palavraCorreta) {
                 // ACERTOU
-                certas++;
-                atualizarPlacar();
-                tocarSom('acerto');
-
+                certas++; atualizarPlacar(); tocarSom('acerto');
                 slots.forEach(slot => slot.classList.add('slot-success'));
 
                 setTimeout(() => {
@@ -456,10 +408,7 @@
                 }, 1200);
             } else {
                 // ERROU
-                erradas++;
-                atualizarPlacar();
-                tocarSom('erro');
-
+                erradas++; atualizarPlacar(); tocarSom('erro');
                 dropzoneContainer.classList.add('error-shake');
                 slots.forEach(slot => slot.classList.add('slot-error'));
 
@@ -467,7 +416,6 @@
                     dropzoneContainer.classList.remove('error-shake');
                     slots.forEach(slot => {
                         slot.classList.remove('slot-error');
-                        // Devolve as peças à piscina
                         if(slot.firstChild) poolContainer.appendChild(slot.firstChild);
                     });
                     isVerificando = false;
@@ -502,15 +450,10 @@
         }, 500);
     }
 
-    // ==========================================
-    // SISTEMA DE SOM E CONFETIS (Reaproveitados)
-    // ==========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
     function tocarSom(tipo) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
         const agora = audioCtx.currentTime;
 
