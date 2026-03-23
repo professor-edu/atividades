@@ -20,7 +20,7 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
-            --cell-size: 40px; /* Será dinâmico pelo JS */
+            --cell-size: 40px; 
         }
 
         body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
@@ -47,47 +47,44 @@
         .overlay.active { display: block; }
         
         /* =========================================
-           LAYOUT MEIO TERMO ESTRUTURAL
+           LAYOUT ESTRUTURAL
            ========================================= */
         main { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 40px 20px;
-            gap: 25px;
+            flex: 1; display: flex; flex-direction: column; 
+            align-items: center; padding: 40px 20px; gap: 25px;
         }
 
         .cartao-jogo-container { 
-            background: white; 
-            width: 100%; 
-            max-width: 1000px;
-            min-height: 450px; 
-            padding: 30px 20px; 
-            border-radius: 30px; 
+            background: white; width: 100%; max-width: 1000px;
+            min-height: 450px; padding: 30px 20px; border-radius: 30px; 
             box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
             border-top: 8px solid var(--cor-1ano); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            overflow: hidden; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; position: relative; overflow: hidden; 
         }
 
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
         /* =========================================
-           BARRA DE STATUS E SELETOR NO JOGO
+           BARRA DE STATUS, PISTAS E TEMPO
            ========================================= */
         .status-bar { width: 100%; max-width: 900px; display: none; }
         .score-container { 
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
             margin-bottom: 15px; font-weight: bold; font-size: 1.4rem; padding: 0 15px;
         }
         .score-certas { color: #219d53; display: flex; align-items: center; gap: 8px;}
         
+        /* Botão de Pista */
+        .btn-hint {
+            background: #fff3cd; color: #856404; border: 2px solid #ffeeba;
+            padding: 6px 15px; border-radius: 15px; cursor: pointer; font-weight: bold;
+            font-size: 1.1rem; display: flex; align-items: center; gap: 5px; transition: 0.2s;
+        }
+        .btn-hint:hover { transform: scale(1.05); background: #ffecb5; }
+        .btn-hint:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
         /* Relógio Animado */
         .timer-container { color: var(--azul-escuro); background: #f0f4f8; padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 8px;}
         .timer-flash { animation: flashRed 1s infinite; color: #ff4757 !important; background: #ffefef; border: 2px solid #ff4757;}
@@ -98,8 +95,7 @@
 
         /* Seletor Pequeno (Sempre visível durante o jogo) */
         .in-game-diff-container {
-            display: none; /* Só visível quando o jogo corre */
-            justify-content: center; gap: 10px; width: 100%; margin-bottom: 25px; flex-wrap: wrap;
+            display: none; justify-content: center; gap: 10px; width: 100%; margin-bottom: 25px; flex-wrap: wrap;
         }
         .diff-tab {
             padding: 8px 20px; border: 2px solid var(--cor-1ano); border-radius: 20px;
@@ -110,14 +106,13 @@
         .diff-tab.active { background: var(--cor-1ano); color: white; box-shadow: 0 4px 10px rgba(0,145,255,0.25); }
 
         /* =========================================
-           ECRÃ INICIAL DE DIFICULDADE (Gigante)
+           ECRÃ INICIAL DE DIFICULDADE
            ========================================= */
         #difficulty-screen { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; }
         #difficulty-screen h2 { color: var(--azul-escuro); font-size: 2rem; margin-bottom: 10px; }
         
         .btn-diff {
-            width: 100%; max-width: 350px;
-            padding: 18px; font-size: 1.2rem; font-weight: bold; color: white;
+            width: 100%; max-width: 350px; padding: 18px; font-size: 1.2rem; font-weight: bold; color: white;
             border: none; border-radius: 15px; cursor: pointer; transition: 0.2s;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
         }
@@ -142,30 +137,37 @@
             border: 2px solid #e3f2fd; border-radius: 15px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.03); touch-action: none;
         }
-        .word-grid {
-            display: grid; gap: 4px; user-select: none;
-        }
+        .word-grid { display: grid; gap: 4px; user-select: none; }
+        
         .grid-cell {
-            /* Tamanhos fluidos adaptados para não quebrar no telemóvel */
             width: clamp(22px, 8vw, var(--cell-size)); 
             height: clamp(22px, 8vw, var(--cell-size)); 
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(1rem, 5vw, 1.4rem); font-weight: bold; color: var(--azul-escuro);
             background: white; border-radius: 8px; cursor: pointer; text-transform: uppercase;
-            box-sizing: border-box; /* Garante que a borda não empurra as células vizinhas */
-            border: 2px solid transparent; 
+            box-sizing: border-box; border: 2px solid transparent; 
         }
         
-        /* Novos Estados das Letras (Cores Exatas s/ Saltos) */
+        /* Estados das Letras */
         .grid-cell.selected { background-color: #fff4ce; color: var(--azul-escuro); border-color: #fbd561; z-index: 10; }
         .grid-cell.found { background-color: #4caf50; color: white; border-color: #4caf50; z-index: 5; }
+        
+        /* Estado de Palavra Falhada (Quando o tempo acaba) */
+        .grid-cell.missed { background-color: #ffebee; color: #c62828; border-color: #ef9a9a; z-index: 4; transition: all 0.5s ease; }
 
-        /* Cartões de Palavras (Em Coluna) */
+        /* Animação de Pista (Pisca a Letra) */
+        @keyframes pulseHint {
+            0% { background-color: white; transform: scale(1); box-shadow: 0 0 0 rgba(255,193,7,0); }
+            50% { background-color: #ffeb3b; transform: scale(1.15); box-shadow: 0 0 15px rgba(255,193,7,0.8); z-index: 20; border-color: #fbc02d; }
+            100% { background-color: white; transform: scale(1); box-shadow: 0 0 0 rgba(255,193,7,0); }
+        }
+        .hint-pulse { animation: pulseHint 1s ease-in-out 3; }
+
+        /* Cartões de Palavras */
         .words-list {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
             flex: 1; min-width: 260px; max-width: 450px;
-            align-content: stretch; /* Ajuda a acompanhar a altura da grelha */
-            grid-auto-rows: 1fr; /* Força todas a terem o mesmo tamanho e preencherem as linhas */
+            align-content: stretch; grid-auto-rows: 1fr; 
         }
         .word-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
@@ -173,11 +175,8 @@
             border-radius: 12px; transition: 0.3s; box-sizing: border-box;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        
-        /* Estilo Exato da Imagem de Referência para Encontrados */
         .word-card.found { background: #e8f5e9; border-color: #81c784; }
-        .word-card.found span { color: #388e3c; } /* Verde escuro para o texto */
-        
+        .word-card.found span { color: #388e3c; } 
         .word-card img { width: 45px; height: 45px; object-fit: contain; }
         .word-card span { font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: var(--azul-escuro); letter-spacing: 0.5px; }
 
@@ -205,6 +204,7 @@
             main { padding: 20px 15px; gap: 15px; } 
             .cartao-jogo-container { padding: 20px 15px; }
             
+            .score-container { justify-content: center; }
             .game-layout { gap: 20px; flex-direction: column; align-items: center; }
             .word-grid { gap: 2px; }
             .grid-wrapper { padding: 8px; }
@@ -216,6 +216,7 @@
             
             .in-game-diff-container { gap: 5px; margin-bottom: 15px; }
             .diff-tab { padding: 6px 12px; font-size: 0.85rem; }
+            .btn-hint { font-size: 0.95rem; padding: 5px 10px; }
         }
     </style>
 </head>
@@ -245,7 +246,7 @@
         </div>
         
         <h1>Sopa de Letras 🔎</h1>
-        <div class="subtitulo">Encontra as palavras escondidas!</div>
+        <div class="subtitulo">Encontra todas as palavras escondidas! Consegues?</div>
     </div>
 </header>
 
@@ -253,6 +254,11 @@
     <div id="status-bar" class="status-bar">
         <div class="score-container">
             <span class="score-certas">✔️ Encontradas: <span id="val-certas">0</span>/<span id="val-total">0</span></span>
+            
+            <button id="btn-hint" class="btn-hint" onclick="usarPista()" style="display: none;">
+                💡 Pistas: <span id="hint-count">2</span>
+            </button>
+
             <div id="timer-box" class="timer-container">
                 ⏳ <span id="timer-val">00:00</span>
             </div>
@@ -326,6 +332,10 @@
     
     let tempoRestante = 0;
     let timerInterval = null;
+    let isGameOver = false;
+
+    // Sistema de Pistas
+    let pistasRestantes = 0;
 
     let isDragging = false;
     let startCell = null;
@@ -337,6 +347,8 @@
     const elEndScreen = document.getElementById('end-screen');
     const elStatusBar = document.getElementById('status-bar');
     const elInGameDiff = document.getElementById('in-game-diff');
+    const elBtnHint = document.getElementById('btn-hint');
+    const elHintCount = document.getElementById('hint-count');
     
     const gridContainer = document.getElementById('word-grid');
     const wordsListContainer = document.getElementById('words-list');
@@ -361,22 +373,32 @@
 
     function iniciarJogo(dificuldade) {
         palavrasEncontradas = 0;
+        isGameOver = false;
         let numPalavras = 6;
         let minutos = 3;
         
-        if (dificuldade === 'facil') { numPalavras = 6; minutos = 3; tamanhoGrelha = 10; }
-        else if (dificuldade === 'medio') { numPalavras = 8; minutos = 4; tamanhoGrelha = 12; }
-        else if (dificuldade === 'dificil') { numPalavras = 10; minutos = 5; tamanhoGrelha = 14; }
+        if (dificuldade === 'facil') { numPalavras = 6; minutos = 3; tamanhoGrelha = 10; pistasRestantes = 0; }
+        else if (dificuldade === 'medio') { numPalavras = 8; minutos = 4; tamanhoGrelha = 12; pistasRestantes = 0; }
+        else if (dificuldade === 'dificil') { numPalavras = 10; minutos = 5; tamanhoGrelha = 14; pistasRestantes = 2; }
 
         tempoRestante = minutos * 60;
         
-        // Ajuste dinâmico do tamanho das células para que as grelhas maiores caibam bem
+        // Ajuste dinâmico do tamanho das células
         const sizeCSS = tamanhoGrelha === 10 ? '42px' : tamanhoGrelha === 12 ? '36px' : '30px';
         document.documentElement.style.setProperty('--cell-size', sizeCSS);
 
         // UI de Dificuldade Ativa
         document.querySelectorAll('.diff-tab').forEach(tab => tab.classList.remove('active'));
         document.getElementById(`tab-${dificuldade}`).classList.add('active');
+
+        // Configurar Botão de Pistas
+        if (dificuldade === 'dificil') {
+            elBtnHint.style.display = 'flex';
+            elBtnHint.disabled = false;
+            elHintCount.textContent = pistasRestantes;
+        } else {
+            elBtnHint.style.display = 'none';
+        }
 
         // Transições de Ecrã
         elDiffScreen.style.display = 'none';
@@ -394,10 +416,13 @@
         palavrasDoJogo = baralhadas.slice(0, numPalavras).map(obj => ({
             ...obj, 
             palavraLimpa: obj.palavra.toUpperCase(), 
-            encontrada: false 
+            encontrada: false,
+            path:[],
+            startR: null,
+            startC: null
         }));
 
-        gerarGrelhaLogica(dificuldade);
+        gerarGrelhaLogica();
         desenharGrelha();
         desenharListaPalavras();
         
@@ -405,20 +430,20 @@
     }
 
     // =========================================
-    // LÓGICA DA GRELHA (GERAÇÃO)
+    // LÓGICA DA GRELHA (GERAÇÃO HORIZ/VERT APENAS)
     // =========================================
-    function gerarGrelhaLogica(dificuldade) {
+    function gerarGrelhaLogica() {
         grelha = Array(tamanhoGrelha).fill(null).map(() => Array(tamanhoGrelha).fill(''));
 
-        // Direções (0: Horizontal, 1: Vertical, 2: Diagonal Direita-Baixo)
-        const direcoesPermitidas = dificuldade === 'dificil' ?[0, 1, 2] : [0, 1];
+        // Apenas Direções Simples: 0: Horizontal (Esq->Dir), 1: Vertical (Cima->Baixo)
+        const direcoesPermitidas = [0, 1]; 
 
         palavrasDoJogo.forEach(item => {
             let colocada = false;
             let tentativas = 0;
             const word = item.palavraLimpa;
 
-            while (!colocada && tentativas < 200) {
+            while (!colocada && tentativas < 300) {
                 tentativas++;
                 let dir = direcoesPermitidas[Math.floor(Math.random() * direcoesPermitidas.length)];
                 let startR = Math.floor(Math.random() * tamanhoGrelha);
@@ -426,8 +451,8 @@
 
                 let cabe = true;
                 for (let i = 0; i < word.length; i++) {
-                    let r = startR + (dir === 1 || dir === 2 ? i : 0);
-                    let c = startC + (dir === 0 || dir === 2 ? i : 0);
+                    let r = startR + (dir === 1 ? i : 0);
+                    let c = startC + (dir === 0 ? i : 0);
                     
                     if (r >= tamanhoGrelha || c >= tamanhoGrelha || (grelha[r][c] !== '' && grelha[r][c] !== word[i])) {
                         cabe = false; break;
@@ -435,10 +460,13 @@
                 }
 
                 if (cabe) {
+                    item.startR = startR;
+                    item.startC = startC;
                     for (let i = 0; i < word.length; i++) {
-                        let r = startR + (dir === 1 || dir === 2 ? i : 0);
-                        let c = startC + (dir === 0 || dir === 2 ? i : 0);
+                        let r = startR + (dir === 1 ? i : 0);
+                        let c = startC + (dir === 0 ? i : 0);
                         grelha[r][c] = word[i];
+                        item.path.push({r, c});
                     }
                     colocada = true;
                 }
@@ -452,6 +480,34 @@
                     grelha[r][c] = alfabeto[Math.floor(Math.random() * alfabeto.length)];
                 }
             }
+        }
+    }
+
+    // =========================================
+    // FUNÇÃO DA PISTA
+    // =========================================
+    function usarPista() {
+        if (pistasRestantes <= 0 || isGameOver) return;
+        
+        // Descobre a primeira palavra não encontrada
+        const palavraFalta = palavrasDoJogo.find(p => !p.encontrada);
+        if (!palavraFalta) return;
+
+        // Procura o elemento da primeira letra
+        const cellEl = document.querySelector(`.grid-cell[data-r="${palavraFalta.startR}"][data-c="${palavraFalta.startC}"]`);
+        if (cellEl) {
+            // Reinicia a animação caso o aluno clique duas vezes seguidas
+            cellEl.classList.remove('hint-pulse');
+            void cellEl.offsetWidth; 
+            cellEl.classList.add('hint-pulse');
+            tocarSom('acerto'); // Som suave de ajuda
+        }
+
+        pistasRestantes--;
+        elHintCount.textContent = pistasRestantes;
+        
+        if (pistasRestantes === 0) {
+            elBtnHint.disabled = true;
         }
     }
 
@@ -497,7 +553,6 @@
     // =========================================
     // LÓGICA DE INTERAÇÃO (SELEÇÃO)
     // =========================================
-
     document.addEventListener('mouseup', () => { if(isDragging) terminarSelecao(); });
 
     gridContainer.addEventListener('touchstart', e => {
@@ -508,7 +563,7 @@
     }, {passive: false});
 
     gridContainer.addEventListener('touchmove', e => {
-        if (!isDragging) return;
+        if (!isDragging || isGameOver) return;
         e.preventDefault();
         const touch = e.touches[0];
         const elem = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -522,6 +577,7 @@
     });
 
     function iniciarSelecao(e) {
+        if (isGameOver) return;
         const r = parseInt(e.target.dataset.r);
         const c = parseInt(e.target.dataset.c);
         isDragging = true;
@@ -530,10 +586,11 @@
         limparSelecaoVisual();
         currentPath = [{r, c}];
         e.target.classList.add('selected');
+        e.target.classList.remove('hint-pulse'); // Limpa pista se clicada
     }
 
     function arrastarSelecao(e) {
-        if (!isDragging || !startCell) return;
+        if (!isDragging || !startCell || isGameOver) return;
         const currentR = parseInt(e.target.dataset.r);
         const currentC = parseInt(e.target.dataset.c);
 
@@ -563,7 +620,7 @@
     }
 
     function terminarSelecao() {
-        if (!isDragging) return;
+        if (!isDragging || isGameOver) return;
         isDragging = false;
 
         if (currentPath.length < 2) {
@@ -598,6 +655,7 @@
             tocarSom('acerto');
             atualizarPlacar();
             if (palavrasEncontradas === palavrasDoJogo.length) {
+                isGameOver = true;
                 finalizarJogo(true);
             }
         }
@@ -633,7 +691,9 @@
             }
             
             if (tempoRestante <= 0) {
-                finalizarJogo(false);
+                pararTimer();
+                isGameOver = true;
+                revelarPalavrasFalta();
             }
         }, 1000);
     }
@@ -642,9 +702,36 @@
         if (timerInterval) clearInterval(timerInterval);
     }
 
+    // =========================================
+    // CORREÇÃO E FIM DE JOGO
+    // =========================================
+    function revelarPalavrasFalta() {
+        let revelouAlguma = false;
+        
+        palavrasDoJogo.forEach(item => {
+            if (!item.encontrada) {
+                revelouAlguma = true;
+                item.path.forEach(p => {
+                    const cellEl = document.querySelector(`.grid-cell[data-r="${p.r}"][data-c="${p.c}"]`);
+                    if (cellEl && !cellEl.classList.contains('found')) {
+                        cellEl.classList.add('missed');
+                    }
+                });
+            }
+        });
+
+        if (revelouAlguma) {
+            tocarSom('erro'); // Som para indicar que o tempo acabou
+            // Espera 3 segundos para o aluno observar antes de avançar
+            setTimeout(() => finalizarJogo(false), 3000);
+        } else {
+            finalizarJogo(false);
+        }
+    }
+
     function finalizarJogo(vitoria) {
         pararTimer();
-        elInGameDiff.style.display = 'none'; // Esconde abas de dif. ao terminar
+        elInGameDiff.style.display = 'none'; 
         
         setTimeout(() => {
             elGameScreen.style.display = 'none';
@@ -660,9 +747,9 @@
                 dispararConfetis();
             } else {
                 document.getElementById('end-title-text').textContent = "TEMPO ESGOTADO! ⏰";
-                tocarSom('erro'); 
+                // Já tocou o som de erro no inicio da revelação
             }
-        }, 500);
+        }, 500); // Ligeiro delay visual para transição de ecrã suave
     }
 
     // =========================================
