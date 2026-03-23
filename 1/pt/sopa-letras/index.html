@@ -20,6 +20,7 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --cell-size: 40px; /* Será dinâmico pelo JS */
         }
 
         body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
@@ -60,7 +61,7 @@
         .cartao-jogo-container { 
             background: white; 
             width: 100%; 
-            max-width: 1000px; /* Ligeiramente mais largo para caber a grelha */
+            max-width: 1000px;
             min-height: 450px; 
             padding: 30px 20px; 
             border-radius: 30px; 
@@ -78,7 +79,7 @@
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
         /* =========================================
-           BARRA DE STATUS SUPERIOR
+           BARRA DE STATUS E SELETOR NO JOGO
            ========================================= */
         .status-bar { width: 100%; max-width: 900px; display: none; }
         .score-container { 
@@ -95,8 +96,21 @@
             50% { transform: scale(1.08); }
         }
 
+        /* Seletor Pequeno (Sempre visível durante o jogo) */
+        .in-game-diff-container {
+            display: none; /* Só visível quando o jogo corre */
+            justify-content: center; gap: 10px; width: 100%; margin-bottom: 25px; flex-wrap: wrap;
+        }
+        .diff-tab {
+            padding: 8px 20px; border: 2px solid var(--cor-1ano); border-radius: 20px;
+            background: white; color: var(--cor-1ano); font-weight: bold; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .diff-tab:hover { background: #e3f2fd; }
+        .diff-tab.active { background: var(--cor-1ano); color: white; box-shadow: 0 4px 10px rgba(0,145,255,0.25); }
+
         /* =========================================
-           ECRÃ DE DIFICULDADE E BOTÕES
+           ECRÃ INICIAL DE DIFICULDADE (Gigante)
            ========================================= */
         #difficulty-screen { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; }
         #difficulty-screen h2 { color: var(--azul-escuro); font-size: 2rem; margin-bottom: 10px; }
@@ -119,39 +133,53 @@
            SOPA DE LETRAS (GRELHA + CARTÕES)
            ========================================= */
         .game-layout {
-            display: flex; gap: 40px; align-items: flex-start; justify-content: center;
-            width: 100%; flex-wrap: wrap; margin-top: 10px;
+            display: flex; gap: 30px; align-items: stretch; justify-content: center;
+            width: 100%; flex-wrap: wrap;
         }
 
-        .grid-wrapper { touch-action: none; /* Previne scroll ao arrastar no touch */ }
+        .grid-wrapper {
+            flex: 0 0 auto; background: white; padding: 12px;
+            border: 2px solid #e3f2fd; border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); touch-action: none;
+        }
         .word-grid {
-            display: grid; gap: 4px; background: var(--bg-header); padding: 12px;
-            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none;
+            display: grid; gap: 4px; user-select: none;
         }
         .grid-cell {
-            width: 40px; height: 40px; background: white; border-radius: 8px;
+            /* Tamanhos fluidos adaptados para não quebrar no telemóvel */
+            width: clamp(22px, 8vw, var(--cell-size)); 
+            height: clamp(22px, 8vw, var(--cell-size)); 
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: bold; color: var(--text-main);
-            cursor: pointer; transition: 0.1s; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: clamp(1rem, 5vw, 1.4rem); font-weight: bold; color: var(--azul-escuro);
+            background: white; border-radius: 8px; cursor: pointer; text-transform: uppercase;
+            box-sizing: border-box; /* Garante que a borda não empurra as células vizinhas */
+            border: 2px solid transparent; 
         }
         
-        /* Estados das Letras */
-        .grid-cell.selected { background-color: #fff9c4; color: #f39c12; transform: scale(1.1); z-index: 10; border: 2px solid #f39c12; }
-        .grid-cell.found { background-color: #2ed573; color: white; transform: scale(1.05); border: none; box-shadow: 0 0 10px rgba(46, 213, 115, 0.5); z-index: 5; }
+        /* Novos Estados das Letras (Cores Exatas s/ Saltos) */
+        .grid-cell.selected { background-color: #fff4ce; color: var(--azul-escuro); border-color: #fbd561; z-index: 10; }
+        .grid-cell.found { background-color: #4caf50; color: white; border-color: #4caf50; z-index: 5; }
 
-        /* Cartões de Palavras ao lado */
+        /* Cartões de Palavras (Em Coluna) */
         .words-list {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; flex: 1; min-width: 250px; max-width: 400px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            flex: 1; min-width: 260px; max-width: 450px;
+            align-content: stretch; /* Ajuda a acompanhar a altura da grelha */
+            grid-auto-rows: 1fr; /* Força todas a terem o mesmo tamanho e preencherem as linhas */
         }
         .word-card {
-            display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 10px;
-            border-radius: 12px; border: 2px solid #e3f2fd; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            background: white; border: 2px solid #e3f2fd; padding: 12px;
+            border-radius: 12px; transition: 0.3s; box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .word-card.found { opacity: 0.4; filter: grayscale(1); border-color: #2ed573; background: #f0fff4; }
-        .word-card.found span { text-decoration: line-through; color: #219d53; }
+        
+        /* Estilo Exato da Imagem de Referência para Encontrados */
+        .word-card.found { background: #e8f5e9; border-color: #81c784; }
+        .word-card.found span { color: #388e3c; } /* Verde escuro para o texto */
         
         .word-card img { width: 45px; height: 45px; object-fit: contain; }
-        .word-card span { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; color: var(--azul-escuro); letter-spacing: 1px; }
+        .word-card span { font-weight: 700; font-size: 0.95rem; text-transform: uppercase; color: var(--azul-escuro); letter-spacing: 0.5px; }
 
         /* =========================================
            ECRÃ FINAL
@@ -177,16 +205,17 @@
             main { padding: 20px 15px; gap: 15px; } 
             .cartao-jogo-container { padding: 20px 15px; }
             
-            .game-layout { gap: 25px; flex-direction: column; align-items: center; }
-            
-            /* Ajusta o tamanho da grelha no telemóvel para caber no ecrã */
-            .grid-cell { width: clamp(22px, 7vw, 35px); height: clamp(22px, 7vw, 35px); font-size: clamp(0.9rem, 4vw, 1.2rem); border-radius: 5px; }
-            .word-grid { gap: 2px; padding: 8px; }
+            .game-layout { gap: 20px; flex-direction: column; align-items: center; }
+            .word-grid { gap: 2px; }
+            .grid-wrapper { padding: 8px; }
             
             .words-list { grid-template-columns: repeat(2, 1fr); width: 100%; min-width: auto; gap: 8px;}
-            .word-card { padding: 6px; gap: 8px; }
-            .word-card img { width: 30px; height: 30px; }
+            .word-card { padding: 8px; gap: 6px; }
+            .word-card img { width: 35px; height: 35px; }
             .word-card span { font-size: 0.85rem; }
+            
+            .in-game-diff-container { gap: 5px; margin-bottom: 15px; }
+            .diff-tab { padding: 6px 12px; font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -228,6 +257,13 @@
                 ⏳ <span id="timer-val">00:00</span>
             </div>
         </div>
+    </div>
+
+    <!-- Seletor em Jogo -->
+    <div id="in-game-diff" class="in-game-diff-container">
+        <button class="diff-tab" id="tab-facil" onclick="iniciarJogo('facil')">Fácil (6)</button>
+        <button class="diff-tab" id="tab-medio" onclick="iniciarJogo('medio')">Médio (8)</button>
+        <button class="diff-tab" id="tab-dificil" onclick="iniciarJogo('dificil')">Difícil (10)</button>
     </div>
 
     <div class="cartao-jogo-container">
@@ -283,7 +319,7 @@
     }
 
     // Variáveis Globais
-    let palavrasDoJogo = [];
+    let palavrasDoJogo =[];
     let grelha =[];
     let tamanhoGrelha = 10;
     let palavrasEncontradas = 0;
@@ -300,6 +336,7 @@
     const elGameScreen = document.getElementById('game-screen');
     const elEndScreen = document.getElementById('end-screen');
     const elStatusBar = document.getElementById('status-bar');
+    const elInGameDiff = document.getElementById('in-game-diff');
     
     const gridContainer = document.getElementById('word-grid');
     const wordsListContainer = document.getElementById('words-list');
@@ -317,6 +354,7 @@
         elEndScreen.style.display = 'none';
         elGameScreen.style.display = 'none';
         elStatusBar.style.display = 'none';
+        elInGameDiff.style.display = 'none';
         elDiffScreen.style.display = 'flex';
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
     }
@@ -332,11 +370,20 @@
 
         tempoRestante = minutos * 60;
         
-        // Configuração Inicial de UI
+        // Ajuste dinâmico do tamanho das células para que as grelhas maiores caibam bem
+        const sizeCSS = tamanhoGrelha === 10 ? '42px' : tamanhoGrelha === 12 ? '36px' : '30px';
+        document.documentElement.style.setProperty('--cell-size', sizeCSS);
+
+        // UI de Dificuldade Ativa
+        document.querySelectorAll('.diff-tab').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(`tab-${dificuldade}`).classList.add('active');
+
+        // Transições de Ecrã
         elDiffScreen.style.display = 'none';
         elEndScreen.style.display = 'none';
         elGameScreen.style.display = 'block';
         elStatusBar.style.display = 'block';
+        elInGameDiff.style.display = 'flex';
         elTimerBox.classList.remove('timer-flash');
 
         elValTotal.textContent = numPalavras;
@@ -346,7 +393,7 @@
         let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
         palavrasDoJogo = baralhadas.slice(0, numPalavras).map(obj => ({
             ...obj, 
-            palavraLimpa: obj.palavra.toUpperCase(), // Mantém os acentos visíveis na grelha
+            palavraLimpa: obj.palavra.toUpperCase(), 
             encontrada: false 
         }));
 
@@ -361,7 +408,6 @@
     // LÓGICA DA GRELHA (GERAÇÃO)
     // =========================================
     function gerarGrelhaLogica(dificuldade) {
-        // Inicializa grelha vazia
         grelha = Array(tamanhoGrelha).fill(null).map(() => Array(tamanhoGrelha).fill(''));
 
         // Direções (0: Horizontal, 1: Vertical, 2: Diagonal Direita-Baixo)
@@ -378,7 +424,6 @@
                 let startR = Math.floor(Math.random() * tamanhoGrelha);
                 let startC = Math.floor(Math.random() * tamanhoGrelha);
 
-                // Verifica se cabe
                 let cabe = true;
                 for (let i = 0; i < word.length; i++) {
                     let r = startR + (dir === 1 || dir === 2 ? i : 0);
@@ -389,7 +434,6 @@
                     }
                 }
 
-                // Se cabe, preenche
                 if (cabe) {
                     for (let i = 0; i < word.length; i++) {
                         let r = startR + (dir === 1 || dir === 2 ? i : 0);
@@ -401,7 +445,6 @@
             }
         });
 
-        // Preenche espaços vazios
         const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (let r = 0; r < tamanhoGrelha; r++) {
             for (let c = 0; c < tamanhoGrelha; c++) {
@@ -427,7 +470,6 @@
                 cell.dataset.r = r;
                 cell.dataset.c = c;
                 
-                // Eventos Mouse
                 cell.addEventListener('mousedown', iniciarSelecao);
                 cell.addEventListener('mouseenter', arrastarSelecao);
                 cell.addEventListener('mouseup', terminarSelecao);
@@ -456,10 +498,8 @@
     // LÓGICA DE INTERAÇÃO (SELEÇÃO)
     // =========================================
 
-    // Prevenir comportamentos indesejados globais ao arrastar
     document.addEventListener('mouseup', () => { if(isDragging) terminarSelecao(); });
 
-    // Suporte a TOUCH para Mobile
     gridContainer.addEventListener('touchstart', e => {
         if (e.target.classList.contains('grid-cell')) {
             e.preventDefault(); 
@@ -500,11 +540,9 @@
         const dr = currentR - startCell.r;
         const dc = currentC - startCell.c;
 
-        // Limpa visual selecionado anterior
         limparSelecaoVisual();
         currentPath =[];
 
-        // Verifica se é uma linha reta válida (Horiz, Vert, Diag)
         if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
             const passos = Math.max(Math.abs(dr), Math.abs(dc));
             const passoR = dr === 0 ? 0 : (dr > 0 ? 1 : -1);
@@ -519,8 +557,6 @@
                 if (cellEl) cellEl.classList.add('selected');
             }
         } else {
-            // Se o utilizador arrastou para uma posição torta, marca só o início e fim (ou nada)
-            // Aqui marcamos apenas a current cell para feedback
             const cellEl = document.querySelector(`.grid-cell[data-r="${currentR}"][data-c="${currentC}"]`);
             if (cellEl) cellEl.classList.add('selected');
         }
@@ -535,7 +571,6 @@
             return;
         }
 
-        // Lê a palavra formada (e a invertida)
         let palavraLida = currentPath.map(p => grelha[p.r][p.c]).join('');
         let palavraLidaRev = palavraLida.split('').reverse().join('');
 
@@ -547,19 +582,17 @@
                 item.encontrada = true;
                 palavrasEncontradas++;
                 
-                // Pinta as letras definitivamente
                 currentPath.forEach(p => {
                     const cellEl = document.querySelector(`.grid-cell[data-r="${p.r}"][data-c="${p.c}"]`);
                     cellEl.classList.remove('selected');
                     cellEl.classList.add('found');
                 });
                 
-                // Risa o cartão
                 document.getElementById(`word-card-${idx}`).classList.add('found');
             }
         });
 
-        limparSelecaoVisual(); // Remove "selected" de letras que não serviram
+        limparSelecaoVisual(); 
 
         if (encontrou) {
             tocarSom('acerto');
@@ -567,8 +600,6 @@
             if (palavrasEncontradas === palavrasDoJogo.length) {
                 finalizarJogo(true);
             }
-        } else {
-            // Som opcional de erro leve, ou silêncio para não chatear
         }
     }
 
@@ -613,6 +644,7 @@
 
     function finalizarJogo(vitoria) {
         pararTimer();
+        elInGameDiff.style.display = 'none'; // Esconde abas de dif. ao terminar
         
         setTimeout(() => {
             elGameScreen.style.display = 'none';
@@ -634,7 +666,7 @@
     }
 
     // =========================================
-    // EFEITOS DE SOM E CONFETIS (MANTIDOS)
+    // EFEITOS DE SOM E CONFETIS
     // =========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
