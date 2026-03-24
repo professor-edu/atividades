@@ -77,20 +77,20 @@
         /* Mapa de Progresso (3 Fases) */
         .mapa-progresso { display: flex; width: 100%; max-width: 700px; background: #f0f4f8; border-radius: 20px; padding: 10px; gap: 10px; margin-bottom: 30px; box-sizing: border-box; }
         .fase-mapa { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; }
-        .fase-titulo { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #8395a7; }
+        .fase-titulo { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #8395a7; text-align: center; }
         .pontos-fase { display: flex; gap: 5px; }
         .ponto { width: 18px; height: 18px; border-radius: 50%; background: #c8d6e5; transition: 0.4s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         
         /* Cores das Fases */
-        .fase-1 .fase-titulo { color: #cd6133; } /* Bronze/Rua */
+        .fase-1 .fase-titulo { color: #cd6133; } 
         .fase-1 .ponto.ativo { background: #cd6133; box-shadow: 0 0 8px rgba(205, 97, 51, 0.6); }
         .fase-1 .ponto.concluido { background: #cd6133; }
         
-        .fase-2 .fase-titulo { color: #7f8fa6; } /* Prata/Mansão */
+        .fase-2 .fase-titulo { color: #7f8fa6; } 
         .fase-2 .ponto.ativo { background: #7f8fa6; box-shadow: 0 0 8px rgba(127, 143, 166, 0.6); }
         .fase-2 .ponto.concluido { background: #7f8fa6; }
 
-        .fase-3 .fase-titulo { color: #fbc531; } /* Ouro/Cofre-Forte */
+        .fase-3 .fase-titulo { color: #fbc531; } 
         .fase-3 .ponto.ativo { background: #fbc531; box-shadow: 0 0 12px rgba(251, 197, 49, 0.8); }
         .fase-3 .ponto.concluido { background: #fbc531; }
 
@@ -196,7 +196,7 @@
             <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
-            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
         <h1>Código Secreto 🕵️‍♂️</h1>
         <div class="subtitulo">A primeira letra de cada imagem abre o cofre!</div>
@@ -276,7 +276,7 @@
     // ==========================================
     // ESTADO DO JOGO E VARIÁVEIS
     // ==========================================
-    const TOTAL_PALAVRAS = 9;
+    let TOTAL_PALAVRAS = 9;
     let palavrasDoJogo =[];
     let palavraIndex = 0;
     let letrasDescobertas = 0;
@@ -315,7 +315,7 @@
             return normalizar(p.palavra).split('').every(char => letrasDisponiveis.includes(char));
         }
 
-        // 1. Filtrar todas as palavras do dados.js que podem ser escritas
+        // 1. Filtrar APENAS as palavras que conseguimos escrever com as iniciais disponíveis
         const palavrasValidas = palavras.filter(podeSerEscrita);
 
         // 2. Dividir em Níveis de Dificuldade
@@ -323,20 +323,23 @@
         let p3 = palavrasValidas.filter(p => p.num === 3).sort(() => Math.random() - 0.5);
         let p4 = palavrasValidas.filter(p => p.num >= 4).sort(() => Math.random() - 0.5);
 
-        // 3. Tentar ir buscar 3 palavras de cada nível
-        let escolhidas =
+        let escolhidas =[];
         
-        function podeSerEscrita(p) {
-            return normalizar(p.palavra).split('').every(char => letrasDisponiveis.includes(char));
+        // 3. Tentar ir buscar 3 palavras de cada bloco
+        escolhidas.push(...p2.splice(0, 3));
+        escolhidas.push(...p3.splice(0, 3));
+        escolhidas.push(...p4.splice(0, 3));
+
+        // 4. Se não chegámos a 9 (porque o nível 3 ficou vazio, por exemplo),
+        // vamos preencher com as palavras válidas que sobraram nos outros níveis!
+        let restantes = [...p2, ...p3, ...p4].sort(() => Math.random() - 0.5);
+        
+        while(escolhidas.length < 9 && restantes.length > 0) {
+            escolhidas.push(restantes.shift());
         }
 
-        // Dividir em Níveis de Dificuldade
-        let p2 = palavras.filter(p => p.num <= 2 && podeSerEscrita(p)).sort(() => Math.random() - 0.5).slice(0, 3);
-        let p3 = palavras.filter(p => p.num === 3 && podeSerEscrita(p)).sort(() => Math.random() - 0.5).slice(0, 3);
-        let p4 = palavras.filter(p => p.num >= 4 && podeSerEscrita(p)).sort(() => Math.random() - 0.5).slice(0, 3);
-
-        // Se por acaso faltarem palavras de um nível, compensa com outras
-        palavrasDoJogo =[...p2, ...p3, ...p4];
+        palavrasDoJogo = escolhidas;
+        TOTAL_PALAVRAS = palavrasDoJogo.length; // Ajusta ao real (que será garantidamente 9 neste caso)
     }
 
     // Cronómetro
@@ -358,9 +361,11 @@
     function atualizarMapa() {
         for (let i = 0; i < TOTAL_PALAVRAS; i++) {
             let pt = document.getElementById(`ponto-${i}`);
-            pt.className = 'ponto'; // reset
-            if (i < palavraIndex) pt.classList.add('concluido');
-            else if (i === palavraIndex) pt.classList.add('ativo');
+            if(pt) {
+                pt.className = 'ponto'; // reset
+                if (i < palavraIndex) pt.classList.add('concluido');
+                else if (i === palavraIndex) pt.classList.add('ativo');
+            }
         }
     }
 
@@ -496,7 +501,10 @@
 
     function finalizarJogo() {
         clearInterval(timerInterval);
-        document.getElementById(`ponto-8`).classList.add('concluido'); // fechar mapa
+        
+        // Fechar o último ponto no mapa, se existir
+        let pFinal = document.getElementById(`ponto-8`);
+        if(pFinal) pFinal.classList.add('concluido');
         
         setTimeout(() => {
             elGameScreen.style.display = 'none';
@@ -561,7 +569,7 @@
     window.addEventListener('resize', redimensionarCanvas);
 
     function dispararConfetis() {
-        redimensionarCanvas(); confetis = []; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
         for (let i = 0; i < 150; i++) {
             confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
         }
