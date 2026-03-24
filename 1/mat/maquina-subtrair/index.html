@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Máquina de Subtrair 🤖</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px; gap: 20px; }
+
+        .cartao-jogo-container { 
+            background: white; 
+            width: 100%; max-width: 900px; min-height: 500px; 
+            padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        .status-bar { width: 100%; max-width: 800px; margin-bottom: 15px; display: none; }
+        .score-container { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; padding: 0 15px; margin-bottom: 10px;}
+        .score-erradas { color: #d0303f; }
+        
+        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        /* =========================================
+           MENU DE NÍVEIS
+           ========================================= */
+        #menu-niveis { display: flex; flex-direction: column; align-items: center; gap: 15px; animation: fadeIn 0.4s ease; width: 100%; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        
+        .btn-nivel {
+            background-color: white; border: 4px solid #ced6e0; border-radius: 20px;
+            padding: 15px 25px; width: 85%; max-width: 450px; cursor: pointer;
+            box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: flex-start; gap: 20px;
+        }
+        .btn-nivel:hover { transform: translateY(-4px); }
+        .btn-nivel:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        #btn-nivel-1:hover { border-color: #2ed573; box-shadow: 0 6px 0 #2ed573; color: #219d53; }
+        #btn-nivel-2:hover { border-color: #0091ff; box-shadow: 0 6px 0 #0091ff; color: #0070c5; }
+        #btn-nivel-3:hover { border-color: #ffa502; box-shadow: 0 6px 0 #ffa502; color: #e69500; }
+        #btn-nivel-4:hover { border-color: #ff4757; box-shadow: 0 6px 0 #ff4757; color: #e84150; }
+
+        .nivel-icon { font-size: 2.5rem; background: #f0f4f8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .nivel-text { text-align: left; }
+        .nivel-titulo { font-size: 1.4rem; font-weight: 900; display: block; color: var(--azul-escuro); }
+        .nivel-desc { font-size: 1rem; color: var(--text-main); font-weight: 500; }
+
+        /* =========================================
+           ECRÃ DO JOGO (A MÁQUINA)
+           ========================================= */
+        #game-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: space-between; animation: fadeIn 0.4s ease; }
+        
+        .fase-aviso { font-size: 1.3rem; font-weight: 700; color: #0091ff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;}
+
+        .equacao-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            background: #f8fafc;
+            padding: 30px 40px;
+            border-radius: 30px;
+            border: 4px dashed #ced6e0;
+        }
+
+        .caixa-num {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .caixa-valor {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border: 4px solid var(--azul-escuro);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--azul-escuro);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .caixa-vazia {
+            background: #fff9c4;
+            border-color: #ffa502;
+            color: #ffa502;
+            animation: pulse 1.5s infinite;
+        }
+
+        .caixa-sucesso {
+            background: #eafff0 !important;
+            border-color: #2ed573 !important;
+            color: #219d53 !important;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* O sinal matemático muda para menos ➖ */
+        .sinal-mat {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ff4757; /* Vermelho na subtração */
+        }
+
+        /* Bolinhas de apoio visual (Nível 1) */
+        .dots-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            width: 80px;
+            height: 30px;
+        }
+        .dot {
+            width: 12px; height: 12px;
+            background-color: var(--cor-1ano);
+            border-radius: 50%;
+        }
+
+        /* Botões de Resposta */
+        .opcoes-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn-opcao {
+            background: white;
+            border: 4px solid #ced6e0;
+            width: 100px;
+            height: 80px;
+            border-radius: 20px;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--azul-escuro);
+            cursor: pointer;
+            box-shadow: 0 6px 0 #ced6e0;
+            transition: all 0.2s;
+        }
+
+        .btn-opcao:hover {
+            border-color: var(--azul-vibrante);
+            color: var(--azul-vibrante);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 var(--azul-vibrante);
+        }
+
+        .btn-opcao:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 transparent;
+        }
+
+        /* Ecrã de Transição de Subnível */
+        #transition-screen {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); z-index: 50; flex-direction: column;
+            align-items: center; justify-content: center; animation: fadeIn 0.3s;
+        }
+        .transition-text { font-size: 2.5rem; color: #0091ff; font-weight: 900; text-align: center; padding: 20px; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            
+            main { padding: 15px 10px; gap: 15px; }
+            .cartao-jogo-container { padding: 20px 10px; min-height: 400px; }
+            
+            .btn-nivel { width: 95%; padding: 10px 15px; gap: 15px; }
+            .nivel-icon { width: 50px; height: 50px; font-size: 2rem; }
+            .nivel-titulo { font-size: 1.2rem; }
+            
+            .equacao-container { padding: 15px; gap: 8px; margin-bottom: 25px; }
+            .caixa-valor { width: 65px; height: 65px; font-size: 2.2rem; border-width: 3px; border-radius: 15px; }
+            .sinal-mat { font-size: 2rem; }
+            
+            .btn-opcao { width: 80px; height: 70px; font-size: 2rem; }
+            .transition-text { font-size: 1.8rem; }
+        }
+
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; z-index: 20;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; }
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px; margin-bottom: 15px;}
+        .btn-menu { background-color: #ced6e0; color: #2f3542; box-shadow: 0 5px 0 #a4b0be; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-2deg); } 75% { transform: translateX(8px) rotate(2deg); } }
+        .error-shake { animation: errorShake 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; box-shadow: 0 6px 0 #ff4757 !important;}
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../../">🏠 Início</a></li>
+        <li><a href="../../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../">🎒 1º Ano</a></li>
+        <li><a href="../../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Máquina de Subtrair 🤖</h1>
+        <div class="subtitulo">Resolve as contas e descobre o número que falta!</div>
+    </div>
+</header>
+
+<main>
+    <div id="status-bar-container" class="status-bar">
+        <div class="score-container">
+            <span class="score-certas" style="color: #219d53;">Conta: <span id="val-progresso">1</span>/20</span>
+            <span class="score-erradas">Erros: <span id="val-erros">0</span></span>
+        </div>
+        <div class="progress-bg">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- MENU DE NÍVEIS -->
+        <div id="menu-niveis">
+            <div class="titulo-menu">Escolhe um Nível:</div>
+            
+            <button class="btn-nivel" id="btn-nivel-1" onclick="iniciarJogo(1)">
+                <span class="nivel-icon">🖐️</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 1 (Até 10)</span>
+                    <span class="nivel-desc">Tirar pelos dedos</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel" id="btn-nivel-2" onclick="iniciarJogo(2)">
+                <span class="nivel-icon">🎒</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 2 (Até 20)</span>
+                    <span class="nivel-desc">Subtrações até 20</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel" id="btn-nivel-3" onclick="iniciarJogo(3)">
+                <span class="nivel-icon">🧱</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 3 (Até 50)</span>
+                    <span class="nivel-desc">Dezenas e unidades simples</span>
+                </span>
+            </button>
+
+            <button class="btn-nivel" id="btn-nivel-4" onclick="iniciarJogo(4)">
+                <span class="nivel-icon">💯</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 4 (Até 100)</span>
+                    <span class="nivel-desc">Dezenas exatas e grandes contas</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- ECRÃ DO JOGO (MÁQUINA) -->
+        <div id="game-screen">
+            <div id="fase-aviso" class="fase-aviso">FASE 1: VAMOS SUBTRAIR!</div>
+
+            <div class="equacao-container">
+                <div class="caixa-num">
+                    <div id="box-a" class="caixa-valor">7</div>
+                    <div id="dots-a" class="dots-container"></div>
+                </div>
+                
+                <div class="sinal-mat">➖</div>
+                
+                <div class="caixa-num">
+                    <div id="box-b" class="caixa-valor caixa-vazia">?</div>
+                    <div id="dots-b" class="dots-container"></div>
+                </div>
+                
+                <div class="sinal-mat">🟰</div>
+                
+                <div class="caixa-num">
+                    <div id="box-c" class="caixa-valor">4</div>
+                    <div id="dots-c" class="dots-container"></div>
+                </div>
+            </div>
+
+            <div class="opcoes-container" id="opcoes-container">
+                <button class="btn-opcao">2</button>
+                <button class="btn-opcao">3</button>
+                <button class="btn-opcao">5</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE TRANSIÇÃO (MEIO DO JOGO) -->
+        <div id="transition-screen">
+            <div class="transition-text">EXCELENTE! 🌟<br><br>Agora, descobre o número que está escondido!</div>
+        </div>
+
+        <!-- ECRÃ FINAL -->
+        <div id="end-screen">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Resolveste 20 subtrações!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> respostas erradas.
+            </div>
+            <button class="btn-reiniciar" onclick="reiniciarNivelAtual()">JOGAR NOVAMENTE 🔄</button>
+            <button class="btn-reiniciar btn-menu" onclick="voltarAoMenu()">VOLTAR AO MENU 🏠</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS
+       ========================================= */
+    const TOTAL_QUESTIONS = 20; // 10 diretas + 10 ocultas
+    let currentLevel = 1;
+    let questionIndex = 0;
+    let errorsCount = 0;
+    let isTransitioning = false;
+    let currentQuestionData = {};
+
+    const menuNiveis = document.getElementById('menu-niveis');
+    const gameScreen = document.getElementById('game-screen');
+    const endScreen = document.getElementById('end-screen');
+    const transitionScreen = document.getElementById('transition-screen');
+    const statusBar = document.getElementById('status-bar-container');
+    
+    const elFase = document.getElementById('fase-aviso');
+    const boxA = document.getElementById('box-a');
+    const boxB = document.getElementById('box-b');
+    const boxC = document.getElementById('box-c');
+    const dotsA = document.getElementById('dots-a');
+    const dotsB = document.getElementById('dots-b');
+    const dotsC = document.getElementById('dots-c');
+    const opcoesContainer = document.getElementById('opcoes-container');
+    
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elProgressFill = document.getElementById('progress-fill');
+
+    /* =========================================
+       GERAÇÃO MATEMÁTICA PROCEDURAL (SUBTRAÇÃO)
+       ========================================= */
+    function generateQuestion(level, sublevelIndex) {
+        let a, b, c;
+
+        // Na subtração: a - b = c (onde a é o número maior)
+        if (level === 1) {
+            // Até 10
+            a = Math.floor(Math.random() * 9) + 2; // 2 a 10
+            b = Math.floor(Math.random() * (a - 1)) + 1; // 1 a (a-1)
+        } 
+        else if (level === 2) {
+            // Até 20
+            a = Math.floor(Math.random() * 10) + 11; // 11 a 20
+            b = Math.floor(Math.random() * (a - 1)) + 1;
+        } 
+        else if (level === 3) {
+            // Até 50
+            a = Math.floor(Math.random() * 30) + 21; // 21 a 50
+            b = Math.floor(Math.random() * (a - 1)) + 1;
+        } 
+        else if (level === 4) {
+            // Até 100
+            if(Math.random() > 0.4) {
+                a = (Math.floor(Math.random() * 6) + 5) * 10; // 50 a 100 (exatas)
+                b = (Math.floor(Math.random() * (a/10 - 1)) + 1) * 10;
+            } else {
+                a = Math.floor(Math.random() * 50) + 51; // 51 a 100
+                b = Math.floor(Math.random() * (a - 1)) + 1;
+            }
+        }
+
+        c = a - b;
+
+        let missingPos, answer;
+
+        if (sublevelIndex < 10) {
+            // Subnível A: Conta direta (Falta o C)
+            missingPos = 'c';
+            answer = c;
+        } else {
+            // Subnível B: Parcela escondida (Falta o A ou o B)
+            missingPos = Math.random() > 0.5 ? 'a' : 'b';
+            answer = missingPos === 'a' ? a : b;
+        }
+
+        // Definir limites lógicos para os distratores (Não apresentar negativos, etc)
+        let minBound, maxBound;
+        if (missingPos === 'a') {
+            minBound = b + 1; // a tem de ser maior que b
+            maxBound = null;  // sem limite máximo estrito
+        } else if (missingPos === 'b') {
+            minBound = 1;     // b no mínimo é 1
+            maxBound = a;     // b tem de ser menor que a
+        } else {
+            // missing c
+            minBound = 1;
+            maxBound = a;
+        }
+
+        let distractors = generateDistractors(answer, level, minBound, maxBound);
+        let options =[answer, ...distractors].sort(() => Math.random() - 0.5);
+
+        return { a, b, c, missingPos, answer, options };
+    }
+
+    // Função de Distratores super segura para não gerar erros lógicos no 1º Ano
+    function generateDistractors(ans, level, minBound, maxBound) {
+        let opts = new Set([ans]);
+        let attempts = 0;
+        
+        while(opts.size < 3 && attempts < 50) {
+            attempts++;
+            let offset = Math.floor(Math.random() * 5) + 1;
+            if (level >= 3 && Math.random() > 0.7) offset = 10;
+            if (Math.random() > 0.5) offset *= -1;
+            
+            let d = ans + offset;
+            
+            if (d < minBound) continue;
+            if (maxBound !== null && d >= maxBound) continue;
+            
+            opts.add(d);
+        }
+        
+        // Fallback (caso o loop acima não encontre)
+        let currentOpts = Array.from(opts);
+        let fallbackAdd = 1;
+        let fallbackSub = 1;
+        while(currentOpts.length < 3) {
+            let d1 = ans + fallbackAdd;
+            if (!currentOpts.includes(d1) && (maxBound === null || d1 < maxBound)) {
+                currentOpts.push(d1);
+            }
+            if (currentOpts.length < 3) {
+                let d2 = ans - fallbackSub;
+                if (!currentOpts.includes(d2) && d2 >= minBound) {
+                    currentOpts.push(d2);
+                }
+            }
+            fallbackAdd++;
+            fallbackSub++;
+        }
+        
+        currentOpts.shift(); // Remove a resposta correta da lista
+        return currentOpts;
+    }
+
+    /* =========================================
+       FLUXO DO JOGO
+       ========================================= */
+    function iniciarJogo(nivel) {
+        currentLevel = nivel;
+        questionIndex = 0;
+        errorsCount = 0;
+        isTransitioning = false;
+
+        menuNiveis.style.display = 'none';
+        endScreen.style.display = 'none';
+        statusBar.style.display = 'flex';
+        gameScreen.style.display = 'flex';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        atualizarPlacar();
+        carregarPergunta();
+    }
+
+    function reiniciarNivelAtual() { iniciarJogo(currentLevel); }
+
+    function voltarAoMenu() {
+        endScreen.style.display = 'none';
+        statusBar.style.display = 'none';
+        gameScreen.style.display = 'none';
+        menuNiveis.style.display = 'flex';
+    }
+
+    function carregarPergunta() {
+        isTransitioning = false;
+        elProgressFill.style.width = `${(questionIndex / TOTAL_QUESTIONS) * 100}%`;
+        elProgresso.textContent = questionIndex + 1;
+
+        // Avisos de Fase
+        if (questionIndex < 10) {
+            elFase.textContent = "FASE 1: VAMOS SUBTRAIR!";
+            elFase.style.color = "#0091ff";
+        } else {
+            elFase.textContent = "FASE 2: NÚMERO ESCONDIDO!";
+            elFase.style.color = "#ffa502";
+        }
+
+        currentQuestionData = generateQuestion(currentLevel, questionIndex);
+        
+        // Reset Visual das Caixas
+        [boxA, boxB, boxC].forEach(b => {
+            b.className = 'caixa-valor'; 
+            b.textContent = '';
+        });
+        [dotsA, dotsB, dotsC].forEach(d => d.innerHTML = '');
+
+        // Preencher Equação
+        configurarCaixa(boxA, dotsA, 'a', currentQuestionData.a);
+        configurarCaixa(boxB, dotsB, 'b', currentQuestionData.b);
+        configurarCaixa(boxC, dotsC, 'c', currentQuestionData.c);
+
+        // Renderizar Botões
+        opcoesContainer.innerHTML = '';
+        currentQuestionData.options.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'btn-opcao';
+            btn.textContent = opt;
+            btn.onclick = () => verificarResposta(opt, btn);
+            opcoesContainer.appendChild(btn);
+        });
+    }
+
+    function configurarCaixa(boxElement, dotsElement, tipo, valor) {
+        if (currentQuestionData.missingPos === tipo) {
+            boxElement.textContent = "?";
+            boxElement.classList.add('caixa-vazia');
+        } else {
+            boxElement.textContent = valor;
+            // Mostra bolinhas no nível 1 para ajudar visualmente a "ver as quantidades" a desaparecer
+            if (currentLevel === 1) desenharBolinhas(dotsElement, valor);
+        }
+    }
+
+    function desenharBolinhas(container, quantidade) {
+        container.innerHTML = '';
+        for(let i=0; i < quantidade; i++) {
+            let dot = document.createElement('div');
+            dot.className = 'dot';
+            container.appendChild(dot);
+        }
+    }
+
+    function verificarResposta(valorClicado, btnElemento) {
+        if (isTransitioning) return;
+
+        if (valorClicado === currentQuestionData.answer) {
+            // ACERTOU
+            isTransitioning = true;
+            tocarSom('acerto');
+            
+            btnElemento.style.borderColor = "#2ed573";
+            btnElemento.style.color = "#219d53";
+            btnElemento.style.backgroundColor = "#eafff0";
+
+            let caixaVazia;
+            let dotsVazios;
+            if (currentQuestionData.missingPos === 'a') { caixaVazia = boxA; dotsVazios = dotsA; }
+            if (currentQuestionData.missingPos === 'b') { caixaVazia = boxB; dotsVazios = dotsB; }
+            if (currentQuestionData.missingPos === 'c') { caixaVazia = boxC; dotsVazios = dotsC; }
+
+            caixaVazia.textContent = valorClicado;
+            caixaVazia.classList.remove('caixa-vazia');
+            caixaVazia.classList.add('caixa-sucesso');
+
+            if (currentLevel === 1) desenharBolinhas(dotsVazios, valorClicado);
+
+            setTimeout(() => {
+                questionIndex++;
+                if (questionIndex === 10) {
+                    mostrarTransicaoMeio();
+                } else if (questionIndex < TOTAL_QUESTIONS) {
+                    carregarPergunta();
+                } else {
+                    finalizarJogo();
+                }
+            }, 1200);
+
+        } else {
+            // ERROU
+            errorsCount++;
+            atualizarPlacar();
+            tocarSom('erro');
+
+            btnElemento.classList.add('error-shake');
+            setTimeout(() => {
+                btnElemento.classList.remove('error-shake');
+            }, 400);
+        }
+    }
+
+    function mostrarTransicaoMeio() {
+        tocarSom('vitoria_curta');
+        transitionScreen.style.display = 'flex';
+        setTimeout(() => {
+            transitionScreen.style.display = 'none';
+            carregarPergunta();
+        }, 2500);
+    }
+
+    function atualizarPlacar() {
+        elErros.textContent = errorsCount;
+    }
+
+    function finalizarJogo() {
+        elProgressFill.style.width = `100%`;
+        gameScreen.style.display = 'none';
+        statusBar.style.display = 'none';
+        endScreen.style.display = 'flex';
+        
+        document.getElementById('final-erros').textContent = errorsCount;
+
+        if (errorsCount === 0) {
+            document.getElementById('end-title-text').textContent = "MÁQUINA PERFEITA! 🏆";
+            tocarSom('vitoria'); dispararConfetis();
+        } else if (errorsCount <= 3) {
+            document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+            tocarSom('vitoria'); dispararConfetis();
+        } else {
+            document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+            tocarSom('vitoria_curta'); 
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E EFEITOS
+       ========================================= */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'vitoria_curta') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, agora);
+            osc.frequency.setValueAtTime(659.25, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis =[];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2,
+                velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360,
+                velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+
+        confetis.forEach(c => {
+            c.y += c.velY;
+            c.x += c.velX;
+            c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y);
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor;
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+</script>
+</body>
+</html>
