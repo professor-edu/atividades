@@ -252,7 +252,7 @@
             MobileDragDrop.polyfill({ holdToDrag: 0 });
         }
     } catch(e) {
-        console.warn("MobileDragDrop bloqueado pela rede da escola.");
+        console.warn("MobileDragDrop não carregou.");
     }
 
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
@@ -292,7 +292,7 @@
     }
 
     function iniciarJogo() {
-        // 2. Proteção Anti-Crash: Verifica se o array 'palavras' existe
+        // 2. Verifica se o array 'palavras' existe
         if (typeof palavras === 'undefined' || palavras.length === 0) {
             document.getElementById('container-principal').style.display = 'none';
             document.getElementById('msg-erro').style.display = 'block';
@@ -310,10 +310,13 @@
         let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
         palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
         
-        // 3. Extração segura de sílabas (Sem usar .flatMap que falha em iPads velhos)
+        // 3. Extração segura de sílabas
         let arrayTemp =[];
         palavras.forEach(p => {
-            if (p.divisao) arrayTemp.push(...p.divisao.split('-'));
+            if (p.divisao) {
+                let sils = p.divisao.split('-');
+                sils.forEach(s => arrayTemp.push(s));
+            }
         });
         todasAsSilabas =[...new Set(arrayTemp)];
         
@@ -326,7 +329,7 @@
         trainWrapper.className = 'train-wrapper start';
         smoke.classList.remove('active');
         
-        // 4. Força o browser a registar o comboio fora do ecrã (Reflow síncrono)
+        // 4. Força o browser a registar o comboio fora do ecrã
         void trainWrapper.offsetWidth;
 
         const palavraObj = palavrasDoJogo[palavraAtualIndex];
@@ -336,7 +339,6 @@
         carriagesContainer.innerHTML = '';
         platformContainer.innerHTML = '';
 
-        // Segurança caso a palavra não tenha divisão definida
         const stringDivisao = palavraObj.divisao || palavraObj.palavra;
         const silabasCorretas = stringDivisao.split('-');
         
@@ -366,12 +368,14 @@
 
         let silabasParaApanhar =[...silabasCorretas];
         
-        let distrator = "";
-        do {
-            distrator = todasAsSilabas[Math.floor(Math.random() * todasAsSilabas.length)];
-        } while (silabasCorretas.includes(distrator));
+        // 5. FILTRO 100% SEGURO (Evita o loop infinito que congelava o jogo!)
+        let distratoresPossiveis = todasAsSilabas.filter(silaba => !silabasCorretas.includes(silaba));
         
-        silabasParaApanhar.push(distrator);
+        if (distratoresPossiveis.length > 0) {
+            let distrator = distratoresPossiveis[Math.floor(Math.random() * distratoresPossiveis.length)];
+            silabasParaApanhar.push(distrator);
+        }
+        
         silabasParaApanhar.sort(() => Math.random() - 0.5);
 
         silabasParaApanhar.forEach((silaba, index) => {
@@ -403,7 +407,6 @@
         platformContainer.addEventListener('dragleave', handleDragLeavePool);
         platformContainer.addEventListener('drop', handleDropPool);
 
-        // Desliza o comboio para a estação
         setTimeout(() => {
             trainWrapper.className = 'train-wrapper in';
             setTimeout(() => { isVerificando = false; }, 1200);
@@ -622,7 +625,6 @@
         if (ativos) requestAnimationFrame(animarConfetis);
     }
 
-    // Inicialização ao carregar a página
     window.onload = iniciarJogo;
 
 </script>
