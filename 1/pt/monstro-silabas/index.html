@@ -97,24 +97,24 @@
             box-shadow: inset 0 -5px 10px rgba(0,0,0,0.05);
         }
 
-        .alimento-drag {
-            background: white;
-            border: 4px solid #ced6e0;
-            border-radius: 20px;
-            padding: 10px;
-            width: 140px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: grab;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            position: absolute;
-            /* transição apenas para reset. Removida durante o drag via JS */
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            user-select: none;
-            touch-action: none; /* Bloqueia scroll no telemóvel ao arrastar */
-        }
+		.alimento-drag {
+			background: white;
+			border: 4px solid #ced6e0;
+			border-radius: 20px;
+			padding: 10px;
+			width: 140px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 5px;
+			cursor: grab;
+			box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+			position: absolute;
+			z-index: 999; /* Garante que o cartão fica sempre por cima de tudo */
+			transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+			user-select: none;
+			touch-action: none;
+		}
 
         .alimento-drag:active { cursor: grabbing; }
 
@@ -419,12 +419,13 @@
         });
     }
 
-    function resetAlimentoPosition() {
-        alimento.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        alimento.style.transform = 'translate3d(0, 0, 0) scale(1)';
-        currentX = 0;
-        currentY = 0;
-    }
+		function resetAlimentoPosition() {
+		alimento.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s';
+		alimento.style.transform = 'translate3d(0, 0, 0) scale(1)';
+		alimento.style.opacity = '1'; // Volta a ficar 100% visível
+		currentX = 0;
+		currentY = 0;
+	}
 
     /* ==================================================
        SISTEMA DE ARRASTAR E LARGAR (DRAG & DROP CUSTOM)
@@ -460,19 +461,20 @@
         alimento.style.transition = 'none'; // Desliga transição para arrasto suave
     }
 
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault(); // Bloqueia scroll do ecrã
+		function drag(e) {
+		if (!isDragging) return;
+		e.preventDefault(); 
 
-        if (e.type === "touchmove") {
-            currentX = e.touches[0].clientX - initialX;
-            currentY = e.touches[0].clientY - initialY;
-        } else {
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-        }
+		if (e.type === "touchmove") {
+			currentX = e.touches[0].clientX - initialX;
+			currentY = e.touches[0].clientY - initialY;
+		} else {
+			currentX = e.clientX - initialX;
+			currentY = e.clientY - initialY;
+		}
 
-        alimento.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(1.1)`;
+        alimento.style.opacity = '0.9'; 
+		alimento.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scale(0.6)`;
 
         // Detetar colisão com Monstros enquanto arrasta
         let hoverOcorreu = false;
