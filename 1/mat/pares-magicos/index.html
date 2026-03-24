@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Pares Mágicos 🪄</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS BASE DO TEMPLATE (Meio-Termo)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-material: #f39c12; /* Laranja do Material Dourado */
+            --cor-borda-material: #d35400;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; overflow-y: scroll; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 850px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 20px 15px; }
+            .cartao-jogo-container { padding: 25px 15px; min-height: 400px; }
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO E PONTUAÇÃO EXTERNA
+           ========================================= */
+        .status-bar { width: 100%; max-width: 750px; display: none; }
+        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
+        .score-certas { color: #219d53; }
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        /* =========================================
+           CSS ESPECÍFICO: PARES MÁGICOS
+           ========================================= */
+
+        /* Ecrãs */
+        #ecra-selecao, #ecra-jogo, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; }
+        #ecra-selecao { display: flex; } /* Visível por defeito */
+
+        /* Seleção de Nível */
+        .niveis-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .btn-nivel { background: white; border: 4px solid var(--azul-vibrante); padding: 25px 40px; border-radius: 20px; font-size: 1.5rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 var(--azul-vibrante); display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .btn-nivel span { font-size: 3rem; }
+        .btn-nivel:hover { transform: translateY(-5px); background: #e3f2fd; }
+        .btn-nivel:active { transform: translateY(6px); box-shadow: 0 0 0 var(--azul-vibrante); }
+
+        /* Tabuleiro do Jogo */
+        .board-container { position: relative; width: 100%; max-width: 700px; display: flex; justify-content: space-between; margin-top: 10px; }
+        
+        /* A Camada do SVG (Para desenhar as linhas) */
+        #lines-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        .board-col { display: flex; flex-direction: column; gap: 15px; width: 42%; z-index: 2; }
+        
+        /* Os Cartões */
+        .match-card {
+            background: white; border: 4px solid #ced6e0; border-radius: 15px; min-height: 85px; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem; 
+            font-weight: bold; color: var(--azul-escuro); cursor: pointer; transition: all 0.2s; 
+            box-shadow: 0 5px 0 #ced6e0; padding: 10px; box-sizing: border-box; text-transform: uppercase;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Estados do Cartão */
+        .match-card.selected { border-color: var(--azul-vibrante); box-shadow: 0 5px 0 var(--azul-vibrante), 0 0 15px rgba(0, 145, 255, 0.3); transform: scale(1.03); z-index: 5; }
+        .match-card.matched { border-color: #2ed573; box-shadow: 0 5px 0 #219d53; background: #eafff0; color: #219d53; cursor: default; transform: scale(0.98); opacity: 0.8; }
+        .match-card.error { border-color: #ff4757; box-shadow: 0 5px 0 #d0303f; background: #ffefef; color: #ff4757; animation: shake 0.4s ease-in-out; }
+
+        /* Visualização de Quantidades */
+        .qty-emojis { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; font-size: 1.8rem; }
+        
+        /* Material Dourado em CSS */
+        .qty-base10 { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .dezena { width: 22px; height: 60px; background: var(--cor-material); border: 2px solid var(--cor-borda-material); border-radius: 4px; display: flex; flex-direction: column; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .dezena div { flex: 1; border-bottom: 1px solid rgba(211, 84, 0, 0.4); }
+        .dezena div:last-child { border-bottom: none; }
+        .unidades-container { display: flex; flex-wrap: wrap; gap: 4px; max-width: 60px; justify-content: flex-start; }
+        .unidade { width: 14px; height: 14px; background: var(--cor-material); border: 2px solid var(--cor-borda-material); border-radius: 3px; box-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+
+        /* Ecrã Final */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .botoes-fim { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 25px; }
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #219d53; transition: 0.2s; }
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 #219d53; }
+        .btn-secundario { background-color: #ff9f43; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #e67e22; transition: 0.2s; }
+        .btn-secundario:active { transform: translateY(5px); box-shadow: 0 0px 0 #e67e22; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 50% { transform: translateX(8px) rotate(3deg); } 75% { transform: translateX(-8px) rotate(-3deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        @media (max-width: 500px) {
+            .match-card { min-height: 65px; font-size: 1.3rem; padding: 5px; }
+            .qty-emojis { font-size: 1.4rem; gap: 2px; }
+            .dezena { width: 16px; height: 50px; }
+            .unidade { width: 10px; height: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Pares Mágicos 🪄</h1>
+        <div class="subtitulo" id="main-subtitle">Toca num cartão e depois no seu par correto para os ligar!</div>
+    </div>
+</header>
+
+<main>
+    <div id="status-bar-container" class="status-bar">
+        <div class="score-container">
+            <span class="score-certas">✔️ Pares: <span id="val-certas">0</span></span>
+            <span class="score-erradas">❌ Enganos: <span id="val-erradas">0</span></span>
+        </div>
+        <div class="progress-bg">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: SELEÇÃO DE NÍVEL -->
+        <div id="ecra-selecao">
+            <h2 style="color: var(--azul-escuro); margin-bottom: 5px;">Escolhe a tua Missão</h2>
+            <div class="niveis-grid">
+                <button class="btn-nivel" onclick="iniciarJogo(1)">
+                    <span>🍎</span>
+                    Nível 1 (Até 10)
+                </button>
+                <button class="btn-nivel" onclick="iniciarJogo(2)">
+                    <span>📦</span>
+                    Nível 2 (De 11 a 20)
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: ÁREA DE JOGO -->
+        <div id="ecra-jogo">
+            <h3 id="instrucao-ronda" style="color: var(--text-main); margin-top: 0; margin-bottom: 15px;">A procurar pares...</h3>
+            
+            <div class="board-container" id="board-container">
+                <!-- SVG Para as linhas de ligação -->
+                <svg id="lines-svg"></svg>
+                
+                <div class="board-col" id="col-left"></div>
+                <div class="board-col" id="col-right"></div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim">
+            <h2 class="end-title">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Fizeste <strong style="color:#2ed573">20</strong> ligações mágicas!<br>
+                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> enganos.
+            </div>
+            <div class="botoes-fim">
+                <button class="btn-acao" onclick="jogarNovamente()">Jogar Novamente ➔</button>
+                <button class="btn-secundario" onclick="voltarAoMenu()">🔠 Mudar Nível</button>
+            </div>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    // Dicionário Numérico
+    const palavrasNumeros =[
+        "ZERO", "UM", "DOIS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ",
+        "ONZE", "DOZE", "TREZE", "CATORZE", "QUINZE", "DEZASSEIS", "DEZASSETE", "DEZOITO", "DEZANOVE", "VINTE"
+    ];
+
+    const emojis =['🍎', '⭐', '🎈', '🚗', '🐱', '⚽', '🦋', '🍕', '🌻', '🧸'];
+
+    // Variáveis de Estado
+    let nivelAtual = 1;
+    let rondasJogadas = 0;
+    const TOTAL_RONDAS = 5; // 5 rondas * 4 pares = 20 ligações
+    
+    let paresCertosGeral = 0;
+    let paresCertosRonda = 0;
+    let erradas = 0;
+    
+    let selecaoEsquerda = null;
+    let selecaoDireita = null;
+    let blockBoard = false;
+    let paresConcluidosNode =[]; // Guarda os pares que já têm linha desenhada
+
+    // DOM
+    const ecraSelecao = document.getElementById('ecra-selecao');
+    const ecraJogo = document.getElementById('ecra-jogo');
+    const ecraFim = document.getElementById('ecra-fim');
+    const statusBar = document.getElementById('status-bar-container');
+    const colLeft = document.getElementById('col-left');
+    const colRight = document.getElementById('col-right');
+    const svgLines = document.getElementById('lines-svg');
+    const instrRonda = document.getElementById('instrucao-ronda');
+    
+    const progressFill = document.getElementById('progress-fill');
+    const valCertas = document.getElementById('val-certas');
+    const valErradas = document.getElementById('val-erradas');
+
+    function mostrarEcra(ecraID) {
+        ecraSelecao.style.display = 'none';
+        ecraJogo.style.display = 'none';
+        ecraFim.style.display = 'none';
+        document.getElementById(ecraID).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        statusBar.style.display = 'none';
+        mostrarEcra('ecra-selecao');
+    }
+
+    function iniciarJogo(nivel) {
+        nivelAtual = nivel;
+        jogarNovamente();
+    }
+
+    function jogarNovamente() {
+        rondasJogadas = 0;
+        paresCertosGeral = 0;
+        erradas = 0;
+        atualizarPlacar();
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        
+        statusBar.style.display = 'block';
+        mostrarEcra('ecra-jogo');
+        gerarRonda();
+    }
+
+    function atualizarPlacar() {
+        valCertas.textContent = paresCertosGeral;
+        valErradas.textContent = erradas;
+        progressFill.style.width = `${(paresCertosGeral / (TOTAL_RONDAS * 4)) * 100}%`;
+    }
+
+    // Geração Visual das Quantidades
+    function getQtyHTML(num) {
+        if (num <= 10) {
+            // Emojis espalhados (Usa sempre o mesmo emoji no cartão para não confundir)
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            let html = '<div class="qty-emojis">';
+            for(let i=0; i<num; i++) html += `<span>${emoji}</span>`;
+            html += '</div>';
+            return html;
+        } else {
+            // Material Dourado (1 Dezena + Unidades)
+            let html = '<div class="qty-base10">';
+            // Barra da Dezena
+            html += '<div class="dezena">';
+            for(let i=0; i<10; i++) html += '<div></div>';
+            html += '</div>';
+            
+            // Cubinhos das unidades
+            let unidades = num - 10;
+            if (unidades > 0) {
+                html += '<div class="unidades-container">';
+                for(let i=0; i<unidades; i++) html += '<div class="unidade"></div>';
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+    }
+
+    function gerarRonda() {
+        colLeft.innerHTML = '';
+        colRight.innerHTML = '';
+        svgLines.innerHTML = '';
+        paresConcluidosNode =[];
+        paresCertosRonda = 0;
+        selecaoEsquerda = null;
+        selecaoDireita = null;
+        blockBoard = false;
+
+        // 1. Escolher 4 números únicos com base no nível
+        let numerosDisponiveis =[];
+        let min = (nivelAtual === 1) ? 1 : 11;
+        let max = (nivelAtual === 1) ? 10 : 20;
+        
+        for (let i = min; i <= max; i++) numerosDisponiveis.push(i);
+        numerosDisponiveis.sort(() => Math.random() - 0.5);
+        let numerosRonda = numerosDisponiveis.slice(0, 4);
+
+        // 2. Escolher o TIPO DE RONDA (A Dinâmica do Triângulo)
+        // Tipo 0: Número <-> Quantidade
+        // Tipo 1: Quantidade <-> Palavra
+        // Tipo 2: Palavra <-> Número
+        const tipoRonda = Math.floor(Math.random() * 3);
+        
+        let leftItems = [];
+        let rightItems =[];
+
+        if (tipoRonda === 0) {
+            instrRonda.textContent = "Liga o Número à Quantidade correta!";
+            numerosRonda.forEach(num => {
+                leftItems.push({ id: num, html: num.toString() });
+                rightItems.push({ id: num, html: getQtyHTML(num) });
+            });
+        } else if (tipoRonda === 1) {
+            instrRonda.textContent = "Liga a Quantidade à Palavra correta!";
+            numerosRonda.forEach(num => {
+                leftItems.push({ id: num, html: getQtyHTML(num) });
+                rightItems.push({ id: num, html: palavrasNumeros[num] });
+            });
+        } else {
+            instrRonda.textContent = "Liga a Palavra ao Número correto!";
+            numerosRonda.forEach(num => {
+                leftItems.push({ id: num, html: palavrasNumeros[num] });
+                rightItems.push({ id: num, html: num.toString() });
+            });
+        }
+
+        // 3. Baralhar as colunas separadamente
+        leftItems.sort(() => Math.random() - 0.5);
+        rightItems.sort(() => Math.random() - 0.5);
+
+        // 4. Renderizar
+        leftItems.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            card.dataset.id = item.id;
+            card.dataset.side = 'left';
+            card.innerHTML = item.html;
+            card.onclick = () => handleCardClick(card);
+            colLeft.appendChild(card);
+        });
+
+        rightItems.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            card.dataset.id = item.id;
+            card.dataset.side = 'right';
+            card.innerHTML = item.html;
+            card.onclick = () => handleCardClick(card);
+            colRight.appendChild(card);
+        });
+    }
+
+    function handleCardClick(card) {
+        if (blockBoard || card.classList.contains('matched')) return;
+
+        tocarSom('pop');
+
+        const side = card.dataset.side;
+
+        // Se clicou do lado ESQUERDO
+        if (side === 'left') {
+            if (selecaoEsquerda) selecaoEsquerda.classList.remove('selected');
+            selecaoEsquerda = card;
+            selecaoEsquerda.classList.add('selected');
+        } 
+        // Se clicou do lado DIREITO
+        else {
+            if (selecaoDireita) selecaoDireita.classList.remove('selected');
+            selecaoDireita = card;
+            selecaoDireita.classList.add('selected');
+        }
+
+        // Se tem um de cada lado selecionado, verifica o par!
+        if (selecaoEsquerda && selecaoDireita) {
+            verificarPar();
+        }
+    }
+
+    function verificarPar() {
+        blockBoard = true;
+        
+        const idLeft = selecaoEsquerda.dataset.id;
+        const idRight = selecaoDireita.dataset.id;
+
+        if (idLeft === idRight) {
+            // ACERTOU!
+            tocarSom('acerto');
+            paresCertosGeral++;
+            paresCertosRonda++;
+            atualizarPlacar();
+
+            selecaoEsquerda.classList.remove('selected');
+            selecaoDireita.classList.remove('selected');
+            
+            selecaoEsquerda.classList.add('matched');
+            selecaoDireita.classList.add('matched');
+
+            // Desenha a linha mágica e guarda os nós para o resize
+            drawLine(selecaoEsquerda, selecaoDireita);
+            paresConcluidosNode.push({ left: selecaoEsquerda, right: selecaoDireita });
+
+            selecaoEsquerda = null;
+            selecaoDireita = null;
+            blockBoard = false;
+
+            if (paresCertosRonda === 4) {
+                setTimeout(rondaConcluida, 800);
+            }
+
+        } else {
+            // ERROU!
+            tocarSom('erro');
+            erradas++;
+            atualizarPlacar();
+
+            selecaoEsquerda.classList.remove('selected');
+            selecaoDireita.classList.remove('selected');
+            
+            selecaoEsquerda.classList.add('error');
+            selecaoDireita.classList.add('error');
+
+            setTimeout(() => {
+                selecaoEsquerda.classList.remove('error');
+                selecaoDireita.classList.remove('error');
+                selecaoEsquerda = null;
+                selecaoDireita = null;
+                blockBoard = false;
+            }, 600);
+        }
+    }
+
+    // Desenha a linha de conexão
+    function drawLine(card1, card2) {
+        const containerRect = document.getElementById('board-container').getBoundingClientRect();
+        const rect1 = card1.getBoundingClientRect();
+        const rect2 = card2.getBoundingClientRect();
+
+        // Calcular o ponto do meio da borda direita do cartão esquerdo
+        const x1 = rect1.right - containerRect.left;
+        const y1 = rect1.top + (rect1.height / 2) - containerRect.top;
+
+        // Calcular o ponto do meio da borda esquerda do cartão direito
+        const x2 = rect2.left - containerRect.left;
+        const y2 = rect2.top + (rect2.height / 2) - containerRect.top;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', '#2ed573');
+        line.setAttribute('stroke-width', '4');
+        line.setAttribute('stroke-linecap', 'round');
+        
+        svgLines.appendChild(line);
+    }
+
+    // Atualiza as linhas se o ecrã rodar (tablet/telemóvel)
+    window.addEventListener('resize', () => {
+        redimensionarCanvas(); // Para os confetis
+        
+        // Redesenhar linhas
+        if (paresConcluidosNode.length > 0) {
+            svgLines.innerHTML = '';
+            paresConcluidosNode.forEach(par => drawLine(par.left, par.right));
+        }
+    });
+
+    function rondaConcluida() {
+        rondasJogadas++;
+        
+        if (rondasJogadas < TOTAL_RONDAS) {
+            gerarRonda();
+        } else {
+            // FIM DO JOGO
+            statusBar.style.display = 'none';
+            mostrarEcra('ecra-fim');
+            document.getElementById('final-erradas').textContent = erradas;
+            tocarSom('vitoria');
+            dispararConfetis();
+        }
+    }
+
+    // ==========================================
+    // SONS SINTETIZADOS
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, agora);
+            osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } 
+        else if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'erro') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    // ==========================================
+    // CONFETIS
+    // ==========================================
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis = [];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5, h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+</script>
+</body>
+</html>
