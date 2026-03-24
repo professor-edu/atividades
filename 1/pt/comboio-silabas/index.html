@@ -95,24 +95,32 @@
             transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1); 
         }
         
-        .train-wrapper.start { transform: translateX(-150vw); transition: none; } 
-        .train-wrapper.in { transform: translateX(0); } 
-        .train-wrapper.out { transform: translateX(150vw); transition: transform 1.5s cubic-bezier(0.5, 0, 0.75, 0); } 
+        .train-wrapper.start { transform: translateX(-150vw); transition: none; } /* Entra pela Esquerda */
+        .train-wrapper.in { transform: translateX(0); } /* Pára no Meio */
+        .train-wrapper.out { transform: translateX(150vw); transition: transform 1.5s cubic-bezier(0.5, 0, 0.75, 0); } /* Sai pela Direita */
 
+        /* A Locomotiva - Agora Virada para a DIREITA */
         .locomotive {
             width: clamp(100px, 20vw, 130px); height: clamp(90px, 18vw, 120px); background: #ff4757; border-radius: 20px 20px 0 0;
             position: relative; display: flex; align-items: center; justify-content: center;
             box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); border-bottom: 5px solid #2f3542;
         }
+        /* Rodas */
         .locomotive::before, .locomotive::after { content:''; position:absolute; bottom:-12px; width:26px; height:26px; background:#2f3542; border-radius:50%; border: 3px solid #747d8c;}
         .locomotive::before { left: 10px; } .locomotive::after { right: 10px; }
         
-        .loco-roof { position: absolute; top: -15px; right: -5px; width: 60%; height: 15px; background: #ff6b81; border-radius: 10px 10px 0 0; }
-        .chimney { position:absolute; top:-35px; left:15px; width:20px; height:35px; background:#2f3542; border-radius:5px 5px 0 0; }
+        /* O teto passa para o lado ESQUERDO (traseira) */
+        .loco-roof { position: absolute; top: -15px; left: -5px; width: 60%; height: 15px; background: #ff6b81; border-radius: 10px 10px 0 0; }
+        /* A chaminé passa para o lado DIREITO (frente) */
+        .chimney { position:absolute; top:-35px; right:15px; width:20px; height:35px; background:#2f3542; border-radius:5px 5px 0 0; }
         
-        .smoke { position: absolute; top: -15px; left: -5px; font-size: 2rem; opacity: 0; pointer-events: none; }
+        /* O fumo agora arrasta para trás (para a esquerda) */
+        .smoke { position: absolute; top: -15px; right: -5px; font-size: 2rem; opacity: 0; pointer-events: none; }
         .smoke.active { animation: puff 1.5s ease-out forwards; }
-        @keyframes puff { 0% { transform: translateY(0) scale(0.5); opacity: 1; } 100% { transform: translateY(-60px) translateX(-20px) scale(2.5); opacity: 0; } }
+        @keyframes puff { 
+            0% { transform: translateY(0) scale(0.5); opacity: 1; } 
+            100% { transform: translateY(-60px) translateX(-40px) scale(2.5); opacity: 0; } 
+        }
 
         .train-img { width: 75%; height: 75%; object-fit: contain; background: white; border-radius: 10px; padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
 
@@ -124,7 +132,8 @@
         .carriage-slot::before, .carriage-slot::after { content:''; position:absolute; bottom:-16px; width:22px; height:22px; background:#2f3542; border-radius:50%; border: 2px solid #747d8c; z-index:1;}
         .carriage-slot::before { left: 8px; } .carriage-slot::after { right: 8px; }
         
-        .carriage-link { position: absolute; left: -12px; bottom: 10px; width: 12px; height: 6px; background: #2f3542; }
+        /* Os engates conectam a carruagem à que está do lado DIREITO */
+        .carriage-link { position: absolute; right: -12px; bottom: 10px; width: 12px; height: 6px; background: #2f3542; }
 
         .carriage-slot.drag-over { border-color: var(--azul-vibrante); background-color: #e3f2fd; transform: scale(1.05); }
         .carriage-slot.filled { border-style: solid; border-color: #ffa502; background: #ffeaa7; }
@@ -199,7 +208,6 @@
         </div>
     </div>
 
-    <!-- MENSAGEM DE ERRO (Se o ficheiro dados falhar) -->
     <div id="msg-erro" style="display:none; color:#ff4757; font-weight:bold; font-size:1.2rem; margin-top:20px;">
         ⚠️ O ficheiro de palavras não foi carregado corretamente.
     </div>
@@ -210,6 +218,11 @@
             
             <div class="scenery">
                 <div id="train" class="train-wrapper start">
+                    
+                    <!-- CARRUAGENS VÊM PRIMEIRO NA ESTRUTURA HTML (Lado Esquerdo) -->
+                    <div id="carriages-container" style="display: flex; gap: 8px;"></div>
+
+                    <!-- LOCOMOTIVA FICA NO FINAL DA ESTRUTURA (Lado Direito a Puxar) -->
                     <div class="locomotive">
                         <div class="chimney">
                             <div class="smoke" id="smoke">☁️</div>
@@ -217,7 +230,7 @@
                         <div class="loco-roof"></div>
                         <img id="game-image" class="train-img" src="" alt="Imagem secreta">
                     </div>
-                    <div id="carriages-container" style="display: flex; gap: 8px;"></div>
+                    
                 </div>
             </div>
             
@@ -242,11 +255,9 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<!-- Importar Dados -->
 <script src="dados.js"></script>
 
 <script>
-    // 1. Inicializa o Drag & Drop com proteção "Anti-Crash"
     try {
         if (typeof MobileDragDrop !== 'undefined') {
             MobileDragDrop.polyfill({ holdToDrag: 0 });
@@ -292,7 +303,6 @@
     }
 
     function iniciarJogo() {
-        // 2. Verifica se o array 'palavras' existe
         if (typeof palavras === 'undefined' || palavras.length === 0) {
             document.getElementById('container-principal').style.display = 'none';
             document.getElementById('msg-erro').style.display = 'block';
@@ -310,7 +320,6 @@
         let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
         palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
         
-        // 3. Extração segura de sílabas
         let arrayTemp =[];
         palavras.forEach(p => {
             if (p.divisao) {
@@ -329,7 +338,6 @@
         trainWrapper.className = 'train-wrapper start';
         smoke.classList.remove('active');
         
-        // 4. Força o browser a registar o comboio fora do ecrã
         void trainWrapper.offsetWidth;
 
         const palavraObj = palavrasDoJogo[palavraAtualIndex];
@@ -368,9 +376,7 @@
 
         let silabasParaApanhar =[...silabasCorretas];
         
-        // 5. FILTRO 100% SEGURO (Evita o loop infinito que congelava o jogo!)
         let distratoresPossiveis = todasAsSilabas.filter(silaba => !silabasCorretas.includes(silaba));
-        
         if (distratoresPossiveis.length > 0) {
             let distrator = distratoresPossiveis[Math.floor(Math.random() * distratoresPossiveis.length)];
             silabasParaApanhar.push(distrator);
@@ -413,9 +419,6 @@
         }, 50);
     }
 
-    // ==========================================
-    // FUNÇÕES DE ARRASTAR
-    // ==========================================
     function handleDragStart(e) {
         if (isVerificando) { e.preventDefault(); return; }
         draggedElement = e.target;
@@ -475,9 +478,6 @@
         }
     }
 
-    // ==========================================
-    // VERIFICAÇÃO E ANIMAÇÃO FINAL
-    // ==========================================
     function verificarCompletude() {
         const slots = Array.from(carriagesContainer.children);
         const todasPreenchidas = slots.every(slot => slot.querySelector('.syllable-card') !== null);
@@ -549,9 +549,6 @@
         }, 500);
     }
 
-    // ==========================================
-    // SONS
-    // ==========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
