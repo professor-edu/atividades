@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Código Secreto 🕵️‍♂️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE ORIGINAL
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 900px; min-height: 500px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            .cartao-jogo-container { padding: 25px 10px; }
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: O CÓDIGO SECRETO
+           ========================================= */
+        
+        /* PLACAR E BARRA DE PROGRESSO */
+        .status-bar { width: 100%; max-width: 500px; margin-bottom: 25px; }
+        .progress-bg { background-color: #e3f2fd; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease-out; }
+        .nivel-texto { font-weight: bold; color: var(--text-main); margin-bottom: 10px; display: block; }
+
+        /* COFRE MISTERIOSO */
+        .cofre-container { margin-bottom: 30px; }
+        .cofre-icon { font-size: 5rem; display: inline-block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); transition: transform 0.3s; }
+        
+        /* ANIMAÇÃO DE TREMER (COFRE) */
+        @keyframes shakeCofre {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-2deg); }
+            20% { transform: translate(-3px, 0px) rotate(2deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(2deg); }
+            50% { transform: translate(-1px, 2px) rotate(-2deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-2deg); }
+            80% { transform: translate(-1px, -1px) rotate(2deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-2deg); }
+        }
+        .tremendo { animation: shakeCofre 0.5s infinite; cursor: pointer; }
+
+        /* PISTAS (IMAGENS + CAIXAS DE TEXTO) */
+        .pistas-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; margin-bottom: 20px; transition: opacity 0.5s; }
+        .pista-item { display: flex; flex-direction: column; align-items: center; background: #ffffff; padding: 15px; border-radius: 20px; border: 3px solid #e3f2fd; box-shadow: 0 4px 10px rgba(0,145,255,0.05); transition: 0.3s; }
+        .pista-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 15px; }
+        
+        .letra-input { width: 60px; height: 60px; font-size: 2.5rem; text-align: center; text-transform: uppercase; border: 3px solid #ced6e0; border-radius: 15px; color: var(--azul-escuro); font-weight: bold; outline: none; transition: 0.3s; background: #f8fafc; }
+        .letra-input:focus { border-color: var(--azul-vibrante); box-shadow: 0 0 15px rgba(0, 145, 255, 0.2); background: white; transform: scale(1.05); }
+        
+        /* Feedbacks */
+        .letra-input.correct { background: #eafff0 !important; border-color: #2ed573 !important; color: #219d53; pointer-events: none; }
+        .letra-input.wrong { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef; color: #ff4757; }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            50% { transform: translateX(5px) rotate(2deg); }
+            75% { transform: translateX(-5px) rotate(-2deg); }
+        }
+
+        /* ANIMAÇÃO PUFF DE FUMO (Quando o cofre abre) */
+        @keyframes puffFumo {
+            0% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(1.5) translateY(-50px); filter: blur(10px); }
+        }
+        .desaparecer-fumo { animation: puffFumo 0.8s forwards; pointer-events: none; }
+
+        /* REVELAÇÃO DA PALAVRA SECRETA */
+        .revelacao-container { display: none; flex-direction: column; align-items: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -40%); z-index: 10; width: 100%; }
+        .img-secreta { width: 180px; height: 180px; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(0); margin-bottom: 20px; }
+        .palavra-secreta { font-size: 3.5rem; font-weight: bold; color: var(--azul-escuro); text-transform: uppercase; letter-spacing: 5px; opacity: 0; transform: translateY(20px); text-shadow: 0 4px 10px rgba(0, 145, 255, 0.2); }
+        
+        @keyframes popOutSafe {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            70% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes slideUpWord {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animar-img { animation: popOutSafe 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animar-texto { animation: slideUpWord 0.5s 0.3s forwards ease-out; }
+
+        /* ECRÃ FINAL */
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 20; }
+        .end-title { font-size: 2.8rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); margin-top: 30px; transition: 0.2s; }
+        .btn-reiniciar:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-1ano-dark); }
+        .btn-reiniciar:active { transform: translateY(5px); box-shadow: 0 0px 0 var(--cor-1ano-dark); }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+        @media (max-width: 600px) {
+            .pista-item { padding: 10px; }
+            .pista-img { width: 50px; height: 50px; }
+            .letra-input { width: 45px; height: 45px; font-size: 1.8rem; }
+            .cofre-icon { font-size: 4rem; }
+            .img-secreta { width: 130px; height: 130px; }
+            .palavra-secreta { font-size: 2.2rem; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Código Secreto 🕵️‍♂️</h1>
+        <div class="subtitulo">A primeira letra de cada imagem abre o cofre!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <div id="game-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center; position: relative;">
+            
+            <div class="status-bar">
+                <span class="nivel-texto">Nível <span id="val-nivel">1</span> de <span id="val-total">5</span></span>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="cofre-container">
+                <span id="icone-cofre" class="cofre-icon tremendo">🔒</span>
+            </div>
+
+            <div id="pistas-container" class="pistas-container">
+                <!-- As pistas vão aparecer aqui via JS -->
+            </div>
+
+            <div id="revelacao-container" class="revelacao-container">
+                <img id="img-secreta" class="img-secreta" src="" alt="Palavra Secreta">
+                <div id="palavra-secreta" class="palavra-secreta"></div>
+            </div>
+
+        </div>
+
+        <div id="end-screen">
+            <h2 class="end-title">Detetive Brilhante! 🕵️‍♂️✨</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;">Abriste todos os cofres e descobriste os segredos!</p>
+            <button class="btn-reiniciar" onclick="iniciarJogo()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<!-- Importar o teu ficheiro de dados -->
+<script src="dados.js"></script>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    // ==========================================
+    // LÓGICA DO JOGO "O CÓDIGO SECRETO"
+    // ==========================================
+    const MAX_NIVEIS = 5;
+    let palavrasValidasParaOcultar = [];
+    let palavrasDoJogo =[];
+    let nivelAtual = 0;
+    let letrasDescobertas = 0;
+    let palavraAtualObj = null;
+    let arrayCaracteresAlvo =[];
+
+    // Elementos DOM
+    const elGameScreen = document.getElementById('game-screen');
+    const elEndScreen = document.getElementById('end-screen');
+    const elProgresso = document.getElementById('progress-fill');
+    const elNivel = document.getElementById('val-nivel');
+    const elTotal = document.getElementById('val-total');
+    
+    const iconCofre = document.getElementById('icone-cofre');
+    const boxPistas = document.getElementById('pistas-container');
+    const boxRevelacao = document.getElementById('revelacao-container');
+    const imgSecreta = document.getElementById('img-secreta');
+    const txtSecreta = document.getElementById('palavra-secreta');
+
+    // Função utilitária para limpar acentos (ex: maçã -> maca) e buscar a 1ª letra
+    function normalizar(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // Função para adaptar os caminhos das imagens caso necessário (como no teu template original)
+    function getImagePath(imgPath) {
+        // Se já estiver no formato correto, podes remover este replace.
+        // Mantive a lógica que tinhas no 'template de jogo.html' original.
+        return imgPath.replace('img/', '../../../1/pt/img/');
+    }
+
+    function prepararDicionario() {
+        // 1. Descobrir que letras iniciais temos disponíveis no dados.js
+        const letrasDisponiveis =[...new Set(palavras.map(p => normalizar(p.palavra).charAt(0)))];
+
+        // 2. Filtrar como Palavras Secretas apenas aquelas cujas letras existam no dicionário como iniciais
+        palavrasValidasParaOcultar = palavras.filter(p => {
+            const chars = normalizar(p.palavra).split('');
+            // A palavra secreta não deve ser gigante para não sair do ecrã (máx 6 letras)
+            if (chars.length > 6) return false;
+            // Verifica se todas as letras desta palavra existem como 1ª letra noutras palavras
+            return chars.every(char => letrasDisponiveis.includes(char));
+        });
+    }
+
+    function iniciarJogo() {
+        if (!palavrasValidasParaOcultar.length) prepararDicionario();
+
+        nivelAtual = 0;
+        elEndScreen.style.display = 'none';
+        elGameScreen.style.display = 'flex';
+        elTotal.textContent = MAX_NIVEIS;
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        // Selecionar N palavras aleatórias
+        let baralhadas = [...palavrasValidasParaOcultar].sort(() => Math.random() - 0.5);
+        palavrasDoJogo = baralhadas.slice(0, MAX_NIVEIS);
+        
+        carregarNivel();
+    }
+
+    function carregarNivel() {
+        palavraAtualObj = palavrasDoJogo[nivelAtual];
+        arrayCaracteresAlvo = normalizar(palavraAtualObj.palavra).split('');
+        letrasDescobertas = 0;
+
+        elNivel.textContent = nivelAtual + 1;
+        elProgresso.style.width = `${(nivelAtual / MAX_NIVEIS) * 100}%`;
+
+        // Reset Visual do Cofre
+        iconCofre.textContent = "🔒";
+        iconCofre.classList.add('tremendo');
+        boxRevelacao.style.display = 'none';
+        imgSecreta.classList.remove('animar-img');
+        txtSecreta.classList.remove('animar-texto');
+        
+        boxPistas.innerHTML = '';
+        boxPistas.classList.remove('desaparecer-fumo');
+        boxPistas.style.display = 'flex';
+
+        // Criar as Pistas
+        arrayCaracteresAlvo.forEach((charAlvo, index) => {
+            // Encontrar uma palavra que comece com esta letra
+            const palavrasQueServem = palavras.filter(p => normalizar(p.palavra).charAt(0) === charAlvo && p.palavra !== palavraAtualObj.palavra);
+            
+            // Se não houver outra palavra diferente, usa a própria (embora o filtro anterior garanta quase sempre que haja)
+            const pistaEscolhida = palavrasQueServem.length > 0 
+                ? palavrasQueServem[Math.floor(Math.random() * palavrasQueServem.length)] 
+                : palavras.find(p => normalizar(p.palavra).charAt(0) === charAlvo);
+
+            // Construir Cartão da Pista
+            const div = document.createElement('div');
+            div.className = 'pista-item';
+            div.innerHTML = `
+                <img class="pista-img" src="${getImagePath(pistaEscolhida.imagem)}" alt="Pista">
+                <input type="text" id="input-${index}" class="letra-input" maxlength="1" autocomplete="off" spellcheck="false">
+            `;
+            boxPistas.appendChild(div);
+
+            // Adicionar Evento de Escrita
+            const input = div.querySelector('input');
+            input.addEventListener('input', (e) => validarLetra(e.target, charAlvo, index));
+        });
+
+        // Focar no primeiro input
+        setTimeout(() => document.getElementById('input-0').focus(), 100);
+    }
+
+    function validarLetra(inputElement, charAlvo, index) {
+        const letraDigitada = normalizar(inputElement.value);
+
+        if (letraDigitada === "") {
+            inputElement.classList.remove('wrong');
+            return;
+        }
+
+        if (letraDigitada === charAlvo) {
+            // ACERTOU A LETRA!
+            inputElement.classList.remove('wrong');
+            inputElement.classList.add('correct');
+            tocarSom('tecla');
+            letrasDescobertas++;
+
+            // Passar foco para o próximo vazio
+            let proximoInput = document.getElementById(`input-${index + 1}`);
+            if (proximoInput && !proximoInput.classList.contains('correct')) {
+                proximoInput.focus();
+            } else {
+                // Procurar qualquer um que falte
+                const todosInputs = document.querySelectorAll('.letra-input');
+                for (let inp of todosInputs) {
+                    if (!inp.classList.contains('correct')) {
+                        inp.focus();
+                        break;
+                    }
+                }
+            }
+
+            // Verificou a palavra toda?
+            if (letrasDescobertas === arrayCaracteresAlvo.length) {
+                abrirCofre();
+            }
+        } else {
+            // ERROU A LETRA
+            inputElement.classList.add('wrong');
+            tocarSom('erro');
+            setTimeout(() => {
+                inputElement.value = '';
+                inputElement.classList.remove('wrong');
+            }, 400);
+        }
+    }
+
+    function abrirCofre() {
+        tocarSom('abrirCofre');
+        
+        // Mudar o cofre
+        iconCofre.textContent = "🔓";
+        iconCofre.classList.remove('tremendo');
+
+        // Pistas desaparecem num puff de fumo
+        boxPistas.classList.add('desaparecer-fumo');
+
+        // Mostrar a revelação ao fim de 0.5s
+        setTimeout(() => {
+            boxPistas.style.display = 'none'; // esconder de vez
+            
+            imgSecreta.src = getImagePath(palavraAtualObj.imagem);
+            txtSecreta.textContent = palavraAtualObj.palavra;
+            
+            boxRevelacao.style.display = 'flex';
+            imgSecreta.classList.add('animar-img');
+            txtSecreta.classList.add('animar-texto');
+            
+            tocarSom('magia'); // Som de recompensa visual
+
+            // Esperar 3.5 segundos e saltar para o próximo nível
+            setTimeout(() => {
+                nivelAtual++;
+                if (nivelAtual < MAX_NIVEIS) {
+                    carregarNivel();
+                } else {
+                    finalizarJogo();
+                }
+            }, 3500);
+
+        }, 500);
+    }
+
+    function finalizarJogo() {
+        elProgresso.style.width = `100%`;
+        setTimeout(() => {
+            elGameScreen.style.display = 'none';
+            elEndScreen.style.display = 'flex';
+            tocarSom('vitoria'); 
+            dispararConfetis();
+        }, 500);
+    }
+
+    // ==========================================
+    // EFEITOS SONOROS BÁSICOS (Web Audio API)
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'tecla') {
+            // Som tipo botão "blip"
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, agora);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'erro') {
+            // Som "bzz" grave
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'abrirCofre') {
+            // Som de mola/click "Tcha-Ching"
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(300, agora);
+            osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.2, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'magia') {
+            // Som "Ta-Daa!" quando a imagem salta
+            const notas =[523.25, 659.25, 783.99, 1046.50]; // Dó, Mi, Sol, Dó
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.1 + 0.4);
+                o.start(agora + i * 0.1); o.stop(agora + i * 0.1 + 0.4);
+            });
+        }
+        else if (tipo === 'vitoria') {
+            // Música de fim
+            const notas =[440, 554.37, 659.25, 880]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.2);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.2 + 0.5);
+                o.start(agora + i * 0.2); o.stop(agora + i * 0.2 + 0.5);
+            });
+        }
+    }
+
+    // ==========================================
+    // CONFETIS
+    // ==========================================
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis = [];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 150; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5, h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arrancar o Jogo
+    window.onload = iniciarJogo;
+
+</script>
+</body>
+</html>
