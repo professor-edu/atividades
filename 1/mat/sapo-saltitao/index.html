@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Sapo Saltitão 🐸</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS BASE DO TEMPLATE (Meio-Termo)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-sapo: #2ecc71;
+            --cor-nenufar: #00b894;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; overflow-y: scroll; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 850px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 20px 10px; gap: 15px;}
+            .cartao-jogo-container { padding: 25px 10px; min-height: 400px; }
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO E PONTUAÇÃO EXTERNA
+           ========================================= */
+        .status-bar { width: 100%; max-width: 750px; display: none; }
+        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
+        .score-certas { color: #219d53; }
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        /* =========================================
+           CSS ESPECÍFICO: SAPO E NENÚFARES
+           ========================================= */
+
+        #ecra-selecao, #ecra-jogo, #ecra-transicao, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; z-index: 20; }
+        #ecra-selecao { display: flex; justify-content: center; }
+
+        /* Seleção de Nível */
+        .niveis-grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; width: 100%; }
+        .btn-nivel { background: white; border: 4px solid var(--azul-vibrante); padding: 15px 25px; border-radius: 20px; font-size: 1.2rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 var(--azul-vibrante); display: flex; flex-direction: column; gap: 10px; align-items: center; flex: 1; min-width: 140px;}
+        .btn-nivel span { font-size: 2.5rem; }
+        .btn-nivel:hover { transform: translateY(-5px); background: #e3f2fd; }
+        .btn-nivel:active { transform: translateY(6px); box-shadow: 0 0 0 var(--azul-vibrante); }
+        
+        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; width: 100%; }
+        .level-selector .btn-nivel { padding: 10px 15px; font-size: 0.95rem; min-width: 100px; flex-direction: row; justify-content: center;}
+        .level-selector .btn-nivel span { font-size: 1.5rem; display: none;}
+        .level-selector .btn-nivel.ativo { background: var(--cor-1ano); color: white; border-color: var(--cor-1ano-dark); box-shadow: 0 4px 10px rgba(0, 145, 255, 0.3); transform: translateY(2px); }
+
+        /* Instrução da Pergunta */
+        .pergunta-destaque { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+        /* O Cenário do Rio */
+        .cenario-rio { 
+            width: 100%; max-width: 750px; height: 180px; 
+            background: linear-gradient(180deg, #74b9ff 0%, #0984e3 100%);
+            border-radius: 30px; position: relative; overflow: hidden; 
+            display: flex; align-items: center; justify-content: space-evenly;
+            margin-bottom: 35px; box-shadow: inset 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Ondas decorativas do rio */
+        .wave { position: absolute; bottom: 0; left: 0; width: 100%; height: 30px; background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="%23ffffff" opacity=".25"></path></svg>') repeat-x; background-size: 50% 100%; animation: wave 10s linear infinite; }
+        @keyframes wave { 0% { background-position: 0 0; } 100% { background-position: 100% 0; } }
+
+        /* Nenúfares (As Pedras da Sequência) */
+        .nenufar { 
+            width: clamp(50px, 12vw, 75px); height: clamp(50px, 12vw, 75px); 
+            background: var(--cor-nenufar); border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 900; color: white;
+            box-shadow: 0 8px 0 #008c72, inset -5px -5px 10px rgba(0,0,0,0.1);
+            position: relative; z-index: 2; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        /* Folha decorativa do nenúfar (o corte em V) */
+        .nenufar::after { content: ''; position: absolute; top: 0; right: 10%; width: 25%; height: 25%; background: #0984e3; clip-path: polygon(100% 0, 0 0, 100% 100%); border-radius: 0 50% 0 0;}
+
+        /* O Nenúfar que falta preencher */
+        .nenufar.missing {
+            background: #ffeaa7; color: #d63031; border: 4px dashed #fdcb6e; box-shadow: none; text-shadow: none;
+        }
+        .nenufar.missing::after { display: none; }
+        
+        .nenufar.filled { background: #55efc4; color: white; border: none; box-shadow: 0 8px 0 #00b894; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .nenufar.filled::after { display: block; }
+
+        /* O Sapo! */
+        .sapo {
+            font-size: clamp(3rem, 10vw, 4.5rem); position: absolute; left: -20px; top: 50%;
+            transform: translateY(-60%); z-index: 10; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2));
+            transition: left 0.4s linear, top 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        /* Animação do Salto em CSS (Saltos encadeados) */
+        @keyframes jumpArc {
+            0% { transform: translateY(-60%) scale(1); }
+            50% { transform: translateY(-120%) scale(1.1); filter: drop-shadow(0 20px 10px rgba(0,0,0,0.1)); }
+            100% { transform: translateY(-60%) scale(1); filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2)); }
+        }
+        .jumping { animation: jumpArc 0.4s ease-in-out; }
+
+        /* BOTÕES DE OPÇÃO (A RESPOSTA) */
+        .options-container { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap;}
+        .btn-opcao { background: white; border: 4px solid #ced6e0; border-radius: 20px; width: 90px; height: 80px; font-size: 2.2rem; font-weight: 900; color: var(--azul-escuro); cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-opcao:hover { border-color: var(--azul-vibrante); color: var(--azul-vibrante); transform: translateY(-4px); box-shadow: 0 10px 0 var(--azul-vibrante); }
+        .btn-opcao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        
+        .btn-opcao.correct { background: #2ed573; color: white; border-color: #219d53; box-shadow: 0 6px 0 #219d53; }
+        .btn-opcao.wrong { background: #ff4757; color: white; border-color: #d0303f; box-shadow: 0 6px 0 #d0303f; opacity: 0.8; }
+
+        /* Ecrã de Transição e Fim */
+        .titulo-destaque { font-size: 3rem; color: var(--azul-escuro); margin-bottom: 15px; }
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 20px 45px; font-size: 1.5rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 8px 0 #219d53; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-acao:active { transform: translateY(8px); box-shadow: 0 0px 0 #219d53; }
+        .btn-acao:hover { background-color: #28c76a; }
+        
+        .btn-secundario { background-color: #ff9f43; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #e67e22; transition: 0.2s; }
+        .btn-secundario:active { transform: translateY(5px); box-shadow: 0 0px 0 #e67e22; }
+
+        /* Animações GLOBAIS */
+        @keyframes shakeError { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-6px) rotate(-3deg); } 50% { transform: translateX(6px) rotate(3deg); } 75% { transform: translateX(-6px) rotate(-3deg); } }
+        .error-shake { animation: shakeError 0.4s; }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+
+        @media (max-width: 600px) {
+            .pergunta-destaque { font-size: 1.4rem; }
+            .cenario-rio { height: 130px; padding: 0 5px;}
+            .nenufar { border-width: 2px; box-shadow: 0 5px 0 #008c72;}
+            .btn-opcao { width: 70px; height: 65px; font-size: 1.8rem; border-width: 3px; box-shadow: 0 5px 0 #ced6e0;}
+            .btn-acao { padding: 15px 30px; font-size: 1.2rem; }
+            .level-selector .btn-nivel { padding: 8px 5px; font-size: 0.85rem; min-width: 30%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Sapo Saltitão 🐸</h1>
+        <div class="subtitulo">Descobre a pedra que falta para o sapo atravessar o rio!</div>
+    </div>
+</header>
+
+<main>
+    <div id="status-bar-container" class="status-bar">
+        <div class="score-container">
+            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
+            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
+        </div>
+        <div class="progress-bg">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-inicio">
+            <div style="font-size: 6rem; margin-bottom: 10px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🐸🪷</div>
+            <h2 class="titulo-destaque">Lagoa Matemática</h2>
+            <p style="font-size: 1.2rem; color: var(--text-main); max-width: 600px; margin-bottom: 30px;">
+                Descobre qual é o número que está escondido no meio dos nenúfares!
+            </p>
+            
+            <div class="niveis-grid">
+                <button class="btn-nivel" onclick="iniciarJogo(1)">
+                    <span>1️⃣</span> Nível 1 (até 10)<br><small>Apenas para a frente</small>
+                </button>
+                <button class="btn-nivel" onclick="iniciarJogo(2)">
+                    <span>⬅️</span> Nível 2 (até 20)<br><small>Para trás e para a frente</small>
+                </button>
+                <button class="btn-nivel" onclick="iniciarJogo(3)">
+                    <span>🚀</span> Nível 3 (até 50)<br><small>Saltos Gigantes (de 2 e 10)</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo">
+            
+            <div class="level-selector" id="level-selector">
+                <button class="btn-nivel" id="btn-niv-1" onclick="selecionarNivel(1)">Nível 1 (até 10)</button>
+                <button class="btn-nivel" id="btn-niv-2" onclick="selecionarNivel(2)">Nível 2 (até 20)</button>
+                <button class="btn-nivel" id="btn-niv-3" onclick="selecionarNivel(3)">Nível 3 (Super Saltos)</button>
+            </div>
+
+            <div class="pergunta-destaque">Qual é o número que falta?</div>
+
+            <!-- O CENÁRIO -->
+            <div class="cenario-rio" id="rio">
+                <div class="wave"></div>
+                <!-- Sapo -->
+                <div id="sapo" class="sapo">🐸</div>
+                <!-- Nenúfares (injetados via JS) -->
+                <div id="nenufares-container" style="display:flex; width:100%; justify-content:space-evenly; z-index:5;"></div>
+            </div>
+
+            <!-- OPÇÕES DE RESPOSTA -->
+            <div class="options-container" id="opcoes">
+                <!-- Botões injetados pelo JS -->
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: TRANSIÇÃO -->
+        <div id="ecra-transicao">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h2 class="titulo-destaque">Atravessaste o Rio!</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;" id="transicao-msg">O sapinho chegou em segurança!</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-acao" style="background:#f39c12; box-shadow:0 8px 0 #d68910; font-size:1.2rem;" onclick="selecionarNivel(nivelAtual)">Repetir Nível 🔄</button>
+                <button class="btn-acao" id="btn-proximo" onclick="proximoNivel()" style="font-size:1.2rem;">Próximo Nível ➔</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // ESTADO DO JOGO E MECÂNICA
+    // ==========================================
+    let nivelAtual = 1;
+    let certas = 0;
+    let erradas = 0;
+    const QUESTOES_POR_NIVEL = 10;
+    let questoesFeitas = 0; 
+    
+    let sequencia =[];
+    let indiceOculto = 0;
+    let respostaCerta = 0;
+    let salto = 1;
+    let isVerificando = false;
+
+    // DOM Elements
+    const elCertas = document.getElementById('val-certas');
+    const elErradas = document.getElementById('val-erradas');
+    const nenufaresContainer = document.getElementById('nenufares-container');
+    const opcoesContainer = document.getElementById('opcoes');
+    const statusBar = document.getElementById('status-bar-container');
+    const sapo = document.getElementById('sapo');
+
+    function mostrarEcra(id) {['ecra-inicio', 'ecra-jogo', 'ecra-transicao'].forEach(e => document.getElementById(e).style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function iniciarJogo(nivel) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        selecionarNivel(nivel);
+    }
+
+    function selecionarNivel(n) {
+        nivelAtual = n;
+        certas = 0;
+        erradas = 0;
+        questoesFeitas = 0;
+        atualizarScore();
+        
+        document.querySelectorAll('.level-selector .btn-nivel').forEach(b => b.classList.remove('ativo'));
+        const btnAtivo = document.getElementById(`btn-niv-${n}`);
+        if(btnAtivo) btnAtivo.classList.add('ativo');
+
+        statusBar.style.display = 'block';
+        mostrarEcra('ecra-jogo');
+        novaSequencia();
+    }
+
+    function proximoNivel() {
+        if (nivelAtual < 3) selecionarNivel(nivelAtual + 1);
+        else selecionarNivel(1);
+    }
+
+    function atualizarScore() {
+        elCertas.textContent = certas;
+        elErradas.textContent = erradas;
+        document.getElementById('progress-fill').style.width = `${(questoesFeitas / QUESTOES_POR_NIVEL) * 100}%`;
+    }
+
+    function novaSequencia() {
+        isVerificando = false;
+        sequencia =[];
+        nenufaresContainer.innerHTML = '';
+        opcoesContainer.innerHTML = '';
+        
+        // Coloca o sapo na margem esquerda
+        sapo.style.transition = 'none';
+        sapo.style.left = '-20px';
+        
+        // Gerador de Sequências Mágicas
+        let start;
+        if (nivelAtual === 1) {
+            // Nível 1: Até 10 (+1)
+            salto = 1;
+            start = Math.floor(Math.random() * 6) + 1; // 1 a 6
+        } 
+        else if (nivelAtual === 2) {
+            // Nível 2: Até 20 (+1 ou -1)
+            salto = Math.random() > 0.5 ? 1 : -1;
+            if (salto === 1) start = Math.floor(Math.random() * 6) + 11; // 11 a 16
+            else start = Math.floor(Math.random() * 6) + 15; // 15 a 20 (Para trás)
+        } 
+        else if (nivelAtual === 3) {
+            // Nível 3: Até 50 (+2, -2, +10, -10)
+            const tipoSalto = Math.random();
+            if (tipoSalto < 0.25) { salto = 2; start = Math.floor(Math.random() * 20)*2 + 2; } // Ex: 20, 22, 24
+            else if (tipoSalto < 0.50) { salto = -2; start = Math.floor(Math.random() * 15)*2 + 10; } // Ex: 18, 16, 14
+            else if (tipoSalto < 0.75) { salto = 10; start = Math.floor(Math.random() * 2)*10 + 10; } // Ex: 10, 20, 30
+            else { salto = -10; start = Math.floor(Math.random() * 2)*10 + 40; } // Ex: 40, 30, 20
+        }
+
+        // Constrói a array com os 5 números
+        for (let i = 0; i < 5; i++) {
+            sequencia.push(start + (i * salto));
+        }
+
+        // Escolhe quem vai estar oculto (Para garantir contexto, tentamos ocultar o do meio 1, 2 ou 3)
+        indiceOculto = Math.floor(Math.random() * 3) + 1;
+        respostaCerta = sequencia[indiceOculto];
+
+        // Renderizar Nenúfares
+        sequencia.forEach((num, index) => {
+            const pad = document.createElement('div');
+            pad.className = 'nenufar';
+            pad.id = `pad-${index}`;
+
+            if (index === indiceOculto) {
+                pad.classList.add('missing');
+                pad.textContent = '❓';
+            } else {
+                pad.textContent = num;
+            }
+            nenufaresContainer.appendChild(pad);
+        });
+
+        // Força a renderização do sapo e aplica transição
+        void sapo.offsetWidth;
+        sapo.style.transition = 'left 0.4s linear, top 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+
+        gerarOpcoes();
+    }
+
+    function gerarOpcoes() {
+        let options =[respostaCerta];
+        
+        // Gera 3 distratores inteligentes baseados no tipo de salto
+        while (options.length < 4) {
+            // O distrator é o valor certo + (salto * desvio)
+            // Ex: Se o salto for 2 e a certa 24. O desvio pode gerar 22, 26, 28. Assim obriga a pensar!
+            let desvio = Math.floor(Math.random() * 5) - 2; // -2, -1, 0, 1, 2
+            if (desvio === 0) desvio = 3; 
+            
+            let wrongAns = respostaCerta + (salto * desvio);
+            
+            if (wrongAns > 0 && !options.includes(wrongAns)) {
+                options.push(wrongAns);
+            }
+        }
+        
+        options.sort(() => Math.random() - 0.5);
+
+        options.forEach(num => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-opcao';
+            btn.textContent = num;
+            btn.onclick = () => verificarResposta(btn, num);
+            opcoesContainer.appendChild(btn);
+        });
+    }
+
+    function verificarResposta(btn, respostaEscolhida) {
+        if (isVerificando) return;
+        isVerificando = true;
+
+        if (respostaEscolhida === respostaCerta) {
+            // ACERTOU!
+            certas++;
+            questoesFeitas++;
+            atualizarScore();
+            
+            btn.classList.add('correct');
+            
+            // Preenche o nenúfar
+            const missingPad = document.getElementById(`pad-${indiceOculto}`);
+            missingPad.classList.remove('missing');
+            missingPad.classList.add('filled');
+            missingPad.textContent = respostaCerta;
+            
+            tocarSom('pop'); // Som de pop quando preenche a pedra
+            
+            // Inicia animação do sapo!
+            setTimeout(() => animarSapo(), 500);
+
+        } else {
+            // ERROU!
+            erradas++;
+            atualizarScore();
+            tocarSom('erro');
+            
+            btn.classList.add('wrong');
+            btn.classList.add('error-shake');
+            
+            setTimeout(() => {
+                btn.classList.remove('error-shake');
+                isVerificando = false;
+            }, 500);
+        }
+    }
+
+    // A Mágica dos Saltos 🐸
+    function animarSapo() {
+        let currentPad = 0;
+        const totalPads = 5;
+
+        function jumpNext() {
+            if (currentPad < totalPads) {
+                // Descobre a posição do próximo nenúfar
+                const targetPad = document.getElementById(`pad-${currentPad}`);
+                const rioRect = document.getElementById('rio').getBoundingClientRect();
+                const padRect = targetPad.getBoundingClientRect();
+                
+                // Calcula a posição relativa do centro do nenúfar dentro do rio
+                const targetX = padRect.left - rioRect.left + (padRect.width / 2) - 30; // 30 = metade da largura do emoji
+                
+                sapo.style.left = `${targetX}px`;
+                
+                // Adiciona a animação CSS de "salto"
+                sapo.classList.remove('jumping');
+                void sapo.offsetWidth; // reset
+                sapo.classList.add('jumping');
+                
+                tocarSom('boing'); // Som de mola
+
+                currentPad++;
+                setTimeout(jumpNext, 400); // Ritmo de salto (0.4s)
+            } else {
+                // Chegou à outra margem
+                sapo.style.left = `calc(100% + 20px)`; // Sai do ecrã pela direita
+                tocarSom('acerto');
+                
+                setTimeout(() => {
+                    if (questoesFeitas >= QUESTOES_POR_NIVEL) fimDoNivel();
+                    else novaSequencia();
+                }, 800);
+            }
+        }
+        
+        jumpNext(); // Inicia o Loop
+    }
+
+    function fimDoNivel() {
+        tocarSom('vitoria');
+        dispararConfetis();
+        let proxBtn = document.getElementById('btn-proximo');
+        
+        document.getElementById('status-bar-container').style.display = 'none';
+
+        if (nivelAtual === 3) {
+            document.getElementById('transicao-msg').innerHTML = `O sapo tornou-se o Rei da Lagoa!<br>Erraste apenas ${erradas} vezes.`;
+            proxBtn.style.display = 'none'; 
+        } else {
+            document.getElementById('transicao-msg').innerHTML = `O sapinho fez ${QUESTOES_POR_NIVEL} travessias em segurança!`;
+            proxBtn.style.display = 'inline-block';
+        }
+        
+        mostrarEcra('ecra-transicao');
+    }
+
+    // ==========================================
+    // ÁUDIO E CONFETIS
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'boing') {
+            // Som elástico de salto
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(200, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+</script>
+</body>
+</html>
