@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1º Ano - Memória de Números 🤔</title>
+    <title>1º Ano - Memória dos Números 🧠</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -45,53 +45,60 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px; gap: 20px; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 30px 20px; gap: 20px; }
 
         .cartao-jogo-container { 
             background: white; 
             width: 100%; max-width: 900px; min-height: 500px; 
             padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
             border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; position: relative; overflow: hidden; 
+            align-items: center; position: relative; overflow: hidden; 
         }
 
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
         
+        /* =========================================
+           MENU DE NÍVEIS (SEMPRE VISÍVEL NO TOPO)
+           ========================================= */
+        .menu-niveis { 
+            display: flex; 
+            gap: 15px; 
+            width: 100%; 
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #e3f2fd;
+        }
+        
+        .btn-nivel {
+            background-color: white; border: 3px solid #ced6e0; border-radius: 15px;
+            padding: 12px 20px; cursor: pointer; font-size: 1.1rem; font-weight: 700;
+            color: var(--text-main); box-shadow: 0 4px 0 #ced6e0; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nivel:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #ced6e0; }
+        .btn-nivel:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent; }
+        
+        /* Estado Ativo do Menu */
+        .btn-nivel.active { 
+            border-color: var(--cor-1ano); 
+            background-color: #e3f2fd; 
+            color: var(--azul-escuro); 
+            box-shadow: 0 4px 0 var(--cor-1ano-dark); 
+            transform: translateY(2px); 
+        }
+
         /* PLACAR DE JOGO */
-        .status-bar { width: 100%; max-width: 800px; margin-bottom: 15px; display: none; }
-        .score-container { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
+        .status-bar { width: 100%; max-width: 800px; display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; padding: 10px 15px; margin-bottom: 15px; background: #f8fafc; border-radius: 15px; border: 2px solid #e3f2fd;}
         .score-pares { color: var(--cor-1ano); }
         .score-jogadas { color: var(--text-main); }
 
         /* =========================================
-           MENU DE NÍVEIS
+           GRELHA DE MEMÓRIA & CARTAS 3D (RIGOROSO)
            ========================================= */
-        #menu-niveis { display: flex; flex-direction: column; align-items: center; gap: 20px; animation: fadeIn 0.4s ease; width: 100%; }
-        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 10px; }
-        
-        .btn-nivel {
-            background-color: white; border: 4px solid #ced6e0; border-radius: 20px;
-            padding: 20px 30px; width: 80%; max-width: 400px; cursor: pointer;
-            box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease;
-            display: flex; align-items: center; justify-content: flex-start; gap: 15px;
-        }
-        .btn-nivel:hover { transform: translateY(-4px); }
-        .btn-nivel:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
-        
-        #btn-nivel-1:hover { border-color: #2ed573; box-shadow: 0 8px 0 #2ed573; color: #219d53; }
-        #btn-nivel-2:hover { border-color: #ffa502; box-shadow: 0 8px 0 #ffa502; color: #e69500; }
-        #btn-nivel-3:hover { border-color: #ff4757; box-shadow: 0 8px 0 #ff4757; color: #e84150; }
-
-        .nivel-icon { font-size: 2.5rem; }
-        .nivel-text { text-align: left; }
-        .nivel-titulo { font-size: 1.5rem; font-weight: 900; display: block; }
-        .nivel-desc { font-size: 1rem; color: var(--text-main); font-weight: 500; }
-
-        /* =========================================
-           GRELHA DE MEMÓRIA & CARTAS 3D
-           ========================================= */
-        #game-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        #game-area { width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;}
         
         .memory-grid {
             display: grid;
@@ -100,42 +107,51 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            perspective: 1000px; /* Cria o efeito 3D no container */
+            perspective: 1000px; /* Mantém o efeito 3D */
         }
 
         .memory-card {
-            background: transparent;
+            width: 100%;
             aspect-ratio: 1 / 1;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* A linha abaixo garante que nunca altera o tamanho com bordas */
+            box-sizing: border-box; 
         }
 
+        /* Efeito de Rotação APENAS (sem Scale) */
         .memory-card.flipped { transform: rotateY(180deg); }
-        .memory-card.matched { transform: rotateY(180deg) scale(0.95); cursor: default; }
+        .memory-card.matched { transform: rotateY(180deg); cursor: default; }
 
         .card-face {
             position: absolute;
-            width: 100%; height: 100%;
+            width: 100%; 
+            height: 100%;
+            top: 0; left: 0;
             backface-visibility: hidden;
             border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             user-select: none;
+            /* box-sizing resolve o erro de transbordo/tamanho das cartas na imagem! */
+            box-sizing: border-box; 
         }
 
         .card-front {
-            background: linear-gradient(135deg, var(--cor-1ano) 0%, #00d2ff 100%);
-            border: 3px solid white;
+            background: linear-gradient(135deg, var(--azul-vibrante) 0%, #00d2ff 100%);
+            border: 4px solid white;
             color: white;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
         }
 
         .card-back {
             background: white;
-            border: 4px solid var(--azul-escuro);
+            border: 4px solid var(--azul-vibrante);
             transform: rotateY(180deg);
             color: var(--azul-escuro);
             font-size: 2rem;
@@ -144,18 +160,62 @@
             text-align: center;
             flex-direction: column;
             line-height: 1.2;
-            word-wrap: break-word;
         }
 
-        /* Efeito de brilho quando encontra o par */
+        /* Efeito quando encontra o par (Muda só as cores, não o tamanho!) */
         .memory-card.matched .card-back {
             border-color: #2ed573;
             background-color: #eafff0;
             color: #219d53;
-            box-shadow: 0 0 15px rgba(46, 213, 115, 0.5);
         }
 
-        /* Tabela responsiva (Muda para 3 colunas x 4 linhas no telemóvel) */
+        /* =========================================
+           AJUSTES DE TEXTO NA CARTA (SEM ABREVIAR)
+           ========================================= */
+        .texto-normal { font-size: 2rem; }
+        .texto-medio { font-size: 1.4rem; word-wrap: break-word; }
+        .texto-longo { font-size: 1.1rem; line-height: 1.3; word-wrap: break-word; }
+
+        /* =========================================
+           CSS MATERIAL MULTIBÁSICO (DOURADO)
+           ========================================= */
+        .base10-container {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+            height: 70%;
+        }
+        .b10-dezena {
+            width: 14px;
+            height: 100%;
+            background: #f1c40f;
+            border: 1px solid #d35400;
+            border-radius: 2px;
+            position: relative;
+        }
+        .b10-dezena::after {
+            content: '';
+            position: absolute; top:0; left:0; right:0; bottom:0;
+            background-image: repeating-linear-gradient(to bottom, transparent, transparent calc(10% - 1px), rgba(211, 84, 0, 0.5) calc(10% - 1px), rgba(211, 84, 0, 0.5) 10%);
+        }
+        .b10-unidades-col {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 2px;
+            height: 100%;
+            justify-content: flex-start;
+        }
+        .b10-unidade {
+            width: 14px;
+            height: 14px;
+            background: #f1c40f;
+            border: 1px solid #d35400;
+            border-radius: 2px;
+        }
+
+        /* Responsividade */
         @media (max-width: 768px) {
             header { padding: 15px 10px; }
             .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
@@ -165,26 +225,30 @@
             h1, .subtitulo { grid-column: 2; text-align: center; }
             
             main { padding: 15px 10px; gap: 15px; }
-            .cartao-jogo-container { padding: 20px 10px; }
+            .cartao-jogo-container { padding: 15px 10px; }
+            
+            .menu-niveis { gap: 8px; margin-bottom: 15px; padding-bottom: 15px;}
+            .btn-nivel { padding: 10px 15px; font-size: 0.95rem; min-width: auto; flex: 1; justify-content: center;}
             
             .memory-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-            .card-back { font-size: 1.4rem; padding: 5px; }
-            .card-front { font-size: 2rem; }
-            .btn-nivel { width: 95%; padding: 15px; }
-            .nivel-icon { font-size: 2rem; }
-            .nivel-titulo { font-size: 1.3rem; }
-            .score-container { font-size: 1.1rem; }
+            .texto-normal { font-size: 1.5rem; }
+            .texto-medio { font-size: 1.1rem; }
+            .texto-longo { font-size: 0.85rem; }
+            .card-front { font-size: 2.5rem; border-width: 3px; }
+            .card-back { border-width: 3px; padding: 4px;}
+            
+            .b10-dezena { width: 10px; }
+            .b10-unidade { width: 10px; height: 10px; }
         }
 
-        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; z-index: 20;}
-        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
-        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; }
-        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px; margin-bottom: 15px;}
-        .btn-menu { background-color: #ced6e0; color: #2f3542; box-shadow: 0 5px 0 #a4b0be; }
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; position: absolute; top:0; left:0; width: 100%; height:100%; background: rgba(255,255,255,0.95); z-index: 20; animation: fadeIn 0.5s ease;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center;}
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px;}
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes errorShake { 0%, 100% { transform: rotateY(180deg) translateX(0); } 25% { transform: rotateY(180deg) translateX(-5px) rotate(-3deg); } 75% { transform: rotateY(180deg) translateX(5px) rotate(3deg); } }
-        .error-shake .card-back { animation: errorShake 0.4s ease; border-color: #ff4757; background-color: #ffefef; color: #ff4757;}
+        .error-shake .card-back { animation: errorShake 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important;}
 
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
     </style>
@@ -197,11 +261,11 @@
     <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
         <li><a href="../../../">🏠 Início</a></li>
-        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
-        <li><a href="../../">🎒 1º Ano</a></li>
-        <li><a href="../../../2/">💡 2º Ano</a></li>
-        <li><a href="../../../3/">🔍 3º Ano</a></li>
-        <li><a href="../../../4/">🚀 4º Ano</a></li>
+<li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+<li><a href="../../">🎒 1º Ano</a></li>
+<li><a href="../../../2/">💡 2º Ano</a></li>
+<li><a href="../../../3/">🔍 3º Ano</a></li>
+<li><a href="../../../4/">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
@@ -211,68 +275,44 @@
             <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
-            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+            <a href="../index.html" class="btn-voltar">⬅️ Voltar</a>
         </div>
         
-        <h1>Memória de Números 🤔</h1>
-        <div class="subtitulo">Encontra os pares escondidos!</div>
+        <h1>Memória dos Números 🧠</h1>
+        <div class="subtitulo">Encontra os pares correspondentes!</div>
     </div>
 </header>
 
 <main>
-    <div id="status-bar-container" class="status-bar">
-        <div class="score-container">
-            <span class="score-pares">Pares: <span id="val-pares">0/6</span></span>
-            <span class="score-jogadas">Jogadas: <span id="val-jogadas">0</span></span>
-        </div>
-    </div>
-
     <div class="cartao-jogo-container">
         
-        <!-- MENU DE NÍVEIS -->
-        <div id="menu-niveis">
-            <div class="titulo-menu">Escolhe um Nível:</div>
-            
-            <button class="btn-nivel" id="btn-nivel-1" onclick="iniciarJogo(1)">
-                <span class="nivel-icon">🍎</span>
-                <span class="nivel-text">
-                    <span class="nivel-titulo">Nível 1 (Até 10)</span>
-                    <span class="nivel-desc">Contar as quantidades</span>
-                </span>
-            </button>
-            
-            <button class="btn-nivel" id="btn-nivel-2" onclick="iniciarJogo(2)">
-                <span class="nivel-icon">➕</span>
-                <span class="nivel-text">
-                    <span class="nivel-titulo">Nível 2 (Até 20)</span>
-                    <span class="nivel-desc">Pequenas somas e contas</span>
-                </span>
-            </button>
-            
-            <button class="btn-nivel" id="btn-nivel-3" onclick="iniciarJogo(3)">
-                <span class="nivel-icon">🧠</span>
-                <span class="nivel-text">
-                    <span class="nivel-titulo">Nível 3 (Até 50)</span>
-                    <span class="nivel-desc">Dezenas, vizinhos e leitura</span>
-                </span>
-            </button>
+        <!-- MENU DE NÍVEIS SEMPRE VISÍVEL -->
+        <div class="menu-niveis" id="menu-niveis">
+            <button class="btn-nivel active" id="btn-nivel-1" onclick="iniciarJogo(1)">🍎 Nível 1 (Até 10)</button>
+            <button class="btn-nivel" id="btn-nivel-2" onclick="iniciarJogo(2)">➕ Nível 2 (Até 20)</button>
+            <button class="btn-nivel" id="btn-nivel-3" onclick="iniciarJogo(3)">🧱 Nível 3 (Até 50)</button>
         </div>
 
-        <!-- GRELHA DO JOGO -->
-        <div id="game-screen">
+        <div id="game-area">
+            <!-- STATUS BAR -->
+            <div id="status-bar-container" class="status-bar">
+                <span class="score-pares">Pares: <span id="val-pares">0/6</span></span>
+                <span class="score-jogadas">Jogadas: <span id="val-jogadas">0</span></span>
+            </div>
+
+            <!-- GRELHA DO JOGO -->
             <div class="memory-grid" id="memory-grid">
                 <!-- Cartas injetadas via Javascript -->
             </div>
-        </div>
 
-        <!-- ECRÃ FINAL -->
-        <div id="end-screen">
-            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
-            <div class="end-stats">
-                Encontraste todos os pares em <strong id="final-jogadas" style="color:var(--cor-1ano)">0</strong> jogadas.
+            <!-- ECRÃ FINAL (SOBREPOSTO À GRELHA) -->
+            <div id="end-screen">
+                <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+                <div class="end-stats">
+                    Encontraste todos os pares em <strong id="final-jogadas" style="color:var(--cor-1ano)">0</strong> jogadas.
+                </div>
+                <button class="btn-reiniciar" onclick="reiniciarNivelAtual()">JOGAR NOVAMENTE 🔄</button>
             </div>
-            <button class="btn-reiniciar" onclick="reiniciarNivelAtual()">JOGAR NOVAMENTE 🔄</button>
-            <button class="btn-reiniciar btn-menu" onclick="voltarAoMenu()">VOLTAR AO MENU 🏠</button>
         </div>
 
         <canvas id="confetti-canvas"></canvas>
@@ -306,20 +346,16 @@
     let lockBoard = false;
     let firstCard, secondCard;
 
-    const menuNiveis = document.getElementById('menu-niveis');
-    const gameScreen = document.getElementById('game-screen');
-    const endScreen = document.getElementById('end-screen');
-    const statusBar = document.getElementById('status-bar-container');
     const memoryGrid = document.getElementById('memory-grid');
+    const endScreen = document.getElementById('end-screen');
     const elPares = document.getElementById('val-pares');
     const elJogadas = document.getElementById('val-jogadas');
 
     /* =========================================
-       GERADORES DE CONTEÚDO MATEMÁTICO
+       GERADORES DE CONTEÚDO E MATERIAL DOURADO
        ========================================= */
     const emojis =['🍎', '🐸', '🚗', '🎈', '⭐', '🐶', '⚽', '🍓'];
 
-    // Auxiliar: Transforma número em extenso (1 a 50)
     function numeroPorExtenso(n) {
         const uni =['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
         const dez =['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezasseis', 'dezassete', 'dezoito', 'dezanove'];
@@ -333,7 +369,29 @@
             if (u === 0) return dezenas[d];
             return dezenas[d] + ' e ' + uni[u];
         }
-        return n;
+        return n.toString();
+    }
+
+    // Desenha Blocos de Base-10 puros em HTML/CSS
+    function gerarMaterialDouradoHTML(num) {
+        let d = Math.floor(num / 10);
+        let u = num % 10;
+        let html = '<div class="base10-container">';
+        
+        for (let i = 0; i < d; i++) {
+            html += '<div class="b10-dezena"></div>';
+        }
+        
+        if (u > 0) {
+            html += '<div class="b10-unidades-col">';
+            for (let i = 0; i < u; i++) {
+                html += '<div class="b10-unidade"></div>';
+            }
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        return html;
     }
 
     function obterParesAleatorios(nivel) {
@@ -342,67 +400,64 @@
 
         while(pares.length < TOTAL_PARES) {
             if (nivel === 1) {
-                // NÍVEL 1: Número vs Emojis (1 a 10)
-                let num = Math.floor(Math.random() * 9) + 2; // 2 a 10 (1 é muito fácil)
+                // Até 10: Emojis
+                let num = Math.floor(Math.random() * 9) + 2; 
                 if(!numerosUsados.includes(num)) {
                     numerosUsados.push(num);
                     let emoji = emojis[Math.floor(Math.random() * emojis.length)];
                     let stringEmojis = Array(num).fill(emoji).join('');
-                    
-                    pares.push({ id: num, val1: num, val2: stringEmojis });
+                    let classeTexto = num > 6 ? 'texto-medio' : 'texto-normal';
+                    pares.push({ id: num, val1: num, val2: stringEmojis, classe2: classeTexto });
                 }
             } 
             else if (nivel === 2) {
-                // NÍVEL 2: Número vs Soma simples (11 a 20)
-                let num = Math.floor(Math.random() * 10) + 11; // 11 a 20
+                // Até 20: Somas
+                let num = Math.floor(Math.random() * 10) + 11;
                 if(!numerosUsados.includes(num)) {
                     numerosUsados.push(num);
-                    // Decide aleatoriamente o tipo de conta
                     let operacao = "";
                     if (Math.random() > 0.5) {
                         operacao = `10 + ${num - 10}`;
                     } else {
-                        // Ex: 15 = 12 + 3
-                        let parcela = Math.floor(Math.random() * 5) + 1; // 1 a 5
+                        let parcela = Math.floor(Math.random() * 5) + 1;
                         operacao = `${num - parcela} + ${parcela}`;
                     }
-                    pares.push({ id: num, val1: num, val2: operacao });
+                    pares.push({ id: num, val1: num, val2: operacao, classe2: 'texto-normal' });
                 }
             }
             else if (nivel === 3) {
-                // NÍVEL 3: Mix Matemático (21 a 50)
-                let num = Math.floor(Math.random() * 30) + 21; // 21 a 50
+                // Até 50: Mix
+                let num = Math.floor(Math.random() * 30) + 21;
                 if(!numerosUsados.includes(num)) {
                     numerosUsados.push(num);
                     
-                    let tipo = pares.length; // Força diversidade
+                    let tipo = pares.length; 
                     let expressao = "";
-                    let tamanhoFonteExtra = false; // Sinaliza que o texto pode ser muito longo
+                    let classeTexto = 'texto-normal';
                     
                     if (tipo === 0 || tipo === 4) {
-                        // Decomposição simples
-                        let d = Math.floor(num/10) * 10;
-                        let u = num % 10;
-                        expressao = `${d} + ${u}`;
+                        // Material Dourado Visual
+                        expressao = gerarMaterialDouradoHTML(num);
+                        classeTexto = ''; 
                     } else if (tipo === 1 || tipo === 5) {
                         // Extenso
                         let ext = numeroPorExtenso(num);
                         expressao = ext.charAt(0).toUpperCase() + ext.slice(1);
-                        tamanhoFonteExtra = true;
+                        classeTexto = expressao.length > 12 ? 'texto-longo' : 'texto-medio';
                     } else if (tipo === 2) {
                         // Antecessor
                         expressao = `Antes do ${num + 1}`;
-                        tamanhoFonteExtra = true;
+                        classeTexto = 'texto-medio';
                     } else if (tipo === 3) {
-                        // Decomposição Palavras
+                        // Dezenas e Unidades por escrito (Totalmente por extenso!)
                         let d = Math.floor(num/10);
                         let u = num % 10;
                         if (u === 0) expressao = `${d} dezenas`;
-                        else expressao = `${d} dezenas e ${u} unid.`;
-                        tamanhoFonteExtra = true;
+                        else expressao = `${d} dezenas e ${u} unidades`; // Garantido sem abreviaturas
+                        classeTexto = 'texto-longo'; 
                     }
 
-                    pares.push({ id: num, val1: num, val2: expressao, textoLongo: tamanhoFonteExtra });
+                    pares.push({ id: num, val1: num, val2: expressao, classe2: classeTexto });
                 }
             }
         }
@@ -410,9 +465,13 @@
     }
 
     /* =========================================
-       LÓGICA DO JOGO
+       LÓGICA DO JOGO E EVENTOS
        ========================================= */
     function iniciarJogo(nivel) {
+        // Atualiza botões do Menu
+        document.querySelectorAll('.btn-nivel').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-nivel-' + nivel).classList.add('active');
+
         currentLevel = nivel;
         jogadas = 0;
         paresEncontrados = 0;
@@ -421,14 +480,10 @@
         firstCard = null;
         secondCard = null;
 
-        // Atualizar UI
         elPares.textContent = `0/${TOTAL_PARES}`;
         elJogadas.textContent = "0";
         
-        menuNiveis.style.display = 'none';
         endScreen.style.display = 'none';
-        statusBar.style.display = 'block';
-        gameScreen.style.display = 'flex';
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
 
         gerarGrelha();
@@ -438,38 +493,26 @@
         iniciarJogo(currentLevel);
     }
 
-    function voltarAoMenu() {
-        endScreen.style.display = 'none';
-        statusBar.style.display = 'none';
-        gameScreen.style.display = 'none';
-        menuNiveis.style.display = 'flex';
-    }
-
     function gerarGrelha() {
         memoryGrid.innerHTML = '';
         let pares = obterParesAleatorios(currentLevel);
         
-        // Desdobra os pares em cartas individuais
         let cartas =[];
         pares.forEach(p => {
-            cartas.push({ matchId: p.id, content: p.val1, isLong: false });
-            cartas.push({ matchId: p.id, content: p.val2, isLong: p.textoLongo || p.val2.length > 5 });
+            cartas.push({ matchId: p.id, content: p.val1, cssClass: 'texto-normal' });
+            cartas.push({ matchId: p.id, content: p.val2, cssClass: p.classe2 });
         });
 
-        // Baralhar cartas
         cartas = cartas.sort(() => Math.random() - 0.5);
 
-        // Renderizar no HTML
         cartas.forEach(c => {
             const cardEl = document.createElement('div');
             cardEl.classList.add('memory-card');
             cardEl.dataset.match = c.matchId;
 
-            let tamanhoEstilo = c.isLong ? "font-size: 1.3rem;" : "";
-            
             cardEl.innerHTML = `
                 <div class="card-face card-front">?</div>
-                <div class="card-face card-back" style="${tamanhoEstilo}">${c.content}</div>
+                <div class="card-face card-back ${c.cssClass}">${c.content}</div>
             `;
             
             cardEl.addEventListener('click', flipCard);
@@ -485,13 +528,11 @@
         tocarSom('flip');
 
         if (!hasFlippedCard) {
-            // Primeira carta do turno
             hasFlippedCard = true;
             firstCard = this;
             return;
         }
 
-        // Segunda carta do turno
         secondCard = this;
         jogadas++;
         elJogadas.textContent = jogadas;
@@ -510,7 +551,6 @@
     }
 
     function disableCards() {
-        // Pausa para deixar a animação de flip acabar antes do sucesso
         lockBoard = true;
         setTimeout(() => {
             firstCard.classList.add('matched');
@@ -534,7 +574,6 @@
     function unflipCards() {
         lockBoard = true;
         
-        // Deixa a pessoa ver a carta 1.2 segundos e depois vira
         setTimeout(() => {
             firstCard.classList.add('error-shake');
             secondCard.classList.add('error-shake');
@@ -544,25 +583,21 @@
                 firstCard.classList.remove('flipped', 'error-shake');
                 secondCard.classList.remove('flipped', 'error-shake');
                 resetBoard();
-            }, 400); // tempo do shake
+            }, 400); 
             
         }, 1200);
     }
 
-    function resetBoard() {
-        [hasFlippedCard, lockBoard] = [false, false];
+    function resetBoard() {[hasFlippedCard, lockBoard] =[false, false];
         [firstCard, secondCard] = [null, null];
     }
 
     function finalizarJogo() {
-        gameScreen.style.display = 'none';
-        statusBar.style.display = 'none';
         endScreen.style.display = 'flex';
-        
         document.getElementById('final-jogadas').textContent = jogadas;
 
         if (jogadas === TOTAL_PARES) {
-            document.getElementById('end-title-text').textContent = "MEMÓRIA DE ELEFANTE! 🐘";
+            document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
             tocarSom('vitoria'); dispararConfetis();
         } else if (jogadas <= TOTAL_PARES + 4) {
             document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
@@ -683,6 +718,10 @@
 
         if (ativos) requestAnimationFrame(animarConfetis);
     }
+
+    // Inicia no nível 1 automaticamente ao abrir
+    window.onload = () => iniciarJogo(1);
+
 </script>
 </body>
 </html>
