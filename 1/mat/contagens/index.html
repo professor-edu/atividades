@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Vamos Contar! 🎲</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS BASE DO TEMPLATE (Meio-Termo)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; overflow-y: scroll; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 850px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 20px 10px; gap: 15px;}
+            .cartao-jogo-container { padding: 25px 10px; min-height: 400px; }
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO EXTERNA E PONTUAÇÃO
+           ========================================= */
+        .status-bar { width: 100%; max-width: 750px; display: flex; flex-direction: column;}
+        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
+        .score-certas { color: #219d53; }
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        /* =========================================
+           CSS ESPECÍFICO: JOGO DE CONTAGENS
+           ========================================= */
+
+        #ecra-jogo, #ecra-transicao { width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 20; }
+        #ecra-transicao { display: none; justify-content: center; }
+
+        /* Seleção de Nível no Topo */
+        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; width: 100%; }
+        .level-selector .btn-nivel { background: #f0f4f8; border: 2px solid #ced6e0; padding: 10px 25px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; color: var(--text-main); transition: 0.2s; flex: 1; max-width: 250px; display: flex; justify-content: center;}
+        .level-selector .btn-nivel:hover { background: #e3f2fd; border-color: var(--azul-vibrante); color: var(--azul-escuro);}
+        .level-selector .btn-nivel.ativo { background: var(--cor-1ano); color: white; border-color: var(--cor-1ano-dark); box-shadow: 0 4px 10px rgba(0, 145, 255, 0.3); transform: translateY(2px); }
+
+        /* Área dos Itens a Contar */
+        .items-display-area {
+            width: 100%; max-width: 600px; min-height: 200px;
+            background: #fdfbf7; border: 4px solid #e2e8f0; border-radius: 25px;
+            padding: 20px; margin-bottom: 35px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: clamp(8px, 3vw, 15px);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .contagem-item {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        /* Botões das Opções de Resposta */
+        .options-container { display: flex; gap: 20px; justify-content: center; width: 100%; flex-wrap: wrap;}
+        .btn-opcao { 
+            background: white; border: 4px solid #ced6e0; border-radius: 20px; 
+            width: clamp(80px, 20vw, 110px); height: clamp(75px, 20vw, 100px); 
+            font-size: clamp(2.2rem, 6vw, 3rem); font-weight: 900; color: var(--azul-escuro); 
+            cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+        .btn-opcao:hover:not(:disabled) { border-color: var(--azul-vibrante); color: var(--azul-vibrante); transform: translateY(-4px); box-shadow: 0 10px 0 var(--azul-vibrante); }
+        .btn-opcao:active:not(:disabled) { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        
+        .btn-opcao:disabled { cursor: not-allowed; }
+        .btn-opcao.correct { background: #2ed573; color: white; border-color: #219d53; box-shadow: 0 6px 0 #219d53; transform: scale(1.05); }
+        .btn-opcao.wrong { background: #ff4757; color: white; border-color: #d0303f; box-shadow: 0 6px 0 #d0303f; opacity: 0.6; }
+
+        /* Ecrã de Transição/Fim */
+        .titulo-destaque { font-size: 3rem; color: var(--azul-escuro); margin-bottom: 15px; }
+        .botoes-fim-container { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-top: 15px; width: 100%; }
+        .botoes-principais { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 8px 0 #219d53; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;}
+        .btn-acao:active { transform: translateY(8px); box-shadow: 0 0px 0 #219d53; }
+        .btn-acao:hover { background-color: #28c76a; }
+
+        /* Animações GLOBAIS */
+        @keyframes shakeError { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-6px) rotate(-3deg); } 50% { transform: translateX(6px) rotate(3deg); } 75% { transform: translateX(-6px) rotate(-3deg); } }
+        .error-shake { animation: shakeError 0.4s; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+
+        @media (max-width: 600px) {
+            .items-display-area { padding: 15px 10px; min-height: 150px; margin-bottom: 25px;}
+            .btn-opcao { width: 80px; height: 75px; font-size: 2.2rem; border-width: 3px; box-shadow: 0 5px 0 #ced6e0;}
+            .btn-acao { padding: 15px 25px; font-size: 1.1rem; }
+            .level-selector .btn-nivel { padding: 10px; font-size: 1rem;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Vamos Contar! 🎲</h1>
+        <div class="subtitulo">Conta os elementos e clica no número certo!</div>
+    </div>
+</header>
+
+<main>
+    <div id="status-bar-container" class="status-bar">
+        <div class="score-container">
+            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
+            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
+        </div>
+        <div class="progress-bg">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: JOGO -->
+        <div id="ecra-jogo">
+            <!-- SELETOR DE NÍVEIS -->
+            <div class="level-selector" id="level-selector">
+                <button class="btn-nivel ativo" id="btn-niv-1" onclick="iniciarJogo(1)">Até 10</button>
+                <button class="btn-nivel" id="btn-niv-2" onclick="iniciarJogo(2)">Até 20</button>
+            </div>
+
+            <!-- O CENÁRIO DOS ITENS -->
+            <div class="items-display-area" id="items-container">
+                <!-- Emojis injetados pelo JS -->
+            </div>
+
+            <!-- OPÇÕES DE RESPOSTA -->
+            <div class="options-container" id="opcoes">
+                <!-- Botões numéricos injetados pelo JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: TRANSIÇÃO/FIM -->
+        <div id="ecra-transicao">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h2 class="titulo-destaque">Muito Bem!</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;" id="transicao-msg">Completaste as contagens!</p>
+            
+            <div class="botoes-fim-container">
+                <div class="botoes-principais">
+                    <button class="btn-acao" style="background:#f39c12; box-shadow:0 8px 0 #d68910;" onclick="iniciarJogo(nivelAtual)">🔄 Repetir Nível</button>
+                    <button class="btn-acao" id="btn-proximo" onclick="iniciarJogo(2)">Nível Seguinte ➔</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // DICIONÁRIO VISUAL
+    // ==========================================
+    const listaEmojis =['🍎', '🎈', '🚗', '⚽', '🧸', '🦋', '🌻', '🐶', '🐱', '🍓', '🍕', '🚀', '🐸', '🌟'];
+
+    // ==========================================
+    // ESTADO DO JOGO E MECÂNICA
+    // ==========================================
+    let nivelAtual = 1;
+    let certas = 0;
+    let erradas = 0;
+    const QUESTOES_POR_NIVEL = 10;
+    let questoesFeitas = 0; 
+    
+    let targetQty = 0;
+    let isVerificando = false;
+
+    // DOM Elements
+    const elCertas = document.getElementById('val-certas');
+    const elErradas = document.getElementById('val-erradas');
+    const itemsContainer = document.getElementById('items-container');
+    const opcoesContainer = document.getElementById('opcoes');
+
+    function mostrarEcra(id) {
+        document.getElementById('ecra-jogo').style.display = 'none';
+        document.getElementById('ecra-transicao').style.display = 'none';
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function iniciarJogo(nivel) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        nivelAtual = nivel;
+        certas = 0;
+        erradas = 0;
+        questoesFeitas = 0;
+        atualizarScore();
+        
+        // Destacar o botão de nível no Topo
+        document.querySelectorAll('.level-selector .btn-nivel').forEach(b => b.classList.remove('ativo'));
+        const btnAtivo = document.getElementById(`btn-niv-${n}`);
+        if(btnAtivo) btnAtivo.classList.add('ativo');
+
+        mostrarEcra('ecra-jogo');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        
+        novaRonda();
+    }
+
+    function atualizarScore() {
+        elCertas.textContent = certas;
+        elErradas.textContent = erradas;
+        document.getElementById('progress-fill').style.width = `${(questoesFeitas / QUESTOES_POR_NIVEL) * 100}%`;
+    }
+
+    function novaRonda() {
+        isVerificando = false;
+        itemsContainer.innerHTML = '';
+        opcoesContainer.innerHTML = '';
+        itemsContainer.style.boxShadow = "inset 0 5px 15px rgba(0,0,0,0.03)";
+        
+        // 1. Determinar o número Alvo consoante o Nível
+        let max = (nivelAtual === 1) ? 10 : 20;
+        targetQty = Math.floor(Math.random() * max) + 1; // 1 a 10 ou 1 a 20
+
+        // 2. Escolher o Emoji
+        const targetEmoji = listaEmojis[Math.floor(Math.random() * listaEmojis.length)];
+
+        // 3. Renderizar os Emojis no quadro
+        for(let i = 0; i < targetQty; i++) {
+            let el = document.createElement('div');
+            el.className = 'contagem-item';
+            el.textContent = targetEmoji;
+            // Rotação subtil para parecer natural
+            el.style.transform = `rotate(${Math.floor(Math.random() * 20) - 10}deg)`;
+            // Delay na animação para aparecerem sequencialmente (muito rápido)
+            el.style.animationDelay = `${i * 0.02}s`;
+            itemsContainer.appendChild(el);
+        }
+
+        // 4. Gerar as Opções de Resposta
+        gerarOpcoes();
+    }
+
+    function gerarOpcoes() {
+        let options = [targetQty];
+        
+        while (options.length < 3) {
+            let offset = Math.floor(Math.random() * 5) - 2; // -2, -1, 0, 1, 2
+            if (offset === 0) offset = 3; 
+            
+            let wrongAns = targetQty + offset;
+            // Garantir que a opção é positiva e não se repete
+            if (wrongAns > 0 && !options.includes(wrongAns)) {
+                options.push(wrongAns);
+            }
+        }
+        
+        // Baralhar
+        options.sort(() => Math.random() - 0.5);
+
+        // Renderizar botões
+        options.forEach(num => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-opcao';
+            btn.textContent = num;
+            btn.onclick = () => verificarResposta(btn, num);
+            opcoesContainer.appendChild(btn);
+        });
+    }
+
+    function verificarResposta(btn, respostaEscolhida) {
+        if (isVerificando) return;
+        
+        if (respostaEscolhida === targetQty) {
+            // ACERTOU!
+            isVerificando = true; // Bloqueia outros cliques
+            certas++;
+            questoesFeitas++;
+            atualizarScore();
+            tocarSom('acerto');
+            
+            btn.classList.add('correct');
+            itemsContainer.style.boxShadow = "inset 0 0 30px rgba(46, 213, 115, 0.5)"; // Brilho verde no quadro
+            
+            // Desativa todos os botões
+            const todosBotoes = document.querySelectorAll('.btn-opcao');
+            todosBotoes.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                if (questoesFeitas >= QUESTOES_POR_NIVEL) fimDoNivel();
+                else novaRonda();
+            }, 1200);
+
+        } else {
+            // ERROU! (Não bloqueia o jogo, a criança pode tentar as outras)
+            erradas++;
+            atualizarScore();
+            tocarSom('erro');
+            
+            btn.classList.add('wrong');
+            btn.classList.add('error-shake');
+            btn.disabled = true; // Desativa apenas o botão errado
+            
+            setTimeout(() => {
+                btn.classList.remove('error-shake');
+            }, 400);
+        }
+    }
+
+    function fimDoNivel() {
+        tocarSom('vitoria');
+        dispararConfetis();
+        let proxBtn = document.getElementById('btn-proximo');
+        
+        if (nivelAtual === 2) {
+            document.getElementById('transicao-msg').innerHTML = `Dominaste as contagens até ao 20!<br>Erraste apenas ${erradas} vezes.`;
+            proxBtn.style.display = 'none'; 
+        } else {
+            document.getElementById('transicao-msg').innerHTML = `Contaste super bem até ao 10!`;
+            proxBtn.style.display = 'flex';
+        }
+        
+        mostrarEcra('ecra-transicao');
+    }
+
+    // ==========================================
+    // ÁUDIO E CONFETIS
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(200, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arranca automaticamente
+    window.onload = () => iniciarJogo(1);
+
+</script>
+</body>
+</html>
