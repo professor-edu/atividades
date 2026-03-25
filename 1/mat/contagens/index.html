@@ -10,7 +10,7 @@
     
     <style>
         /* =========================================
-           CSS DO TEMPLATE BASE (MOLDE INTOCÁVEL BOM.HTML)
+           CSS DO TEMPLATE BASE (MOLDE BOM.HTML)
            ========================================= */
         :root {
             --bg-body: #f0f4f8;
@@ -24,18 +24,23 @@
             --cor-sucesso: #2ed573;
         }
 
+        /* Removido o overflow-y: scroll que forçava a barra de rolagem */
         body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
         .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
         .hamburger:hover { background: #fff9c4; }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
         .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-voltar:hover { transform: scale(1.05); }
+        
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
         
@@ -45,14 +50,16 @@
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
         .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
         
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 20px; }
         .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10; }
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
-        
+
         @media (max-width: 768px) {
             header { padding: 15px 10px; }
             .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
@@ -64,13 +71,65 @@
             .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
         }
 
-        /* Status Bar Externa do BOM.html */
-        .status-bar { width: 100%; max-width: 700px; margin-bottom: 0; display: none; }
-        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
-        .score-certas { color: #219d53; }
-        .score-erradas { color: #d0303f; }
-        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+        /* =========================================
+           NOVA BARRA DE PROGRESSO & PONTUAÇÕES
+           ========================================= */
+        .status-bar { 
+            width: 100%; 
+            max-width: 800px; 
+            margin-bottom: 0px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 25px;
+        }
+        
+        .stats-side {
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.15rem;
+            line-height: 1.2;
+        }
+
+        .stat-box.certas { color: var(--cor-sucesso); }
+        .stat-box.erradas { color: var(--cor-erro); }
+        .stat-icon { font-size: 1.6rem; margin-bottom: 3px; }
+
+        .progress-side {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .progress-bg { 
+            background-color: white; 
+            border-radius: 15px; 
+            height: 22px; 
+            width: 100%; 
+            overflow: hidden; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+        
+        .progress-fill { 
+            background-color: var(--cor-1ano); 
+            height: 100%; 
+            width: 0%; 
+            border-radius: 15px; 
+            transition: width 0.4s ease-out; 
+        }
+
+        @media (max-width: 600px) {
+            .status-bar { flex-direction: column; gap: 15px; }
+            .stats-side { width: 100%; justify-content: space-around; gap: 10px; }
+        }
 
         /* =========================================
            ESTILOS ESPECÍFICOS - VAMOS CONTAR
@@ -78,13 +137,51 @@
 
         #ecra-jogo { width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1; }
 
-        /* Painel de Topo Compacto (Substitui os botões gigantes) */
+        /* Painel de Topo / Botões Até 10 e Até 20 */
         .painel-topo { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 700px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #e3f2fd; position: relative; }
-        .menu-niveis { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; flex: 1; }
-        .btn-nivel { background-color: white; border: 3px solid #ced6e0; border-radius: 12px; padding: 10px 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; color: var(--text-main); box-shadow: 0 3px 0 #ced6e0; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; }
-        .btn-nivel:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #ced6e0; }
-        .btn-nivel:active { transform: translateY(3px); box-shadow: 0 0px 0 transparent; }
-        .btn-nivel.ativo { border-color: var(--cor-1ano); background-color: #e3f2fd; color: var(--azul-escuro); box-shadow: 0 3px 0 var(--cor-1ano-dark); transform: translateY(2px); }
+        .menu-niveis { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; flex: 1; }
+        
+        /* Botões Inativos (Animação correta) */
+        .btn-nivel { 
+            background-color: white; 
+            border: 3px solid #ced6e0; 
+            border-radius: 12px; 
+            padding: 10px 25px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            box-shadow: 0 4px 0 #ced6e0; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .btn-nivel:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 #ced6e0; 
+            background-color: #f8fafc;
+        }
+        .btn-nivel:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0px 0 transparent; 
+        }
+        
+        /* Botão Ativo (Animação correta) */
+        .btn-nivel.ativo { 
+            border-color: var(--cor-1ano); 
+            background-color: #e3f2fd; 
+            color: var(--azul-escuro); 
+            box-shadow: 0 4px 0 var(--cor-1ano-dark); 
+        }
+        .btn-nivel.ativo:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 var(--cor-1ano-dark); 
+        }
+        .btn-nivel.ativo:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0px 0 transparent; 
+        }
 
         /* Área de Exibição dos Emojis */
         .items-display-area {
@@ -97,20 +194,20 @@
         }
 
         .contagem-item {
-            font-size: clamp(2.5rem, 6vw, 3.5rem); /* Tamanho padrão */
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
             line-height: 1;
         }
 
-        /* Classe especial aplicada por JS para números grandes */
+        /* Classe especial aplicada automaticamente por JS para números > 10 */
         .items-display-area.lots-of-items { gap: 8px 12px; }
         .items-display-area.lots-of-items .contagem-item {
-            font-size: clamp(1.8rem, 5vw, 2.3rem); /* Redução automática de tamanho */
+            font-size: clamp(1.8rem, 5vw, 2.3rem);
         }
 
-        /* Botões Numéricos */
+        /* Botões Numéricos de Resposta */
         .options-container { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap;}
         .btn-opcao { 
             background: white; border: 3px solid #ced6e0; border-radius: 15px; 
@@ -129,12 +226,13 @@
         /* Ajustes Mobile Finos Específicos */
         @media (max-width: 768px) {
             .painel-topo { padding-bottom: 10px; margin-bottom: 20px; gap: 10px;}
+            .menu-niveis { gap: 10px; }
             .btn-nivel { padding: 8px 15px; font-size: 1rem; }
             .items-display-area { padding: 12px; min-height: 140px; margin-bottom: 25px;}
             .btn-opcao { width: 65px; height: 65px; font-size: 2rem; border-width: 3px; box-shadow: 0 4px 0 #ced6e0;}
         }
 
-        /* Ecrã de Transição/Fim (Ocupa o cartão inteiro sem alargar) */
+        /* Ecrã de Transição/Fim (Sobreposição Absoluta para não empurrar nada) */
         #ecra-transicao { 
             display: none; flex-direction: column; align-items: center; justify-content: center; 
             width: 100%; height: 100%; position: absolute; top: 0; left: 0; 
@@ -166,12 +264,12 @@
 <nav class="sidebar" id="sidebar">
     <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
-        <li><a href="../../../">🏠 Início</a></li>
-<li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
-<li><a href="../../">🎒 1º Ano</a></li>
-<li><a href="../../../2/">💡 2º Ano</a></li>
-<li><a href="../../../3/">🔍 3º Ano</a></li>
-<li><a href="../../../4/">🚀 4º Ano</a></li>
+        <li><a href="../../../../index.html">🏠 Início</a></li>
+        <li><a href="../../../../pre/index.html">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../index.html">🎒 1º Ano</a></li>
+        <li><a href="../../../../2/index.html">💡 2º Ano</a></li>
+        <li><a href="../../../../3/index.html">🔍 3º Ano</a></li>
+        <li><a href="../../../../4/index.html">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
@@ -189,14 +287,24 @@
 </header>
 
 <main>
-    <!-- Status Bar externa como no BOM.html -->
+    <!-- NOVA BARRA DE PROGRESSO & PONTUAÇÕES -->
     <div id="status-bar-container" class="status-bar">
-        <div class="score-container">
-            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
-            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
+        <div class="stats-side">
+            <div class="stat-box certas">
+                <span class="stat-icon">✔️</span>
+                <span>Certas:</span>
+                <span id="val-certas">0</span>
+            </div>
+            <div class="stat-box erradas">
+                <span class="stat-icon">❌</span>
+                <span>Erradas:</span>
+                <span id="val-erradas">0</span>
+            </div>
         </div>
-        <div class="progress-bg">
-            <div id="progress-fill" class="progress-fill"></div>
+        <div class="progress-side">
+            <div class="progress-bg">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
         </div>
     </div>
 
@@ -205,7 +313,7 @@
         <!-- ECRÃ 1: JOGO -->
         <div id="ecra-jogo">
             
-            <!-- Painel de Níveis Super Compacto -->
+            <!-- Painel de Níveis Topo -->
             <div class="painel-topo">
                 <div class="menu-niveis" id="level-selector">
                     <button class="btn-nivel ativo" id="btn-niv-1" onclick="iniciarJogo(1)">🎲 Até 10</button>
@@ -224,7 +332,7 @@
             </div>
         </div>
 
-        <!-- ECRÃ 2: TRANSIÇÃO/FIM (Sobreposição Absoluta para não mudar a altura do cartão) -->
+        <!-- ECRÃ 2: TRANSIÇÃO/FIM -->
         <div id="ecra-transicao">
             <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
             <h2 class="titulo-destaque" id="titulo-transicao">Muito Bem!</h2>
@@ -294,8 +402,8 @@
         document.getElementById('status-bar-container').style.display = 'flex';
         atualizarScore();
         
-        // Destacar o botão de nível no Topo
-        document.querySelectorAll('.level-selector .btn-nivel').forEach(b => b.classList.remove('ativo'));
+        // Destacar o botão de nível no Topo - Corrigido pelo ID do container
+        document.querySelectorAll('#level-selector .btn-nivel').forEach(b => b.classList.remove('ativo'));
         const btnAtivo = document.getElementById(`btn-niv-${nivel}`);
         if(btnAtivo) btnAtivo.classList.add('ativo');
 
@@ -348,7 +456,7 @@
     }
 
     function gerarOpcoes() {
-        let options = [targetQty];
+        let options =[targetQty];
         
         while (options.length < 3) {
             let offset = Math.floor(Math.random() * 7) - 3; // -3, -2, -1, 0, 1, 2, 3
