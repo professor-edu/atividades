@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Ligar as Quantidades 🔗</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE ORIGINAL
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* MENU LATERAL (NOVOS LINKS) */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px 10px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 900px; min-height: 550px; padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; font-size: 1.2rem;}
+            .cartao-jogo-container { padding: 20px 10px; border-radius: 20px;}
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: LIGAR QUANTIDADES
+           ========================================= */
+
+        /* Ecrãs */
+        #ecra-inicio, #ecra-jogo, #ecra-transicao, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; z-index: 20; }
+        #ecra-inicio { display: flex; justify-content: center; flex: 1; }
+
+        /* HUD */
+        .hud-top { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 800px; margin-bottom: 15px; }
+        .nivel-badge { font-weight: bold; color: var(--azul-escuro); background: #e3f2fd; padding: 8px 15px; border-radius: 20px; border: 2px solid #bde6ff; }
+        .progress-bg { background-color: #f0f4f8; border-radius: 10px; height: 12px; width: 100%; max-width: 800px; overflow: hidden; margin-bottom: 25px; }
+        .progress-fill { background-color: #2ed573; height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease-out; }
+
+        /* ÁREA DE LIGAÇÕES */
+        .board-container { position: relative; width: 100%; max-width: 800px; display: flex; justify-content: space-between; flex: 1; }
+        .coluna { display: flex; flex-direction: column; gap: 15px; width: 45%; z-index: 2; }
+        
+        /* Cartões */
+        .card { background: white; border: 3px solid #ced6e0; border-radius: 15px; min-height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); user-select: none; padding: 10px; position: relative; }
+        .card:hover { transform: scale(1.02); border-color: var(--azul-vibrante); }
+        .card.selected { border-color: var(--azul-vibrante); box-shadow: 0 0 0 4px rgba(0, 145, 255, 0.2); background: #f0f8ff; transform: scale(1.05); z-index: 10; }
+        .card.matched { background: #eafff0; border-color: #2ed573; color: #219d53; pointer-events: none; opacity: 0.9; }
+        .card.wrong { animation: shakeError 0.4s; border-color: #ff4757; background: #ffefef; }
+        
+        .card-texto { font-size: 2rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase; text-align: center; }
+
+        /* SVG Overlay para as Linhas */
+        #svg-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .match-line { stroke: #2ed573; stroke-width: 5; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 0.5s forwards ease-out; stroke-linecap: round; }
+        
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-1deg); } 50% { transform: translateX(5px) rotate(1deg); } 75% { transform: translateX(-5px) rotate(-1deg); } }
+
+        /* =========================================
+           CSS DOS RECURSOS VISUAIS MATEMÁTICOS
+           ========================================= */
+        
+        /* 1. Emojis */
+        .emoji-grid { font-size: 1.8rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 150px; line-height: 1.2; }
+
+        /* 2. Material Multibásico (Dourado) */
+        .multibase-box { display: flex; gap: 10px; align-items: flex-end; justify-content: center; }
+        .dezena-barra { width: 16px; height: 80px; background: #f1c40f; border: 1px solid #d35400; border-radius: 2px; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        /* Riscos da dezena */
+        .dezena-barra::before { content: ''; width: 100%; height: 100%; background-image: repeating-linear-gradient(to bottom, transparent, transparent 7px, #d35400 7px, #d35400 8px); }
+        .unidades-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; align-content: end; }
+        .unidade-cubo { width: 12px; height: 12px; background: #f1c40f; border: 1px solid #d35400; border-radius: 2px; box-shadow: 1px 1px 0 rgba(0,0,0,0.1); }
+
+        /* 3. Ábaco */
+        .abaco-box { display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
+        .abaco-hastes { display: flex; gap: 35px; border-bottom: 6px solid #8e44ad; padding-bottom: 2px; height: 60px; align-items: flex-end; justify-content: center; position: relative; }
+        .haste { width: 4px; height: 75px; background: #bdc3c7; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; position: relative; border-radius: 2px; }
+        .argola-d { width: 24px; height: 8px; background: #e74c3c; border-radius: 10px; border: 1px solid #c0392b; margin-bottom: -1px; z-index: 2; }
+        .argola-u { width: 24px; height: 8px; background: #3498db; border-radius: 10px; border: 1px solid #2980b9; margin-bottom: -1px; z-index: 2; }
+        .abaco-labels { display: flex; gap: 40px; font-weight: 900; color: #8e44ad; font-size: 1.2rem; margin-top: 2px; }
+
+        /* UI Geral */
+        .titulo-destaque { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 15px; }
+        .btn-acao { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 700; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); transition: 0.2s; margin-top: 20px; }
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 var(--cor-1ano-dark); }
+        .btn-acao:hover { background-color: #0084eb; }
+
+        @media (max-width: 600px) {
+            .card { min-height: 60px; padding: 5px; }
+            .card-texto { font-size: 1.3rem; }
+            .emoji-grid { font-size: 1.2rem; }
+            .dezena-barra { width: 12px; height: 60px; }
+            .dezena-barra::before { background-image: repeating-linear-gradient(to bottom, transparent, transparent 5px, #d35400 5px, #d35400 6px); }
+            .unidade-cubo { width: 8px; height: 8px; }
+            .abaco-hastes { gap: 25px; height: 50px; }
+            .haste { height: 60px; }
+            .argola-d, .argola-u { width: 18px; height: 6px; }
+            .abaco-labels { gap: 25px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Ligar as Quantidades 🔗</h1>
+        <div class="subtitulo">Toca na imagem e depois toca no número certo para os ligar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-inicio">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🧠🔗</div>
+            <h2 class="titulo-destaque">O Desafio das Ligações</h2>
+            <p style="font-size: 1.2rem; color: var(--text-main); max-width: 600px; margin-bottom: 30px;">
+                Vamos treinar a nossa contagem com o Material Dourado e com o Ábaco!<br>Temos 3 níveis de dificuldade à tua espera.
+            </p>
+            <button class="btn-acao" onclick="iniciarJogo()">Começar a Jogar! ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo">
+            
+            <div class="hud-top">
+                <div class="nivel-badge" id="hud-nivel">Nível 1 (Até 10)</div>
+                <div style="font-weight:bold; color:var(--text-main);">Ronda <span id="hud-ronda">1</span>/6</div>
+            </div>
+
+            <div class="progress-bg">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+
+            <div class="board-container" id="board-container">
+                <svg id="svg-lines"></svg>
+                <div class="coluna" id="col-esquerda"></div>
+                <div class="coluna" id="col-direita"></div>
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: TRANSIÇÃO -->
+        <div id="ecra-transicao">
+            <div style="font-size: 5rem; margin-bottom: 10px;">⭐</div>
+            <h2 class="titulo-destaque">Muito Bem!</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;" id="transicao-msg">Completaste este nível!</p>
+            <button class="btn-acao" onclick="proximaRonda()" style="background:#2ed573; box-shadow:0 5px 0 #219d53;">Continuar ➔</button>
+        </div>
+
+        <!-- ECRÃ 4: FIM -->
+        <div id="ecra-fim">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h2 class="titulo-destaque">Fantástico!</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 30px;">Completaste todos os níveis e ligaste todas as quantidades na perfeição!</p>
+            <button class="btn-acao" onclick="mostrarEcra('ecra-inicio')">Jogar Novamente 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // DICIONÁRIO E GERADORES VISUAIS
+    // ==========================================
+    const nomesNumeros =["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove", "vinte"];
+    const dezenasNomes =["", "dez", "vinte", "trinta", "quarenta", "cinquenta"];
+    
+    function numeroParaPalavra(n) {
+        if (n <= 20) return nomesNumeros[n];
+        if (n === 50) return "cinquenta";
+        let d = Math.floor(n / 10);
+        let u = n % 10;
+        if (u === 0) return dezenasNomes[d];
+        return dezenasNomes[d] + " e " + nomesNumeros[u];
+    }
+
+    const emojisArr =["🍎", "⭐", "🚗", "🐶", "🎈", "⚽", "🐢"];
+    
+    function gerarVisual(n, nivel) {
+        // Nível 1: Emojis ou Multibásico Unidades
+        if (nivel === 1) {
+            if (Math.random() > 0.5) {
+                let emoji = emojisArr[Math.floor(Math.random() * emojisArr.length)];
+                return `<div class="emoji-grid">${emoji.repeat(n)}</div>`;
+            } else {
+                return gerarMultibasico(n);
+            }
+        }
+        // Nível 2 e 3: Multibásico ou Ábaco
+        else {
+            if (Math.random() > 0.5) return gerarMultibasico(n);
+            else return gerarAbaco(n);
+        }
+    }
+
+    function gerarMultibasico(n) {
+        let d = Math.floor(n / 10);
+        let u = n % 10;
+        let html = `<div class="multibase-box">`;
+        for(let i=0; i<d; i++) html += `<div class="dezena-barra"></div>`;
+        if (u > 0) {
+            html += `<div class="unidades-grid">`;
+            for(let i=0; i<u; i++) html += `<div class="unidade-cubo"></div>`;
+            html += `</div>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    function gerarAbaco(n) {
+        let d = Math.floor(n / 10);
+        let u = n % 10;
+        let argolasD = `<div class="argola-d"></div>`.repeat(d);
+        let argolasU = `<div class="argola-u"></div>`.repeat(u);
+        return `
+            <div class="abaco-box">
+                <div class="abaco-hastes">
+                    <div class="haste">${argolasD}</div>
+                    <div class="haste">${argolasU}</div>
+                </div>
+                <div class="abaco-labels"><span>D</span><span>U</span></div>
+            </div>`;
+    }
+
+    function gerarTextoCard(n) {
+        // 50% chance de ser o algarismo, 50% chance de ser a palavra escrita
+        return Math.random() > 0.5 ? n.toString() : numeroParaPalavra(n);
+    }
+
+    // ==========================================
+    // ESTADO DO JOGO E MECÂNICA
+    // ==========================================
+    const TOTAL_RONDAS = 6; // 2 rondas por nível
+    let rondaAtual = 1;
+    let paresDescobertos = 0;
+    
+    let cardSelecionadoEsq = null;
+    let cardSelecionadoDir = null;
+    let ligacoesFeitas =[];
+
+    const colEsq = document.getElementById('col-esquerda');
+    const colDir = document.getElementById('col-direita');
+    const svgLines = document.getElementById('svg-lines');
+
+    function mostrarEcra(id) {['ecra-inicio', 'ecra-jogo', 'ecra-transicao', 'ecra-fim'].forEach(e => document.getElementById(e).style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function iniciarJogo() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        rondaAtual = 1;
+        iniciarRonda();
+    }
+
+    function iniciarRonda() {
+        mostrarEcra('ecra-jogo');
+        paresDescobertos = 0;
+        cardSelecionadoEsq = null;
+        cardSelecionadoDir = null;
+        ligacoesFeitas =[];
+        svgLines.innerHTML = '';
+        colEsq.innerHTML = '';
+        colDir.innerHTML = '';
+
+        document.getElementById('hud-ronda').textContent = rondaAtual;
+        document.getElementById('progress-fill').style.width = `${((rondaAtual - 1) / TOTAL_RONDAS) * 100}%`;
+
+        // Determinar Nível
+        let nivel = 1;
+        let min = 1, max = 10;
+        document.getElementById('hud-nivel').textContent = "Nível 1: Até 10";
+
+        if (rondaAtual === 3 || rondaAtual === 4) {
+            nivel = 2; min = 11; max = 20;
+            document.getElementById('hud-nivel').textContent = "Nível 2: 11 a 20";
+        } else if (rondaAtual === 5 || rondaAtual === 6) {
+            nivel = 3; min = 20; max = 50;
+            document.getElementById('hud-nivel').textContent = "Nível 3: 20 a 50";
+        }
+
+        // Gerar 4 números únicos
+        let numerosRonda =[];
+        while (numerosRonda.length < 4) {
+            let num = Math.floor(Math.random() * (max - min + 1)) + min;
+            if (!numerosRonda.includes(num)) numerosRonda.push(num);
+        }
+
+        // Criar Cartões
+        let leftCards =[];
+        let rightCards =[];
+
+        numerosRonda.forEach(n => {
+            leftCards.push({ val: n, html: gerarVisual(n, nivel) });
+            rightCards.push({ val: n, html: `<div class="card-texto">${gerarTextoCard(n)}</div>` });
+        });
+
+        // Baralhar
+        leftCards.sort(() => Math.random() - 0.5);
+        rightCards.sort(() => Math.random() - 0.5);
+
+        // Renderizar Esquerda
+        leftCards.forEach((item, index) => {
+            let div = document.createElement('div');
+            div.className = 'card left-card';
+            div.dataset.val = item.val;
+            div.dataset.id = `L${index}`;
+            div.innerHTML = item.html;
+            div.onclick = () => cliqueCard(div, 'esq');
+            colEsq.appendChild(div);
+        });
+
+        // Renderizar Direita
+        rightCards.forEach((item, index) => {
+            let div = document.createElement('div');
+            div.className = 'card right-card';
+            div.dataset.val = item.val;
+            div.dataset.id = `R${index}`;
+            div.innerHTML = item.html;
+            div.onclick = () => cliqueCard(div, 'dir');
+            colDir.appendChild(div);
+        });
+
+        // Redesenhar linhas em caso de resize (rotação do telemóvel)
+        window.removeEventListener('resize', desenharLinhas);
+        window.addEventListener('resize', desenharLinhas);
+    }
+
+    function cliqueCard(card, lado) {
+        if (card.classList.contains('matched')) return;
+
+        tocarSom('select');
+
+        if (lado === 'esq') {
+            if (cardSelecionadoEsq) cardSelecionadoEsq.classList.remove('selected');
+            cardSelecionadoEsq = card;
+            cardSelecionadoEsq.classList.add('selected');
+        } else {
+            if (cardSelecionadoDir) cardSelecionadoDir.classList.remove('selected');
+            cardSelecionadoDir = card;
+            cardSelecionadoDir.classList.add('selected');
+        }
+
+        // Se ambos estiverem selecionados, verifica o match
+        if (cardSelecionadoEsq && cardSelecionadoDir) {
+            verificarMatch();
+        }
+    }
+
+    function verificarMatch() {
+        let vEsq = cardSelecionadoEsq.dataset.val;
+        let vDir = cardSelecionadoDir.dataset.val;
+
+        if (vEsq === vDir) {
+            // MATCH CERTO
+            tocarSom('match');
+            cardSelecionadoEsq.classList.remove('selected');
+            cardSelecionadoDir.classList.remove('selected');
+            cardSelecionadoEsq.classList.add('matched');
+            cardSelecionadoDir.classList.add('matched');
+
+            ligacoesFeitas.push({ esq: cardSelecionadoEsq, dir: cardSelecionadoDir });
+            desenharLinhas();
+
+            cardSelecionadoEsq = null;
+            cardSelecionadoDir = null;
+            paresDescobertos++;
+
+            if (paresDescobertos === 4) {
+                setTimeout(fimDaRonda, 800);
+            }
+
+        } else {
+            // ERRO
+            tocarSom('erro');
+            let tempEsq = cardSelecionadoEsq;
+            let tempDir = cardSelecionadoDir;
+            
+            tempEsq.classList.add('wrong');
+            tempDir.classList.add('wrong');
+
+            setTimeout(() => {
+                tempEsq.classList.remove('wrong', 'selected');
+                tempDir.classList.remove('wrong', 'selected');
+            }, 400);
+
+            cardSelecionadoEsq = null;
+            cardSelecionadoDir = null;
+        }
+    }
+
+    function desenharLinhas() {
+        svgLines.innerHTML = '';
+        const boardRect = document.getElementById('board-container').getBoundingClientRect();
+
+        ligacoesFeitas.forEach(par => {
+            const r1 = par.esq.getBoundingClientRect();
+            const r2 = par.dir.getBoundingClientRect();
+
+            // Centro-Direita do cartão esquerdo
+            let x1 = (r1.right - boardRect.left) - 5;
+            let y1 = (r1.top + r1.height / 2) - boardRect.top;
+
+            // Centro-Esquerda do cartão direito
+            let x2 = (r2.left - boardRect.left) + 5;
+            let y2 = (r2.top + r2.height / 2) - boardRect.top;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('class', 'match-line');
+            svgLines.appendChild(line);
+        });
+    }
+
+    function fimDaRonda() {
+        document.getElementById('progress-fill').style.width = `${(rondaAtual / TOTAL_RONDAS) * 100}%`;
+        
+        if (rondaAtual === 2 || rondaAtual === 4) {
+            tocarSom('levelUp');
+            let prox = rondaAtual === 2 ? "Nível 2 (De 11 a 20)" : "Nível 3 (De 20 a 50)";
+            document.getElementById('transicao-msg').innerHTML = `Prepara-te para o<br><strong>${prox}</strong>!`;
+            mostrarEcra('ecra-transicao');
+        } else if (rondaAtual === TOTAL_RONDAS) {
+            tocarSom('vitoria');
+            dispararConfetis();
+            mostrarEcra('ecra-fim');
+        } else {
+            rondaAtual++;
+            iniciarRonda();
+        }
+    }
+
+    function proximaRonda() {
+        rondaAtual++;
+        iniciarRonda();
+    }
+
+    // ==========================================
+    // ÁUDIO E CONFETIS
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'select') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'match') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'levelUp') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.1); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.1 + 0.4);
+                o.start(agora + i * 0.1); o.stop(agora + i * 0.1 + 0.4);
+            });
+        } else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; desenharLinhas(); }
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+</script>
+</body>
+</html>
