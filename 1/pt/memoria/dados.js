@@ -46,6 +46,9 @@ const palavras = [
   { palavra: "girafa", imagem: "img/girafa.png", num: 3, divisao: "GI-RA-FA" },
   { palavra: "cadeira", imagem: "img/cadeira.png", num: 3, divisao: "CA-DEI-RA" },
   { palavra: "caracol", imagem: "img/caracol.png", num: 3, divisao: "CA-RA-COL" },
-  { palavra: "piano", imagem: "img/piano.png", num: 3, divisao: "PI-A-NO" }
+  { palavra: "piano", imagem: "img/piano.png", num: 3, divisao: "PI-A-NO" },
+  { palavra: "ilha", imagem: "img/ilha.png", num: 2, divisao: "I-LHA" },
+  { palavra: "elefante", imagem: "img/elefante.png", num: 4, divisao: "E-LE-FAN-TE" },
+  { palavra: "uva", imagem: "img/uva.png", num: 2, divisao: "U-VA" },
+  { palavra: "igreja", imagem: "img/igreja.png", num: 3, divisao: "I-GRE-JA" }
 ];
- 
