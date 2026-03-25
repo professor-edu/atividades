@@ -49,7 +49,7 @@
         
         main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px 10px; }
         
-        /* Cartão adaptável (não estica para o infinito) */
+        /* Cartão adaptável */
         .cartao-jogo-container { background: white; width: 100%; max-width: 900px; padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; height: auto; margin-bottom: 20px; }
         
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0;}
@@ -72,7 +72,7 @@
         #ecra-inicio, #ecra-jogo, #ecra-transicao { width: 100%; display: none; flex-direction: column; align-items: center; z-index: 20; }
         #ecra-inicio { display: flex; justify-content: center; }
 
-        /* SELETOR DE NÍVEIS (NO TOPO) */
+        /* SELETOR DE NÍVEIS */
         .level-selector { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; width: 100%; }
         .btn-nivel { background: #f0f4f8; border: 2px solid #ced6e0; padding: 12px 20px; border-radius: 20px; font-weight: 800; font-size: 1rem; cursor: pointer; color: var(--text-main); transition: 0.2s; flex: 1; min-width: 120px; }
         .btn-nivel:hover { background: #e3f2fd; border-color: var(--azul-vibrante); }
@@ -86,23 +86,19 @@
         .progress-bg { background-color: #f0f4f8; border-radius: 10px; height: 12px; width: 100%; max-width: 800px; overflow: hidden; margin-bottom: 25px; }
         .progress-fill { background-color: #2ed573; height: 100%; width: 0%; border-radius: 10px; transition: width 0.4s ease-out; }
 
-        /* ÁREA DE LIGAÇÕES (GRELHA PERFEITA) */
+        /* ÁREA DE LIGAÇÕES */
         .board-wrapper { position: relative; width: 100%; max-width: 800px; margin: 0 auto; flex-grow: 1; }
         .board-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 60px; width: 100%; }
         
-        /* Cartões */
-        .card { background: white; border: 3px solid #ced6e0; border-radius: 15px; min-height: 70px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); user-select: none; padding: 10px; position: relative; }
+        .card { background: white; border: 3px solid #ced6e0; border-radius: 15px; min-height: 70px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); user-select: none; padding: 10px; position: relative; flex: 1; }
         .card:hover { transform: scale(1.02); border-color: var(--azul-vibrante); }
         .card.selected { border-color: var(--azul-vibrante); box-shadow: 0 0 0 4px rgba(0, 145, 255, 0.2); background: #f0f8ff; transform: scale(1.05); z-index: 10; }
         .card.matched { background: #eafff0; border-color: #2ed573; color: #219d53; pointer-events: none; opacity: 0.9; }
         .card.wrong { animation: shakeError 0.4s; border-color: #ff4757; background: #ffefef; }
         
         .card-texto { font-size: 3.5rem; font-weight: 900; color: var(--azul-escuro); }
-
-        /* Contas do Nível 3 */
         .conta-texto { font-size: 2.8rem; font-weight: 900; color: var(--azul-escuro); }
 
-        /* SVG Overlay para as Linhas */
         #svg-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .match-line { stroke: #2ed573; stroke-width: 5; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 0.5s forwards ease-out; stroke-linecap: round; }
         
@@ -132,6 +128,9 @@
         .btn-acao:hover { background-color: #0084eb; }
         .btn-acao.verde { background-color: #2ed573; box-shadow: 0 5px 0 #219d53; }
         .btn-acao.verde:hover { background-color: #28c76a; }
+
+        /* CONFETIS GLOBAIS (FORA DO CARTÃO) */
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
 
         @media (max-width: 600px) {
             .board-grid { gap: 10px 20px; }
@@ -175,8 +174,8 @@
             </button>
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        <h1>Ligar Quantidades 🔗</h1>
-        <div class="subtitulo">Toca na imagem ou conta, e liga ao número certo!</div>
+        <h1>Ligar as Quantidades 🔗</h1>
+        <div class="subtitulo">Toca na imagem ou conta e liga ao número certo!</div>
     </div>
 </header>
 
@@ -214,7 +213,7 @@
                 <div id="progress-fill" class="progress-fill"></div>
             </div>
 
-            <!-- TABULEIRO DE JOGO (Agora com CSS Grid para alinhar em altura) -->
+            <!-- TABULEIRO DE JOGO -->
             <div class="board-wrapper" id="board-wrapper">
                 <svg id="svg-lines"></svg>
                 <div class="board-grid" id="board-grid"></div>
@@ -232,10 +231,11 @@
                 <button class="btn-acao verde" onclick="proximoNivel()" id="btn-proximo">Próximo Nível ➔</button>
             </div>
         </div>
-
-        <canvas id="confetti-canvas"></canvas>
     </div>
 </main>
+
+<!-- CONFETIS MOVIDOS PARA FORA DO CARTÃO PARA NÃO INTERFERIR COM O LAYOUT -->
+<canvas id="confetti-canvas"></canvas>
 
 <footer>
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
@@ -395,7 +395,6 @@
         leftCards.sort(() => Math.random() - 0.5);
         rightCards.sort(() => Math.random() - 0.5);
 
-        // Preencher a Grelha (Alternando Esquerda e Direita para alinhar as alturas)
         for(let i = 0; i < PARES_POR_PAINEL; i++) {
             let divEsq = document.createElement('div');
             divEsq.className = 'card left-card';
@@ -420,7 +419,6 @@
 
     function cliqueCard(card, lado) {
         if (card.classList.contains('matched')) return;
-
         tocarSom('select');
 
         if (lado === 'esq') {
@@ -524,7 +522,7 @@
     }
 
     // ==========================================
-    // ÁUDIO E CONFETIS
+    // ÁUDIO E CONFETIS ATUALIZADOS PARA FULLSCREEN
     // ==========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function tocarSom(tipo) {
@@ -561,7 +559,17 @@
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
     let confetis =[];
-    function redimensionarCanvas() { canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; desenharLinhas(); }
+    
+    // Os confetis agora cobrem a janela inteira do navegador!
+    function redimensionarCanvas() { 
+        canvasConfetti.width = window.innerWidth; 
+        canvasConfetti.height = window.innerHeight; 
+    }
+    
+    window.addEventListener('resize', () => {
+        redimensionarCanvas();
+        desenharLinhas();
+    });
     
     function dispararConfetis() {
         redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
