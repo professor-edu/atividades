@@ -83,12 +83,11 @@
         #ecra-selecao, #ecra-jogo, #ecra-transicao, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; z-index: 20; }
         #ecra-selecao { display: flex; justify-content: center; }
 
-        /* Seleção de Nível */
-        .niveis-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; width: 100%; }
-        .btn-nivel { background: white; border: 4px solid var(--azul-vibrante); padding: 20px 30px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 var(--azul-vibrante); display: flex; flex-direction: column; gap: 10px; align-items: center; flex: 1; min-width: 150px;}
-        .btn-nivel span { font-size: 3rem; }
-        .btn-nivel:hover { transform: translateY(-5px); background: #e3f2fd; }
-        .btn-nivel:active { transform: translateY(6px); box-shadow: 0 0 0 var(--azul-vibrante); }
+        /* Seleção de Nível (No Ecrã de Jogo) */
+        .level-selector { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; width: 100%; }
+        .btn-nivel { background: #f0f4f8; border: 2px solid #ced6e0; padding: 10px 15px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; cursor: pointer; color: var(--text-main); transition: 0.2s; flex: 1; min-width: 100px; }
+        .btn-nivel:hover { background: #e3f2fd; border-color: var(--azul-vibrante); color: var(--azul-escuro);}
+        .btn-nivel.ativo { background: var(--cor-1ano); color: white; border-color: var(--cor-1ano-dark); box-shadow: 0 4px 10px rgba(0, 145, 255, 0.3); }
 
         /* Instrução da Pergunta */
         .pergunta-destaque { font-size: 2.2rem; color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 10px;}
@@ -148,6 +147,9 @@
         .btn-acao { background-color: #2ed573; color: white; border: none; padding: 20px 45px; font-size: 1.5rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 8px 0 #219d53; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
         .btn-acao:active { transform: translateY(8px); box-shadow: 0 0px 0 #219d53; }
         .btn-acao:hover { background-color: #28c76a; }
+        
+        .btn-secundario { background-color: #ff9f43; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #e67e22; transition: 0.2s; }
+        .btn-secundario:active { transform: translateY(5px); box-shadow: 0 0px 0 #e67e22; }
 
         /* Animações GLOBAIS */
         @keyframes shakeError { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-6px) rotate(-3deg); } 50% { transform: translateX(6px) rotate(3deg); } 75% { transform: translateX(-6px) rotate(-3deg); } }
@@ -165,6 +167,7 @@
             .caixa-10 .mini-emoji { font-size: 1.6rem; }
             .btn-opcao { width: 70px; height: 65px; font-size: 2rem; border-width: 3px; box-shadow: 0 5px 0 #ced6e0;}
             .btn-acao { padding: 15px 30px; font-size: 1.2rem; }
+            .btn-nivel { padding: 8px 5px; font-size: 0.85rem; min-width: 30%; }
         }
     </style>
 </head>
@@ -217,23 +220,19 @@
             <p style="font-size: 1.2rem; color: var(--text-main); max-width: 600px; margin-bottom: 30px;">
                 Clica nos objetos para os marcares sem te perderes na contagem. Depois, escolhe o número certo!
             </p>
-            
-            <div class="niveis-grid">
-                <button class="btn-nivel" onclick="iniciarJogo(1)">
-                    <span>🍎</span> Nível 1 (até 10)
-                </button>
-                <button class="btn-nivel" onclick="iniciarJogo(2)">
-                    <span>🚗</span> Nível 2 (até 20)
-                </button>
-                <button class="btn-nivel" onclick="iniciarJogo(3)">
-                    <span>📦</span> Nível 3 (até 50)
-                </button>
-            </div>
+            <button class="btn-acao" onclick="selecionarNivel(1)">Começar a Investigar! ▶️</button>
         </div>
 
         <!-- ECRÃ 2: JOGO -->
         <div id="ecra-jogo">
             
+            <!-- SELETOR DE NÍVEIS -->
+            <div class="level-selector" id="level-selector">
+                <button class="btn-nivel" id="btn-niv-1" onclick="selecionarNivel(1)">Nível 1 (até 10)</button>
+                <button class="btn-nivel" id="btn-niv-2" onclick="selecionarNivel(2)">Nível 2 (até 20)</button>
+                <button class="btn-nivel" id="btn-niv-3" onclick="selecionarNivel(3)">Nível 3 (até 50)</button>
+            </div>
+
             <div class="pergunta-destaque">
                 Quantas <span id="target-emoji-display" class="pergunta-emoji">❓</span> vês?
             </div>
@@ -302,23 +301,27 @@
     const targetDisplay = document.getElementById('target-emoji-display');
     const cenario = document.getElementById('cenario');
     const opcoesContainer = document.getElementById('opcoes');
+    const statusBar = document.getElementById('status-bar-container');
 
     function mostrarEcra(id) {['ecra-inicio', 'ecra-jogo', 'ecra-transicao'].forEach(e => document.getElementById(e).style.display = 'none');
         document.getElementById(id).style.display = 'flex';
     }
 
-    function iniciarJogo(nivel) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        selecionarNivel(nivel);
-    }
-
     function selecionarNivel(n) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         nivelAtual = n;
         certas = 0;
         erradas = 0;
         questoesFeitas = 0;
         atualizarScore();
         
+        // Destacar o botão do nível ativo
+        document.querySelectorAll('.btn-nivel').forEach(b => b.classList.remove('ativo'));
+        const btnAtivo = document.getElementById(`btn-niv-${n}`);
+        if(btnAtivo) btnAtivo.classList.add('ativo');
+
+        // Mostrar a Barra de Progresso e o Ecrã de Jogo
+        statusBar.style.display = 'block';
         mostrarEcra('ecra-jogo');
         novaInvestigacao();
     }
@@ -356,7 +359,7 @@
             targetQty = Math.floor(Math.random() * 10) + 1; 
             numSingles = targetQty;
             
-            // Distratores: 4 a 6 itens soltos errados
+            // Distratores: 5 itens soltos errados
             for(let i=0; i<5; i++) {
                 itemsToRender.push({ isTarget: false, char: distractors[i % distractors.length].char, value: 1, type: 'single' });
             }
@@ -366,7 +369,7 @@
             targetQty = Math.floor(Math.random() * 10) + 11; 
             numSingles = targetQty;
             
-            // Distratores: 8 a 12 itens soltos
+            // Distratores: 10 itens soltos
             for(let i=0; i<10; i++) {
                 itemsToRender.push({ isTarget: false, char: distractors[i % distractors.length].char, value: 1, type: 'single' });
             }
@@ -460,7 +463,6 @@
         
         // Gera 3 respostas erradas mas "próximas" da correta (para exigir contagem)
         while (options.length < 4) {
-            // Desvio entre -3 e +3. No nível 3 o desvio pode ser de -10 ou +10 para confundir nas dezenas
             let offset = Math.floor(Math.random() * 7) - 3; 
             if (nivelAtual === 3 && Math.random() > 0.5) offset = (Math.random() > 0.5 ? 10 : -10);
             
@@ -468,13 +470,11 @@
             
             let wrongAns = targetQty + offset;
             
-            // Garante que é positivo e que não repete opções
             if (wrongAns > 0 && !options.includes(wrongAns)) {
                 options.push(wrongAns);
             }
         }
         
-        // Baralhar as opções
         options.sort(() => Math.random() - 0.5);
 
         options.forEach(num => {
@@ -529,7 +529,7 @@
         dispararConfetis();
         let proxBtn = document.getElementById('btn-proximo');
         
-        document.getElementById('status-bar-container').style.display = 'none';
+        statusBar.style.display = 'none';
 
         if (nivelAtual === 3) {
             document.getElementById('transicao-msg').innerHTML = `És o melhor detetive do mundo!<br>Erraste apenas ${erradas} vezes.`;
@@ -558,7 +558,6 @@
             gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
             osc.start(agora); osc.stop(agora + 0.15);
         } else if (tipo === 'ding10') {
-            // Som mágico especial para a caixa de 10
             osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1500, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.linearRampToValueAtTime(0.15, agora + 0.1); gain.gain.linearRampToValueAtTime(0, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
