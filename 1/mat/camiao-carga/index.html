@@ -87,36 +87,50 @@
         .highlight-number { font-size: 4rem; color: #e67e22; font-weight: 900; padding: 0 10px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
 
         /* =========================================
-           O CAMIÃO (CORRIGIDO PARA A DIREITA)
+           O CAMIÃO
            ========================================= */
         .cenario-estrada { width: 100%; max-width: 700px; padding-bottom: 15px; border-bottom: 4px solid #95a5a6; margin-bottom: 20px; overflow: hidden; position: relative; height: 180px; display: flex; align-items: flex-end;}
         
         .truck-wrapper { display: flex; align-items: flex-end; transform: translateX(0); z-index: 5; }
         
-        /* Cabine do Camião (AGORA À DIREITA) */
+        /* Cabine do Camião */
         .truck-cabin { width: 90px; height: 110px; background: #0091ff; border-radius: 0 25px 0 0; position: relative; border: 2px solid #0070c5; border-left: none;}
         .truck-window { width: 45px; height: 45px; background: #e3f2fd; position: absolute; top: 12px; right: 12px; border-radius: 0 12px 0 0; border: 2px solid #81c8f8;}
         
-        /* Reboque (Onde cai a carga, AGORA À ESQUERDA) */
+        /* Reboque */
         .truck-bed { width: 280px; height: 15px; background: #34495e; position: relative; border-radius: 5px 0 0 5px; display: flex; flex-direction: column-reverse;}
         /* Caixas agora empilham encostadas à cabine (à direita) */
         .cargo-area { width: 270px; height: 140px; position: absolute; bottom: 15px; right: 5px; display: flex; flex-wrap: wrap-reverse; justify-content: flex-end; align-content: flex-start; gap: 3px; }
         
         /* Rodas */
         .wheel { width: 40px; height: 40px; background: #2c3e50; border: 5px solid #bdc3c7; border-radius: 50%; position: absolute; bottom: -20px; z-index: 10;}
-        .wheel-front { right: 20px; } /* Roda da cabine */
-        .wheel-back1 { left: 70px; }  /* Rodas do reboque */
+        .wheel-front { right: 20px; } 
+        .wheel-back1 { left: 70px; }  
         .wheel-back2 { left: 15px; }
 
-        /* ITENS DE CARGA */
+        /* =========================================
+           ITENS DE CARGA E ANIMAÇÃO MÁGICA
+           ========================================= */
         .box-1 { width: 35px; height: 35px; background: #f1c40f; border: 2px solid #d35400; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #d35400; font-size: 1.2rem; animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset -2px -2px 0 rgba(0,0,0,0.1);}
-        
-        /* NOVA CAIXA +5 (AZUL) */
         .box-5 { width: 52px; height: 35px; background: #3498db; border: 2px solid #2980b9; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; font-size: 1.3rem; animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2);}
-        
         .box-10 { width: 73px; height: 35px; background: #e67e22; border: 2px solid #b33900; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; font-size: 1.4rem; animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2); letter-spacing: 2px;}
         
         @keyframes dropIn { 0% { transform: translateY(-80px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+
+        /* Animações de Transformação (Merge) */
+        @keyframes mergeOut {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .merged-box {
+            animation: mergePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            box-shadow: 0 0 20px #f1c40f, inset -2px -2px 0 rgba(0,0,0,0.2) !important;
+        }
+        @keyframes mergePop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.3); filter: brightness(1.5); }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
         /* PAINEL DE CONTROLO */
         .controls-container { display: flex; gap: 15px; justify-content: center; width: 100%; margin-bottom: 25px; flex-wrap: wrap;}
@@ -228,10 +242,10 @@
 
             <!-- ALVO (A ENCOMENDA) -->
             <div class="target-container">
-                A encomenda é de <span class="highlight-number" id="target-num">0</span>!
+                A encomenda é de <span class="highlight-number" id="target-num">0</span>
             </div>
 
-            <!-- O CAMIÃO VIRADO PARA A DIREITA -->
+            <!-- O CAMIÃO -->
             <div class="cenario-estrada">
                 <div class="truck-wrapper" id="truck">
                     <div class="truck-bed">
@@ -362,12 +376,11 @@
         targetNumber = Math.floor(Math.random() * (max - min + 1)) + min;
         elTarget.textContent = targetNumber;
 
-        // Animação do camião a entrar (Agora entra da esquerda para o meio de frente)
         truck.style.transition = 'none';
-        truck.style.transform = 'translateX(-150%)';
+        truck.style.transform = 'translateX(-1000px)'; 
         setTimeout(() => {
             truck.style.transition = 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-            truck.style.transform = 'translateX(0)';
+            truck.style.transform = 'translateX(0)'; 
             tocarSom('driveIn');
         }, 50);
     }
@@ -388,6 +401,58 @@
         }
         cargoArea.appendChild(box);
         feedbackMsg.style.opacity = '0'; 
+
+        // LÓGICA MAGICA DE AGRUPAMENTO (A partir do nível 3)
+        if (nivelAtual >= 3) {
+            verificarMerge();
+        }
+    }
+
+    // Funde automaticamente 10 caixas pequenas numa grande (ou 2 médias numa grande)
+    function verificarMerge() {
+        let caixas1 = cargoArea.querySelectorAll('.box-1');
+        let caixas5 = cargoArea.querySelectorAll('.box-5');
+
+        let willMerge = false;
+        let elementsToRemove =[];
+
+        // Prioridade: 10 caixas de 1
+        if (caixas1.length >= 10) {
+            willMerge = true;
+            for(let i = 0; i < 10; i++) elementsToRemove.push(caixas1[i]);
+        } 
+        // Em alternativa: 2 caixas de 5
+        else if (caixas5.length >= 2) {
+            willMerge = true;
+            for(let i = 0; i < 2; i++) elementsToRemove.push(caixas5[i]);
+        }
+
+        if (willMerge) {
+            isAnimating = true; // Impede novos cliques enquanto transforma
+            
+            // Inicia animação de saída nas caixas pequenas
+            elementsToRemove.forEach(el => {
+                el.style.animation = 'mergeOut 0.3s forwards';
+            });
+            
+            tocarSom('magia'); // Som especial de transformação!
+
+            setTimeout(() => {
+                // Remove do ecrã
+                elementsToRemove.forEach(el => el.remove());
+                
+                // Cria e adiciona a nova caixa gigante de 10
+                let novaCaixa = document.createElement('div');
+                novaCaixa.className = 'box-10 merged-box';
+                novaCaixa.textContent = '10';
+                cargoArea.appendChild(novaCaixa);
+                
+                isAnimating = false;
+                
+                // Volta a verificar caso a criança tenha clicado super rápido
+                verificarMerge(); 
+            }, 300);
+        }
     }
 
     function esvaziarCarga(silencioso = false) {
@@ -402,31 +467,24 @@
         if(isAnimating) return;
 
         if (currentLoaded === targetNumber) {
-            // SUCESSO!
             isAnimating = true;
             certas++;
             questoesFeitas++;
             atualizarScore();
             tocarSom('horn');
-
             feedbackMsg.style.opacity = '0';
             
-            // Animação de conduzir embora (sai pela direita, sempre em frente!)
             setTimeout(() => {
                 truck.style.transition = 'transform 1s ease-in';
-                truck.style.transform = 'translateX(150%)';
+                truck.style.transform = 'translateX(1000px)'; 
             }, 300);
 
             setTimeout(() => {
-                if (questoesFeitas >= QUESTOES_POR_NIVEL) {
-                    fimDoNivel();
-                } else {
-                    novaEncomenda();
-                }
+                if (questoesFeitas >= QUESTOES_POR_NIVEL) fimDoNivel();
+                else novaEncomenda();
             }, 1500);
 
         } else {
-            // ERRO!
             erradas++;
             atualizarScore();
             tocarSom('erro');
@@ -434,12 +492,8 @@
             truck.classList.add('shake');
             setTimeout(() => truck.classList.remove('shake'), 400);
 
-            // Feedback Pedagógico
-            if (currentLoaded < targetNumber) {
-                feedbackMsg.textContent = `Atenção! Só tens ${currentLoaded}. Faltam mais!`;
-            } else {
-                feedbackMsg.textContent = `Ups! Carregaste ${currentLoaded}. É demais! Esvazia e tenta outra vez.`;
-            }
+            if (currentLoaded < targetNumber) feedbackMsg.textContent = `Atenção! Só tens ${currentLoaded}. Faltam mais!`;
+            else feedbackMsg.textContent = `Ups! Carregaste ${currentLoaded}. É demais! Esvazia e tenta outra vez.`;
             feedbackMsg.style.opacity = '1';
         }
     }
@@ -475,6 +529,11 @@
             osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
             gain.gain.setValueAtTime(0.2, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
             osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'magia') {
+            // Som de transformação mágica (ascendente rápido)
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.2);
+            gain.gain.setValueAtTime(0, agora); gain.gain.linearRampToValueAtTime(0.15, agora + 0.1); gain.gain.linearRampToValueAtTime(0, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
         } else if (tipo === 'clear') {
             osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
