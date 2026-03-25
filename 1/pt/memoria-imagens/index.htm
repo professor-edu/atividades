@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Memória de Imagens 🖼️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (INTACTO)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; }
+
+        .cartao-jogo-container { 
+            background: white; 
+            width: 100%; max-width: 850px; 
+            padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        /* =========================================
+           PAINEL DE TOPO: NÍVEIS + PLACAR
+           ========================================= */
+        .painel-topo {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 750px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #e3f2fd;
+        }
+
+        .status-bar { 
+            display: flex; 
+            gap: 20px; 
+            font-weight: bold; 
+            font-size: 1.2rem; 
+            background: #f8fafc; 
+            padding: 10px 25px; 
+            border-radius: 15px; 
+            border: 2px solid #e3f2fd;
+        }
+        .score-pares { color: var(--cor-1ano); }
+        .score-jogadas { color: var(--text-main); }
+
+        .menu-niveis { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-nivel {
+            background-color: white; border: 3px solid #ced6e0; border-radius: 12px;
+            padding: 10px 18px; cursor: pointer; font-size: 1.05rem; font-weight: 700;
+            color: var(--text-main); box-shadow: 0 3px 0 #ced6e0; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nivel:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #ced6e0; }
+        .btn-nivel:active { transform: translateY(3px); box-shadow: 0 0px 0 transparent; }
+        
+        .btn-nivel.active { 
+            border-color: var(--cor-1ano); 
+            background-color: #e3f2fd; 
+            color: var(--azul-escuro); 
+            box-shadow: 0 3px 0 var(--cor-1ano-dark); 
+            transform: translateY(2px); 
+        }
+
+        /* =========================================
+           GRELHA RÍGIDA - A ÁREA DE JOGO NÃO MEXE
+           ========================================= */
+        #game-area { width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;}
+        
+        .memory-grid {
+            display: grid;
+            gap: 12px;
+            width: 100%;
+            max-width: 650px;
+            aspect-ratio: 4 / 3; /* Força um rectângulo estático de proporções exatas */
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        /* Os níveis cortam exatamente a mesma área em fatias mais pequenas */
+        .grid-nivel-1 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
+        .grid-nivel-2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+        .grid-nivel-3 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(4, 1fr); }
+
+        .memory-card {
+            width: 100%;
+            height: 100%; 
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box; 
+        }
+
+        .memory-card.flipped { transform: rotateY(180deg); }
+        .memory-card.matched { transform: rotateY(180deg); cursor: default; }
+
+        .card-face {
+            position: absolute;
+            width: 100%; 
+            height: 100%;
+            top: 0; left: 0;
+            backface-visibility: hidden;
+            border-radius: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            user-select: none;
+            box-sizing: border-box;
+            overflow: hidden;
+            padding: 8px; 
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, var(--azul-vibrante) 0%, #00d2ff 100%);
+            border: 3px solid white;
+            color: white;
+            font-size: 2.5rem; 
+            font-weight: 900;
+        }
+
+        .card-back {
+            background: white;
+            border: 4px solid var(--azul-vibrante);
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched .card-back {
+            border-color: #2ed573;
+            background-color: #eafff0;
+        }
+
+        /* Estilo Interno da Carta (Apenas Imagem) */
+        .card-img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Responsividade Mobile - Área de jogo também fixa em proporção Mobile */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            
+            main { padding: 15px 10px; gap: 15px;}
+            .cartao-jogo-container { padding: 20px 10px; }
+            
+            .painel-topo { gap: 10px; padding-bottom: 15px; margin-bottom: 15px; }
+            .status-bar { padding: 8px 15px; font-size: 1rem; width: 100%; justify-content: space-around;}
+            .btn-nivel { padding: 8px 10px; font-size: 0.9rem; flex: 1; justify-content: center;}
+            
+            /* Grelha Mobile mais alta, mas rigidamente fixa */
+            .memory-grid { gap: 8px; max-width: 400px; aspect-ratio: 3 / 4; }
+            .grid-nivel-1 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); }
+            .grid-nivel-2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+            .grid-nivel-3 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); }
+            
+            .card-front { font-size: 2rem; border-width: 2px; }
+            .card-back { border-width: 3px; padding: 4px; border-radius: 10px; }
+            .card-face { border-radius: 10px; }
+        }
+
+        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; position: absolute; top:0; left:0; width: 100%; height:100%; background: rgba(255,255,255,0.95); z-index: 20; animation: fadeIn 0.5s ease;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center;}
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px;}
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes errorShake { 0%, 100% { transform: rotateY(180deg) translateX(0); } 25% { transform: rotateY(180deg) translateX(-5px) rotate(-3deg); } 75% { transform: rotateY(180deg) translateX(5px) rotate(3deg); } }
+        .error-shake .card-back { animation: errorShake 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important;}
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Memória de Imagens 🖼️</h1>
+        <div class="subtitulo">Encontra os pares de imagens iguais!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- PAINEL DE TOPO -->
+        <div class="painel-topo">
+            <div class="menu-niveis" id="menu-niveis">
+                <button class="btn-nivel active" id="btn-nivel-1" onclick="iniciarJogo(1)">🟢 Fácil (12)</button>
+                <button class="btn-nivel" id="btn-nivel-2" onclick="iniciarJogo(2)">🟡 Médio (16)</button>
+                <button class="btn-nivel" id="btn-nivel-3" onclick="iniciarJogo(3)">🔴 Difícil (20)</button>
+            </div>
+            
+            <div id="status-bar-container" class="status-bar">
+                <span class="score-pares">Pares: <span id="val-pares">0/6</span></span>
+                <span class="score-jogadas">Jogadas: <span id="val-jogadas">0</span></span>
+            </div>
+        </div>
+
+        <div id="game-area">
+            <!-- GRELHA DO JOGO -->
+            <div class="memory-grid" id="memory-grid">
+                <!-- Cartas injetadas via Javascript -->
+            </div>
+
+            <!-- ECRÃ FINAL -->
+            <div id="end-screen">
+                <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+                <div class="end-stats">
+                    Encontraste todos os pares em <strong id="final-jogadas" style="color:var(--cor-1ano)">0</strong> jogadas.
+                </div>
+                <button class="btn-reiniciar" onclick="reiniciarNivelAtual()">JOGAR NOVAMENTE 🔄</button>
+            </div>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script src="dados.js"></script>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS
+       ========================================= */
+    let currentLevel = 1;
+    let jogadas = 0;
+    let paresEncontrados = 0;
+    let TOTAL_PARES = 6;
+    
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
+
+    const memoryGrid = document.getElementById('memory-grid');
+    const endScreen = document.getElementById('end-screen');
+    const elPares = document.getElementById('val-pares');
+    const elJogadas = document.getElementById('val-jogadas');
+
+    function getImagePath(imgPath) {
+        if (!imgPath) return '';
+        return imgPath.replace('img/', '../img/');
+    }
+
+    /* =========================================
+       GERAÇÃO DE PARES E GRELHA
+       ========================================= */
+    function obterParesAleatorios(nivel) {
+        TOTAL_PARES = nivel === 1 ? 6 : (nivel === 2 ? 8 : 10);
+        let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
+        return baralhadas.slice(0, TOTAL_PARES);
+    }
+
+    function iniciarJogo(nivel) {
+        document.querySelectorAll('.btn-nivel').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-nivel-' + nivel).classList.add('active');
+
+        currentLevel = nivel;
+        jogadas = 0;
+        paresEncontrados = 0;
+        TOTAL_PARES = nivel === 1 ? 6 : (nivel === 2 ? 8 : 10);
+        
+        hasFlippedCard = false;
+        lockBoard = false;
+        firstCard = null;
+        secondCard = null;
+
+        elPares.textContent = `0/${TOTAL_PARES}`;
+        elJogadas.textContent = "0";
+        
+        endScreen.style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        gerarGrelha();
+    }
+
+    function reiniciarNivelAtual() {
+        iniciarJogo(currentLevel);
+    }
+
+    function gerarGrelha() {
+        memoryGrid.innerHTML = '';
+        
+        memoryGrid.className = 'memory-grid grid-nivel-' + currentLevel;
+
+        let pares = obterParesAleatorios(currentLevel);
+        let cartas =[];
+        
+        // Aqui geramos DUAS cartas com a mesma imagem
+        pares.forEach(p => {
+            cartas.push({ matchId: p.palavra, content: p.imagem });
+            cartas.push({ matchId: p.palavra, content: p.imagem });
+        });
+
+        cartas = cartas.sort(() => Math.random() - 0.5);
+
+        cartas.forEach(c => {
+            const cardEl = document.createElement('div');
+            cardEl.classList.add('memory-card');
+            cardEl.dataset.match = c.matchId;
+
+            let backContent = `<img src="${getImagePath(c.content)}" class="card-img" alt="Imagem">`;
+
+            cardEl.innerHTML = `
+                <div class="card-face card-front">?</div>
+                <div class="card-face card-back">${backContent}</div>
+            `;
+            
+            cardEl.addEventListener('click', flipCard);
+            memoryGrid.appendChild(cardEl);
+        });
+    }
+
+    /* =========================================
+       MECÂNICA DO JOGO E FLIP
+       ========================================= */
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add('flipped');
+        tocarSom('flip');
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
+        }
+
+        secondCard = this;
+        jogadas++;
+        elJogadas.textContent = jogadas;
+        
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        let isMatch = firstCard.dataset.match === secondCard.dataset.match;
+
+        if (isMatch) {
+            disableCards();
+        } else {
+            unflipCards();
+        }
+    }
+
+    function disableCards() {
+        lockBoard = true;
+        setTimeout(() => {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            paresEncontrados++;
+            elPares.textContent = `${paresEncontrados}/${TOTAL_PARES}`;
+            tocarSom('acerto');
+
+            if (paresEncontrados === TOTAL_PARES) {
+                setTimeout(finalizarJogo, 1000);
+            } else {
+                resetBoard();
+            }
+        }, 500);
+    }
+
+    function unflipCards() {
+        lockBoard = true;
+        
+        setTimeout(() => {
+            firstCard.classList.add('error-shake');
+            secondCard.classList.add('error-shake');
+            tocarSom('erro');
+
+            setTimeout(() => {
+                firstCard.classList.remove('flipped', 'error-shake');
+                secondCard.classList.remove('flipped', 'error-shake');
+                resetBoard();
+            }, 400); 
+            
+        }, 1200);
+    }
+
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] =[false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+
+    function finalizarJogo() {
+        endScreen.style.display = 'flex';
+        document.getElementById('final-jogadas').textContent = jogadas;
+
+        dispararConfetis();
+
+        if (jogadas === TOTAL_PARES) {
+            document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
+            tocarSom('vitoria'); 
+        } else if (jogadas <= TOTAL_PARES + 4) {
+            document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+            tocarSom('vitoria'); 
+        } else {
+            document.getElementById('end-title-text').textContent = "CONSEGUISTE! 💪";
+            tocarSom('vitoria'); 
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E EFEITOS
+       ========================================= */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(300, agora);
+            osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas();
+        confetis =[];
+        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 100; i++) {
+            confetis.push({
+                x: Math.random() * canvasConfetti.width,
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
+                w: Math.random() * 10 + 5,
+                h: Math.random() * 10 + 5,
+                cor: cores[Math.floor(Math.random() * cores.length)],
+                velY: Math.random() * 3 + 2,
+                velX: Math.random() * 2 - 1,
+                rotacao: Math.random() * 360,
+                velRotacao: Math.random() * 5 - 2.5
+            });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        let ativos = false;
+
+        confetis.forEach(c => {
+            c.y += c.velY;
+            c.x += c.velX;
+            c.rotacao += c.velRotacao;
+            if (c.y < canvasConfetti.height) ativos = true;
+
+            ctxConfetti.save();
+            ctxConfetti.translate(c.x, c.y);
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor;
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+            ctxConfetti.restore();
+        });
+
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    window.onload = () => iniciarJogo(1);
+
+</script>
+</body>
+</html>
