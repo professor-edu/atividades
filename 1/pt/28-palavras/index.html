@@ -1,1 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - As 28 Palavras 📖</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           MOLDE INTOCÁVEL DO BOM.HTML
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff;
+            --cor-1ano: #0091ff;
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
 
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; overflow-y: scroll; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10; }
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 20px 15px; gap: 15px; }
+            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: AS 28 PALAVRAS
+           ========================================= */
+        #ecra-menu, #ecra-fase1, #ecra-fase2, #ecra-fase3, #ecra-fase4, #ecra-fim { width: 100%; display: none; flex-direction: column; align-items: center; }
+        #ecra-menu { display: flex; } /* Visível por defeito */
+
+        /* MENU DAS PALAVRAS */
+        .grelha-palavras { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 700px; margin-top: 20px; }
+        .btn-palavra { background: #fdfbf7; border: 3px solid #ced6e0; border-radius: 15px; padding: 15px 25px; font-size: 1.3rem; font-weight: bold; color: var(--azul-escuro); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ced6e0; display: flex; align-items: center; gap: 10px; min-width: 140px; justify-content: center; text-transform: uppercase;}
+        .btn-palavra:hover { border-color: var(--azul-vibrante); transform: translateY(-3px); box-shadow: 0 8px 0 var(--azul-vibrante); }
+        .btn-palavra:active { transform: translateY(5px); box-shadow: none; }
+        .btn-palavra.bloqueado { opacity: 0.5; cursor: not-allowed; border-color: #eee; box-shadow: 0 5px 0 #eee; }
+
+        /* HEADER INTERNO DO CARTÃO (Progresso das Fases) */
+        .cartao-header { display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 2px dashed #e3f2fd; padding-bottom: 15px; margin-bottom: 20px; }
+        .btn-mini-voltar { background: #f0f4f8; color: var(--text-main); border: none; padding: 8px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn-mini-voltar:hover { background: #e3f2fd; color: var(--azul-escuro); }
+        
+        .fases-progresso { display: flex; gap: 10px; }
+        .fase-dot { width: 35px; height: 35px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; filter: grayscale(100%); opacity: 0.5; transition: 0.3s; }
+        .fase-dot.ativa { background: var(--cor-1ano); filter: grayscale(0%); opacity: 1; box-shadow: 0 3px 10px rgba(0, 145, 255, 0.3); transform: scale(1.1); }
+        .fase-dot.feita { background: #2ed573; filter: grayscale(0%); opacity: 1; }
+
+        .pergunta-texto { font-size: 1.6rem; color: var(--azul-escuro); font-weight: 900; margin-bottom: 20px; }
+        .img-destaque { height: 180px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); }
+
+        /* FASE 1: GLOBAL (Nuvem Mágica) */
+        .area-revelacao { position: relative; width: 250px; height: 80px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+        .palavra-escondida { font-size: 2.5rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase; letter-spacing: 5px; opacity: 0; transition: opacity 1s; }
+        .nuvem-magica { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #f1f2f6, #dfe4ea); border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; color: var(--text-main); box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.5s; z-index: 5; }
+        .nuvem-magica:hover { transform: scale(1.05); }
+
+        /* FASE 2: ANALÍTICA (Cortar Sílabas) */
+        .silabas-display { display: flex; gap: 15px; justify-content: center; margin: 20px 0; font-size: 3rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase;}
+        .silaba-pedaco { opacity: 0; transform: scale(0.5); transition: 0.4s; }
+        .silaba-pedaco.visivel { opacity: 1; transform: scale(1); }
+        .btn-palma { background: #ff9f43; color: white; border: none; width: 80px; height: 80px; border-radius: 50%; font-size: 3rem; cursor: pointer; box-shadow: 0 6px 0 #e67e22; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+        .btn-palma:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+
+        /* FASE 3: SINTÉTICA (Construir Palavras) */
+        .frascos-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; padding: 20px; background: #fdfbf7; border-radius: 20px; border: 3px solid #e2e8f0;}
+        .frasco-silaba { background: white; border: 3px solid var(--azul-vibrante); width: 70px; height: 70px; border-radius: 15px; font-size: 2rem; font-weight: bold; color: var(--azul-escuro); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 0 var(--azul-vibrante); transition: 0.2s; text-transform: uppercase;}
+        .frasco-silaba:active { transform: translateY(5px); box-shadow: 0 0 0 transparent; }
+        .palavra-alvo-box { min-height: 60px; border-bottom: 4px dashed #ced6e0; display: flex; gap: 10px; justify-content: center; align-items: flex-end; padding-bottom: 10px; margin-bottom: 20px; width: 200px; margin-left: auto; margin-right: auto;}
+        .silaba-slot { font-size: 2.5rem; font-weight: 900; color: var(--cor-sucesso); text-transform: uppercase; animation: popIn 0.3s ease;}
+
+        /* FASE 4: DETETIVE (Escrita) */
+        .input-area { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+        .word-input { width: 250px; padding: 15px; font-size: 1.5rem; text-align: center; text-transform: lowercase; border: 3px solid #ced6e0; border-radius: 15px; color: var(--azul-escuro); font-weight: bold; outline: none; transition: 0.3s; }
+        .word-input:focus { border-color: var(--azul-vibrante); box-shadow: 0 0 10px rgba(0, 145, 255, 0.2); }
+
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 #219d53; transition: 0.2s; text-transform: uppercase; margin-top: 20px;}
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.1); }
+
+        /* Animações e Efeitos */
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .error-shake { animation: shakeError 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        .success-flash { background-color: #eafff0 !important; border-color: #2ed573 !important; color: #219d53 !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        
+        /* Oculta os detalhes que só aparecem com o JS */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>As 28 Palavras 📖</h1>
+        <div class="subtitulo">Aprende a ler e a escrever passo a passo!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- HEADER INTERNO (Só aparece dentro das Fases) -->
+        <div id="cartao-header" class="cartao-header hidden">
+            <button class="btn-mini-voltar" onclick="voltarAoMenu()">🔙 Menu Principal</button>
+            <div class="fases-progresso">
+                <div class="fase-dot" id="dot-1" title="Fase Global">👁️</div>
+                <div class="fase-dot" id="dot-2" title="Fase Analítica">👏</div>
+                <div class="fase-dot" id="dot-3" title="Fase Sintética">🧪</div>
+                <div class="fase-dot" id="dot-4" title="Fase Escrita">✍️</div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 0: MENU DAS PALAVRAS -->
+        <div id="ecra-menu">
+            <div style="font-size: 5rem; margin-bottom: 10px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));">📚✨</div>
+            <h2 style="color: var(--azul-escuro); margin-bottom: 5px;">O Meu Livro</h2>
+            <p style="color: var(--text-main); margin-top: 0;">Escolhe a palavra que queres aprender hoje!</p>
+            
+            <div class="grelha-palavras" id="grelha-palavras">
+                <!-- Botões injetados por JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 1: FASE GLOBAL -->
+        <div id="ecra-fase1">
+            <div class="pergunta-texto">Clica na nuvem mágica para revelares a palavra!</div>
+            <img id="fase1-img" class="img-destaque" src="" alt="Imagem">
+            
+            <div class="area-revelacao">
+                <div id="nuvem-magica" class="nuvem-magica" onclick="revelarPalavra()">✨ Toca Aqui! ✨</div>
+                <div id="fase1-palavra" class="palavra-escondida">PALAVRA</div>
+            </div>
+            
+            <button id="btn-avancar-1" class="btn-acao hidden" onclick="avancarFase(2)">Seguinte ➔</button>
+        </div>
+
+        <!-- ECRÃ 2: FASE ANALÍTICA (Bater Palmas) -->
+        <div id="ecra-fase2">
+            <div class="pergunta-texto">Bate palmas para separar a palavra em pedacinhos!</div>
+            <img id="fase2-img" class="img-destaque" style="height:120px;" src="" alt="Imagem">
+            
+            <div id="silabas-display" class="silabas-display">
+                <!-- Sílabas injetadas por JS -->
+            </div>
+            
+            <button id="btn-palma" class="btn-palma" onclick="baterPalma()">👏</button>
+            <button id="btn-avancar-2" class="btn-acao hidden" onclick="avancarFase(3)">Seguinte ➔</button>
+        </div>
+
+        <!-- ECRÃ 3: FASE SINTÉTICA (Construir novas palavras) -->
+        <div id="ecra-fase3">
+            <div class="pergunta-texto">Fábrica de Palavras! Constrói: <span id="fase3-alvo-txt" style="color:var(--azul-vibrante)"></span></div>
+            <img id="fase3-img" class="img-destaque" style="height:130px;" src="" alt="Imagem Nova">
+            
+            <div id="palavra-alvo-box" class="palavra-alvo-box">
+                <!-- Sílabas preenchidas vão aparecer aqui -->
+            </div>
+
+            <div id="frascos-container" class="frascos-container">
+                <!-- Frascos de sílabas injetados por JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 4: FASE DE ESCRITA -->
+        <div id="ecra-fase4">
+            <div class="pergunta-texto">Escreve o nome da imagem!</div>
+            <img id="fase4-img" class="img-destaque" src="" alt="Imagem">
+            
+            <div class="input-area">
+                <input type="text" id="word-input" class="word-input" placeholder="escreve aqui..." autocomplete="off" spellcheck="false">
+                <button id="btn-verificar" class="btn-verificar btn-acao" onclick="verificarEscrita()">Verificar ✅</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 5: FIM -->
+        <div id="ecra-fim">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h2 class="pergunta-texto" style="font-size: 2.5rem;">Fantástico!</h2>
+            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;">Aprendeste a ler e a escrever a palavra <b><span id="fim-palavra"></span></b>!</p>
+            <button class="btn-acao" onclick="voltarAoMenu()">Voltar ao Livro 📖</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // BANCO DE DADOS (Método das 28 Palavras)
+    // Aqui podes ir adicionando as restantes palavras facilmente!
+    // ==========================================
+    const metodo28 =[
+        { id: 1, palavra: "menino", desbloqueada: false, emoji: "👦" },
+        { id: 2, palavra: "menina", desbloqueada: false, emoji: "👧" },
+        { 
+            id: 3, 
+            palavra: "boneca", 
+            desbloqueada: true, 
+            emoji: "🎎", // Usamos emoji para não estarmos dependentes de links de imagens
+            silabas: ["bo", "ne", "ca"],
+            // Na fase 3, a criança vai construir estas palavras:
+            desafiosSinteticos:[
+                { alvo: "boca", emoji: "👄", construcao: ["bo", "ca"] },
+                { alvo: "cama", emoji: "🛏️", construcao: ["ca", "ma"] }
+            ],
+            // Frascos disponíveis (Sílabas antigas + Novas)
+            frascos:["bo", "ca", "ne", "ma", "ni", "no"]
+        },
+        { id: 4, palavra: "rato", desbloqueada: false, emoji: "🐭" }
+    ];
+
+    // Variáveis de Estado
+    let palavraAtualObj = null;
+    let faseAtual = 0;
+    
+    // Variáveis Fase 2
+    let palmasDadas = 0;
+    
+    // Variáveis Fase 3
+    let indexDesafioSintetico = 0;
+    let silabasColocadas =[];
+
+    // DOM Elements
+    const ecraMenu = document.getElementById('ecra-menu');
+    const ecraFase1 = document.getElementById('ecra-fase1');
+    const ecraFase2 = document.getElementById('ecra-fase2');
+    const ecraFase3 = document.getElementById('ecra-fase3');
+    const ecraFase4 = document.getElementById('ecra-fase4');
+    const ecraFim = document.getElementById('ecra-fim');
+    const cartaoHeader = document.getElementById('cartao-header');
+
+    // INICIALIZAR MENU
+    function inicializarMenu() {
+        const grelha = document.getElementById('grelha-palavras');
+        grelha.innerHTML = '';
+
+        metodo28.forEach((item, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-palavra';
+            
+            if (item.desbloqueada) {
+                btn.innerHTML = `${index + 1}. ${item.palavra} ${item.emoji}`;
+                btn.onclick = () => iniciarPalavra(item.id);
+            } else {
+                btn.classList.add('bloqueado');
+                btn.innerHTML = `🔒 Palavra ${index + 1}`;
+            }
+            grelha.appendChild(btn);
+        });
+    }
+
+    function mostrarEcra(id) {[ecraMenu, ecraFase1, ecraFase2, ecraFase3, ecraFase4, ecraFim].forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        cartaoHeader.classList.add('hidden');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-menu');
+    }
+
+    function atualizarDots(faseNum) {
+        for(let i=1; i<=4; i++) {
+            const dot = document.getElementById(`dot-${i}`);
+            dot.className = 'fase-dot'; // reset
+            if (i < faseNum) dot.classList.add('feita');
+            if (i === faseNum) dot.classList.add('ativa');
+        }
+    }
+
+    function iniciarPalavra(id) {
+        palavraAtualObj = metodo28.find(p => p.id === id);
+        cartaoHeader.classList.remove('hidden');
+        avancarFase(1);
+    }
+
+    function avancarFase(faseNum) {
+        faseAtual = faseNum;
+        atualizarDots(faseNum);
+
+        if (faseNum === 1) prepararFase1();
+        else if (faseNum === 2) prepararFase2();
+        else if (faseNum === 3) prepararFase3();
+        else if (faseNum === 4) prepararFase4();
+    }
+
+    // ==========================================
+    // FASE 1: GLOBAL (Nuvem Mágica)
+    // ==========================================
+    function prepararFase1() {
+        document.getElementById('fase1-img').src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${palavraAtualObj.emoji}</text></svg>`;
+        document.getElementById('fase1-palavra').textContent = palavraAtualObj.palavra;
+        document.getElementById('fase1-palavra').style.opacity = '0';
+        
+        const nuvem = document.getElementById('nuvem-magica');
+        nuvem.style.opacity = '1';
+        nuvem.style.pointerEvents = 'auto';
+        
+        document.getElementById('btn-avancar-1').classList.add('hidden');
+        mostrarEcra('ecra-fase1');
+    }
+
+    function revelarPalavra() {
+        tocarSom('magia');
+        const nuvem = document.getElementById('nuvem-magica');
+        nuvem.style.opacity = '0';
+        nuvem.style.pointerEvents = 'none';
+        
+        document.getElementById('fase1-palavra').style.opacity = '1';
+        
+        setTimeout(() => {
+            document.getElementById('btn-avancar-1').classList.remove('hidden');
+        }, 1000);
+    }
+
+    // ==========================================
+    // FASE 2: ANALÍTICA (Cortar Sílabas)
+    // ==========================================
+    function prepararFase2() {
+        document.getElementById('fase2-img').src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${palavraAtualObj.emoji}</text></svg>`;
+        palmasDadas = 0;
+        
+        const container = document.getElementById('silabas-display');
+        container.innerHTML = '';
+        
+        palavraAtualObj.silabas.forEach((sil, i) => {
+            const span = document.createElement('span');
+            span.className = 'silaba-pedaco';
+            span.id = `silaba-${i}`;
+            span.textContent = sil;
+            container.appendChild(span);
+        });
+
+        document.getElementById('btn-palma').style.display = 'flex';
+        document.getElementById('btn-avancar-2').classList.add('hidden');
+        mostrarEcra('ecra-fase2');
+    }
+
+    function baterPalma() {
+        if (palmasDadas < palavraAtualObj.silabas.length) {
+            tocarSom('palma');
+            const silabaEl = document.getElementById(`silaba-${palmasDadas}`);
+            silabaEl.classList.add('visivel');
+            palmasDadas++;
+
+            if (palmasDadas === palavraAtualObj.silabas.length) {
+                document.getElementById('btn-palma').style.display = 'none';
+                setTimeout(() => {
+                    tocarSom('acerto');
+                    document.getElementById('btn-avancar-2').classList.remove('hidden');
+                }, 800);
+            }
+        }
+    }
+
+    // ==========================================
+    // FASE 3: SINTÉTICA (Construir)
+    // ==========================================
+    function prepararFase3() {
+        indexDesafioSintetico = 0;
+        carregarDesafioSintetico();
+        mostrarEcra('ecra-fase3');
+    }
+
+    function carregarDesafioSintetico() {
+        silabasColocadas =[];
+        const desafio = palavraAtualObj.desafiosSinteticos[indexDesafioSintetico];
+        
+        document.getElementById('fase3-alvo-txt').textContent = desafio.alvo.toUpperCase();
+        document.getElementById('fase3-img').src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${desafio.emoji}</text></svg>`;
+        
+        const box = document.getElementById('palavra-alvo-box');
+        box.innerHTML = '';
+        
+        const frascosContainer = document.getElementById('frascos-container');
+        frascosContainer.innerHTML = '';
+
+        // Baralhar frascos
+        let frascos = [...palavraAtualObj.frascos].sort(() => Math.random() - 0.5);
+        frascos.forEach(sil => {
+            const btn = document.createElement('button');
+            btn.className = 'frasco-silaba';
+            btn.textContent = sil;
+            btn.onclick = () => clicarFrasco(sil, btn);
+            frascosContainer.appendChild(btn);
+        });
+    }
+
+    function clicarFrasco(silaba, btnElement) {
+        const desafio = palavraAtualObj.desafiosSinteticos[indexDesafioSintetico];
+        const silabaEsperada = desafio.construcao[silabasColocadas.length];
+
+        if (silaba === silabaEsperada) {
+            // Acertou na sílaba
+            tocarSom('pop');
+            silabasColocadas.push(silaba);
+            
+            const span = document.createElement('div');
+            span.className = 'silaba-slot';
+            span.textContent = silaba;
+            document.getElementById('palavra-alvo-box').appendChild(span);
+
+            // Se terminou a palavra
+            if (silabasColocadas.length === desafio.construcao.length) {
+                tocarSom('acerto');
+                setTimeout(() => {
+                    indexDesafioSintetico++;
+                    if (indexDesafioSintetico < palavraAtualObj.desafiosSinteticos.length) {
+                        carregarDesafioSintetico();
+                    } else {
+                        avancarFase(4);
+                    }
+                }, 1500);
+            }
+        } else {
+            // Errou
+            tocarSom('erro');
+            btnElement.classList.add('error-shake');
+            setTimeout(() => btnElement.classList.remove('error-shake'), 400);
+        }
+    }
+
+    // ==========================================
+    // FASE 4: DETETIVE (Escrita)
+    // ==========================================
+    function prepararFase4() {
+        document.getElementById('fase4-img').src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${palavraAtualObj.emoji}</text></svg>`;
+        const input = document.getElementById('word-input');
+        input.value = '';
+        input.disabled = false;
+        input.classList.remove('success-flash', 'error-shake');
+        
+        mostrarEcra('ecra-fase4');
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function verificarEscrita() {
+        const input = document.getElementById('word-input');
+        const resp = input.value.trim().toLowerCase();
+        
+        if (resp === palavraAtualObj.palavra.toLowerCase()) {
+            tocarSom('vitoria');
+            input.classList.add('success-flash');
+            input.disabled = true;
+            
+            setTimeout(() => {
+                cartaoHeader.classList.add('hidden');
+                document.getElementById('fim-palavra').textContent = palavraAtualObj.palavra.toUpperCase();
+                mostrarEcra('ecra-fim');
+                dispararConfetis();
+            }, 1000);
+        } else {
+            tocarSom('erro');
+            input.classList.add('error-shake');
+            setTimeout(() => {
+                input.classList.remove('error-shake');
+                input.value = '';
+                input.focus();
+            }, 500);
+        }
+    }
+
+    document.getElementById('word-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); verificarEscrita(); }
+    });
+
+
+    // ==========================================
+    // ÁUDIO E CONFETIS
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'magia') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.5);
+            gain.gain.setValueAtTime(0, agora); gain.gain.linearRampToValueAtTime(0.1, agora + 0.1); gain.gain.linearRampToValueAtTime(0, agora + 0.6);
+            osc.start(agora); osc.stop(agora + 0.6);
+        } else if (tipo === 'palma') {
+            // Ruído branco para imitar palma (simples)
+            osc.type = 'square'; osc.frequency.setValueAtTime(100, agora); osc.frequency.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            gain.gain.setValueAtTime(0.2, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(200, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Inicializa
+    window.onload = inicializarMenu;
+
+</script>
+</body>
+</html>
