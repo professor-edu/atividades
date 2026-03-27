@@ -38,7 +38,7 @@ const bancoPerguntas =[
             { q: "Rebentou um balão! Quantos sobraram?", v: "🎈🎈🎈🎈<span class='riscado'>🎈</span>", opts: ["3", "4", "5"], ans: "4" },
             { q: "Comi uma maçã. Sobram:", v: "🍎🍎🍎<span class='riscado'>🍎</span>", opts: ["2", "3", "4"], ans: "3" },
             { q: "Tinha 5 doces, perdi 2. Fico com:", v: "🍬🍬🍬<span class='riscado'>🍬🍬</span>", opts: ["2", "3", "4"], ans: "3" },
-            { q: "Havia 6 cães. Um cão fugiu. Quantos ficam?", v: "🐶🐶🐶🐶<span class='riscado'>🐶🐶</span>", opts: ["3", "4", "5"], ans: "4" },
+            { q: "Havia 6 cães. Dois (2) fugiram. Quantos ficaram?", v: "🐶🐶🐶🐶<span class='riscado'>🐶🐶</span>", opts: ["3", "4", "5"], ans: "4" },
             { q: "Tinha 8 bolas, perdi 3. Fico com...", v: "⚽⚽⚽⚽⚽<span class='riscado'>⚽⚽⚽</span>", opts: ["4", "5", "6"], ans: "5" },
             // Somas e Subtrações Numéricas
             { q: "Qual é o resultado?", v: "2 + 3 = ?", opts: ["4", "5", "6"], ans: "5" },
