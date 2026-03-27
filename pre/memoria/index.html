@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Memória Mágica 🎨</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           MOLDE INTOCÁVEL (Com cores do Pré-Escolar)
+           ========================================= */
+        :root {
+            /* Cores do Tema Pré-Escolar */
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-pre); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        
+        /* O "MAIN" E O CARTÃO DE JOGO (Mais amplo para crianças pequenas) */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px; gap: 20px; }
+        
+        .cartao-jogo-container { 
+            background: white; 
+            width: 100%; 
+            max-width: 900px; 
+            min-height: 550px; 
+            padding: 30px 20px; 
+            border-radius: 30px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+            position: relative; overflow: hidden; box-sizing: border-box;
+        }
+
+        /* OPÇÕES DE BORDAS FÁCEIS DE EDITAR
+           Basta mudares a class do cartao-jogo-container no HTML (ex: <div class="cartao-jogo-container c2">) 
+        */
+        .c1 { border-top: 8px solid #ff6b6b; }
+        .c2 { border-top: 8px solid #4dabf7; }
+        .c3 { border-top: 8px solid #51cf66; } /* Verde suave (Padrão atual) */
+        .c4 { border-top: 8px solid #fcc419; }
+        .c5 { border-top: 8px solid #cc5de8; }
+        .c6 { border-top: 8px solid #ff922b; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-pre); flex-shrink: 0; z-index: 10; }
+        footer p { font-size: 0.8rem; color: var(--cor-pre-dark); margin: 0; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1 { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 15px; }
+            .cartao-jogo-container { padding: 20px 10px; min-height: 400px; }
+        }
+
+        /* =========================================
+           NOVO PROGRESSO: O CAMINHO MÁGICO 🗺️
+           ========================================= */
+        .caminho-magico {
+            width: 100%;
+            max-width: 750px;
+            height: 60px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Reduzida a margem para colar mais ao cartão */
+        }
+
+        .caminho-trilho {
+            width: calc(100% - 60px); /* Deixa margem para o alvo */
+            height: 8px;
+            background: #b2ebf2;
+            border-radius: 4px;
+            margin-left: 20px;
+            border-bottom: 3px dashed #81ecec;
+            position: relative;
+        }
+
+        .caminho-avatar {
+            position: absolute;
+            left: 0%; /* Inicia a 0% */
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem; /* Personagem grande e visível */
+            transition: left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Animação de salto/passo suave */
+            z-index: 3;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.15));
+        }
+
+        .caminho-alvo {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3.5rem;
+            z-index: 2;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.15));
+        }
+
+        @media (max-width: 768px) {
+            .caminho-magico { height: 50px; }
+            .caminho-avatar, .caminho-alvo { font-size: 2.8rem; }
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: MEMÓRIA PRÉ-ESCOLAR
+           ========================================= */
+
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1;}
+        #ecra-jogo { display: flex; justify-content: center; }
+
+        .titulo-nivel { font-size: 2rem; color: var(--azul-escuro); margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px;}
+
+        /* Grelha de 12 cartas (4x3 ou 3x4 no mobile) */
+        .memory-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 700px;
+            perspective: 1000px;
+        }
+
+        .memory-card {
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            cursor: pointer; 
+            position: relative; 
+            transform-style: preserve-3d; 
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .memory-card.flipped { transform: rotateY(180deg); }
+        .memory-card.matched { transform: rotateY(180deg); opacity: 0.6; cursor: default;}
+
+        .card-face {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            backface-visibility: hidden; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.08); box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Costas da Carta (O que a criança vê primeiro) */
+        .card-front {
+            background: linear-gradient(135deg, var(--cor-pre) 0%, #81ecec 100%);
+            border: 4px solid white;
+            color: white; font-size: 3.5rem; 
+        }
+
+        /* Frente da Carta (A Imagem) */
+        .card-back {
+            background: white;
+            border: 4px solid var(--cor-pre);
+            transform: rotateY(180deg);
+            padding: 10px;
+        }
+
+        .card-back img { width: 90%; height: 90%; object-fit: contain; pointer-events: none;}
+
+        /* Feedback da Carta */
+        .memory-card.matched .card-back { border-color: #2ed573; background-color: #eafff0; }
+        .error-shake .card-back { border-color: #ff4757 !important; background-color: #ffefef !important; animation: shakeError 0.4s ease; }
+
+        /* Modais e Ecrãs de Transição (Simples e Visuais) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; animation: fadeIn 0.3s ease; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-radius: 30px; padding: 40px 20px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; align-items: center; gap: 20px;}
+        
+        .modal-emoji { font-size: 6rem; line-height: 1; margin: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1)); animation: popIn 0.5s ease;}
+        .modal-titulo { font-size: 2.2rem; color: var(--azul-escuro); margin: 0;}
+        
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 18px 45px; font-size: 1.5rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 8px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase;}
+        .btn-acao:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        /* Animações Globais */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: rotateY(180deg) translateX(0); } 25% { transform: rotateY(180deg) translateX(-8px) rotate(-3deg); } 75% { transform: rotateY(180deg) translateX(8px) rotate(3deg); } }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+
+        @media (max-width: 600px) {
+            .memory-grid { grid-template-columns: repeat(3, 1fr); gap: 10px;}
+            .titulo-nivel { font-size: 1.5rem; margin-bottom: 15px;}
+            .card-front { font-size: 2.5rem; border-width: 3px;}
+            .card-back { border-width: 3px; padding: 5px;}
+            .btn-acao { padding: 15px 30px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <!-- Sem texto, só ícones simples para não sobrecarregar as crianças -->
+        <h1>Memória Mágica 🌟</h1>
+    </div>
+</header>
+
+<main>
+    
+    <!-- O CAMINHO MÁGICO 🗺️ -->
+    <div class="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐸</div> <!-- Podes mudar o boneco aqui! -->
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🏰</div> <!-- Podes mudar o destino aqui! -->
+    </div>
+
+    <!-- O CARTÃO DE JOGO (Com a classe .c3 para ter a borda verde em cima) -->
+    <div class="cartao-jogo-container c3">
+        
+        <div id="ecra-jogo" class="ecra">
+            <h2 class="titulo-nivel" id="titulo-nivel">Nível 1: Os Animais 🐶</h2>
+            
+            <div class="memory-grid" id="memory-grid">
+                <!-- Cartas injetadas via JS -->
+            </div>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<!-- Modal de Transição de Nível -->
+<div class="modal-overlay" id="modal-transicao">
+    <div class="modal-box">
+        <div class="modal-emoji">👏</div>
+        <h2 class="modal-titulo">Muito Bem!</h2>
+        <button class="btn-acao" onclick="avancarNivel()">Próxima Aventura ➔</button>
+    </div>
+</div>
+
+<!-- Modal de Vitória Final -->
+<div class="modal-overlay" id="modal-vitoria">
+    <div class="modal-box">
+        <div class="modal-emoji">🏰</div>
+        <h2 class="modal-titulo">Chegaste ao Castelo!</h2>
+        <button class="btn-acao" onclick="reiniciarJogo()">Jogar Novamente 🔄</button>
+    </div>
+</div>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<!-- Incluir a base de dados centralizada -->
+<script src="dados.js"></script>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    /* =========================================
+       CONFIGURAÇÃO DOS NÍVEIS (Baseado no dados.js)
+       ========================================= */
+    
+    // Nível 1: Animais | Nível 2: Comida/Fruta | Nível 3: Objetos/Brinquedos
+    const niveisConfig =[
+        { titulo: "Os Animais 🐶", palavrasChave:["gato", "vaca", "rato", "tartaruga", "baleia", "abelha", "ovelha", "macaco", "cavalo", "foca", "papagaio", "leão", "coelho", "galinha", "porco", "urso", "peixe", "cigarra"] },
+        { titulo: "A Comida 🍎", palavrasChave:["melão", "cenoura", "maçã", "queijo", "limão", "tomate", "banana", "batata", "uva", "pêssego", "morango"] },
+        { titulo: "Os Objetos 🧸", palavrasChave:["bola", "violino", "mota", "janela", "jipe", "cama", "dado", "vela", "bicicleta", "livro", "óculos", "casaco", "tesoura", "mala", "avião", "pote", "bota", "mapa"] }
+    ];
+
+    /* =========================================
+       VARIÁVEIS DE ESTADO
+       ========================================= */
+    let nivelAtual = 0; // 0 = Nível 1, 1 = Nível 2, 2 = Nível 3
+    let paresEncontrados = 0;
+    const PARES_POR_NIVEL = 6; // 6 pares = 12 cartas
+    const TOTAL_PARES_JOGO = PARES_POR_NIVEL * 3; // 18 pares no total para o avatar atravessar o caminho todo
+    let paresGlobais = 0;
+
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
+
+    const memoryGrid = document.getElementById('memory-grid');
+    const avatar = document.getElementById('avatar-progresso');
+
+    function getImagePath(imgPath) { return imgPath ? imgPath : ''; }
+
+    /* =========================================
+       LÓGICA PRINCIPAL DO JOGO
+       ========================================= */
+    function iniciarJogo() {
+        nivelAtual = 0;
+        paresGlobais = 0;
+        document.getElementById('modal-vitoria').classList.remove('active');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        atualizarCaminho();
+        prepararNivel();
+    }
+
+    function avancarNivel() {
+        nivelAtual++;
+        document.getElementById('modal-transicao').classList.remove('active');
+        prepararNivel();
+    }
+
+    function reiniciarJogo() {
+        iniciarJogo();
+    }
+
+    function prepararNivel() {
+        paresEncontrados = 0;
+        hasFlippedCard = false;
+        lockBoard = false;
+        firstCard = null;
+        secondCard = null;
+
+        const config = niveisConfig[nivelAtual];
+        document.getElementById('titulo-nivel').textContent = `Nível ${nivelAtual + 1}: ${config.titulo}`;
+
+        gerarGrelha(config.palavrasChave);
+    }
+
+    function gerarGrelha(palavrasFiltro) {
+        memoryGrid.innerHTML = '';
+        
+        // 1. Filtrar do dados.js apenas as imagens da categoria atual
+        let objetosDisponiveis = palavras.filter(p => palavrasFiltro.includes(p.palavra.toLowerCase()));
+        
+        // Segurança: se o ficheiro dados não tiver 6 palavras daquela categoria, pega noutras aleatórias
+        if (objetosDisponiveis.length < PARES_POR_NIVEL) {
+            let outras = palavras.filter(p => !palavrasFiltro.includes(p.palavra.toLowerCase()));
+            outras = outras.sort(() => Math.random() - 0.5);
+            let faltam = PARES_POR_NIVEL - objetosDisponiveis.length;
+            objetosDisponiveis = objetosDisponiveis.concat(outras.slice(0, faltam));
+        }
+
+        // 2. Baralhar e escolher exatamente 6
+        objetosDisponiveis = objetosDisponiveis.sort(() => Math.random() - 0.5).slice(0, PARES_POR_NIVEL);
+
+        // 3. Duplicar para fazer os pares (Imagem <-> Imagem)
+        let cartas =[];
+        objetosDisponiveis.forEach(obj => {
+            cartas.push(obj); // Carta 1
+            cartas.push(obj); // Carta 2
+        });
+
+        // 4. Baralhar as 12 cartas
+        cartas = cartas.sort(() => Math.random() - 0.5);
+
+        // 5. Injetar no HTML
+        cartas.forEach(c => {
+            const cardEl = document.createElement('div');
+            cardEl.classList.add('memory-card');
+            cardEl.dataset.match = c.palavra;
+
+            // O verso da carta tem uma estrelinha mágica
+            cardEl.innerHTML = `
+                <div class="card-face card-front">⭐</div>
+                <div class="card-face card-back">
+                    <img src="${getImagePath(c.imagem)}" alt="">
+                </div>
+            `;
+            
+            cardEl.addEventListener('click', flipCard);
+            memoryGrid.appendChild(cardEl);
+        });
+    }
+
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add('flipped');
+        tocarSom('flip');
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
+        }
+
+        secondCard = this;
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        // Como o pré-escolar é visual, verifica pelo ID da palavra
+        let isMatch = firstCard.dataset.match === secondCard.dataset.match;
+
+        if (isMatch) disableCards();
+        else unflipCards();
+    }
+
+    function disableCards() {
+        lockBoard = true;
+        setTimeout(() => {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            paresEncontrados++;
+            paresGlobais++;
+            atualizarCaminho();
+            tocarSom('acerto');
+
+            if (paresEncontrados === PARES_POR_NIVEL) {
+                setTimeout(fimDoNivel, 1000);
+            } else {
+                resetBoard();
+            }
+        }, 500);
+    }
+
+    function unflipCards() {
+        lockBoard = true;
+        
+        setTimeout(() => {
+            firstCard.classList.add('error-shake');
+            secondCard.classList.add('error-shake');
+            tocarSom('erro');
+
+            setTimeout(() => {
+                firstCard.classList.remove('flipped', 'error-shake');
+                secondCard.classList.remove('flipped', 'error-shake');
+                resetBoard();
+            }, 400); 
+            
+        }, 1000); // Dá um bocadinho mais de tempo (1s) para a criança ver as duas imagens antes de virarem
+    }
+
+    function resetBoard() {[hasFlippedCard, lockBoard] =[false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+
+    function atualizarCaminho() {
+        // Move o boneco (avatar) ao longo da linha consoante o total de pares do jogo
+        let percent = (paresGlobais / TOTAL_PARES_JOGO) * 100;
+        avatar.style.left = `${percent}%`;
+    }
+
+    function fimDoNivel() {
+        if (nivelAtual < 2) {
+            // Passa para o próximo nível
+            tocarSom('vitoria_curta');
+            document.getElementById('modal-transicao').classList.add('active');
+        } else {
+            // Ganhou o jogo todo! (Chegou ao Castelo)
+            tocarSom('vitoria');
+            dispararConfetis();
+            document.getElementById('modal-vitoria').classList.add('active');
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E EFEITOS (Sons suaves)
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            // Som suave de bolha a subir
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.15);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        }
+        else if (tipo === 'acerto') {
+            // Ding alegre
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            // Um leve "boop" (não punitivo)
+            osc.type = 'sine'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria_curta') {
+            const notas =[523.25, 659.25, 783.99]; // Acorde simples
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.08, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.4);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.4);
+            });
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 12 + 8, h: Math.random() * 12 + 8, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 4 + 2, velX: Math.random() * 3 - 1.5, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Inicia no nível 1 automaticamente ao abrir
+    window.onload = iniciarJogo;
+
+</script>
+</body>
+</html>
