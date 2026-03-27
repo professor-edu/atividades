@@ -38,7 +38,7 @@ const bancoPerguntas =[
             { q: "Rebentou um balão! Quantos sobraram?", v: "🎈🎈🎈🎈<span class='riscado'>🎈</span>", opts: ["3", "4", "5"], ans: "4" },
             { q: "Comi uma maçã. Sobram:", v: "🍎🍎🍎<span class='riscado'>🍎</span>", opts: ["2", "3", "4"], ans: "3" },
             { q: "Tinha 5 doces, perdi 2. Fico com:", v: "🍬🍬🍬<span class='riscado'>🍬🍬</span>", opts: ["2", "3", "4"], ans: "3" },
-            { q: "Um cão fugiu. Quantos ficam?", v: "🐶🐶🐶🐶<span class='riscado'>🐶🐶</span>", opts: ["3", "4", "5"], ans: "4" },
+            { q: "Havia 6 cães. Um cão fugiu. Quantos ficam?", v: "🐶🐶🐶🐶<span class='riscado'>🐶🐶</span>", opts: ["3", "4", "5"], ans: "4" },
             { q: "Tinha 8 bolas, perdi 3. Fico com...", v: "⚽⚽⚽⚽⚽<span class='riscado'>⚽⚽⚽</span>", opts: ["4", "5", "6"], ans: "5" },
             // Somas e Subtrações Numéricas
             { q: "Qual é o resultado?", v: "2 + 3 = ?", opts: ["4", "5", "6"], ans: "5" },
@@ -55,8 +55,8 @@ const bancoPerguntas =[
             { q: "Resolve:", v: "5 - 5 = ?", opts: ["0", "1", "5"], ans: "0" },
             { q: "Subtrai:", v: "7 - 2 = ?", opts:["4", "5", "6"], ans: "5" },
             // Lógica, Sequências e Comparações
-            { q: "O número 5 é maior que o número...", v: "", opts: ["6", "4", "8"], ans: "4" },
-            { q: "O número 8 é [ ? ] que o 10.", v: "8 ___ 10", opts: ["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Menor" },
+            { q: "O número 5 é MAIOR (>) que o número...", v: "", opts: ["6", "4", "8"], ans: "4" },
+            { q: "O número 8 é [ ? ] que o 10.", v: "8 ___ 10", opts: ["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Menor (>)" },
             { q: "Onde há MAIS peixes?", v: "🐟🐟 ... 🐟🐟🐟", opts: ["Esquerda", "Direita", "Iguais"], ans: "Direita" },
             { q: "Qual é o número escondido?", v: "1, 2, 3, ❓, 5", opts:["4", "6", "0"], ans: "4" },
             { q: "O que vem a seguir?", v: "7, 8, 9, ❓", opts: ["6", "10", "11"], ans: "10" },
@@ -90,19 +90,22 @@ const bancoPerguntas =[
             { q: "Junta os números:", v: "10 + 4 = ?", opts: ["14", "41", "104"], ans: "14" },
             { q: "Faz a conta:", v: "10 + 7 = ?", opts:["17", "71", "8"], ans: "17" },
             { q: "Soma:", v: "10 + 9 = ?", opts:["19", "91", "109"], ans: "19" },
-            { q: "Junta mais:", v: "10 + 1 = ?", opts: ["101", "11", "2"], ans: "11" },
+            { q: "Junta:", v: "10 + 1 = ?", opts: ["101", "11", "2"], ans: "11" },
             { q: "Resolve:", v: "10 + 10 = ?", opts:["1010", "20", "0"], ans: "20" },
+            { q: "Resolve:", v: "10 + 0 = ?", opts:["1010", "20", "10"], ans: "20" },
             // Somas com transição/avançadas
             { q: "Faz a conta:", v: "8 + 4 = ?", opts:["11", "12", "13"], ans: "12" },
             { q: "Soma:", v: "9 + 3 = ?", opts: ["12", "13", "11"], ans: "12" },
-            { q: "Resolve o cálculo mental:", v: "7 + 5 = ?", opts:["12", "11", "13"], ans: "12" },
+            { q: "Soma:", v: "7 + 5 = ?", opts:["12", "11", "13"], ans: "12" },
             { q: "Soma:", v: "9 + 9 = ?", opts: ["17", "18", "19"], ans: "18" },
             { q: "Soma:", v: "6 + 5 = ?", opts:["10", "11", "12"], ans: "11" },
             { q: "Soma:", v: "8 + 6 = ?", opts:["13", "14", "15"], ans: "14" },
-            { q: "Junta mais:", v: "11 + 3 = ?", opts:["13", "14", "15"], ans: "14" },
+            { q: "Soma:", v: "8 + 2 + 1 = ?", opts:["13", "12", "15"], ans: "12" },
+            { q: "Junta:", v: "11 + 3 = ?", opts:["13", "14", "15"], ans: "14" },
             { q: "Cálculo:", v: "12 + 4 = ?", opts: ["16", "15", "17"], ans: "16" },
             { q: "Faz a conta:", v: "15 + 5 = ?", opts:["19", "20", "10"], ans: "20" },
             { q: "Soma:", v: "14 + 2 = ?", opts:["16", "17", "15"], ans: "16" },
+            { q: "Soma:", v: "5 + 5 + 5 = ?", opts:["16", "17", "15"], ans: "15" },
             // Subtrações
             { q: "Resolve a subtração:", v: "15 - 3 = ?", opts:["12", "13", "11"], ans: "12" },
             { q: "Subtrai:", v: "16 - 4 = ?", opts:["12", "10", "14"], ans: "12" },
@@ -128,9 +131,11 @@ const bancoPerguntas =[
             { q: "O que vem DEPOIS do 11?", v: "10, 11, ❓", opts: ["12", "13", "9"], ans: "12" },
             { q: "Conta de 2 em 2:", v: "12, 14, 16, ❓", opts:["17", "18", "20"], ans: "18" },
             { q: "Conta de 2 em 2:", v: "2, 4, 6, ❓", opts:["7", "8", "9"], ans: "8" },
-            { q: "O número 18 é [ ? ] que o 14.", v: "18 ___ 14", opts:["Maior", "Menor", "Igual"], ans: "Maior" },
-            { q: "O número 11 é [ ? ] que o 15.", v: "11 ___ 15", opts:["Maior", "Menor", "Igual"], ans: "Menor" },
-            { q: "O que é maior?", v: "13 ou 16?", opts: ["13", "16", "Iguais"], ans: "16" }
+            { q: "Conta de 3 em 3:", v: "10, 13, 16, ❓", opts:["17", "18", "19"], ans: "19" },
+            { q: "O número 18 é [ ? ] que o 14.", v: "18 ___ 14", opts:["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Maior (>)" },
+            { q: "O número 11 é [ ? ] que o 15.", v: "11 ___ 15", opts:["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Menor (<)" },
+            { q: "Compara", v: "10 + 4 [ ? ] 4 + 10", opts:["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Igual (=)" },
+            { q: "O que é MAIOR (>)?", v: "13 ou 16?", opts: ["13", "16", "Iguais"], ans: "16" }
         ]
     },
     {
@@ -159,14 +164,14 @@ const bancoPerguntas =[
             { q: "Soma:", v: "30 + 8 = ?", opts:["38", "83", "11"], ans: "38" },
             { q: "Cálculo Rápido:", v: "25 + 5 = ?", opts: ["30", "35", "20"], ans: "30" },
             { q: "Faz a conta:", v: "35 + 5 = ?", opts:["40", "45", "50"], ans: "40" },
-            { q: "Soma:", v: "21 + 2 = ?", opts: ["23", "24", "22"], ans: "23" },
+            { q: "Soma:", v: "21 + 2 + 3 = ?", opts: ["26", "24", "25"], ans: "25" },
             { q: "Cálculo:", v: "45 + 3 = ?", opts:["47", "48", "49"], ans: "48" },
             // Subtrações
             { q: "Tira 10:", v: "40 - 10 = ?", opts:["30", "50", "20"], ans: "30" },
             { q: "Subtrai:", v: "30 - 10 = ?", opts:["10", "20", "40"], ans: "20" },
             { q: "Faz a conta:", v: "50 - 20 = ?", opts: ["20", "30", "40"], ans: "30" },
             { q: "Subtração simples:", v: "25 - 5 = ?", opts: ["15", "20", "30"], ans: "20" },
-            { q: "Tira as unidades:", v: "38 - 8 = ?", opts:["30", "8", "20"], ans: "30" },
+            { q: "Subtrai:", v: "38 - 8 = ?", opts:["30", "8", "20"], ans: "30" },
             { q: "Cálculo:", v: "42 - 2 = ?", opts: ["40", "20", "30"], ans: "40" },
             { q: "O Rui tinha 20 cartas e perdeu 5. Ficou com:", v: "", opts: ["10", "15", "25"], ans: "15" },
             // Sequências e Contagens
@@ -181,11 +186,11 @@ const bancoPerguntas =[
             { q: "Conta de 5 em 5:", v: "30, 35, 40, ❓", opts: ["45", "50", "41"], ans: "45" },
             { q: "Conta de 10 em 10:", v: "10, 20, 30, ❓", opts: ["35", "40", "50"], ans: "40" },
             // Maior e Menor
-            { q: "O número 45 é [ ? ] que o 32.", v: "45 ___ 32", opts:["Maior", "Menor", "Igual"], ans: "Maior" },
-            { q: "O número 28 é [ ? ] que o 41.", v: "28 ___ 41", opts:["Maior", "Menor", "Igual"], ans: "Menor" },
-            { q: "Qual é maior?", v: "38 ou 41?", opts:["38", "41", "Iguais"], ans: "41" },
-            { q: "Qual é menor?", v: "49 ou 29?", opts: ["49", "29", "Iguais"], ans: "29" },
-            { q: "O que é maior?", v: "23 ou 32?", opts:["23", "32", "Iguais"], ans: "32" },
+            { q: "O número 45 é [ ? ] que o 32.", v: "45 ___ 32", opts:["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Maior (>)" },
+            { q: "O número 28 é [ ? ] que o 41.", v: "28 ___ 41", opts:["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Menor (<)" },
+            { q: "Qual é maior?", v: "38 ou 41?", opts:["38", "41", "Iguais (=)"], ans: "41" },
+            { q: "Qual é menor?", v: "49 ou 29?", opts: ["49", "29", "Iguais (=)"], ans: "29" },
+            { q: "O que é maior?", v: "23 ou 32?", opts:["23", "32", "Iguais (=)"], ans: "32" },
             // Lógica de Metades e Dobros
             { q: "O dobro de 20 é:", v: "", opts:["30", "40", "50"], ans: "40" },
             { q: "A metade de 40 é:", v: "", opts: ["20", "30", "10"], ans: "20" },
@@ -202,8 +207,8 @@ const bancoPerguntas =[
         perguntasPool:[
             // Leitura e Decomposição
             { q: "8 Dezenas e 0 Unidades é o número:", v: "", opts:["8", "80", "800"], ans: "80" },
-            { q: "O número 75 tem quantas dezenas?", v: "", opts:["7", "5", "75"], ans: "7" },
-            { q: "Quantas unidades tem o número 92?", v: "", opts:["9", "2", "92"], ans: "2" },
+            { q: "Qual o algarismo das dezenas no número 75?", v: "", opts:["7", "5", "75"], ans: "7" },
+            { q: "Qual o algarismo das unidades no número 92?", v: "", opts:["9", "2", "92"], ans: "2" },
             { q: "Que número é este: NOVENTA E NOVE", v: "", opts: ["66", "99", "109"], ans: "99" },
             { q: "Que número é: OITENTA E OITO", v: "", opts: ["80", "18", "88"], ans: "88" },
             { q: "Que número é: SESSENTA E TRÊS", v: "", opts:["63", "36", "603"], ans: "63" },
@@ -215,11 +220,11 @@ const bancoPerguntas =[
             { q: "Junta tudo:", v: "70 + 10 + 5 = ?", opts:["85", "75", "95"], ans: "85" },
             // Somas de Dezenas
             { q: "Cálculo Mental:", v: "50 + 20 = ?", opts:["60", "70", "80"], ans: "70" },
-            { q: "Soma de dezenas:", v: "40 + 40 = ?", opts: ["60", "70", "80"], ans: "80" },
+            { q: "Soma rápida:", v: "40 + 40 = ?", opts: ["60", "70", "80"], ans: "80" },
             { q: "Soma rápida:", v: "50 + 50 = ?", opts:["50", "0", "100"], ans: "100" },
             { q: "Faz a conta:", v: "60 + 30 = ?", opts:["80", "90", "100"], ans: "90" },
             { q: "Junta:", v: "70 + 20 = ?", opts: ["80", "90", "100"], ans: "90" },
-            { q: "Soma as dezenas:", v: "80 + 10 = ?", opts: ["70", "90", "100"], ans: "90" },
+            { q: "Soma rápida:", v: "80 + 10 = ?", opts: ["70", "90", "100"], ans: "90" },
             // Subtrações de Dezenas
             { q: "Subtração rápida:", v: "100 - 10 = ?", opts: ["90", "80", "10"], ans: "90" },
             { q: "Subtrai:", v: "80 - 20 = ?", opts:["60", "50", "70"], ans: "60" },
@@ -227,9 +232,9 @@ const bancoPerguntas =[
             { q: "Cálculo mental:", v: "90 - 30 = ?", opts: ["50", "60", "70"], ans: "60" },
             { q: "Faz a conta:", v: "70 - 10 = ?", opts:["50", "60", "80"], ans: "60" },
             // Problemas Simples e Lógica de 100
-            { q: "Faltam 20 para 100. Eu tenho:", v: "100 - 20 = ?", opts: ["80", "70", "90"], ans: "80" },
+            { q: "Faltam 20 para 100. Sou o número:", v: "100 - 20 = ?", opts: ["80", "70", "90"], ans: "80" },
             { q: "Faltam 5 páginas para acabar um livro de 100 páginas. Em que página estou?", v: "", opts: ["90", "95", "105"], ans: "95" },
-            { q: "Se eu tenho 90 cêntimos, quanto falta para 100?", v: "", opts: ["5", "10", "20"], ans: "10" },
+            { q: "Se eu tenho 90 cêntimos, quanto falta para 100 (um euro)?", v: "", opts: ["5", "10", "20"], ans: "10" },
             { q: "Tinha 100 balões, voaram 10. Fico com:", v: "", opts:["90", "80", "110"], ans: "90" },
             // Sequências
             { q: "Conta de 10 em 10:", v: "50, 60, 70, ❓", opts: ["80", "75", "90"], ans: "80" },
@@ -245,8 +250,8 @@ const bancoPerguntas =[
             { q: "Atenção! Qual é o número MAIOR?", v: "79 ou 97?", opts: ["79", "97", "89"], ans: "97" },
             { q: "O que é MENOR?", v: "64 ou 46?", opts:["64", "46", "Iguais"], ans: "46" },
             { q: "Qual é MAIOR?", v: "85 ou 58?", opts: ["85", "58", "Iguais"], ans: "85" },
-            { q: "O número 90 é [ ? ] que o 89.", v: "90 ___ 89", opts: ["Maior", "Menor", "Igual"], ans: "Maior" },
-            { q: "O número 55 é [ ? ] que o 60.", v: "55 ___ 60", opts: ["Maior", "Menor", "Igual"], ans: "Menor" },
+            { q: "O número 90 é [ ? ] que o 89.", v: "90 ___ 89", opts: ["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Maior (>)" },
+            { q: "O número 55 é [ ? ] que o 60.", v: "55 ___ 60", opts: ["Maior (>)", "Menor (<)", "Igual (=)"], ans: "Menor (<)" },
             // Dobros e Metades Finais
             { q: "Qual é a metade de 100?", v: "", opts:["50", "40", "60"], ans: "50" },
             { q: "Qual é o dobro de 50?", v: "", opts:["25", "100", "75"], ans: "100" },
