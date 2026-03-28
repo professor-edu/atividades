@@ -177,17 +177,17 @@
     <!-- ZONA SUPERIOR: DISCIPLINAS FIXAS -->
     <div class="grid-disciplinas">
         <a href="pt/" class="cartao-disciplina c-port">
-            <div class="badge-jogos">25 Jogos</div>
+            <div class="badge-jogos" id="contador-pt">0 Jogos</div>
             <div class="icone-wrapper">✍️</div>
             <span class="nome-disciplina">Português</span>
         </a>
         <a href="mat/" class="cartao-disciplina c-mat">
-            <div class="badge-jogos">15 Jogos</div>
+            <div class="badge-jogos" id="contador-mat">0 Jogos</div>
             <div class="icone-wrapper">🔢</div>
             <span class="nome-disciplina">Matemática</span>
         </a>
         <a href="em/" class="cartao-disciplina c-estudo">
-            <div class="badge-jogos">12 Jogos</div>
+            <div class="badge-jogos" id="contador-em">0 Jogos</div>
             <div class="icone-wrapper">🌍</div>
             <span class="nome-disciplina">Estudo do Meio</span>
         </a>
@@ -250,13 +250,35 @@
         { nome: "As Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" }
     ];
 
-    // Função para renderizar 6 jogos aleatórios
+  // =========================================================
+    // 1. FUNÇÃO QUE CONTA OS JOGOS AUTOMATICAMENTE
+    // =========================================================
+    function atualizarContadores() {
+        const totalPT = todosOsJogos.filter(jogo => jogo.cat === 'pt').length;
+        const totalMAT = todosOsJogos.filter(jogo => jogo.cat === 'mat').length;
+        const totalEM = todosOsJogos.filter(jogo => jogo.cat === 'em').length;
+
+        // Atualiza o texto nas etiquetas (tendo a certeza que usaste os IDs corretos no HTML)
+        const badgePT = document.getElementById('contador-pt');
+        const badgeMAT = document.getElementById('contador-mat');
+        const badgeEM = document.getElementById('contador-em');
+
+        if(badgePT) badgePT.textContent = totalPT + " Jogos";
+        if(badgeMAT) badgeMAT.textContent = totalMAT + " Jogos";
+        if(badgeEM) badgeEM.textContent = totalEM + " Jogos";
+    }
+
+    // =========================================================
+    // 2. FUNÇÃO QUE GERA OS 6 JOGOS ALEATÓRIOS DO DIA
+    // =========================================================
     function gerarJogosDoDia() {
         const container = document.getElementById('jogos-dia-container');
-        container.innerHTML = ''; // Limpar container
+        if (!container) return; // Segurança extra
+
+        container.innerHTML = ''; // Limpa o container
         
         // Baralhar o array inteiro
-        const jogosBaralhados =[...todosOsJogos].sort(() => Math.random() - 0.5);
+        const jogosBaralhados = [...todosOsJogos].sort(() => Math.random() - 0.5);
         
         // Selecionar apenas os 6 primeiros
         const jogosSelecionados = jogosBaralhados.slice(0, 6);
@@ -282,8 +304,13 @@
         });
     }
 
-    // Executar quando a página carrega
-    window.onload = gerarJogosDoDia;
+    // =========================================================
+    // 3. ARRANQUE: EXECUTA AS DUAS FUNÇÕES QUANDO A PÁGINA ABRE
+    // =========================================================
+    window.onload = function() {
+        atualizarContadores();
+        gerarJogosDoDia();
+    };
 
 </script>
 </body>
