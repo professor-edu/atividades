@@ -1,6 +1,8 @@
 const palavras = [
   // --- Palavras Originais ---
   { palavra: "pato", imagem: "img/pato.png", num: 2, divisao: "PA-TO" },
+  { palavra: "pao", imagem: "img/pao.png", num: 1, divisao: "PÃO" },
+  { palavra: "comboio", imagem: "img/comboio.png", num: 3, divisao: "COM-BOI-O" },
   { palavra: "gato", imagem: "img/gato.png", num: 2, divisao: "GA-TO" },
   { palavra: "bola", imagem: "img/bola.png", num: 2, divisao: "BO-LA" },
   { palavra: "vaca", imagem: "img/vaca.png", num: 2, divisao: "VA-CA" },
