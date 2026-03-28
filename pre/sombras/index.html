@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - O Jogo das Sombras 🌑</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (ESTRUTURA BOM PRE.HTML)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           ÁREA PRINCIPAL MAXIMIZADA E SEM SCROLL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           O CAMINHO MÁGICO 🗺️ (BARRA DE PROGRESSO)
+           ========================================= */
+        .caminho-magico {
+            width: 100%; max-width: 700px; height: 50px; position: relative;
+            display: none; margin-bottom: 5px; flex-shrink: 0;
+        }
+        .caminho-trilho {
+            position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0;
+            border-bottom: 4px dashed var(--cor-pre); z-index: 1;
+        }
+        
+        /* MACAQUINHO E BANANA! */
+        .caminho-avatar {
+            position: absolute; left: 0%; bottom: -5px; 
+            transform: translateX(-50%); font-size: 2.5rem; 
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+        .caminho-alvo {
+            position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem;
+            z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO: JOGO DAS SOMBRAS
+           ========================================= */
+        .ecra { width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        #ecra-selecao { display: flex; }
+
+        .titulo-destaque { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0;}
+        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 20px; }
+        
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        /* Categorias */
+        .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; width: 100%; max-width: 600px; margin-top: 20px; }
+        .cat-card { background: #ffffff; border: 3px solid #e1f5f2; padding: 20px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        .cat-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--cor-pre); box-shadow: 0 8px 15px rgba(79, 209, 197, 0.2); }
+        .cat-icon { font-size: 3rem; }
+
+        /* ZONAS DE ARRASTO */
+        .area-sombras { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px; margin-bottom: 40px; }
+        
+        .sombra-slot {
+            width: clamp(90px, 20vw, 130px);
+            height: clamp(90px, 20vw, 130px);
+            background: #f8fafc;
+            border: 4px dashed #cbd5e1;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .sombra-slot.drag-over { border-color: var(--cor-pre); background-color: #e6fffa; transform: scale(1.08); }
+        
+        /* O truque da sombra! Transforma imagens coloridas em silhuetas */
+        .img-sombra {
+            width: 75%;
+            height: 75%;
+            object-fit: contain;
+            filter: brightness(0) opacity(0.2); /* Fica cinza escuro */
+            pointer-events: none;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Quando acerta, a imagem volta a ganhar cor! */
+        .sombra-slot.matched { border-style: solid; border-color: #2ed573; background: #eafff0; box-shadow: 0 6px 15px rgba(46, 213, 115, 0.2);}
+        .sombra-slot.matched .img-sombra { filter: none; transform: scale(1.15); }
+
+        /* PISCINA DE OBJETOS PARA ARRASTAR */
+        .area-objetos {
+            display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px;
+            padding-top: 25px; border-top: 3px dashed #e2e8f0; min-height: 120px;
+        }
+        
+        .area-objetos.drag-over { background-color: #f8fafc; border-radius: 20px; }
+
+        .objeto-drag {
+            width: clamp(85px, 18vw, 120px);
+            height: clamp(85px, 18vw, 120px);
+            background: white;
+            border: 4px solid var(--cor-pre);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            box-shadow: 0 6px 0 var(--cor-pre-dark);
+            transition: transform 0.1s, box-shadow 0.1s;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .objeto-drag:active { cursor: grabbing; transform: translateY(6px); box-shadow: 0 0px 0 var(--cor-pre-dark); }
+        .objeto-drag.dragging { opacity: 0.5; transform: scale(0.9); }
+
+        .img-colorida { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+
+        /* MODAIS E ANIMAÇÕES */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; animation: fadeIn 0.3s ease; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px 20px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; align-items: center; gap: 15px;}
+        .modal-emoji { font-size: 5rem; line-height: 1; margin: 0; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); animation: popIn 0.5s ease;}
+        .modal-titulo { font-size: 2rem; color: var(--azul-escuro); margin: 0;}
+
+        @media (max-width: 600px) {
+            .caminho-trilho { left: 30px; right: 40px; }
+            .area-sombras, .area-objetos { gap: 10px; }
+            .titulo-destaque { font-size: 2rem; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        
+        .error-shake { animation: shakeError 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>O Jogo das Sombras 🌑</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Escolhe o teu tema favorito!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO (O Macaco e a Banana) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐒</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🍌</div> 
+    </div>
+
+    <!-- CARTÃO DO JOGO -->
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: SELEÇÃO DE CATEGORIA -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-destaque" style="margin-bottom: 5px;">Os Meus Temas</h2>
+            <div id="cat-grid" class="cat-grid">
+                <!-- Categorias injetadas pelo JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO DE ARRASTAR -->
+        <div id="ecra-jogo" class="ecra" style="justify-content: space-around;">
+            
+            <div class="area-sombras" id="area-sombras">
+                <!-- Sombras entram aqui -->
+            </div>
+            
+            <div class="area-objetos" id="area-objetos">
+                <!-- Imagens coloridas entram aqui -->
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 5px;">🏆</div>
+            <h2 class="titulo-destaque">Parabéns!</h2>
+            <p class="texto-intro">Descobriste todas as sombras!</p>
+            <button class="btn-acao" onclick="voltarAoMenu()">Jogar Outro Tema 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<!-- Modal de Transição de Ronda -->
+<div class="modal-overlay" id="modal-transicao">
+    <div class="modal-box">
+        <div class="modal-emoji">👏</div>
+        <h2 class="modal-titulo">Muito Bem!</h2>
+        <button class="btn-acao" onclick="proximaRonda()">Continuar ➔</button>
+    </div>
+</div>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Inicializa o arrastar para ecrãs táteis
+    try {
+        if (typeof MobileDragDrop !== 'undefined') {
+            MobileDragDrop.polyfill({ holdToDrag: 0 });
+        }
+    } catch(e) {}
+
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    /* =========================================
+       DADOS DO JOGO (4 Categorias, 8 Imagens)
+       ========================================= */
+    // Substitui estas strings pelos nomes exatos das tuas imagens na pasta 'img/'
+    const dados_sombras = {
+        "Animais": {
+            icone: "🐶",
+            imagens:["gato", "vaca", "rato", "tartaruga", "baleia", "macaco", "cavalo", "ovelha"]
+        },
+        "Fruta": {
+            icone: "🍎",
+            imagens:["maçã", "banana", "melão", "uva", "limão", "tomate", "cenoura", "batata"] // Algumas verduras também :)
+        },
+        "Brinquedos": {
+            icone: "🧸",
+            imagens:["bola", "boneca", "dado", "piano", "violino", "palhaço", "roda", "fada"]
+        },
+        "Veículos": {
+            icone: "🚗",
+            imagens:["carro", "mota", "avião", "jipe", "bicicleta", "barco", "navio", "comboio"] // Ajustar se algumas não existirem no teu repositório
+        }
+    };
+
+    let categoriaAtual = "";
+    let imagensDaCategoria =[];
+    let rondaAtual = 0; // 0 ou 1 (porque 8 imagens = 2 rondas de 4)
+    let paresNaRonda = 0;
+    let paresTotaisEncontrados = 0;
+    const PARES_POR_RONDA = 4;
+    const TOTAL_PARES = 8;
+    
+    let isTransitioning = false;
+    let draggedElement = null;
+
+    const areaSombras = document.getElementById('area-sombras');
+    const areaObjetos = document.getElementById('area-objetos');
+    const avatar = document.getElementById('avatar-progresso');
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const subtitulo = document.getElementById('jogo-subtitulo');
+
+    // Remove acentos se necessário e formata o caminho da imagem
+    function getImagePath(nome) { 
+        // Substitui caracteres para garantir compatibilidade se não estiverem mapeados (ex: maçã -> maca.png, se os teus ficheiros não tiverem acentos)
+        // Por norma, manténs o mesmo formato do dados.js. Como não tenho o dados.js completo, assumimos o padrão.
+        const nomeLimpo = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return `img/${nomeLimpo}.png`; 
+    }
+
+    function inicializarMenu() {
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = '';
+        
+        Object.keys(dados_sombras).forEach(cat => {
+            const btn = document.createElement('div');
+            btn.className = 'cat-card';
+            btn.innerHTML = `<span class="cat-icon">${dados_sombras[cat].icone}</span><span>${cat}</span>`;
+            btn.onclick = () => iniciarJogo(cat);
+            grid.appendChild(btn);
+        });
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        caminhoMagico.style.display = 'none';
+        subtitulo.textContent = "Escolhe o teu tema favorito!";
+        mostrarEcra('ecra-selecao');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+
+    function iniciarJogo(cat) {
+        categoriaAtual = cat;
+        subtitulo.textContent = `Tema: ${cat} ${dados_sombras[cat].icone}`;
+        
+        imagensDaCategoria =[...dados_sombras[cat].imagens].sort(() => Math.random() - 0.5);
+        rondaAtual = 0;
+        paresTotaisEncontrados = 0;
+        
+        caminhoMagico.style.display = 'block';
+        atualizarCaminho();
+        prepararRonda();
+    }
+
+    function proximaRonda() {
+        rondaAtual++;
+        document.getElementById('modal-transicao').classList.remove('active');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        paresNaRonda = 0;
+        isTransitioning = false;
+        mostrarEcra('ecra-jogo');
+
+        // Pega em 4 imagens da categoria
+        let imagensRonda = imagensDaCategoria.slice(rondaAtual * PARES_POR_RONDA, (rondaAtual + 1) * PARES_POR_RONDA);
+        
+        areaSombras.innerHTML = '';
+        areaObjetos.innerHTML = '';
+
+        // Cria os slots de Sombras
+        let sombrasBaralhadas = [...imagensRonda].sort(() => Math.random() - 0.5);
+        sombrasBaralhadas.forEach(imgNome => {
+            const slot = document.createElement('div');
+            slot.className = 'sombra-slot';
+            slot.dataset.match = imgNome;
+            
+            const imgSilhueta = document.createElement('img');
+            imgSilhueta.className = 'img-sombra';
+            imgSilhueta.src = getImagePath(imgNome);
+            
+            slot.appendChild(imgSilhueta);
+            
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDropSlot);
+            
+            areaSombras.appendChild(slot);
+        });
+
+        // Cria os Objetos para Arrastar
+        let objetosBaralhados = [...imagensRonda].sort(() => Math.random() - 0.5);
+        objetosBaralhados.forEach(imgNome => {
+            const card = document.createElement('div');
+            card.className = 'objeto-drag';
+            card.dataset.id = imgNome;
+            card.draggable = true;
+            
+            const imgCor = document.createElement('img');
+            imgCor.className = 'img-colorida';
+            imgCor.src = getImagePath(imgNome);
+            
+            card.appendChild(imgCor);
+
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+
+            areaObjetos.appendChild(card);
+        });
+
+        areaObjetos.addEventListener('dragover', handleDragOverPool);
+        areaObjetos.addEventListener('dragleave', handleDragLeavePool);
+        areaObjetos.addEventListener('drop', handleDropPool);
+    }
+
+    /* =========================================
+       DRAG AND DROP LOGIC
+       ========================================= */
+    function handleDragStart(e) {
+        if (isTransitioning) { e.preventDefault(); return; }
+        draggedElement = e.target.closest('.objeto-drag');
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', draggedElement.dataset.id);
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault(); 
+        const slot = e.target.closest('.sombra-slot');
+        // Só aceita o hover se ainda não estiver preenchido (não tiver a classe matched)
+        if (slot && !slot.classList.contains('matched')) {
+            slot.classList.add('drag-over');
+        }
+    }
+    
+    function handleDragLeave(e) {
+        const slot = e.target.closest('.sombra-slot');
+        if (slot) slot.classList.remove('drag-over');
+    }
+
+    function handleDropSlot(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.sombra-slot');
+        if (!slot || !draggedElement) return;
+        
+        slot.classList.remove('drag-over');
+
+        // Se o slot já estiver preenchido, rejeita
+        if (slot.classList.contains('matched')) return;
+
+        const idSlot = slot.dataset.match;
+        const idDrag = draggedElement.dataset.id;
+
+        if (idSlot === idDrag) {
+            // ACERTOU!
+            tocarSom('acerto');
+            slot.classList.add('matched');
+            
+            // Removemos a carta colorida e deixamos a sombra fazer o trabalho de ganhar cor
+            draggedElement.remove();
+            
+            paresNaRonda++;
+            paresTotaisEncontrados++;
+            atualizarCaminho();
+
+            if (paresNaRonda === PARES_POR_RONDA) {
+                isTransitioning = true;
+                setTimeout(fimDaRonda, 800);
+            }
+        } else {
+            // ERROU!
+            tocarSom('erro');
+            slot.classList.add('error-shake');
+            setTimeout(() => slot.classList.remove('error-shake'), 400);
+        }
+    }
+
+    function handleDragOverPool(e) {
+        e.preventDefault();
+        areaObjetos.classList.add('drag-over');
+    }
+
+    function handleDragLeavePool(e) {
+        areaObjetos.classList.remove('drag-over');
+    }
+
+    function handleDropPool(e) {
+        e.preventDefault();
+        areaObjetos.classList.remove('drag-over');
+        if (draggedElement && draggedElement.parentElement !== areaObjetos) {
+            areaObjetos.appendChild(draggedElement);
+        }
+    }
+
+    function atualizarCaminho() {
+        let percent = (paresTotaisEncontrados / TOTAL_PARES) * 100;
+        avatar.style.left = `${percent}%`;
+    }
+
+    function fimDaRonda() {
+        if (rondaAtual === 0) { // Vai para a ronda 2
+            tocarSom('vitoria_curta');
+            document.getElementById('modal-transicao').classList.add('active');
+        } else {
+            // Fim do Jogo
+            tocarSom('vitoria');
+            dispararConfetis();
+            mostrarEcra('ecra-fim');
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria_curta') {
+            const notas =[523.25, 659.25, 783.99]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.08, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.4);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.4);
+            });
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arranca
+    window.onload = inicializarMenu;
+
+</script>
+</body>
+</html>
