@@ -50,13 +50,14 @@
         .overlay.active { display: block; }
 
         /* =========================================
-           ÁREA PRINCIPAL (RIGOROSAMENTE IGUAL A BOM.HTML)
+           ÁREA PRINCIPAL MAXIMIZADA E SEM SCROLL
            ========================================= */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
         
         .cartao-jogo-container { 
-            background: white; width: 100%; max-width: 800px; min-height: 450px; 
-            padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; /* Faz a caixa branca expandir-se verticalmente preenchendo o espaço vazio */
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
             border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
             align-items: center; justify-content: center; position: relative; overflow: hidden; 
         }
@@ -73,16 +74,16 @@
             .hamburger { grid-column: 1; justify-self: start; }
             .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
             h1, .subtitulo { grid-column: 2; text-align: center; }
-            main { padding: 20px 15px; gap: 15px; }
-            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; }
         }
 
         /* =========================================
-           O CAMINHO MÁGICO 🗺️ (Ocupa o espaço da status-bar original)
+           O CAMINHO MÁGICO 🗺️ (BARRA DE PROGRESSO)
            ========================================= */
         .caminho-magico {
             width: 100%; max-width: 700px; height: 50px; position: relative;
-            display: none; margin-bottom: 0px; 
+            display: none; margin-bottom: 5px; flex-shrink: 0;
         }
         .caminho-trilho {
             position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0;
@@ -100,37 +101,43 @@
         }
 
         /* =========================================
-           CSS ESPECÍFICO: JOGO DA MEMÓRIA 
-           (DIMENSIONADO PARA CABER NOS 450px)
+           CSS ESPECÍFICO: JOGO DA MEMÓRIA (CARTAS GRANDES)
            ========================================= */
         .ecra { width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
         #ecra-inicio { display: flex; }
 
-        .titulo-destaque { font-size: 2.2rem; color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0;}
-        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 20px; }
+        .titulo-destaque { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0;}
+        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 20px; }
         
-        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
         .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
         .btn-acao:hover { filter: brightness(1.05); }
 
-        .titulo-nivel { font-size: 1.8rem; color: var(--azul-escuro); margin: 0 0 15px 0; }
+        .titulo-nivel { font-size: 2rem; color: var(--azul-escuro); margin: 0 0 15px 0; }
 
-        /* GRELHA CONTROLADA PARA EVITAR SCROLL */
+        /* GRELHA MAXIMIZADA PARA APROVEITAR TODO O ESPAÇO */
         .memory-grid { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; 
-            width: 100%; max-width: 400px; perspective: 1000px; margin: 0 auto;
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 650px; /* Cartas GIGANTES no desktop/tablet */
+            margin: 0 auto;
+            perspective: 1000px;
         }
 
         .memory-card { width: 100%; aspect-ratio: 1 / 1; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); -webkit-tap-highlight-color: transparent; }
         .memory-card.flipped, .memory-card.matched { transform: rotateY(180deg) !important; }
         .memory-card.matched { cursor: default; pointer-events: none; }
 
-        .card-face { position: absolute; width: 100%; height: 100%; top: 0; left: 0; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.08); box-sizing: border-box; overflow: hidden; transition: opacity 0.3s; }
-        .card-front { background: linear-gradient(135deg, var(--cor-pre) 0%, #81ecec 100%); border: 3px solid white; color: white; font-size: 2.5rem; }
-        .card-back { background: white; border: 3px solid var(--cor-pre); transform: rotateY(180deg); padding: 8px; }
-        .card-back img { width: 90%; height: 90%; object-fit: contain; pointer-events: none;}
+        .card-face { position: absolute; width: 100%; height: 100%; top: 0; left: 0; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); box-sizing: border-box; overflow: hidden; transition: opacity 0.3s; }
+        
+        /* Frente da carta aumentada */
+        .card-front { background: linear-gradient(135deg, var(--cor-pre) 0%, #81ecec 100%); border: 3px solid white; color: white; font-size: 3.5rem; }
+        .card-back { background: white; border: 3px solid var(--cor-pre); transform: rotateY(180deg); padding: 12px; }
+        .card-back img { width: 95%; height: 95%; object-fit: contain; pointer-events: none;}
 
-        .memory-card.matched .card-back { border-color: #2ed573; background-color: #eafff0; opacity: 0.5; filter: grayscale(30%); }
+        .memory-card.matched .card-back { border-color: #2ed573; background-color: #eafff0; opacity: 0.6; filter: grayscale(20%); }
 
         .error-shake .card-back { border-color: #ff4757 !important; background-color: #ffefef !important; animation: shakeError 0.4s ease; }
 
@@ -141,20 +148,22 @@
         .modal-emoji { font-size: 5rem; line-height: 1; margin: 0; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); animation: popIn 0.5s ease;}
         .modal-titulo { font-size: 2rem; color: var(--azul-escuro); margin: 0;}
 
+        /* AJUSTES MOBILE PARA A GRELHA */
         @media (max-width: 600px) {
             .caminho-trilho { left: 30px; right: 40px; }
-            .memory-grid { max-width: 320px; gap: 10px;}
+            /* Em telemóveis, a grelha passa a 3 colunas para as cartas continuarem grandes */
+            .memory-grid { grid-template-columns: repeat(3, 1fr); max-width: 100%; gap: 10px;}
             .titulo-nivel { font-size: 1.5rem; margin-bottom: 12px;}
-            .card-front { font-size: 2rem; }
-            .titulo-destaque { font-size: 1.8rem; }
+            .card-front { font-size: 2.5rem; }
+            .titulo-destaque { font-size: 2rem; }
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes shakeError { 0%, 100% { transform: rotateY(180deg) translateX(0); } 25% { transform: rotateY(180deg) translateX(-8px) rotate(-3deg); } 75% { transform: rotateY(180deg) translateX(8px) rotate(3deg); } }
 
-        /* CONFETIS SEGUROS: Limitados ao contentor do jogo tal como no BOM.html */
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        /* CONFETIS LIMITADOS AO ECRÃ PARA NÃO GERAR SCROLL NUNCA */
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -164,12 +173,12 @@
 <nav class="sidebar" id="sidebar">
     <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
-       <li><a href="../../">🏠 Início</a></li>
-<li><a href="../">🎨 Pré-Escolar</a></li>
-<li><a href="../../1/">🎒 1º Ano</a></li>
-<li><a href="../..//2/">💡 2º Ano</a></li>
-<li><a href="../../3/">🔍 3º Ano</a></li>
-<li><a href="../../4/">🚀 4º Ano</a></li>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../..//2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
@@ -188,7 +197,7 @@
 </header>
 
 <main>
-    <!-- O CAMINHO MÁGICO 🗺️ -->
+    <!-- O CAMINHO MÁGICO 🗺️ (Ocupa o espaço natural) -->
     <div class="caminho-magico" id="caminho-magico">
         <div class="caminho-trilho">
             <div class="caminho-avatar" id="avatar-progresso">🚗</div> 
@@ -196,7 +205,7 @@
         <div class="caminho-alvo" id="alvo-progresso">🏠</div> 
     </div>
 
-    <!-- CARTÃO DO JOGO -->
+    <!-- CARTÃO DO JOGO (Adapta-se ao ecrã sem provocar scroll) -->
     <div class="cartao-jogo-container">
         
         <!-- ECRÃ INICIAL -->
@@ -211,7 +220,7 @@
         <div id="ecra-jogo" class="ecra">
             <h2 class="titulo-nivel" id="titulo-nivel">Nível 1</h2>
             <div class="memory-grid" id="memory-grid">
-                <!-- Cartas -->
+                <!-- Cartas Gigantes Injetadas Aqui -->
             </div>
         </div>
 
@@ -254,9 +263,9 @@
        CONFIGURAÇÃO DOS NÍVEIS
        ========================================= */
     const niveisConfig =[
-        { titulo: "Os Animais 🐶", palavrasChave:["gato", "vaca", "rato", "tartaruga", "baleia", "abelha", "ovelha", "macaco", "cavalo", "foca", "papagaio", "leão", "coelho", "galinha", "porco", "urso", "peixe", "cigarra"] },
-        { titulo: "A Comida 🍎", palavrasChave:["melão", "cenoura", "maçã", "queijo", "limão", "tomate", "banana", "batata", "uva", "pêssego", "morango"] },
-        { titulo: "Os Objetos 🧸", palavrasChave:["bola", "violino", "mota", "janela", "jipe", "cama", "dado", "vela", "bicicleta", "livro", "óculos", "casaco", "tesoura", "mala", "avião", "pote", "bota", "mapa"] }
+        { titulo: "Animais 🐶", palavrasChave:["gato", "vaca", "rato", "tartaruga", "baleia", "abelha", "ovelha", "macaco", "cavalo", "foca", "papagaio", "leão", "coelho", "galinha", "porco", "urso", "peixe", "cigarra"] },
+        { titulo: "Fruta e Comida 🍎", palavrasChave:["melão", "cenoura", "maçã", "queijo", "limão", "tomate", "banana", "batata", "uva", "pêssego", "morango"] },
+        { titulo: "bjetos 🧸", palavrasChave:["bola", "violino", "mota", "janela", "jipe", "cama", "dado", "vela", "bicicleta", "livro", "óculos", "casaco", "tesoura", "mala", "avião", "pote", "bota", "mapa"] }
     ];
 
     let nivelAtual = 0; 
@@ -272,7 +281,10 @@
     const memoryGrid = document.getElementById('memory-grid');
     const avatar = document.getElementById('avatar-progresso');
 
-    function getImagePath(imgPath) { return imgPath.replace('img/', '../img/'); }
+    // FUNÇÃO REVERTIDA: Retorna exatamente a string que o teu dados.js fornecer (ex: "img/gato.png" ou "../img/gato.png")
+    function getImagePath(imgPath) { 
+        return imgPath ? imgPath : ''; 
+    }
 
     function mostrarEcra(id) {
         document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
@@ -333,10 +345,11 @@
             cardEl.classList.add('memory-card');
             cardEl.dataset.match = c.palavra;
 
+            // src usa agora exatamente a propriedade original gerada
             cardEl.innerHTML = `
                 <div class="card-face card-front">⭐</div>
                 <div class="card-face card-back">
-                    <img src="${getImagePath(c.imagem)}" alt="">
+                    <img src="${getImagePath(c.imagem)}" alt="${c.palavra}">
                 </div>
             `;
             
