@@ -331,22 +331,22 @@
    const dados_sombras = {
         "Animais": {
             icone: "🐶",
-            imagens: ["abelha", "baleia", "cavalo", "cobra", "galinha", "gato", "girafa", "macaco", "sapo", "zebra", "ovelha", "leao", "burro", "aguia", "bode", "caracol", "cigarra", "coelho", "elefante", "foca", "javali", "mosca", "porco", "rato", "urso", "tartaruga"]
+            imagens: ["abelha", "aguia", "baleia", "bode", "burro", "caracol", "cavalo", "cigarra", "cobra", "coelho", "elefante", "foca", "galinha", "gato", "girafa", "javali", "leao", "macaco", "mosca", "ovelha", "porco", "rato", "sapo", "tartaruga", "urso", "zebra"]
         },
         "Alimentos": {
             icone: "🍎",
-            imagens: ["abacaxi", "banana", "batata", "cenoura", "gelado", "gema", "limao", "maca", "melao", "pessego", "queijo", "uva", "ovo", "tomate", "caju", "pao"]
+            imagens: ["abacaxi", "banana", "batata", "caju", "cenoura", "gelado", "gema", "limao", "maca", "melao", "ovo", "pao", "pessego", "queijo", "tomate", "uva"]
         },
         "Objetos": {
             icone: "📦",
-            imagens: ["balde", "bola", "chave", "dado", "foguete", "livro", "oculos", "tesoura", "cadeira", "martelo", "moeda", "pente"]
+            imagens: ["anel", "balde", "banco", "bola", "boneca", "bota", "botao", "cadeira", "caixa", "cama", "casaco", "chapeu", "chave", "coroa", "dado", "ferro", "flauta", "foguete", "guitarra", "livro", "martelo", "moeda", "oculos", "pente", "tesoura"]
         },
-        "Mundo e Escola": {
+        "Mundo": {
             icone: "🌍",
-            imagens: ["autocarro", "aviao", "barco", "bicicleta", "camiao", "carro", "casa", "mota", "escola", "globo", "igreja", "ponte"]
+            imagens: ["arvore", "autocarro", "aviao", "barco", "bicicleta", "camiao", "carro", "casa", "comboio", "escola", "foguete", "globo", "igreja", "jipe", "mota", "navio", "ponte", "quarto", "rei"]
         }
     };
-
+    
     let categoriaAtual = "";
     let imagensDaCategoria =[];
     let rondaAtual = 0; // 0 ou 1 (porque 8 imagens = 2 rondas de 4)
@@ -401,7 +401,12 @@
         categoriaAtual = cat;
         subtitulo.textContent = `Tema: ${cat} ${dados_sombras[cat].icone}`;
         
-        imagensDaCategoria =[...dados_sombras[cat].imagens].sort(() => Math.random() - 0.5);
+        // 1. Baralha a lista completa de nomes da categoria
+        let listaBaralhada = [...dados_sombras[cat].imagens].sort(() => Math.random() - 0.5);
+        
+        // 2. Escolhe apenas as primeiras 12 palavras (3 rondas de 4)
+        imagensDaCategoria = listaBaralhada.slice(0, TOTAL_PARES);
+        
         rondaAtual = 0;
         paresTotaisEncontrados = 0;
         
@@ -563,11 +568,10 @@
     }
 
     function fimDaRonda() {
-        if (rondaAtual === 0) { // Vai para a ronda 2
+        if (paresTotaisEncontrados < TOTAL_PARES) { 
             tocarSom('vitoria_curta');
             document.getElementById('modal-transicao').classList.add('active');
         } else {
-            // Fim do Jogo
             tocarSom('vitoria');
             dispararConfetis();
             mostrarEcra('ecra-fim');
