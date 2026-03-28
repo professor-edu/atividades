@@ -8,10 +8,6 @@
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
-    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
-    
     <style>
         /* =========================================
            CSS DO TEMPLATE BASE (ESTRUTURA BOM PRE.HTML)
@@ -61,9 +57,8 @@
             background: white; width: 100%; max-width: 900px; 
             flex: 1; 
             padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
-            border-top: 8px solid #51cf66; /* COR FIXA E EXIGIDA AQUI */
-            display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; position: relative; overflow: hidden; 
+            border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
         }
         
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
@@ -82,66 +77,22 @@
         }
 
         /* =========================================
-           BOTÃO PARA REGRESSAR AO MENU PRINCIPAL
-           ========================================= */
-        .container-nav-jogo {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            padding-bottom: 40px; 
-            box-sizing: border-box;
-        }
-        
-        .btn-voltar-menu {
-            margin: 0 auto; 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: #f0f4f8; 
-            color: #334e68;            
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;       
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-        }
-        
-        .btn-voltar-menu:hover {
-            background-color: #e2e8f0;
-            transform: translateY(-2px);
-        }
-        
-        .btn-voltar-menu span {
-            color: #4a90e2;
-        }
-        
-        /* =========================================
-           O CAMINHO MÁGICO 🐶 -> 🦴 (COR VERDE 51cf66)
+           O CAMINHO MÁGICO 🐶 -> 🦴
            ========================================= */
         .caminho-magico {
             width: 100%; max-width: 700px; height: 50px; position: relative;
             display: none; margin-bottom: 5px; flex-shrink: 0;
         }
         .caminho-trilho {
-            position: absolute; bottom: 1px; left: 40px; right: 50px; height: 0;
-            border-bottom: 4px dashed #51cf66; /* COR FIXA AQUI */
-            z-index: 1;
+            position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0;
+            border-bottom: 4px dashed var(--cor-pre); z-index: 1;
         }
-        
         .caminho-avatar {
-            position: absolute; 
-            left: 0%; 
-            bottom: 0px; 
+            position: absolute; left: 0%; bottom: -5px; 
             transform: translateX(-50%) scaleX(-1); 
             font-size: 2.5rem; 
             transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 3; 
-            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); 
-            line-height: 1;
+            z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
         }
         .caminho-alvo {
             position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem;
@@ -149,31 +100,45 @@
         }
 
         /* =========================================
+           BOTÃO DE MENU DE JOGO NO TOPO
+           ========================================= */
+        .container-nav-jogo {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 15px; margin-bottom: 15px; border-bottom: 2px dashed #e1f5f2;
+        }
+        .btn-voltar-menu {
+            background-color: #f0f4f8; color: #334e68; border: none; padding: 10px 20px;
+            border-radius: 30px; font-size: 1rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        
+        .info-nivel {
+            font-size: 1.2rem; font-weight: 800; color: var(--cor-pre-dark);
+            background: #e6fffa; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-pre);
+        }
+
+        /* =========================================
            MENUS E ECRÃS BASE
            ========================================= */
         .ecra { width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1;}
-        
-        /* Centramento Fixo do Menu */
-        #ecra-selecao { display: flex; justify-content: center; align-items: center; padding-top: 0;}
+        #ecra-selecao { display: flex; justify-content: flex-start; padding-top: 10px;}
 
-        .titulo-destaque { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0;}
-        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 20px; }
-        
-        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
-        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
-        .btn-acao:hover { filter: brightness(1.05); }
+        .titulo-destaque { font-size: 2.2rem; color: var(--azul-escuro); margin: 0 0 10px 0;}
+        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 25px; }
 
-        /* Categorias */
-        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; margin: 0 auto; }
-        .cat-card { background: #ffffff; border: 3px solid #e1f5f2; padding: 20px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
-        .cat-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--cor-pre); box-shadow: 0 8px 15px rgba(79, 209, 197, 0.2); }
-        .cat-icon { font-size: 3rem; }
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 600px; margin: 0 auto; }
+        .cat-card { background: #ffffff; border: 3px solid #e1f5f2; padding: 20px; border-radius: 20px; font-size: 1.2rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        .cat-card:hover { transform: translateY(-5px); border-color: var(--cor-pre); box-shadow: 0 8px 15px rgba(79, 209, 197, 0.2); }
+        .cat-icon { font-size: 2.5rem; }
 
         /* Estilos Globais Imagens dos Jogos */
         .img-item { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transition: 0.3s;}
         .clickable-box { cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; border-radius: 15px;}
         .clickable-box:active { transform: scale(0.95); }
         
+        /* Acertos e Erros */
         .success-box { border: 4px solid #2ed573 !important; background: #eafff0 !important; animation: popIn 0.4s ease forwards; }
         .error-box { animation: shakeError 0.4s ease; border: 4px solid #ff4757 !important; background: #ffefef !important; }
 
@@ -186,23 +151,28 @@
         .espelho-lado .clickable-box { border: 2px solid transparent; width: 100%; height: 100%; }
 
         /* =========================================
-           JOGO 2: O INTRUSO 🦆
+           JOGO 2: O INTRUSO 🦆 (CORRIGIDO PARA NÃO SOBREPOR)
            ========================================= */
         .intruso-container { 
-            display: grid; gap: 15px; width: 100%; max-width: 650px; 
-            justify-content: center; align-content: center; flex: 1; margin: 0 auto;
+            display: grid; gap: 15px; width: 100%; margin: 0 auto;
+            justify-content: center; align-content: center; flex: 1;
         }
-        
+
+        /* Classes que controlam a largura máxima conforme as colunas, forçando a encolher! */
+        .intruso-nivel-1 { grid-template-columns: repeat(2, 1fr); max-width: 350px; }
+        .intruso-nivel-2 { grid-template-columns: repeat(3, 1fr); max-width: 500px; }
+        .intruso-nivel-3 { grid-template-columns: repeat(4, 1fr); max-width: 600px; }
+        /* No Nível 4, como tem 3 linhas, a largura máxima tem de ser apertada para não empurrar a altura */
+        .intruso-nivel-4 { grid-template-columns: repeat(4, 1fr); max-width: 480px; }
+
         .intruso-container .clickable-box { 
             background: #f8fafc; border: 3px solid #e2e8f0; padding: 10px; 
             aspect-ratio: 1/1; 
             width: 100%;
-            /* ESTAS DUAS LINHAS IMPEDEM O CRESCIMENTO INFINITO NO NÍVEL 1 */
-            max-width: 180px; 
-            max-height: 180px; 
-            place-self: center; /* Mantém o quadrado sempre ao centro da sua coluna */
+            height: auto;
+            box-sizing: border-box; /* Impede que a border e o padding somem ao tamanho */
+            place-self: center; 
         }
-        
         .intruso-container .clickable-box:hover { border-color: var(--cor-pre); transform: scale(1.05); }
 
         /* =========================================
@@ -229,18 +199,25 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; animation: fadeIn 0.3s ease; }
         .modal-overlay.active { display: flex; }
         .modal-box { background: white; width: 100%; max-width: 400px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-top: 8px solid var(--cor-pre); }
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; margin-top: 15px; width: 100%;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
 
         @media (max-width: 600px) {
             .caminho-trilho { left: 30px; right: 40px; }
             .espelho-container { flex-direction: column; }
             .espelho-lado { padding: 5px; gap: 2px;}
             .container-nav-jogo { padding-bottom: 10px; margin-bottom: 10px; }
+            .info-nivel { padding: 5px 15px; font-size: 1rem; }
             .cat-grid { gap: 10px; }
             .cat-card { padding: 15px; font-size: 1.1rem; }
             .cat-icon { font-size: 2rem; }
-            
-            /* Ajuste responsivo de segurança para o Intruso Mobile */
-            .intruso-container .clickable-box { max-width: 130px; max-height: 130px; padding: 10px; }
+
+            /* Ajuste responsivo de segurança extra para o Intruso Mobile */
+            .intruso-container { gap: 10px; }
+            .intruso-nivel-1 { max-width: 250px; }
+            .intruso-nivel-2 { max-width: 320px; }
+            .intruso-nivel-3 { max-width: 360px; }
+            .intruso-nivel-4 { max-width: 320px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -274,7 +251,6 @@
             </button>
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        
         <h1>Jogo das Diferenças 🔍</h1>
         <div class="subtitulo" id="jogo-subtitulo">Abre bem os olhos!</div>
     </div>
@@ -319,9 +295,10 @@
         <div id="ecra-jogo" class="ecra" style="justify-content: flex-start;">
             <div class="container-nav-jogo">
                 <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span> Outros Jogos</button>
+                <div class="info-nivel" id="info-nivel">Nível 1</div>
             </div>
             
-            <!-- Os contentores dos 4 jogos -->
+            <!-- Os contentores dos 4 jogos (só um visível de cada vez) -->
             <div id="area-1-espelho" class="espelho-container" style="display: none;">
                 <div class="espelho-lado" id="espelho-esq"></div>
                 <div class="espelho-lado interativo" id="espelho-dir"></div>
@@ -374,8 +351,10 @@
         document.getElementById('hamburgerBtn').classList.toggle('open'); 
     }
 
+    // Função Segura para a Rota das Imagens
     function getImagePath(nomeImg) {
         if (!nomeImg) return '';
+        // Proteção contra dados.js com caminhos completos ou vazios
         if(nomeImg.startsWith('img/')) return `../${nomeImg}`;
         return `../img/${nomeImg.replace('img/', '')}`;
     }
@@ -388,13 +367,15 @@
     let rondaAtual = 1;
     const RONDAS_POR_NIVEL = 2; 
     const TOTAL_NIVEIS = 4;
-    const TOTAL_JOGADAS = RONDAS_POR_NIVEL * TOTAL_NIVEIS;
+    const TOTAL_JOGADAS = RONDAS_POR_NIVEL * TOTAL_NIVEIS; // 8 rodadas por jogo inteiro
     let jogadaGlobal = 0;
     let isVerificando = false;
 
+    // Elementos DOM
     const caminhoMagico = document.getElementById('caminho-magico');
     const avatar = document.getElementById('avatar-progresso');
     const subtitulo = document.getElementById('jogo-subtitulo');
+    const labelNivel = document.getElementById('info-nivel');
     
     function mostrarEcra(id) {
         document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
@@ -438,10 +419,15 @@
         avatar.style.left = `${percent}%`;
     }
 
+    // =========================================
+    // DISTRIBUIDOR DE JOGOS
+    // ==========================================
     function prepararRonda() {
         isVerificando = false;
+        labelNivel.textContent = `Nível ${nivelAtual}`;
         document.querySelectorAll('[id^="area-"]').forEach(el => el.style.display = 'none');
 
+        // Extrai imagens aleatórias (sem repetição) do dados.js
         let imagensDisponiveis = [...palavras].sort(() => Math.random() - 0.5);
 
         if (jogoAtivo === 1) gerarEspelho(imagensDisponiveis);
@@ -461,12 +447,15 @@
         const dir = document.getElementById('espelho-dir');
         esq.innerHTML = ''; dir.innerHTML = '';
 
+        // Nivel 1: 3 img (Ausência), Nivel 2: 4 img (Cor), Nivel 3: 5 img (Espelho), Nivel 4: 6 img (Aleatório)
         let qnt = nivelAtual + 2; 
         let objsRonda = imagens.slice(0, qnt);
         
+        // Vamos usar as 9 quadrículas CSS para espalhar os objetos sem sobreposição
         let posicoes =[0,1,2,3,4,5,6,7,8].sort(() => Math.random() - 0.5).slice(0, qnt);
-        let alvoIndex = Math.floor(Math.random() * qnt); 
+        let alvoIndex = Math.floor(Math.random() * qnt); // Qual das imagens vai mudar
         
+        // Define o tipo de erro com base no nível
         let tipoErro = "";
         if (nivelAtual === 1) tipoErro = "ausencia";
         else if (nivelAtual === 2) tipoErro = "cor";
@@ -476,6 +465,7 @@
             tipoErro = tipos[Math.floor(Math.random() * tipos.length)];
         }
 
+        // Constrói as 9 quadrículas para a Esquerda e Direita
         for (let i = 0; i < 9; i++) {
             let caixaEsq = document.createElement('div');
             let caixaDir = document.createElement('div');
@@ -484,14 +474,18 @@
             let imgIndex = posicoes.indexOf(i);
             
             if (imgIndex !== -1) {
+                // Tem objeto nesta quadrícula
                 let obj = objsRonda[imgIndex];
+                
+                // Imagem Original Esquerda
                 caixaEsq.innerHTML = `<img src="${getImagePath(obj.imagem)}" class="img-item">`;
                 
+                // Lógica da Direita (A cópia ou o erro)
                 if (imgIndex === alvoIndex) {
                     caixaDir.onclick = () => resolverRonda(true, caixaDir);
                     
                     if (tipoErro === "ausencia") {
-                        caixaDir.innerHTML = ``; 
+                        caixaDir.innerHTML = ``; // Não tem imagem
                     } else {
                         let imgCopy = document.createElement('img');
                         imgCopy.src = getImagePath(obj.imagem);
@@ -504,14 +498,20 @@
                         caixaDir.appendChild(imgCopy);
                     }
                 } else {
+                    // Cópia normal
                     caixaDir.onclick = () => resolverRonda(false, caixaDir);
                     caixaDir.innerHTML = `<img src="${getImagePath(obj.imagem)}" class="img-item">`;
                 }
             } else {
-                if (tipoErro === "ausencia" && posicoes[alvoIndex] === i) {
-                    caixaDir.onclick = () => resolverRonda(true, caixaDir);
+                // Quadrícula vazia na direita se clicada é erro, exceto se a resposta for a ausência!
+                if (tipoErro === "ausencia" && alvoIndex === posicoes.indexOf(alvoIndex)) {
+                    caixaDir.onclick = () => resolverRonda(false, caixaDir);
                 } else {
                     caixaDir.onclick = () => resolverRonda(false, caixaDir);
+                }
+                
+                if (tipoErro === "ausencia" && posicoes[alvoIndex] === i) {
+                    caixaDir.onclick = () => resolverRonda(true, caixaDir);
                 }
             }
             
@@ -528,18 +528,20 @@
         area.style.display = 'grid';
         area.innerHTML = '';
 
+        // Limpa e garante a atribuição da classe certa de nível para impedir overgrowth
+        area.className = 'intruso-container intruso-nivel-' + nivelAtual;
+
         let objPrincipal = imagens[0];
         let objIntruso = imagens[1]; 
         
-        let colunas, linhas, total;
+        let total;
         let tipoErro = "";
 
-        if (nivelAtual === 1) { colunas = 2; linhas = 2; total = 4; tipoErro = "imagem"; }
-        else if (nivelAtual === 2) { colunas = 3; linhas = 2; total = 6; tipoErro = "cor"; }
-        else if (nivelAtual === 3) { colunas = 4; linhas = 2; total = 8; tipoErro = "espelho"; }
-        else { colunas = 4; linhas = 3; total = 12; tipoErro = "rotacao"; }
+        if (nivelAtual === 1) { total = 4; tipoErro = "imagem"; }
+        else if (nivelAtual === 2) { total = 6; tipoErro = "cor"; }
+        else if (nivelAtual === 3) { total = 8; tipoErro = "espelho"; }
+        else { total = 12; tipoErro = "rotacao"; }
 
-        area.style.gridTemplateColumns = `repeat(${colunas}, 1fr)`;
         let alvoIndex = Math.floor(Math.random() * total);
 
         for (let i = 0; i < total; i++) {
@@ -713,6 +715,7 @@
         }
     }
 
+
     /* =========================================
        SISTEMA DE SOM E CONFETIS
        ========================================= */
@@ -736,7 +739,7 @@
             osc.start(agora); osc.stop(agora + 0.15);
         }
         else if (tipo === 'acerto') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
         } 
@@ -795,7 +798,6 @@
         if (ativos) requestAnimationFrame(animarConfetis);
     }
 
-    // O jogo inicializa diretamente mostrando as escolhas (Menu Principal)
 </script>
 </body>
 </html>
