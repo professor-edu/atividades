@@ -458,66 +458,65 @@
        JOGOS 1, 2 e 3: INTERATIVOS (Mover itens)
        ========================================= */
     function gerarJogoInterativo() {
-        sourceZone.innerHTML = '';
-        destZone.innerHTML = '';
-        const sourceZone = document.getElementById('item-source');
-        const destZone = document.getElementById('item-dest');
-        
-        sourceZone.ondragover = allowDrop;
-        destZone.ondragover = allowDrop;
-        
-        sourceZone.ondrop = dropItem;
-        destZone.ondrop = dropItem;
+    sourceZone.innerHTML = '';
+    destZone.innerHTML = '';
 
+    // Ativar a receção de drops
+    sourceZone.ondragover = allowDrop;
+    destZone.ondragover = allowDrop;
+    sourceZone.ondrop = dropItem;
+    destZone.ondrop = dropItem;
 
-        
-        let emojiItem = "";
-        
-        if (jogoAtivo === 1) {
-            instrucao.innerHTML = alvoNumero === 0 ? `👾 O monstro está cheio! (0)` : `👾 Quero ${alvoNumero} 🍪!`;
-            emojiItem = "🍪";
-        } else if (jogoAtivo === 2) {
-            instrucao.innerHTML = alvoNumero === 0 ? `🌳 Cesto vazio! (0)` : `🌳 Colhe ${alvoNumero} 🍎!`;
-            emojiItem = "🍎";
-        } else if (jogoAtivo === 3) {
-            instrucao.innerHTML = alvoNumero === 0 ? `🚂 Comboio sem viagem! (0)` : `🚂 Faltam ${alvoNumero} animais!`;
-            const animais =["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐨","🐯","🦁"];
-            emojiItem = "random_animal";
-            window.animaisRonda = [...animais].sort(() => Math.random() - 0.5);
-        }
+    let emojiItem = "";
 
-        dicaPontos.innerHTML = getPontos(alvoNumero);
+    if (jogoAtivo === 1) {
+        instrucao.innerHTML = alvoNumero === 0 ? `👾 O monstro está cheio! (0)` : `👾 Quero ${alvoNumero} 🍪!`;
+        emojiItem = "🍪";
+    } else if (jogoAtivo === 2) {
+        instrucao.innerHTML = alvoNumero === 0 ? `🌳 Cesto vazio! (0)` : `🌳 Colhe ${alvoNumero} 🍎!`;
+        emojiItem = "🍎";
+    } else if (jogoAtivo === 3) {
+        instrucao.innerHTML = alvoNumero === 0 ? `🚂 Comboio sem viagem! (0)` : `🚂 Faltam ${alvoNumero} animais!`;
+        const animais = ["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐨","🐯","🦁"];
+        emojiItem = "random_animal";
+        window.animaisRonda = [...animais].sort(() => Math.random() - 0.5);
+    }
 
-        // Gera sempre 10 itens para a criança poder escolher
-        for (let i = 0; i < 10; i++) {
-    let item = document.createElement('div');
-    item.className = 'click-item';
+    dicaPontos.innerHTML = getPontos(alvoNumero);
 
-    // PASSO 4 — ID único para drag & drop
-    item.id = "item-" + i + "-" + Date.now();
+    // Gera sempre 10 itens para a criança poder escolher
+    for (let i = 0; i < 10; i++) {
 
-    // Ativar arrastar
-    item.draggable = true;
-    item.ondragstart = dragStart;
+        let item = document.createElement('div');
+        item.className = 'click-item';
 
-    // Lógica do emoji
-    if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
-    else item.innerHTML = emojiItem;
+        // PASSO 4 — ID único
+        item.id = "item-" + i + "-" + Date.now();
 
-    // Lógica do clique (mantém-se)
-    item.onclick = function() {
-        if (isVerificando) return;
-        tocarSom('pop');
-        if (item.parentElement === sourceZone) {
-            destZone.appendChild(item);
-            carregados++;
-        } else {
-            sourceZone.appendChild(item);
-            carregados--;
-        }
-    };
+        // Ativar arrastar
+        item.draggable = true;
+        item.ondragstart = dragStart;
 
-    sourceZone.appendChild(item);
+        // Emoji
+        if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
+        else item.innerHTML = emojiItem;
+
+        // Clique tradicional
+        item.onclick = function() {
+            if (isVerificando) return;
+            tocarSom('pop');
+
+            if (item.parentElement === sourceZone) {
+                destZone.appendChild(item);
+                carregados++;
+            } else {
+                sourceZone.appendChild(item);
+                carregados--;
+            }
+        };
+
+        sourceZone.appendChild(item);
+    } // <-- ESTA CHAVE FALTAVA!
 }
 
     function verificarInterativo() {
