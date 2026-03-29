@@ -460,6 +460,16 @@
     function gerarJogoInterativo() {
         sourceZone.innerHTML = '';
         destZone.innerHTML = '';
+        const sourceZone = document.getElementById('item-source');
+        const destZone = document.getElementById('item-dest');
+        
+        sourceZone.ondragover = allowDrop;
+        destZone.ondragover = allowDrop;
+        
+        sourceZone.ondrop = dropItem;
+        destZone.ondrop = dropItem;
+
+
         
         let emojiItem = "";
         
@@ -480,26 +490,35 @@
 
         // Gera sempre 10 itens para a criança poder escolher
         for (let i = 0; i < 10; i++) {
-            let item = document.createElement('div');
-            item.className = 'click-item';
-            
-            if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
-            else item.innerHTML = emojiItem;
-            
-            item.onclick = function() {
-                if (isVerificando) return;
-                tocarSom('pop');
-                if (item.parentElement === sourceZone) {
-                    destZone.appendChild(item);
-                    carregados++;
-                } else {
-                    sourceZone.appendChild(item);
-                    carregados--;
-                }
-            };
+    let item = document.createElement('div');
+    item.className = 'click-item';
+
+    // PASSO 4 — ID único para drag & drop
+    item.id = "item-" + i + "-" + Date.now();
+
+    // Ativar arrastar
+    item.draggable = true;
+    item.ondragstart = dragStart;
+
+    // Lógica do emoji
+    if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
+    else item.innerHTML = emojiItem;
+
+    // Lógica do clique (mantém-se)
+    item.onclick = function() {
+        if (isVerificando) return;
+        tocarSom('pop');
+        if (item.parentElement === sourceZone) {
+            destZone.appendChild(item);
+            carregados++;
+        } else {
             sourceZone.appendChild(item);
+            carregados--;
         }
-    }
+    };
+
+    sourceZone.appendChild(item);
+}
 
     function verificarInterativo() {
         if (isVerificando) return;
@@ -566,6 +585,34 @@
         });
     }
 
+        function allowDrop(ev) {
+        ev.preventDefault();
+    }
+    
+    function dragStart(ev) {
+        ev.dataTransfer.setData("text/plain", ev.target.id);
+    }
+    
+    function dropItem(ev) {
+        ev.preventDefault();
+    
+        const id = ev.dataTransfer.getData("text/plain");
+        const item = document.getElementById(id);
+        if (!item) return;
+    
+        // Só permite drop em zonas válidas
+        if (ev.currentTarget.classList.contains('zone-box')) {
+            ev.currentTarget.appendChild(item);
+    
+            // Atualiza contagem tal como no clique
+            if (ev.currentTarget === destZone) carregados++;
+            else if (ev.currentTarget === sourceZone) carregados--;
+        }
+    }
+
+
+
+    
     /* =========================================
        RESULTADOS E TRANSIÇÕES
        ========================================= */
