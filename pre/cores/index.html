@@ -1,1 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🟢 INSERIR AQUI O TÍTULO DA PÁGINA 🟢 -->
+    <title>Pré-Escolar - Nome do Jogo</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =====================================================================
+           🚫 NÃO MEXER: CSS DO TEMPLATE BASE E ESTRUTURA GERAL 🚫
+           ===================================================================== */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
 
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; width: 100%; box-sizing: border-box;}
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        /* ECRÃS BASE (Garante centragem e esconde o que não está ativo) */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+        
+        /* BOTÕES GLOBAIS INTOCÁVEIS */
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        /* TÍTULOS E TEXTOS BASE */
+        .titulo-destaque { font-size: 2.2rem; color: var(--azul-escuro); margin: 0 0 20px 0; font-weight: 700;}
+        .pergunta-destaque { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+        /* O CAMINHO MÁGICO (BARRA DE PROGRESSO DO PRÉ-ESCOLAR) */
+        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-pre); z-index: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+
+        /* ANIMAÇÕES GLOBAIS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; }
+        
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; border-radius: 20px;}
+        }
+
+        /* =====================================================================
+           🟢 INSERIR AQUI CSS ESPECÍFICO DO ECRÃ INICIAL (MENU) 🟢
+           ===================================================================== */
+        
+        /* ===============================
+		   MENU INICIAL – ESTILO
+		=============================== */
+
+		.menu-screen {
+			padding: 30px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.titulo-menu {
+			color: #0d47a1;
+			font-size: 2.3rem;
+			margin-bottom: 20px;
+		}
+
+		/* Trilho 🐝 → 🌻 */
+		.trilho-cores {
+			width: 100%;
+			max-width: 600px;
+			height: 50px;
+			border-bottom: 4px dashed #ff922b;
+			position: relative;
+			margin-bottom: 30px;
+		}
+
+		#abelha-trilho {
+			position: absolute;
+			left: 0%;
+			bottom: -10px;
+			font-size: 2rem;
+			transform: translateX(-50%);
+			transition: left 1s ease;
+		}
+
+		#flor-trilho {
+			position: absolute;
+			right: -10px;
+			bottom: -10px;
+			font-size: 2.3rem;
+		}
+
+		/* Cartões */
+		.card-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 20px;
+			width: 100%;
+			max-width: 900px;
+		}
+
+		.menu-card {
+			background: white;
+			border: 4px solid #ff922b;
+			border-radius: 20px;
+			padding: 20px;
+			cursor: pointer;
+			text-align: center;
+			font-weight: 700;
+			transition: 0.25s;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+		}
+
+		.menu-card:hover {
+			transform: translateY(-6px);
+			background: #fff3e0;
+			box-shadow: 0 10px 18px rgba(255,146,43,0.35);
+		}
+
+		.icon {
+			font-size: 3rem;
+			margin-bottom: 8px;
+		}
+
+        /* =====================================================================
+           🟢 INSERIR AQUI CSS DOS JOGOS E ELEMENTOS INTERATIVOS 🟢
+           ===================================================================== */
+        
+        /* Coloca aqui as classes das tuas imagens, botões de jogo, áreas de drag/drop, etc */
+
+    </style>
+</head>
+<body>
+
+<!-- 🚫 NÃO MEXER: OVERLAY E SIDEBAR 🚫 -->
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<!-- 🚫 NÃO MEXER: HEADER BASE 🚫 (Podes apenas alterar o título e o emoji) -->
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <!-- 🟢 ALTERAR AQUI O TÍTULO E SUBTÍTULO DO JOGO 🟢 -->
+        <h1 id="header-titulo">Nome do Jogo 🎯</h1>
+        <div class="subtitulo" id="header-subtitulo">Instrução principal aparece aqui!</div>
+    </div>
+</header>
+
+<main>
+    <!-- 🚫 NÃO MEXER: BARRA DE PROGRESSO DO PRÉ-ESCOLAR (CAMINHO MÁGICO) 🚫 -->
+    <!-- (Podes mudar os emojis do avatar e alvo via Javascript) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐒</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🍌</div> 
+    </div>
+
+    <!-- 🚫 NÃO MEXER: CARTÃO PRINCIPAL 🚫 -->
+    <div class="cartao-jogo-container">
+        
+        <!-- =====================================================================
+             🟢 INSERIR AQUI HTML DO ECRÃ INICIAL (MENU / SELEÇÃO DE JOGOS) 🟢
+             ===================================================================== -->
+        
+
+	<div id="menu-inicial" class="menu-screen">
+
+	  <h1 class="titulo-menu">Jogos das Cores 🎨</h1>
+
+	  <!-- Trilho -->
+	  <div class="trilho-cores">
+		  <div id="abelha-trilho">🐝</div>
+		  <div id="flor-trilho">🌻</div>
+	  </div>
+
+	  <!-- Cartões dos jogos -->
+	  <div class="card-grid">
+		  <div class="menu-card" onclick="abrirJogo('monstro')">
+			  <div class="icon">👾</div>
+			  Monstro das Cores
+		  </div>
+
+		  <div class="menu-card" onclick="abrirJogo('arvore')">
+			  <div class="icon">🌳</div>
+			  Árvore Mágica das Cores
+		  </div>
+
+		  <div class="menu-card" onclick="abrirJogo('comboio')">
+			  <div class="icon">🚂</div>
+			  Comboio das Cores
+		  </div>
+
+		  <div class="menu-card" onclick="abrirJogo('misturador')">
+			  <div class="icon">🧪</div>
+			  Misturador de Cores
+		  </div>
+
+		  <div class="menu-card" onclick="abrirJogo('armario')">
+			  <div class="icon">🧦</div>
+			  Armário das Cores
+		  </div>
+
+		  <div class="menu-card" onclick="abrirJogo('flor')">
+			  <div class="icon">🌼</div>
+			  Flor Mágica
+		  </div>
+	  </div>
+
+	</div>
+
+        <!-- =====================================================================
+             🟢 INSERIR AQUI HTML DA ÁREA DE JOGO 🟢
+             ===================================================================== -->
+        <div id="ecra-jogo" class="ecra" style="justify-content: flex-start;">
+            
+            <div class="pergunta-destaque" id="instrucao-ronda">O que é que vamos fazer?</div>
+
+            <!-- INSERIR AQUI AS ÁREAS DOS JOGOS -->
+            <div id="area-jogo-1" style="display: none; width: 100%;">
+                <!-- Elementos do Jogo 1 vão aqui -->
+            </div>
+
+            <div id="area-jogo-2" style="display: none; width: 100%;">
+                <!-- Elementos do Jogo 2 vão aqui -->
+            </div>
+
+        </div>
+
+        <!-- =====================================================================
+             🚫 NÃO MEXER: HTML DO ECRÃ DE FIM (MOLDE INTOCÁVEL) 🚫
+             (Mas podes alterar os textos via Javascript se quiseres)
+             ===================================================================== -->
+        <div id="ecra-fim" class="ecra" style="position: absolute; top:0; left:0; height:100%; background:rgba(255,255,255,0.95); z-index:20; border-radius:30px;">
+            <div style="font-size: 5rem; margin-bottom: 5px;">🏆</div>
+            <h2 class="titulo-destaque">Parabéns!</h2>
+            <p style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 25px;" id="msg-fim">Completaste o jogo com sucesso!</p>
+            <button class="btn-acao" onclick="voltarMenuPrincipal()">Jogar Outro 🔄</button>
+        </div>
+
+    </div>
+</main>
+
+<!-- 🚫 NÃO MEXER: TELA DE CONFETIS E FOOTER 🚫 -->
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    /* =====================================================================
+       🚫 NÃO MEXER: JAVASCRIPT DO TEMPLATE BASE 🚫
+       (Navegação, Confetis, Lógica de Ecrãs, Efeitos Sonoros)
+       ===================================================================== */
+    
+    // Atualiza o Ano do Footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    // Menu Hamburger
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    // Função universal para alternar ecrãs sem quebrar o layout
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    // Retorna ao menu inicial e reseta visuais
+    function voltarMenuPrincipal() {
+        document.getElementById('caminho-magico').style.display = 'none';
+        document.querySelectorAll('[id^="area-jogo-"]').forEach(el => el.style.display = 'none');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    // Função para atualizar o bonequinho na barra de progresso (Manda a percentagem de 0 a 100)
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        if(avatar) avatar.style.left = `${percentagem}%`;
+    }
+
+    // Audio Context API (Garante sons sem ficheiros MP3 externos)
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    // Confetis em Fullscreen Responsivo
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    /* =====================================================================
+       🟢 INSERIR AQUI DADOS DOS JOGOS (ARRAYS, OBJETOS EXTERNOS) 🟢
+       ===================================================================== */
+    // Exemplo: let palavras =[]; ou importar do dados.js no topo
+    
+
+    /* =====================================================================
+       🟢 INSERIR AQUI JAVASCRIPT GERAL E DOS JOGOS 🟢
+       ===================================================================== */
+    /* ===============================
+   FUNÇÃO DE NAVEGAÇÃO
+	=============================== */
+
+	function abrirJogo(id) {
+	// Esconde o menu
+	document.getElementById("menu-inicial").style.display = "none";
+
+	// Mostra o ecrã correspondente
+	document.getElementById("jogo-" + id).style.display = "flex";
+
+	// Reinicia trilho (se for preciso)
+	if (document.getElementById("abelha-trilho")) {
+		document.getElementById("abelha-trilho").style.left = "0%";
+		}
+	}	
+	
+    // Variáveis de Estado do teu jogo
+    let jogoAtual = 0;
+    let rondaAtual = 0;
+    let totalRondas = 5; // Define o teu limite
+
+    // Inicia no Ecrã Principal
+    window.onload = function() {
+        mostrarEcra('ecra-selecao');
+    };
+
+    // Função disparada pelos botões do menu
+    function iniciarJogo(idJogo) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        
+        jogoAtual = idJogo;
+        rondaAtual = 0;
+        
+        // Ativa a barra de progresso (O Caminho Mágico)
+        document.getElementById('caminho-magico').style.display = 'block';
+        atualizarProgressoCaminho(0);
+
+        // Oculta todas as áreas de jogo, mostra apenas a que precisas
+        document.querySelectorAll('[id^="area-jogo-"]').forEach(el => el.style.display = 'none');
+        const areaSelecionada = document.getElementById(`area-jogo-${idJogo}`);
+        if(areaSelecionada) areaSelecionada.style.display = 'block';
+
+        mostrarEcra('ecra-jogo');
+        
+        // Chama a função que vai preparar a primeira ronda
+        prepararRonda();
+    }
+
+    // Prepara a interface da ronda
+    function prepararRonda() {
+        // ... (Insere a lógica de buscar perguntas, baralhar e colocar no ecrã) ...
+        document.getElementById('instrucao-ronda').textContent = `Ronda ${rondaAtual + 1} de ${totalRondas}`;
+    }
+
+    // Função chamada quando a criança acerta
+    function acertou() {
+        tocarSom('acerto');
+        rondaAtual++;
+        
+        // Calcula a percentagem e move o avatar
+        let percentagem = (rondaAtual / totalRondas) * 100;
+        atualizarProgressoCaminho(percentagem);
+
+        setTimeout(() => {
+            if (rondaAtual >= totalRondas) {
+                // FIM DO JOGO
+                tocarSom('vitoria');
+                dispararConfetis();
+                mostrarEcra('ecra-fim');
+            } else {
+                // PRÓXIMA RONDA
+                prepararRonda();
+            }
+        }, 1000);
+    }
+
+    // Função chamada quando a criança erra
+    function errou(elementoAnimar) {
+        tocarSom('erro');
+        elementoAnimar.classList.add('error-shake');
+        setTimeout(() => {
+            elementoAnimar.classList.remove('error-shake');
+        }, 500);
+    }
+
+</script>
+</body>
+</html>
