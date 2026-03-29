@@ -163,12 +163,10 @@
 
         .item-busca-wrapper {
             position: relative;
-            /* Permite rodar aleatoriamente no JS */
             transition: transform 0.2s;
         }
         
         .item-busca-wrapper:hover {
-            /* Quando passa o rato, a imagem endireita-se e cresce ligeiramente */
             transform: scale(1.1) rotate(0deg) !important;
             z-index: 10;
         }
@@ -232,12 +230,12 @@
 <nav class="sidebar" id="sidebar">
     <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
-        <li><a href="../../">🏠 Início</a></li>
-        <li><a href="../">🎨 Pré-Escolar</a></li>
-        <li><a href="../../1/">🎒 1º Ano</a></li>
-        <li><a href="../../2/">💡 2º Ano</a></li>
-        <li><a href="../../3/">🔍 3º Ano</a></li>
-        <li><a href="../../4/">🚀 4º Ano</a></li>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
@@ -247,7 +245,7 @@
             <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </button>
-            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+            <a href="../../" class="btn-voltar">⬅️ Voltar</a>
         </div>
         
         <h1>O Detetive 🕵️‍♂️</h1>
@@ -297,8 +295,9 @@
 </main>
 
 <footer>
-    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
+
 
 <script src="dados.js"></script>
 
@@ -325,11 +324,13 @@
         if(avatar) avatar.style.left = `${percentagem}%`;
     }
 
-    // Rotas seguras das imagens
+    // NOVA FUNÇÃO TOTALMENTE SEGURA PARA A ROTA DAS IMAGENS
     function getImagePath(nomeImg) {
         if (!nomeImg) return '';
-        if(nomeImg.startsWith('img/')) return `../${nomeImg}`;
-        return `../img/${nomeImg.replace('img/', '')}`;
+        // Limpa qualquer pasta do caminho (ex: "img/pato.png" vira "pato.png")
+        const nomeFicheiro = nomeImg.replace('img/', '');
+        // Força o caminho direto de 'procurar' para a pasta de imagens 'img'
+        return `../img/${nomeFicheiro}`;
     }
 
     /* =====================================================================
@@ -338,7 +339,7 @@
     
     const TOTAL_RONDAS = 15;
     let rondaAtual = 0;
-    let alvosDestaRonda =[]; // Array de strings (nome dos ficheiros de imagem)
+    let alvosDestaRonda =[]; 
     let alvosEncontrados = 0;
     let isVerificando = false;
 
@@ -347,7 +348,7 @@
     const buscaContainer = document.getElementById('busca-container');
     const instrucaoTxt = document.getElementById('instrucao-ronda');
 
-    // O jogo arranca logo sem menu
+    // O jogo arranca logo sem menu (assim que garante que o dados.js carregou)
     window.onload = function() {
         iniciarJogo();
     };
@@ -374,42 +375,38 @@
         let qtdTotalCenario = 6;
 
         if (rondaAtual >= 10) {
-            // Fase 3 (Mais Dificil)
             qtdAlvos = 2;
             qtdTotalCenario = 16;
             instrucaoTxt.textContent = "Procura estas duas imagens:";
         } else if (rondaAtual >= 5) {
-            // Fase 2 (Média)
             qtdAlvos = 1;
             qtdTotalCenario = 12;
             instrucaoTxt.textContent = "Onde está esta imagem?";
         } else {
-            // Fase 1 (Fácil)
             qtdAlvos = 1;
             qtdTotalCenario = 6;
             instrucaoTxt.textContent = "Procura esta imagem:";
         }
 
-        // 1. Baralha todas as palavras disponíveis em dados.js
+        // 1. Usa as palavras do dados.js e baralha
         let bancoImagens = [...palavras].map(p => p.imagem).sort(() => Math.random() - 0.5);
 
         // 2. Seleciona os alvos
         for(let i=0; i<qtdAlvos; i++) {
             alvosDestaRonda.push(bancoImagens[i]);
             
-            // Desenha o alvo no topo
             let wrapper = document.createElement('div');
             wrapper.className = 'alvo-wrapper';
             wrapper.innerHTML = `
-                <img src="${getImagePath(bancoImagens[i])}" class="img-alvo" id="alvo-topo-${i}">
+                <img src="${getImagePath(bancoImagens[i])}" class="img-alvo" id="alvo-topo-${i}" alt="Alvo">
                 <div class="visto-alvo">✔️</div>
             `;
             alvosContainer.appendChild(wrapper);
         }
 
         // 3. Prepara a piscina de imagens para o cenário
-        let imagensCenario = [...alvosDestaRonda]; // Coloca logo os alvos lá dentro
-        let imagensRestantes = bancoImagens.slice(qtdAlvos); // As que sobraram
+        let imagensCenario =[...alvosDestaRonda]; 
+        let imagensRestantes = bancoImagens.slice(qtdAlvos); 
         
         // Preenche o resto com distratores
         while (imagensCenario.length < qtdTotalCenario) {
@@ -430,6 +427,7 @@
             let imgHTML = document.createElement('img');
             imgHTML.src = getImagePath(img);
             imgHTML.className = 'img-busca';
+            imgHTML.alt = "Busca";
             
             let visto = document.createElement('div');
             visto.className = 'visto-busca';
@@ -448,7 +446,6 @@
     function verificarClique(imagemClicada, wrapperDOM, imgDOM) {
         if (isVerificando || imgDOM.classList.contains('correto')) return;
 
-        // Verifica se a imagem clicada está na lista de alvos
         let alvoIndex = alvosDestaRonda.indexOf(imagemClicada);
 
         if (alvoIndex !== -1) {
@@ -456,13 +453,11 @@
             tocarSom('acerto');
             imgDOM.classList.add('correto');
             
-            // Marca o alvo correspondente no topo como encontrado
             let alvoTopo = document.getElementById(`alvo-topo-${alvoIndex}`);
             alvoTopo.classList.add('encontrado');
 
             alvosEncontrados++;
 
-            // Se já encontrou todos os alvos desta ronda
             if (alvosEncontrados === alvosDestaRonda.length) {
                 isVerificando = true;
                 rondaAtual++;
@@ -472,12 +467,10 @@
 
                 setTimeout(() => {
                     if (rondaAtual >= TOTAL_RONDAS) {
-                        // Fim do Jogo
                         tocarSom('vitoria');
                         dispararConfetis();
                         mostrarEcra('ecra-transicao');
                     } else {
-                        // Próxima Ronda
                         prepararRonda();
                     }
                 }, 1000);
