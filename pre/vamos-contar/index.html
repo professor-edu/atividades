@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Vamos Contar! 🎲</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (MOLDE INTOCÁVEL PRE)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           ÁREA PRINCIPAL MAXIMIZADA E SEM SCROLL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           O CAMINHO MÁGICO 🐒 -> 🍌
+           ========================================= */
+        .caminho-magico {
+            width: 100%; max-width: 700px; height: 50px; position: relative;
+            display: none; margin-bottom: 5px; flex-shrink: 0;
+        }
+        .caminho-trilho {
+            position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0;
+            border-bottom: 4px dashed var(--cor-pre); z-index: 1;
+        }
+        .caminho-avatar {
+            position: absolute; left: 0%; bottom: -5px; 
+            transform: translateX(-50%) scaleX(-1); 
+            font-size: 2.5rem; 
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+        .caminho-alvo {
+            position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem;
+            z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+
+        /* =========================================
+           BOTÃO DE MENU E NÍVEIS
+           ========================================= */
+        .container-nav-jogo {
+            width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;
+            padding-bottom: 15px; margin-bottom: 10px; border-bottom: 2px dashed #e1f5f2;
+        }
+        .top-row { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        
+        .btn-voltar-menu {
+            background-color: #f0f4f8; color: #334e68; border: none; padding: 8px 15px;
+            border-radius: 20px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+
+        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .btn-nivel-topo { background: #f8fafc; border: 2px solid #ced6e0; padding: 8px 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: var(--text-main); box-shadow: 0 3px 0 #ced6e0; transition: all 0.2s ease;}
+        .btn-nivel-topo:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #ced6e0; background-color: #e3f2fd; }
+        .btn-nivel-topo:active { transform: translateY(2px); box-shadow: 0 0px 0 transparent; }
+        .btn-nivel-topo.ativo { border-color: var(--cor-pre); background-color: #e6fffa; color: var(--azul-escuro); box-shadow: 0 3px 0 var(--cor-pre-dark); transform: translateY(0); }
+
+        /* =========================================
+           MENUS E ECRÃS BASE
+           ========================================= */
+        .ecra { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center;    
+            justify-content: center; 
+            width: 100%; 
+            min-height: 350px;      
+            text-align: center;      
+            flex: 1;                
+        }
+
+        .titulo-destaque { font-size: 2.2rem; color: var(--azul-escuro); margin: 0 0 30px 0; font-weight: 700;}
+        .pergunta-destaque { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 10px; font-weight: 900; }
+        .dica-pontos { font-size: 1.5rem; color: #ff6b6b; letter-spacing: 2px; margin-bottom: 15px; min-height: 30px;}
+
+        /* Menu Inicial */
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 550px; margin: 0 auto; }
+        .cat-card { background: #ffffff; border: 3px solid #e1f5f2; padding: 15px; border-radius: 20px; font-size: 1.1rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+        .cat-card:hover { transform: translateY(-5px); border-color: var(--cor-pre); box-shadow: 0 8px 15px rgba(79, 209, 197, 0.2); }
+        .cat-icon { font-size: 2.5rem; }
+
+        /* =========================================
+           ZONAS DE JOGO INTERATIVAS (Mecânica Click)
+           ========================================= */
+        .interactive-area { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 15px; align-items: center; flex: 1;}
+        
+        .zone-box { 
+            width: 100%; min-height: 90px; border-radius: 20px; border: 4px dashed #cbd5e1; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; padding: 10px; box-sizing: border-box;
+            transition: 0.3s;
+        }
+        
+        /* Personalização por Jogo */
+        .theme-monstro .dest-zone { background: #ffefef; border-color: #ff6b6b; border-style: solid;} /* Prato do monstro */
+        .theme-arvore .source-zone { background: #eafff0; border-color: #2ed573; border-style: solid;} /* Árvore */
+        .theme-arvore .dest-zone { background: #fff9c4; border-color: #f1c40f; border-style: solid;} /* Cesto */
+        .theme-comboio .dest-zone { background: #e3f2fd; border-color: #4dabf7; border-style: solid;} /* Comboio */
+
+        /* Os Itens que se clicam */
+        .click-item {
+            width: 50px; height: 50px; background: white; border: 3px solid #cbd5e1; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer;
+            box-shadow: 0 4px 0 #cbd5e1; transition: 0.1s; user-select: none; -webkit-tap-highlight-color: transparent;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .click-item:active { transform: translateY(4px); box-shadow: 0 0px 0 transparent; }
+        .click-item:hover { border-color: var(--cor-pre); }
+
+        /* Jogo 4: Contagem Simples */
+        .simple-display {
+            width: 100%; min-height: 120px; background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 20px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; padding: 15px; box-sizing: border-box;
+            font-size: 3.5rem; line-height: 1; margin-bottom: 20px;
+        }
+        .options-container { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap;}
+        .btn-opcao { background: white; border: 4px solid #ced6e0; border-radius: 15px; width: 80px; height: 80px; font-size: 2.5rem; font-weight: 900; color: var(--azul-escuro); cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-opcao:hover { border-color: var(--cor-pre); color: var(--cor-pre-dark); transform: translateY(-4px); box-shadow: 0 10px 0 var(--cor-pre); }
+        .btn-opcao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        .btn-opcao.correct { background: #2ed573; color: white; border-color: #219d53; box-shadow: 0 6px 0 #219d53; pointer-events: none;}
+        .btn-opcao.wrong { background: #ff4757; color: white; border-color: #d0303f; box-shadow: 0 6px 0 #d0303f; opacity: 0.6; pointer-events: none;}
+
+        /* Botão Ação Comum */
+        .btn-acao { background-color: #2ed573; color: white; border: none; padding: 12px 35px; font-size: 1.2rem; font-weight: 800; border-radius: 25px; cursor: pointer; box-shadow: 0 6px 0 #219d53; transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        /* MODAIS E FINS DE JOGO */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; animation: fadeIn 0.3s ease; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; width: 100%; max-width: 400px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-top: 8px solid var(--cor-pre); }
+
+        @media (max-width: 600px) {
+            .caminho-trilho { left: 30px; right: 40px; }
+            .container-nav-jogo { padding-bottom: 10px; margin-bottom: 10px; }
+            .cat-grid { gap: 10px; }
+            .cat-card { padding: 10px; font-size: 1rem; }
+            .cat-icon { font-size: 2rem; }
+            .click-item { width: 40px; height: 40px; font-size: 1.6rem; border-width: 2px;}
+            .btn-opcao { width: 65px; height: 65px; font-size: 2rem; border-width: 3px; box-shadow: 0 4px 0 #ced6e0;}
+            .pergunta-destaque { font-size: 1.5rem; }
+            .dica-pontos { font-size: 1.2rem; }
+            .titulo-destaque { font-size: 1.8rem; margin-bottom: 20px;}
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important;}
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Vamos Contar! 🎲</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Brinca com os números e quantidades!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐒</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🍌</div> 
+    </div>
+
+    <!-- CARTÃO DO JOGO -->
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: MENU DE JOGOS -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-destaque">O que queres jogar?</h2>
+            <div class="cat-grid">
+                <div class="cat-card" onclick="selecionarJogo(1)">
+                    <span class="cat-icon">👾</span>
+                    <span>Monstro Guloso</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(2)">
+                    <span class="cat-icon">🌳</span>
+                    <span>Árvore de Maçãs</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(3)">
+                    <span class="cat-icon">🚂</span>
+                    <span>Comboio dos Animais</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(4)">
+                    <span class="cat-icon">🔢</span>
+                    <span>Contagem Simples</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGABILIDADE -->
+        <div id="ecra-jogo" class="ecra" style="justify-content: flex-start;">
+            
+            <div class="container-nav-jogo">
+                <div class="top-row">
+                    <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span> Jogos</button>
+                    <div class="info-nivel" id="info-contagem">0/5</div>
+                </div>
+                
+                <div class="level-selector">
+                    <button class="btn-nivel-topo ativo" id="btn-niv-1" onclick="mudarNivel(1)">Nível 1 (até 5)</button>
+                    <button class="btn-nivel-topo" id="btn-niv-2" onclick="mudarNivel(2)">Nível 2 (6 a 10)</button>
+                    <button class="btn-nivel-topo" id="btn-niv-3" onclick="mudarNivel(3)">Nível 3 (0 a 10)</button>
+                </div>
+            </div>
+            
+            <div id="pergunta-container">
+                <h2 id="instrucao-jogo" class="pergunta-destaque">Quero 3 🍪!</h2>
+                <div id="dica-pontos" class="dica-pontos">🔴🔴🔴</div>
+            </div>
+
+            <!-- Área Interativa (Jogos 1, 2, 3) -->
+            <div id="interactive-area" class="interactive-area" style="display: none;">
+                <div id="item-dest" class="zone-box dest-zone"></div>
+                <div id="item-source" class="zone-box source-zone"></div>
+                <button id="btn-verificar" class="btn-acao" onclick="verificarInterativo()">PRONTO! ✔️</button>
+            </div>
+
+            <!-- Área Simples (Jogo 4) -->
+            <div id="simple-area" class="interactive-area" style="display: none;">
+                <div id="simple-display" class="simple-display"></div>
+                <div id="simple-options" class="options-container"></div>
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 5px;">🏆</div>
+            <h2 class="titulo-destaque">Parabéns!</h2>
+            <p class="texto-intro" style="margin-bottom: 30px;">És um campeão a contar!</p>
+            <button class="btn-acao" onclick="voltarMenu()" style="width: 100%; max-width: 300px;">Jogar Outro 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<!-- Modal de Feedback Positivo -->
+<div class="modal-overlay" id="modal-transicao">
+    <div class="modal-box">
+        <div style="font-size: 4.5rem; margin:0; line-height:1; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));">⭐</div>
+        <h2 style="color:var(--azul-escuro); margin: 15px 0;">Muito Bem!</h2>
+        <button class="btn-acao" onclick="continuarRonda()">Continuar ➔</button>
+    </div>
+</div>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    /* =========================================
+       MOTOR DE ESTADOS DO JOGO
+       ========================================= */
+    let jogoAtivo = 0; // 1=Monstro, 2=Arvore, 3=Comboio, 4=Simples
+    let nivelAtual = 1;
+    let rondaAtual = 0;
+    const RONDAS_MAX = 5; 
+    
+    let alvoNumero = 0;
+    let carregados = 0;
+    let isVerificando = false;
+
+    // Elementos DOM
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const avatar = document.getElementById('avatar-progresso');
+    const subtitulo = document.getElementById('jogo-subtitulo');
+    const labelContagem = document.getElementById('info-contagem');
+    const instrucao = document.getElementById('instrucao-jogo');
+    const dicaPontos = document.getElementById('dica-pontos');
+    const intArea = document.getElementById('interactive-area');
+    const simpleArea = document.getElementById('simple-area');
+    const sourceZone = document.getElementById('item-source');
+    const destZone = document.getElementById('item-dest');
+
+    window.onload = function() {
+        mostrarEcra('ecra-selecao');
+    };
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarMenu() {
+        caminhoMagico.style.display = 'none';
+        subtitulo.textContent = "Brinca com os números e quantidades!";
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function selecionarJogo(idJogo) {
+        jogoAtivo = idJogo;
+        
+        let nomes =["O Monstro Guloso", "A Árvore das Maçãs", "Comboio dos Animais", "Contagem Simples"];
+        subtitulo.textContent = `A Jogar: ${nomes[idJogo-1]}`;
+        
+        // Remove classes de tema antigas
+        intArea.classList.remove('theme-monstro', 'theme-arvore', 'theme-comboio');
+        
+        if (idJogo === 1) intArea.classList.add('theme-monstro');
+        if (idJogo === 2) intArea.classList.add('theme-arvore');
+        if (idJogo === 3) intArea.classList.add('theme-comboio');
+
+        caminhoMagico.style.display = 'block';
+        mudarNivel(1);
+    }
+
+    function mudarNivel(n) {
+        nivelAtual = n;
+        rondaAtual = 0;
+        
+        document.querySelectorAll('.btn-nivel-topo').forEach(b => b.classList.remove('ativo'));
+        document.getElementById(`btn-niv-${n}`).classList.add('ativo');
+
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarCaminho() {
+        let percent = (rondaAtual / RONDAS_MAX) * 100;
+        avatar.style.left = `${percent}%`;
+        labelContagem.textContent = `${rondaAtual}/${RONDAS_MAX}`;
+    }
+
+    function gerarAlvo() {
+        if(nivelAtual === 1) return Math.floor(Math.random() * 5) + 1; // 1-5
+        if(nivelAtual === 2) return Math.floor(Math.random() * 5) + 6; // 6-10
+        if(nivelAtual === 3) return Math.floor(Math.random() * 11);    // 0-10
+    }
+
+    function getPontos(n) {
+        if(n === 0) return "";
+        return "🔴".repeat(n);
+    }
+
+    function prepararRonda() {
+        isVerificando = false;
+        carregados = 0;
+        alvoNumero = gerarAlvo();
+        atualizarCaminho();
+
+        if (jogoAtivo === 4) {
+            intArea.style.display = 'none';
+            simpleArea.style.display = 'flex';
+            gerarJogoSimples();
+        } else {
+            simpleArea.style.display = 'none';
+            intArea.style.display = 'flex';
+            gerarJogoInterativo();
+        }
+    }
+
+    /* =========================================
+       JOGOS 1, 2 e 3: INTERATIVOS (Mover itens)
+       ========================================= */
+    function gerarJogoInterativo() {
+        sourceZone.innerHTML = '';
+        destZone.innerHTML = '';
+        
+        let emojiItem = "";
+        
+        if (jogoAtivo === 1) {
+            instrucao.innerHTML = alvoNumero === 0 ? `👾 O monstro está cheio! (0)` : `👾 Quero ${alvoNumero} 🍪!`;
+            emojiItem = "🍪";
+        } else if (jogoAtivo === 2) {
+            instrucao.innerHTML = alvoNumero === 0 ? `🌳 Cesto vazio! (0)` : `🌳 Colhe ${alvoNumero} 🍎!`;
+            emojiItem = "🍎";
+        } else if (jogoAtivo === 3) {
+            instrucao.innerHTML = alvoNumero === 0 ? `🚂 Comboio sem viagem! (0)` : `🚂 Faltam ${alvoNumero} animais!`;
+            const animais =["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐨","🐯","🦁"];
+            emojiItem = "random_animal";
+            window.animaisRonda = [...animais].sort(() => Math.random() - 0.5);
+        }
+
+        dicaPontos.innerHTML = getPontos(alvoNumero);
+
+        // Gera sempre 10 itens para a criança poder escolher
+        for (let i = 0; i < 10; i++) {
+            let item = document.createElement('div');
+            item.className = 'click-item';
+            
+            if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
+            else item.innerHTML = emojiItem;
+            
+            item.onclick = function() {
+                if (isVerificando) return;
+                tocarSom('pop');
+                if (item.parentElement === sourceZone) {
+                    destZone.appendChild(item);
+                    carregados++;
+                } else {
+                    sourceZone.appendChild(item);
+                    carregados--;
+                }
+            };
+            sourceZone.appendChild(item);
+        }
+    }
+
+    function verificarInterativo() {
+        if (isVerificando) return;
+        isVerificando = true;
+
+        if (carregados === alvoNumero) {
+            acertou();
+        } else {
+            errou(destZone);
+        }
+    }
+
+    /* =========================================
+       JOGO 4: SIMPLES (Contar e clicar botão)
+       ========================================= */
+    function gerarJogoSimples() {
+        const display = document.getElementById('simple-display');
+        const opts = document.getElementById('simple-options');
+        display.innerHTML = '';
+        opts.innerHTML = '';
+
+        instrucao.innerHTML = `Quantos vês aqui?`;
+        dicaPontos.innerHTML = ""; // No jogo simples não há dica de pontos, eles têm de contar!
+
+        const emojis =["🚗","🎈","🌻","🐟","⚽","🧸"];
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        if (alvoNumero === 0) {
+            display.innerHTML = `<span style="opacity:0.3; font-size:1.5rem;">(Nenhum objeto)</span>`;
+        } else {
+            for(let i=0; i < alvoNumero; i++) {
+                let el = document.createElement('span');
+                el.innerHTML = emoji;
+                el.style.animation = `popIn 0.3s ease ${(i*0.05)}s both`;
+                display.appendChild(el);
+            }
+        }
+
+        // Gerar 3 opções
+        let options = [alvoNumero];
+        while(options.length < 3) {
+            let max = nivelAtual === 1 ? 5 : 10;
+            let num = Math.floor(Math.random() * (max + 1));
+            if(!options.includes(num)) options.push(num);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        options.forEach(num => {
+            let btn = document.createElement('button');
+            btn.className = 'btn-opcao';
+            btn.innerText = num;
+            btn.onclick = () => {
+                if(isVerificando) return;
+                isVerificando = true;
+                if(num === alvoNumero) {
+                    btn.classList.add('correct');
+                    acertou();
+                } else {
+                    btn.classList.add('wrong');
+                    errou(btn);
+                }
+            };
+            opts.appendChild(btn);
+        });
+    }
+
+    /* =========================================
+       RESULTADOS E TRANSIÇÕES
+       ========================================= */
+    function acertou() {
+        tocarSom('acerto');
+        rondaAtual++;
+        atualizarCaminho();
+
+        setTimeout(() => {
+            if (rondaAtual >= RONDAS_MAX) {
+                tocarSom('vitoria');
+                dispararConfetis();
+                mostrarEcra('ecra-fim');
+            } else {
+                tocarSom('vitoria_curta');
+                document.getElementById('modal-transicao').classList.add('active');
+            }
+        }, 800);
+    }
+
+    function errou(elementoAnimar) {
+        tocarSom('erro');
+        elementoAnimar.classList.add('error-shake');
+        setTimeout(() => {
+            elementoAnimar.classList.remove('error-shake');
+            isVerificando = false;
+        }, 500);
+    }
+
+    function continuarRonda() {
+        document.getElementById('modal-transicao').classList.remove('active');
+        prepararRonda();
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria_curta') {
+            const notas =[523.25, 659.25, 783.99]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.08, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.4);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.4);
+            });
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+</script>
+</body>
+</html>
