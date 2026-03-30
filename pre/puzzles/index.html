@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - O Puzzle Mágico 🧩</title>
+    <title>Pré-Escolar - Puzzle Mágico 🧩</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -30,7 +30,8 @@
             --cor-jogo-dark: #e17000;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; touch-action: none; }
+        /* CORREÇÃO: min-height permite crescer, pan-y permite scroll vertical no telemóvel */
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
         
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         
@@ -74,7 +75,7 @@
         /* =========================================
            ÁREA PRINCIPAL
            ========================================= */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 15px 20px; gap: 10px; overflow: hidden; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 15px 20px; gap: 10px; } /* Removido overflow: hidden para permitir scroll natural */
         
         .cartao-jogo-container { 
             background: white; width: 100%; max-width: 900px; flex: 1; 
@@ -171,14 +172,16 @@
         .pool-container {
             display: flex; justify-content: center; align-items: center; gap: clamp(8px, 2vw, 15px);
             width: 100%; max-width: 600px; margin: 0 auto; padding: 15px 0; border-top: 3px dashed #e2e8f0;
-            flex-shrink: 0; min-height: 15vh;
+            flex-shrink: 0; min-height: 15vh; flex-wrap: wrap; /* Permitir que quebrem a linha em telemóveis finos */
         }
 
         .puzzle-piece {
             height: clamp(70px, 16vh, 130px); aspect-ratio: 1 / var(--slices);
             background-size: calc(var(--slices) * 100%) 100%; background-repeat: no-repeat;
             border: 3px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            cursor: grab; touch-action: none; transition: transform 0.1s;
+            cursor: grab; 
+            touch-action: none; /* AQUI ESTÁ A MAGIA: Bloqueia scroll apenas ao tocar na peça */
+            transition: transform 0.1s;
         }
 
         .puzzle-piece:active { cursor: grabbing; transform: scale(1.05); }
@@ -217,7 +220,7 @@
             </button>
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        <h1>O Puzzle Mágico 🧩</h1>
+        <h1>Puzzle Mágico 🧩</h1>
         <div class="subtitulo" id="jogo-subtitulo">Junta as peças!</div>
     </div>
 </header>
@@ -236,7 +239,7 @@
         
         <!-- ECRÃ 1: MENU PRINCIPAL -->
         <div id="ecra-selecao" class="ecra">
-            <h2 class="titulo-destaque">O que vamos juntar?</h2>
+            <h2 class="titulo-destaque">O que vamos juntar hoje?</h2>
             <div class="cat-grid">
                 <div class="cat-card" onclick="selecionarCategoria('Animais')">
                     <span class="cat-icon">🐶</span><span>Animais</span>
@@ -330,7 +333,6 @@
         document.getElementById(id).style.display = 'flex';
     }
 
-    // REGRA 3: Limpeza de Confetis
     function voltarMenu() {
         caminhoMagico.style.display = 'none';
         subtitulo.textContent = "Junta as peças!";
@@ -367,8 +369,6 @@
         poolContainer.innerHTML = '';
         
         const palavraSorteada = listaAtual[Math.floor(Math.random() * listaAtual.length)];
-        
-        // REGRA 4: Caminho correto da imagem usando o dados.js
         const imgSrc = `../${palavraSorteada.imagem}`; 
 
         let numPecas = 2; 
