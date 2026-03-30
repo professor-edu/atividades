@@ -101,7 +101,7 @@ const palavras = [
   { palavra: "mina", imagem: "img/mina.png", num: 2, divisao: "MI-NA" },
   { palavra: "moeda", imagem: "img/moeda.png", num: 3, divisao: "MO-E-DA" },
   { palavra: "mola", imagem: "img/mola.png", num: 2, divisao: "MO-LA" },
-  { palavra: "morango", imagem: "img/morango.png", num: 2, divisao: "MO-RAN-GO" },
+  { palavra: "morango", imagem: "img/morango.png", num: 3, divisao: "MO-RAN-GO" },
   { palavra: "mosca", imagem: "img/mosca.png", num: 2, divisao: "MOS-CA" },
   { palavra: "mota", imagem: "img/mota.png", num: 2, divisao: "MO-TA" },
   { palavra: "navio", imagem: "img/navio.png", num: 3, divisao: "NA-VI-O" },
