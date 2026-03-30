@@ -1,1 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Mestre das Sequências 🧩</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (ESTRUTURA BOM PRE.HTML)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            
+            /* Cor Específica deste Jogo (#cc5de8) */
+            --cor-jogo: #cc5de8;
+            --cor-jogo-dark: #a13eb8;
+        }
 
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* ÁREA PRINCIPAL MAXIMIZADA E SEM SCROLL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+
+        /* BARRA DE PROGRESSO E PONTUAÇÕES INTOCÁVEL (Escondida neste jogo) */
+        .status-bar { width: 100%; max-width: 700px; margin-bottom: 0; display: none; }
+        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
+        .score-certas { color: #219d53; }
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: white; border-radius: 15px; height: 22px; width: 100%; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px 5px; }
+        }
+
+        /* =========================================
+           O CAMINHO MÁGICO 🐛 -> 🦋
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-jogo); z-index: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+
+        /* =========================================
+           ECRÃS BASE E MENU INICIAL
+           ========================================= */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; min-height: 350px; text-align: center; flex: 1; position: relative; }
+        #ecra-selecao { justify-content: center; }
+
+        .titulo-destaque { font-size: clamp(2rem, 6vw, 2.8rem); color: var(--azul-escuro); margin: 0 0 10px 0; font-weight: 900;}
+        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 25px; line-height: 1.5; max-width: 600px;}
+        
+        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 800; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .cat-card { background: #ffffff; border: 3px solid #f3e8ff; padding: 20px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+        .cat-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--cor-jogo); box-shadow: 0 8px 15px rgba(204, 93, 232, 0.2); }
+        .cat-icon { font-size: 3rem; }
+
+        /* =========================================
+           BOTÃO OUTROS JOGOS E INFO
+           ========================================= */
+        .container-nav-jogo {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed #f3e8ff;
+        }
+        .btn-voltar-menu {
+            background-color: #f0f4f8; color: #334e68; border: none; padding: 10px 20px;
+            border-radius: 30px; font-size: 1rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        .btn-voltar-menu span { color: var(--cor-jogo); }
+
+        .info-nivel {
+            font-size: 1.2rem; font-weight: 800; color: var(--cor-jogo-dark);
+            background: #faf5ff; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-jogo);
+        }
+
+        /* =========================================
+           O MOTOR DAS SEQUÊNCIAS (DRAG & DROP DE 5 ITENS)
+           ========================================= */
+        
+        .instrucao-jogo { font-size: clamp(1.2rem, 3.5vw, 1.6rem); color: var(--azul-escuro); font-weight: bold; margin-bottom: 20px; }
+        
+        /* Referência de Padrões (Opcional) */
+        .referencia-container {
+            display: flex; gap: clamp(4px, 1.5vw, 12px); justify-content: center; margin-bottom: 20px;
+        }
+        .ref-item {
+            width: clamp(45px, 12vw, 75px); height: clamp(45px, 12vw, 75px); display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.5rem, 5vw, 2.5rem); background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 12px;
+        }
+
+        /* Onde se largam as peças (5 Slots) */
+        .dropzone-container {
+            display: flex; justify-content: center; gap: clamp(4px, 1.5vw, 12px); width: 100%; max-width: 800px;
+            margin-bottom: 40px; padding: 15px 5px; border-radius: 20px; background: rgba(204, 93, 232, 0.05);
+            flex-wrap: nowrap; /* Garante que os 5 cabem na mesma linha */
+        }
+        
+        .slot {
+            width: clamp(50px, 15vw, 90px); height: clamp(50px, 15vw, 90px);
+            background: #ffffff; border: 4px dashed #cbd5e1; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; position: relative; box-sizing: border-box;
+        }
+        .slot.drag-over { border-color: var(--cor-jogo); background-color: #faf5ff; transform: scale(1.1); }
+        
+        /* Onde estão as peças baralhadas */
+        .pool-container {
+            display: flex; justify-content: center; gap: clamp(8px, 2vw, 15px); width: 100%; max-width: 800px;
+            padding-top: 20px; border-top: 3px dashed #e2e8f0; flex-wrap: wrap; min-height: 100px;
+        }
+        .pool-container.drag-over { background: #f8fafc; border-radius: 20px; }
+
+        /* As Peças Arrastáveis */
+        .drag-item {
+            width: clamp(50px, 15vw, 90px); height: clamp(50px, 15vw, 90px);
+            background: white; border: 4px solid var(--cor-jogo); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; flex-wrap: wrap; align-content: center; gap: 2px;
+            font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 700; color: var(--azul-escuro);
+            cursor: grab; box-shadow: 0 5px 0 var(--cor-jogo-dark); transition: transform 0.1s, box-shadow 0.1s;
+            user-select: none; touch-action: none; box-sizing: border-box;
+        }
+        .drag-item:active { cursor: grabbing; transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .drag-item.dragging { opacity: 0.5; transform: scale(0.9); }
+
+        /* Variações Visuais Específicas do Jogo */
+        .escala-0 { transform: scale(0.4) !important; }
+        .escala-1 { transform: scale(0.6) !important; }
+        .escala-2 { transform: scale(0.8) !important; }
+        .escala-3 { transform: scale(1.0) !important; }
+        .escala-4 { transform: scale(1.2) !important; }
+        
+        /* Para o jogo de quantidades, a fonte encolhe se houver muitos emojis */
+        .quant-item { font-size: clamp(0.8rem, 2.5vw, 1.2rem) !important; }
+
+        /* Sucesso e Erro Slots */
+        .success-bounce { border: 4px solid #2ed573 !important; background: #eafff0 !important; animation: popIn 0.4s ease forwards; }
+        .error-shake { animation: shakeError 0.4s ease; border: 4px solid #ff4757 !important; background: #ffefef !important; }
+
+        @media (max-width: 600px) {
+            .caminho-trilho { left: 30px; right: 40px; }
+            .container-nav-jogo { padding-bottom: 10px; margin-bottom: 10px; }
+            .info-nivel { padding: 5px 15px; font-size: 1rem; }
+            .cat-grid { gap: 10px; max-width: 100%;}
+            .cat-card { padding: 15px; font-size: 1.1rem; }
+            .cat-icon { font-size: 2rem; }
+            .dropzone-container { gap: 4px; padding: 10px 2px; }
+            .drag-item { border-width: 3px; box-shadow: 0 4px 0 var(--cor-jogo-dark); }
+        }
+
+        /* MODAIS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 300; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; animation: fadeIn 0.3s ease; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px 20px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; align-items: center; gap: 15px;}
+        .modal-emoji { font-size: 5rem; line-height: 1; margin: 0; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); animation: popIn 0.5s ease;}
+        .modal-titulo { font-size: 2rem; color: var(--azul-escuro); margin: 0;}
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Mestre das Sequências 🧩</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Aprende a arrumar as coisas certas!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO (Lagarta para Borboleta) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐛</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🦋</div> 
+    </div>
+
+    <!-- CARTÃO DO JOGO -->
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: MENU PRINCIPAL -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-destaque" style="margin-bottom: 5px;">O que vamos arrumar?</h2>
+            <div class="cat-grid">
+                <div class="cat-card" onclick="selecionarJogo(1)">
+                    <span class="cat-icon">📏</span>
+                    <span>Tamanhos</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(2)">
+                    <span class="cat-icon">🎨</span>
+                    <span>Padrões</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(3)">
+                    <span class="cat-icon">🌱</span>
+                    <span>Histórias</span>
+                </div>
+                <div class="cat-card" onclick="selecionarJogo(4)">
+                    <span class="cat-icon">🔢</span>
+                    <span>Quantidades</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: ÁREA DE JOGABILIDADE (O MOTOR DE 5 ITENS) -->
+        <div id="ecra-jogo" class="ecra" style="justify-content: flex-start;">
+            
+            <div class="container-nav-jogo">
+                <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span> Outros Jogos</button>
+                <div class="info-nivel" id="info-nivel">Ronda 1</div>
+            </div>
+            
+            <div id="instrucao-texto" class="instrucao-jogo">Instrução...</div>
+            
+            <!-- Referência opcional para o jogo de Padrões -->
+            <div id="referencia-container" class="referencia-container" style="display: none;"></div>
+
+            <!-- Os 5 Espaços Vazios -->
+            <div id="dropzone-container" class="dropzone-container"></div>
+            
+            <!-- A Piscina de Peças Baralhadas -->
+            <div id="pool-container" class="pool-container"></div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 5px;">🦋</div>
+            <h2 class="titulo-destaque">Fantástico!</h2>
+            <p class="texto-intro">A lagarta transformou-se em borboleta!</p>
+            <button class="btn-acao" onclick="voltarMenu()" style="max-width: 300px;">Jogar Outro 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<script>
+    // Inicializa o arrastar para ecrãs táteis
+    try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
+
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    /* =========================================
+       DADOS DO JOGO
+       ========================================= */
+    const emojisGerais =['🍎','🍌','🍇','🍓','🐶','🐱','🚗','⭐','🎈','🌸','🐠','🐸'];
+    
+    // Histórias da Natureza e Rotinas (Mínimo 4 passos, máximo 5 passos)
+    const historiasData = [['🥚','🐛','🍃','🪹','🦋'], // Lagarta
+        ['🌱','🌿','🪴','🌺','🍎'], // Planta
+        ['👶','🧒','🧑','👨','👴'], // Idade['🌌','🌅','☀️','🌇','🌙']  // Dia
+    ];
+
+    let jogoAtivo = 0;
+    let rondaAtual = 1;
+    const TOTAL_RONDAS = 3; // 3 rondas por jogo para não cansar
+    let isVerificando = false;
+    let draggedElement = null;
+    let expectedSequence =[];
+
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const avatar = document.getElementById('avatar-progresso');
+    const subtitulo = document.getElementById('jogo-subtitulo');
+    const labelRonda = document.getElementById('info-nivel');
+    
+    const instrucaoTexto = document.getElementById('instrucao-texto');
+    const referenciaContainer = document.getElementById('referencia-container');
+    const dropzoneContainer = document.getElementById('dropzone-container');
+    const poolContainer = document.getElementById('pool-container');
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarMenu() {
+        caminhoMagico.style.display = 'none';
+        subtitulo.textContent = "Aprende a arrumar as coisas certas!";
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function selecionarJogo(idJogo) {
+        jogoAtivo = idJogo;
+        rondaAtual = 1;
+        isVerificando = false;
+
+        let nomes =["Tamanhos Mágicos", "O Colar de Padrões", "A Linha do Tempo", "As Quantidades"];
+        subtitulo.textContent = `A Jogar: ${nomes[idJogo-1]}`;
+        
+        caminhoMagico.style.display = 'block';
+        atualizarProgresso();
+
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarProgresso() {
+        let percent = ((rondaAtual - 1) / TOTAL_RONDAS) * 100;
+        avatar.style.left = `${percent}%`;
+    }
+
+    /* =========================================
+       MOTOR DE GERAÇÃO DOS JOGOS (5 ITENS)
+       ========================================= */
+    function prepararRonda() {
+        isVerificando = false;
+        labelRonda.textContent = `Ronda ${rondaAtual}`;
+        
+        dropzoneContainer.innerHTML = '';
+        poolContainer.innerHTML = '';
+        referenciaContainer.innerHTML = '';
+        referenciaContainer.style.display = 'none';
+        expectedSequence = [];
+
+        let numItens = 5; 
+        let cards =[];
+
+        // --- 1. JOGO DOS TAMANHOS ---
+        if (jogoAtivo === 1) {
+            instrucaoTexto.textContent = "Ordena do Mais Pequeno para o Maior!";
+            let emoji = emojisGerais[Math.floor(Math.random() * emojisGerais.length)];
+            
+            for(let i=0; i<5; i++) {
+                expectedSequence.push(String(i));
+                let card = document.createElement('div');
+                card.className = 'drag-item';
+                card.dataset.val = String(i);
+                card.innerHTML = `<span class="escala-${i}">${emoji}</span>`;
+                cards.push(card);
+            }
+        }
+        // --- 2. JOGO DOS PADRÕES ---
+        else if (jogoAtivo === 2) {
+            instrucaoTexto.textContent = "Copia o padrão de cima!";
+            referenciaContainer.style.display = 'flex';
+            
+            let ems =[...emojisGerais].sort(() => Math.random() - 0.5).slice(0,3);
+            let padrao =[];
+            // Alterna entre ABABA e ABCAB
+            if (Math.random() > 0.5) padrao = [ems[0], ems[1], ems[0], ems[1], ems[0]]; // ABABA
+            else padrao = [ems[0], ems[1], ems[2], ems[0], ems[1]]; // ABCAB
+
+            padrao.forEach((emj, i) => {
+                expectedSequence.push(`${emj}-${i}`); // ID único para cada posição do padrão
+                
+                // Desenha a referência
+                let ref = document.createElement('div');
+                ref.className = 'ref-item';
+                ref.textContent = emj;
+                referenciaContainer.appendChild(ref);
+
+                // Cria o cartão para o utilizador
+                let card = document.createElement('div');
+                card.className = 'drag-item';
+                card.dataset.val = `${emj}-${i}`;
+                card.textContent = emj;
+                cards.push(card);
+            });
+        }
+        // --- 3. JOGO DAS HISTÓRIAS (TEMPO) ---
+        else if (jogoAtivo === 3) {
+            instrucaoTexto.textContent = "Qual é a ordem certa da história?";
+            let historia = historiasData[Math.floor(Math.random() * historiasData.length)];
+            numItens = historia.length; // 4 ou 5
+
+            for(let i=0; i<numItens; i++) {
+                expectedSequence.push(historia[i]);
+                let card = document.createElement('div');
+                card.className = 'drag-item';
+                card.dataset.val = historia[i];
+                card.textContent = historia[i];
+                cards.push(card);
+            }
+        }
+        // --- 4. JOGO DAS QUANTIDADES ---
+        else if (jogoAtivo === 4) {
+            instrucaoTexto.textContent = "Ordena do que tem Menos para o que tem Mais!";
+            let emoji = emojisGerais[Math.floor(Math.random() * emojisGerais.length)];
+            
+            for(let i=1; i<=5; i++) {
+                expectedSequence.push(String(i));
+                let card = document.createElement('div');
+                card.className = 'drag-item quant-item';
+                card.dataset.val = String(i);
+                
+                // Preenche o cartão com a quantidade certa de emojis repetidos
+                let content = '';
+                for(let j=0; j<i; j++) content += `<span>${emoji}</span>`;
+                card.innerHTML = content;
+                
+                cards.push(card);
+            }
+        }
+
+        // Criar as Dropzones
+        for(let i=0; i<numItens; i++) {
+            let slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDropSlot);
+            dropzoneContainer.appendChild(slot);
+        }
+
+        // Baralhar os Cartões e adicionar à Piscina
+        cards.sort(() => Math.random() - 0.5);
+        cards.forEach(card => {
+            card.draggable = true;
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+            poolContainer.appendChild(card);
+        });
+
+        poolContainer.addEventListener('dragover', handleDragOverPool);
+        poolContainer.addEventListener('dragleave', handleDragLeavePool);
+        poolContainer.addEventListener('drop', handleDropPool);
+    }
+
+    /* =========================================
+       LÓGICA DE ARRASTAR E LARGAR
+       ========================================= */
+    function handleDragStart(e) {
+        if (isVerificando) { e.preventDefault(); return; }
+        draggedElement = e.target.closest('.drag-item');
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', draggedElement.dataset.val);
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault(); 
+        const slot = e.target.closest('.slot');
+        if (slot) slot.classList.add('drag-over');
+    }
+    
+    function handleDragLeave(e) {
+        const slot = e.target.closest('.slot');
+        if (slot) slot.classList.remove('drag-over');
+    }
+
+    function handleDropSlot(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.slot');
+        if (!slot || !draggedElement) return;
+        
+        slot.classList.remove('drag-over');
+
+        // Se a caixa já tiver uma peça, a antiga volta para a piscina de baixo!
+        if (slot.firstChild) {
+            poolContainer.appendChild(slot.firstChild);
+        }
+        
+        slot.appendChild(draggedElement);
+        verificarCompletude();
+    }
+
+    function handleDragOverPool(e) {
+        e.preventDefault();
+        poolContainer.classList.add('drag-over');
+    }
+
+    function handleDragLeavePool(e) {
+        poolContainer.classList.remove('drag-over');
+    }
+
+    function handleDropPool(e) {
+        e.preventDefault();
+        poolContainer.classList.remove('drag-over');
+        if (draggedElement && draggedElement.parentElement !== poolContainer) {
+            poolContainer.appendChild(draggedElement);
+        }
+    }
+
+    /* =========================================
+       VALIDAÇÃO DA SEQUÊNCIA E PROGRESSO
+       ========================================= */
+    function verificarCompletude() {
+        const slots = Array.from(dropzoneContainer.children);
+        
+        // Verifica se ainda há espaços vazios
+        if (slots.some(slot => !slot.firstChild)) return; 
+
+        if (isVerificando) return;
+        isVerificando = true;
+
+        let allCorrect = true;
+        let errosTemporarios =[];
+
+        slots.forEach((slot, i) => {
+            const valCarta = slot.firstChild.dataset.val;
+            
+            // Lógica Especial: Se for o jogo dos padrões (onde há emojis repetidos A, B, A, B),
+            // a validação ignora o sufixo único (ex: 🍎-0 e 🍎-2 são aceites se a base for igual).
+            let valComparar = valCarta;
+            let valAlvo = expectedSequence[i];
+            
+            if (jogoAtivo === 2) {
+                valComparar = valComparar.split('-')[0];
+                valAlvo = valAlvo.split('-')[0];
+            }
+
+            if (valComparar !== valAlvo) {
+                allCorrect = false;
+                errosTemporarios.push(slot);
+            } else {
+                slot.classList.add('success-bounce');
+            }
+        });
+
+        if (allCorrect) {
+            tocarSom('acerto');
+            rondaAtual++;
+            atualizarProgresso();
+            
+            setTimeout(() => {
+                if (rondaAtual > TOTAL_RONDAS) {
+                    tocarSom('vitoria');
+                    dispararConfetis();
+                    mostrarEcra('ecra-fim');
+                } else {
+                    prepararRonda();
+                }
+            }, 1200);
+
+        } else {
+            tocarSom('erro');
+            
+            // As que estão erradas tremem
+            errosTemporarios.forEach(slot => slot.classList.add('error-shake'));
+            
+            setTimeout(() => {
+                // Remove as classes e atira as erradas de volta para a piscina!
+                slots.forEach(slot => slot.classList.remove('success-bounce', 'error-shake'));
+                errosTemporarios.forEach(slot => poolContainer.appendChild(slot.firstChild));
+                isVerificando = false;
+            }, 800);
+        }
+    }
+
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.15);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = window.innerWidth; 
+        canvasConfetti.height = window.innerHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#cc5de8', '#a13eb8', '#4fd1c5', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Inicializa Ecrã Seleção
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
