@@ -2,8 +2,8 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pré-Escolar - O Puzzle Mágico 🧩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Puzzle Mágico 🧩</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -24,90 +24,138 @@
             --bg-header: #e1f5f2;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
-            --cor-jogo: #ff9f43;      /* Cor de Laranja (Puzzle) */
+            --cor-jogo: #ff9f43;      
             --cor-jogo-dark: #e17000;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        /* OVERFLOW HIDDEN PARA BLOQUEAR SCROLL COMPLETAMENTE */
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; touch-action: none; }
         
-        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        header { background-color: var(--bg-header); padding: 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        /* O HAMBURGER VOLTOU */
         .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
         .hamburger:hover { background: #fff9c4; }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
         .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
         .btn-voltar:hover { transform: scale(1.05); }
-        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
         
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 4vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 2.5vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 5px; }
+        
+        /* SIDEBAR E OVERLAY */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            /* Botão voltar centrado no mobile, acima do título */
+            .nav-container { position: static; transform: none; display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 5px; }
+            .nav-container .hamburger { position: absolute; left: 10px; }
+            .nav-container .btn-voltar { margin: 0 auto; }
+            h1 { text-align: center; }
+        }
+
         /* =========================================
-           ÁREA PRINCIPAL
+           ÁREA PRINCIPAL (FLEX E SEM SCROLL)
            ========================================= */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow: hidden; }
         
         .cartao-jogo-container { 
             background: white; width: 100%; max-width: 900px; flex: 1; 
-            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            padding: 15px; border-radius: 25px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
             border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; 
-            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+            align-items: center; overflow: hidden; box-sizing: border-box;
         }
         
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
-        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer { height: 35px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.75rem; color: var(--cor-borda); margin: 0; }
         footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
 
         /* =========================================
-           O CAMINHO MÁGICO
+           O CAMINHO MÁGICO 🐝 -> 🍯
            ========================================= */
-        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-magico { width: 100%; max-width: 600px; height: 40px; position: relative; display: none; margin-bottom: 10px; flex-shrink: 0; }
         .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-jogo); z-index: 1; }
-        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
-        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: 0px; font-size: 2rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
 
         /* =========================================
            ECRÃS BASE E MENU
            ========================================= */
-        .ecra { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; min-height: 350px; text-align: center; flex: 1; position: relative; animation: fadeIn 0.4s ease; box-sizing: border-box;}
-        #ecra-selecao { justify-content: center; }
-        #ecra-fim { justify-content: center; align-items: center; }
+        .ecra { display: none; flex-direction: column; align-items: center; width: 100%; flex: 1; position: relative; animation: fadeIn 0.4s ease; box-sizing: border-box; overflow: hidden; }
+        #ecra-selecao, #ecra-fim { justify-content: center; }
+        #ecra-jogo { justify-content: space-between; } /* Espalha a nav, puzzle e peças verticalmente */
 
-        .titulo-destaque { font-size: clamp(2rem, 6vw, 2.8rem); color: var(--azul-escuro); margin: 0 0 25px 0; font-weight: 900; line-height: 1.2;}
-        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 25px; line-height: 1.5; max-width: 600px;}
+        .titulo-destaque { font-size: clamp(1.8rem, 5vw, 2.8rem); color: var(--azul-escuro); margin: 0 0 15px 0; font-weight: 900; line-height: 1.1;}
+        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 20px; }
         
-        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 550px; margin: 15px auto 0; }
-        .cat-card { background: #ffffff; border: 3px solid #fff3e0; padding: 25px 15px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .cat-card { background: #ffffff; border: 3px solid #fff3e0; padding: 15px; border-radius: 20px; font-size: 1.2rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
         .cat-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--cor-jogo); box-shadow: 0 8px 15px rgba(255, 159, 67, 0.2); }
-        .cat-icon { font-size: 3rem; }
+        .cat-icon { font-size: 2.5rem; line-height: 1; }
 
-        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 800; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 25px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 800; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
         
-        /* Botão Nav */
-        .container-nav-jogo { width: 100%; display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed #fff3e0; }
-        .btn-voltar-menu { background-color: #f0f4f8; color: #334e68; border: none; padding: 10px 20px; border-radius: 30px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        /* =========================================
+           BARRA DO TOPO NO JOGO (Na mesma linha!)
+           ========================================= */
+        .container-nav-jogo { 
+            width: 100%; display: flex; justify-content: space-between; align-items: center; 
+            padding-bottom: 10px; margin-bottom: 10px; border-bottom: 2px dashed #fff3e0; 
+            flex-shrink: 0;
+        }
+        
+        .btn-voltar-menu { background-color: #f0f4f8; color: #334e68; border: none; padding: 8px 15px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; white-space: nowrap;}
         .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
-        .info-nivel { font-size: 1.2rem; font-weight: 800; color: var(--cor-jogo-dark); background: #fff8e1; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-jogo); }
+        
+        .instrucao-jogo { font-size: clamp(1.1rem, 3vw, 1.4rem); color: var(--azul-escuro); font-weight: bold; margin: 0; text-align: center; flex: 1; }
+        
+        .info-nivel { font-size: 1rem; font-weight: 800; color: var(--cor-jogo-dark); background: #fff8e1; padding: 6px 15px; border-radius: 20px; border: 2px solid var(--cor-jogo); white-space: nowrap;}
+
+        /* Em ecrãs pequenos, esconde o texto do botão "Outros Temas" para caber tudo na mesma linha */
+        @media (max-width: 500px) {
+            .texto-btn-outros { display: none; }
+            .btn-voltar-menu { padding: 8px 12px; }
+            .instrucao-jogo { font-size: 1rem; }
+            .info-nivel { font-size: 0.9rem; padding: 6px 10px; }
+        }
 
         /* =========================================
            A MAGIA DO PUZZLE (CSS SLICING)
            ========================================= */
-        .instrucao-jogo { font-size: clamp(1.2rem, 3vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; margin-bottom: 20px; }
         
-        /* O Contentor do Puzzle Final (Onde se larga) */
+        /* O Contentor do Puzzle Final (Dinâmico para evitar scroll) */
         .puzzle-drop-area {
             display: flex;
             width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1 / 1; /* Força um quadrado perfeito */
+            /* Limita a altura e largura para caber sempre no ecrã sem empurrar as peças para fora */
+            max-height: 42vh; 
+            max-width: 42vh;
+            aspect-ratio: 1 / 1; 
             background-color: #f8fafc;
             border: 4px dashed #cbd5e1;
             border-radius: 15px;
-            margin: 0 auto 30px auto;
+            margin: auto; /* Centra na área que lhe foi dada pelo flex */
             position: relative;
             overflow: hidden;
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.02);
+            flex-shrink: 0;
         }
 
         /* O Fundo Transparente para a Fase 3 */
@@ -116,10 +164,10 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            opacity: 0.2; /* A imagem quase transparente */
+            opacity: 0.25; 
             display: none;
             z-index: 0;
-            filter: grayscale(50%);
+            filter: grayscale(30%);
         }
 
         /* Os espaços vazios verticais */
@@ -129,30 +177,34 @@
             border-right: 2px dashed #cbd5e1;
             position: relative;
             z-index: 1;
+            display: flex; /* Garante que a imagem preenche */
         }
         .puzzle-slot:last-child { border-right: none; }
         .puzzle-slot.drag-over { background-color: rgba(255, 159, 67, 0.2); }
 
-        /* Quando o Puzzle está concluído, limpa as bordas e junta tudo */
+        /* Concluído */
         .puzzle-drop-area.completed { border: 4px solid var(--cor-jogo); border-radius: 15px; background: white; animation: popIn 0.5s ease forwards; box-shadow: 0 10px 20px rgba(255,159,67,0.3);}
         .puzzle-drop-area.completed .puzzle-slot { border: none; }
         .puzzle-drop-area.completed .puzzle-guide-bg { display: none; }
 
         /* =========================================
-           AS PEÇAS (FATIAS)
+           AS PEÇAS (FATIAS EM BAIXO)
            ========================================= */
         .pool-container {
-            display: flex; justify-content: center; gap: clamp(10px, 3vw, 20px);
+            display: flex; justify-content: center; align-items: center;
+            gap: clamp(8px, 2vw, 15px);
             width: 100%; max-width: 600px; margin: 0 auto;
-            padding-top: 25px; border-top: 3px dashed #e2e8f0; min-height: 120px;
+            padding: 15px 0; border-top: 3px dashed #e2e8f0;
+            flex-shrink: 0;
+            /* Altura controlada para caber no telemóvel */
+            min-height: 15vh;
         }
 
         .puzzle-piece {
-            /* A Altura é fixa na piscina, a largura calcula-se pelo Aspect Ratio */
-            height: clamp(100px, 20vw, 140px);
+            /* Adapta o tamanho vertical e calcula a largura sozinho via aspect-ratio */
+            height: clamp(70px, 16vh, 130px);
             aspect-ratio: 1 / var(--slices);
             
-            /* O truque do corte mágico! */
             background-size: calc(var(--slices) * 100%) 100%;
             background-repeat: no-repeat;
             
@@ -167,13 +219,10 @@
         .puzzle-piece:active { cursor: grabbing; transform: scale(1.05); }
         .puzzle-piece.dragging { opacity: 0.5; }
 
-        /* Quando a peça está encaixada no Slot de cima */
+        /* Quando encaixada */
         .puzzle-slot .puzzle-piece {
-            height: 100%;
-            width: 100%;
-            border: none;
-            border-radius: 0;
-            box-shadow: none;
+            height: 100%; width: 100%;
+            border: none; border-radius: 0; box-shadow: none;
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -185,23 +234,40 @@
 </head>
 <body>
 
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
 <header>
     <div class="header-content">
         <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
-        <h1>O Puzzle Mágico 🧩</h1>
+        <h1>Puzzle Mágico 🧩</h1>
         <div class="subtitulo" id="jogo-subtitulo">Junta a cabeça ao rabo!</div>
     </div>
 </header>
 
 <main>
-    <!-- O CAMINHO MÁGICO -->
+    <!-- O CAMINHO MÁGICO 🐝 -> 🍯 -->
     <div class="caminho-magico" id="caminho-magico">
         <div class="caminho-trilho">
-            <div class="caminho-avatar" id="avatar-progresso">🐒</div> 
+            <div class="caminho-avatar" id="avatar-progresso">🐝</div> 
         </div>
-        <div class="caminho-alvo" id="alvo-progresso">🍌</div> 
+        <div class="caminho-alvo" id="alvo-progresso">🍯</div> 
     </div>
 
     <!-- CARTÃO DO JOGO -->
@@ -229,20 +295,21 @@
         <!-- ECRÃ 2: ÁREA DE JOGO -->
         <div id="ecra-jogo" class="ecra">
             
+            <!-- LINHA DE NAVEGAÇÃO -->
             <div class="container-nav-jogo">
-                <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span> Outros Temas</button>
+                <button class="btn-voltar-menu" onclick="voltarMenu()">
+                    <span>🔄</span><span class="texto-btn-outros">Temas</span>
+                </button>
+                <div id="instrucao-texto" class="instrucao-jogo">✋ Monta a imagem ✋</div>
                 <div class="info-nivel" id="info-nivel">Fase 1</div>
             </div>
-            
-            <div id="instrucao-texto" class="instrucao-jogo">Monta a imagem!</div>
 
             <!-- O Puzzle Final -->
             <div id="puzzle-drop-area" class="puzzle-drop-area">
                 <div id="puzzle-guide-bg" class="puzzle-guide-bg"></div>
-                <!-- Os Slots entram aqui via JS -->
             </div>
             
-            <!-- As Peças Baralhadas em baixo -->
+            <!-- As Peças Baralhadas -->
             <div id="pool-container" class="pool-container"></div>
 
         </div>
@@ -268,9 +335,14 @@
     try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
     /* =========================================
-       DADOS (Embutidos para funcionar já)
-       Podes substituir isto pela chamada do teu dados.js no futuro.
+       DADOS
        ========================================= */
     const palavrasLista =[
       { palavra: "abacaxi", imagem: "img/abacaxi.png", categoria: "Alimentos" },
@@ -287,7 +359,6 @@
       { palavra: "sapo", imagem: "img/sapo.png", categoria: "Animais" }
     ];
 
-    // Mapeamento automático (Se falhar a categoria em cima, o jogo tenta adivinhar)
     const listas = {
         Animais:["abelha","águia","baleia","bode","burro","caracol","cavalo","cigarra","cobra","coelho","elefante","foca","galinha","gato","girafa","hipopótamo","javali","leão","macaco","mosca","ovelha","pato","pavão","peixe","porco","rato","rinoceronte","sapo","tartaruga","urso","vaca","zebra"],
         Objetos:["anel","balde","banco","bola","boneca","bota","botão","cadeira","caixa","cama","casaco","chapéu","chave","dado","dedo","dente","escada","escola","espada","ferro","flauta","foguete","funil","guitarra","janela","jipe","laço","leque","livro","lixo","lupa","mala","mapa","mesa","moeda","mola","mota","navio","óculos","osso","piano","ponte","pote","quadro","quarto","roda","sapato","sino","taça","televisão","tesoura","tigela","vassoura","vela","violino"],
@@ -320,7 +391,6 @@
     }
 
     function selecionarCategoria(cat) {
-        // Filtra a lista principal consoante o botão clicado
         if (cat === 'Mistura') {
             listaAtual = [...palavrasLista];
         } else {
@@ -328,7 +398,6 @@
                 if(p.categoria) return p.categoria === cat;
                 return listas[cat].includes(p.palavra);
             });
-            // Se a lista ficar vazia por falta de dados, carrega tudo
             if(listaAtual.length === 0) listaAtual =[...palavrasLista];
         }
 
@@ -345,33 +414,22 @@
         avatar.style.left = `${percent}%`;
     }
 
-    /* =========================================
-       O CÉREBRO DO PUZZLE MÁGICO
-       ========================================= */
     function prepararRonda() {
         document.getElementById('info-nivel').textContent = `Fase ${rondaAtual}`;
         dropArea.classList.remove('completed');
         
-        // Limpar HTML
         dropArea.querySelectorAll('.puzzle-slot').forEach(el => el.remove());
         poolContainer.innerHTML = '';
         
-        // 1. Escolhe uma palavra à sorte
         const palavraSorteada = listaAtual[Math.floor(Math.random() * listaAtual.length)];
-        
-        // Caminho da imagem (Ajustado para procurar na pasta ../ se o ficheiro estiver numa subpasta)
-        // Se a tua estrutura não precisar do "../", apaga-o.
         const imgSrc = `../${palavraSorteada.imagem}`; 
 
-        // 2. Define a Dificuldade (Nº de Peças)
-        let numPecas = 2; // Fase Fácil
-        if (rondaAtual === 2) numPecas = 3; // Fase Média
-        if (rondaAtual === 3) numPecas = 4; // Fase Difícil
+        let numPecas = 2; 
+        if (rondaAtual === 2) numPecas = 3; 
+        if (rondaAtual === 3) numPecas = 4; 
 
-        // Define a variável de CSS para que o Aspect Ratio funcione
         document.documentElement.style.setProperty('--slices', numPecas);
 
-        // 3. Fase 3 (Difícil): Mostra a imagem de fundo transparente como guia
         if (rondaAtual === 3) {
             guideBg.style.display = 'block';
             guideBg.style.backgroundImage = `url('${imgSrc}')`;
@@ -379,11 +437,9 @@
             guideBg.style.display = 'none';
         }
 
-        // 4. Cria os Slots e as Peças (Fatias)
         let pecasCriadas =[];
 
         for(let i = 0; i < numPecas; i++) {
-            // Criar Slot de Cima
             let slot = document.createElement('div');
             slot.className = 'puzzle-slot';
             slot.dataset.index = i;
@@ -392,13 +448,11 @@
             slot.addEventListener('drop', handleDropSlot);
             dropArea.appendChild(slot);
 
-            // Criar Peça de Baixo
             let piece = document.createElement('div');
             piece.className = 'puzzle-piece';
             piece.dataset.index = i;
             piece.draggable = true;
             
-            // O CSS Magic Cut!
             piece.style.backgroundImage = `url('${imgSrc}')`;
             let positionPercentage = (i / (numPecas - 1)) * 100;
             piece.style.backgroundPosition = `${positionPercentage}% 0%`;
@@ -409,13 +463,9 @@
             pecasCriadas.push(piece);
         }
 
-        // 5. Baralha e atira para a piscina
         pecasCriadas.sort(() => Math.random() - 0.5).forEach(p => poolContainer.appendChild(p));
     }
 
-    /* =========================================
-       DRAG & DROP E VALIDAÇÃO (UX Imediata)
-       ========================================= */
     function handleDragStart(e) {
         draggedElement = e.target;
         draggedElement.classList.add('dragging');
@@ -431,7 +481,6 @@
     function handleDragOver(e) {
         e.preventDefault();
         const slot = e.target.closest('.puzzle-slot');
-        // Só permite hover se o slot estiver vazio
         if (slot && !slot.hasChildNodes()) slot.classList.add('drag-over');
     }
     
@@ -446,25 +495,19 @@
         if (!slot || !draggedElement) return;
         slot.classList.remove('drag-over');
 
-        // VALIDAÇÃO DIRETA PARA O PRÉ-ESCOLAR
-        // Só aceita a peça se for a certa (auto-correção)
         if (slot.dataset.index === draggedElement.dataset.index) {
             slot.appendChild(draggedElement);
             tocarSom('encaixe');
             verificarVitoria();
         } else {
-            // Se errou, a peça volta ao lugar
             tocarSom('erro');
         }
     }
 
     function verificarVitoria() {
         const slots = Array.from(dropArea.querySelectorAll('.puzzle-slot'));
-        
-        // Se ainda há algum slot vazio, sai
         if (slots.some(slot => !slot.hasChildNodes())) return;
 
-        // Se chegou aqui, montou o puzzle completo!
         dropArea.classList.add('completed');
         tocarSom('acerto');
         
@@ -482,9 +525,6 @@
         }, 1500);
     }
 
-    /* =========================================
-       SISTEMA DE SOM
-       ========================================= */
     let audioCtx = null;
     function iniciarAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
