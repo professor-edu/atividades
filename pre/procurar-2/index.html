@@ -1,1 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Super Detetive 🕵️‍♂️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (MOLDE INTOCÁVEL BOM.HTML)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            
+            /* Cor Específica deste Jogo (Amarelo Dourado) */
+            --cor-jogo: #fcc419;
+            --cor-jogo-dark: #f08c00;
+        }
 
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           ÁREA PRINCIPAL MAXIMIZADA E SEM SCROLL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           O CAMINHO MÁGICO 🕵️‍♂️ -> 🏆
+           ========================================= */
+        .caminho-magico {
+            width: 100%; max-width: 700px; height: 50px; position: relative;
+            display: none; margin-bottom: 5px; flex-shrink: 0;
+        }
+        .caminho-trilho {
+            position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0;
+            border-bottom: 4px dashed var(--cor-jogo); z-index: 1;
+        }
+        .caminho-avatar {
+            position: absolute; left: 0%; bottom: -5px; 
+            transform: translateX(-50%); 
+            font-size: 2.5rem; 
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+        .caminho-alvo {
+            position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem;
+            z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1;
+        }
+
+        /* =========================================
+           ECRÃS BASE E ANIMAÇÕES GERAIS
+           ========================================= */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; min-height: 350px; text-align: center; flex: 1; position: relative; }
+        .titulo-destaque { font-size: clamp(2rem, 6vw, 2.5rem); color: var(--azul-escuro); margin: 0 0 15px 0; font-weight: 900;}
+        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 25px; line-height: 1.5; max-width: 600px;}
+        
+        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 800; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-shadow: 1px 1px 0 rgba(0,0,0,0.1);}
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; border-color: var(--cor-erro) !important; background: #ffefef !important; }
+
+        /* =========================================
+           O TUTORIAL ANIMADO (CSS PURO)
+           ========================================= */
+        .tutorial-box {
+            background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 20px; padding: 15px;
+            width: 100%; max-width: 320px; margin: 0 auto 25px auto; position: relative;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .tut-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px dashed #cbd5e1; padding-bottom: 10px; }
+        .tut-timer { font-size: 1.2rem; font-weight: bold; color: var(--azul-escuro); }
+        .tut-targets { background: white; border: 2px solid var(--cor-jogo); border-radius: 10px; padding: 4px 10px; display: flex; gap: 5px; font-size: 1.2rem;}
+        .tut-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .tut-grid span { font-size: 1.8rem; background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 5px; line-height: 1;}
+        
+        .tut-target-anim { position: relative; transition: 0.3s; }
+        .tut-cursor { position: absolute; bottom: 0; right: 20px; font-size: 2rem; animation: tutorialMove 4s infinite ease-in-out; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index: 10;}
+
+        @keyframes tutorialMove {
+            0%, 10% { transform: translate(0, 0) scale(1); }
+            40% { transform: translate(-100px, -45px) scale(1); } /* Move to Target */
+            45% { transform: translate(-100px, -45px) scale(0.8); } /* Click */
+            50%, 80% { transform: translate(-100px, -45px) scale(1); } /* Wait */
+            100% { transform: translate(0, 0) scale(1); } /* Move back */
+        }
+        /* The target lights up right after the click (45% to 80%) */
+        @keyframes tutorialHighlight {
+            0%, 44% { border-color: #e2e8f0; background: white; }
+            45%, 80% { border-color: var(--cor-jogo); background: #fff9db; box-shadow: 0 0 10px rgba(252, 196, 25, 0.4); }
+            81%, 100% { border-color: #e2e8f0; background: white; }
+        }
+        .tut-anim-glow { animation: tutorialHighlight 4s infinite ease-in-out; }
+
+
+        /* =========================================
+           CSS ESPECÍFICO: O SUPER DETETIVE
+           ========================================= */
+        
+        /* PAINEL DE CONTROLO DO TOPO */
+        .hud-detetive {
+            width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; margin-bottom: 15px; background: #f8fafc; border-radius: 20px;
+            border: 3px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box;
+            gap: 10px; flex-wrap: wrap;
+        }
+
+        /* ⏱️ Cronómetro */
+        .timer-box { font-size: 1.6rem; font-weight: 900; color: var(--azul-escuro); display: flex; align-items: center; gap: 8px; min-width: 90px; }
+        .danger-blink { color: #ff4757 !important; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* 🎯 Alvos (As 3 imagens) */
+        .hud-alvos { display: flex; gap: 10px; background: white; padding: 8px 15px; border-radius: 15px; border: 3px solid var(--cor-jogo); }
+        .alvo-hud-img { width: 35px; height: 35px; object-fit: contain; position: relative; transition: 0.3s; }
+        .alvo-hud-img.found { filter: grayscale(1) opacity(0.3); transform: scale(0.8); }
+
+        /* 💡 Pista */
+        .btn-pista { 
+            background: var(--cor-jogo); color: white; border: none; border-radius: 12px; width: 50px; height: 50px; 
+            font-size: 1.8rem; cursor: pointer; box-shadow: 0 4px 0 var(--cor-jogo-dark); transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-pista:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0px 0 transparent; }
+        .btn-pista:disabled { background: #cbd5e1; box-shadow: 0 4px 0 #94a3b8; cursor: not-allowed; opacity: 0.7; filter: grayscale(1);}
+
+        /* CENA DO CRIME (GRELHA DENSA) */
+        .busca-container {
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+            gap: clamp(6px, 1.5vw, 12px); width: 100%; flex: 1; padding: 5px;
+        }
+
+        .img-wrapper {
+            background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 6px;
+            width: clamp(55px, 12vw, 85px); height: clamp(55px, 12vw, 85px);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            transition: all 0.2s ease; user-select: none; -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+        
+        .img-wrapper:active { transform: scale(0.9); }
+        .img-busca { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        /* Quando encontrado */
+        .img-wrapper.found { border-color: var(--cor-jogo); background: #fff9db; opacity: 0.6; pointer-events: none; }
+        
+        /* Animação da Pista */
+        @keyframes pulseHint { 
+            0% { box-shadow: 0 0 0 0 rgba(252, 196, 25, 0.8); border-color: var(--cor-jogo); } 
+            70% { box-shadow: 0 0 0 15px rgba(252, 196, 25, 0); border-color: var(--cor-jogo); } 
+            100% { box-shadow: 0 0 0 0 rgba(252, 196, 25, 0); border-color: #e2e8f0; } 
+        }
+        .hint-glow { animation: pulseHint 1s ease-out; position: relative; z-index: 10; background: #fff9db;}
+
+        /* ECRÃS DE FIM E TIMEOUT EM ABSOLUTE */
+        #ecra-transicao, #ecra-timeout { 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0; 
+            background: rgba(255,255,255,0.95); z-index: 20; border-radius: 30px; animation: fadeIn 0.3s ease;
+        }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+
+        @media (max-width: 600px) {
+            .caminho-trilho { left: 30px; right: 40px; }
+            .hud-detetive { padding: 8px 10px; gap: 5px; justify-content: space-around;}
+            .timer-box { font-size: 1.3rem; min-width: auto;}
+            .hud-alvos { padding: 5px 10px; gap: 5px;}
+            .alvo-hud-img { width: 28px; height: 28px; }
+            .btn-pista { width: 45px; height: 45px; font-size: 1.5rem; border-radius: 10px;}
+            
+            /* Ajuste crucial da grelha em mobile para não dar scroll */
+            .busca-container { gap: 6px; }
+            .img-wrapper { width: clamp(45px, 11vw, 60px); height: clamp(45px, 11vw, 60px); padding: 4px; border-radius: 8px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Super Detetive 🕵️‍♂️</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Atenção, foco e rapidez!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO (Detetive e Taça) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🕵️‍♂️</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🏆</div> 
+    </div>
+
+    <!-- CARTÃO DO JOGO -->
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: INÍCIO (COM TUTORIAL CSS) -->
+        <div id="ecra-inicio" class="ecra" style="display: flex;">
+            <h2 class="titulo-destaque" style="margin-bottom: 25px;">Missão Rápida</h2>
+            
+            <!-- Tutorial CSS -->
+            <div class="tutorial-box">
+                <div class="tut-top">
+                    <span class="tut-timer">⏱️ 00:59</span>
+                    <div class="tut-targets">
+                        <span class="tut-img">🍎</span><span class="tut-img">🚗</span><span class="tut-img">🐶</span>
+                    </div>
+                    <span class="tut-hint" style="opacity:0.5; filter:grayscale(1)">💡</span>
+                </div>
+                <div class="tut-grid">
+                    <span>⚽</span><span class="tut-target-anim tut-anim-glow">🍎</span><span>🦋</span>
+                    <span>🐢</span><span>🚗</span><span>🎈</span>
+                </div>
+                <div class="tut-cursor">👆</div>
+            </div>
+
+            <p class="texto-intro" style="margin-bottom: 30px;">
+                Encontra as 3 imagens antes que o tempo acabe!<br>Se precisares, usa a Lâmpada Mágica 💡 (1 vez por ronda).
+            </p>
+            <button class="btn-acao" onclick="iniciarJogo()">INICIAR MISSÃO ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO (AÇÃO PURA) -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- PAINEL SUPERIOR -->
+            <div class="hud-detetive">
+                <div class="timer-box" id="timer-display">⏱️ 01:00</div>
+                <div class="hud-alvos" id="hud-alvos">
+                    <!-- 3 Alvos entram aqui -->
+                </div>
+                <button class="btn-pista" id="btn-pista" onclick="usarPista()" title="Pista Mágica">💡</button>
+            </div>
+
+            <!-- GRELHA DENSA DE BUSCA -->
+            <div class="busca-container" id="busca-container">
+                <!-- Imagens injetadas pelo JS -->
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: TIMEOUT (FALHOU) -->
+        <div id="ecra-timeout">
+            <div style="font-size: 5rem; margin-bottom: 10px;">⏰</div>
+            <h2 class="titulo-destaque" style="color:var(--cor-erro);">O Tempo Esgotou!</h2>
+            <p class="texto-intro" style="margin-bottom: 25px;">Tens de ser mais rápido detetive.</p>
+            <button class="btn-acao" style="background:var(--cor-erro); box-shadow: 0 6px 0 #d0303f;" onclick="iniciarJogo()">Voltar à Ronda 1 🔄</button>
+        </div>
+
+        <!-- ECRÃ 4: FIM DO JOGO (VENCEU) -->
+        <div id="ecra-transicao">
+            <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
+            <h2 class="titulo-destaque">Super Detetive!</h2>
+            <p class="texto-intro" style="margin-bottom: 25px;">Completaste todas as missões a tempo!</p>
+            <button class="btn-acao" onclick="voltarMenuPrincipal()">Voltar ao Início 🏠</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script src="dados.js"></script>
+
+<script>
+    /* =====================================================================
+       JAVASCRIPT TEMPLATE BASE E NAVEGAÇÃO
+       ===================================================================== */
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra, #ecra-timeout, #ecra-transicao').forEach(e => {
+            if(e) e.style.display = 'none';
+        });
+        const alvo = document.getElementById(id);
+        if(alvo) alvo.style.display = 'flex';
+    }
+
+    function voltarMenuPrincipal() {
+        pararRelogio();
+        document.getElementById('caminho-magico').style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-inicio');
+    }
+
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        if(avatar) avatar.style.left = `${percentagem}%`;
+    }
+
+    function getImagePath(nomeImg) {
+        if (!nomeImg) return '';
+        const nomeFicheiro = nomeImg.replace('img/', '');
+        return `../img/${nomeFicheiro}`;
+    }
+
+    /* =====================================================================
+       LÓGICA DO "SUPER DETETIVE" ⏱️
+       ===================================================================== */
+    const TOTAL_RONDAS = 5;
+    let rondaAtual = 1;
+    let alvosRonda = []; // Nomes das 3 imagens a procurar
+    let alvosEncontrados = 0;
+    
+    let tempoRestante = 60;
+    let timerId = null;
+    let dicaDisponivel = true;
+    let isVerificando = false;
+
+    // DOM Elements
+    const hudAlvos = document.getElementById('hud-alvos');
+    const buscaContainer = document.getElementById('busca-container');
+    const timerDisplay = document.getElementById('timer-display');
+    const btnPista = document.getElementById('btn-pista');
+
+    // Arranca no Menu Inical
+    window.onload = function() {
+        mostrarEcra('ecra-inicio');
+    };
+
+    function iniciarJogo() {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        rondaAtual = 1;
+        document.getElementById('caminho-magico').style.display = 'block';
+        atualizarProgressoCaminho(0);
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        isVerificando = false;
+        alvosEncontrados = 0;
+        alvosRonda =[];
+        hudAlvos.innerHTML = '';
+        buscaContainer.innerHTML = '';
+        
+        // Reset da Dica
+        dicaDisponivel = true;
+        btnPista.disabled = false;
+
+        // Reset do Relógio (Sempre 60 segundos por ronda)
+        pararRelogio();
+        tempoRestante = 60;
+        atualizarDisplayRelogio();
+        
+        // 1. Extrair todas as imagens disponíveis no dados.js
+        let bancoImagens = [...palavras].map(p => p.imagem).sort(() => Math.random() - 0.5);
+
+        // 2. Selecionar os 3 Alvos desta ronda
+        for(let i=0; i<3; i++) {
+            let img = bancoImagens[i];
+            alvosRonda.push(img);
+            
+            // Coloca no Topo (HUD)
+            let imgEl = document.createElement('img');
+            imgEl.src = getImagePath(img);
+            imgEl.className = 'alvo-hud-img';
+            imgEl.id = `hud-alvo-${i}`;
+            hudAlvos.appendChild(imgEl);
+        }
+
+        // 3. Preparar Grelha de Busca (24 imagens para dar uma "parede" densa)
+        let imagensCenario = [...alvosRonda]; 
+        let distratores = bancoImagens.slice(3); 
+        
+        while (imagensCenario.length < 24) {
+            imagensCenario.push(distratores.pop());
+        }
+
+        // 4. Baralha e Renderiza a Grelha
+        imagensCenario.sort(() => Math.random() - 0.5);
+
+        imagensCenario.forEach(img => {
+            let wrapper = document.createElement('div');
+            wrapper.className = 'img-wrapper';
+            wrapper.dataset.imgId = img;
+            
+            let imgHTML = document.createElement('img');
+            imgHTML.src = getImagePath(img);
+            imgHTML.className = 'img-busca';
+            
+            wrapper.appendChild(imgHTML);
+            wrapper.onclick = () => cliqueImagem(img, wrapper);
+            
+            buscaContainer.appendChild(wrapper);
+        });
+
+        // Iniciar Relógio
+        timerId = setInterval(tickRelogio, 1000);
+    }
+
+    /* --- GESTÃO DO TEMPO --- */
+    function tickRelogio() {
+        tempoRestante--;
+        atualizarDisplayRelogio();
+
+        if (tempoRestante <= 0) {
+            pararRelogio();
+            tocarSom('timeout');
+            mostrarEcra('ecra-timeout');
+            // O botão do ecrã chama iniciarJogo() que reinicia na ronda 1.
+        }
+    }
+
+    function atualizarDisplayRelogio() {
+        // Formata para 00:XX
+        let sec = String(tempoRestante).padStart(2, '0');
+        timerDisplay.textContent = `⏱️ 00:${sec}`;
+
+        // Piscar vermelho nos últimos 10s
+        if (tempoRestante <= 10 && tempoRestante > 0) {
+            timerDisplay.classList.add('danger-blink');
+        } else {
+            timerDisplay.classList.remove('danger-blink');
+        }
+    }
+
+    function pararRelogio() {
+        if(timerId) clearInterval(timerId);
+    }
+
+    /* --- A PISTA MAGICA 💡 --- */
+    function usarPista() {
+        if (!dicaDisponivel || isVerificando) return;
+        
+        // Encontra no DOM os items (wrappers) que são alvos e ainda não foram encontrados
+        let wrappers = Array.from(document.querySelectorAll('.img-wrapper:not(.found)'));
+        let alvosNoEcra = wrappers.filter(w => alvosRonda.includes(w.dataset.imgId));
+
+        if (alvosNoEcra.length > 0) {
+            // Pega no primeiro que encontrar e pisca
+            let alvoParaAjudar = alvosNoEcra[0];
+            alvoParaAjudar.classList.add('hint-glow');
+            
+            tocarSom('dica');
+            
+            // Desativa botão
+            dicaDisponivel = false;
+            btnPista.disabled = true;
+
+            setTimeout(() => {
+                alvoParaAjudar.classList.remove('hint-glow');
+            }, 1000);
+        }
+    }
+
+    /* --- CLIQUE NAS IMAGENS --- */
+    function cliqueImagem(imgClicada, wrapper) {
+        if (isVerificando || wrapper.classList.contains('found')) return;
+
+        let indexNoAlvo = alvosRonda.indexOf(imgClicada);
+
+        if (indexNoAlvo !== -1) {
+            // É UM DOS ALVOS!
+            tocarSom('pop');
+            wrapper.classList.add('found');
+            
+            // "Apaga" no HUD de cima
+            let hudImg = document.getElementById(`hud-alvo-${indexNoAlvo}`);
+            if(hudImg) hudImg.classList.add('found');
+
+            alvosEncontrados++;
+
+            if (alvosEncontrados === 3) {
+                // PASSOU A RONDA!
+                isVerificando = true;
+                pararRelogio();
+                tocarSom('acerto');
+                
+                let percentagem = (rondaAtual / TOTAL_RONDAS) * 100;
+                atualizarProgressoCaminho(percentagem);
+
+                setTimeout(() => {
+                    if (rondaAtual >= TOTAL_RONDAS) {
+                        tocarSom('vitoria');
+                        dispararConfetis();
+                        mostrarEcra('ecra-transicao'); // Fim do Jogo
+                    } else {
+                        rondaAtual++;
+                        prepararRonda(); // Próxima
+                    }
+                }, 800);
+            }
+        } else {
+            // É UM DISTRATOR (ERROU)
+            tocarSom('erro');
+            wrapper.classList.add('error-shake');
+            setTimeout(() => wrapper.classList.remove('error-shake'), 400);
+        }
+    }
+
+
+    /* =====================================================================
+       SISTEMA DE SOM E CONFETIS
+       ===================================================================== */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'dica') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.linearRampToValueAtTime(1000, agora + 0.2);
+            gain.gain.setValueAtTime(0, agora); gain.gain.linearRampToValueAtTime(0.1, agora + 0.1); gain.gain.linearRampToValueAtTime(0, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        } else if (tipo === 'erro') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'timeout') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, agora); osc.frequency.exponentialRampToValueAtTime(50, agora + 0.6);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.6);
+            osc.start(agora); osc.stop(agora + 0.6);
+        } else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#ff4757', '#fcc419', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+</script>
+</body>
+</html>
