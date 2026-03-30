@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - O Puzzle Mágico 🧩</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-jogo: #ff9f43;      /* Cor de Laranja (Puzzle) */
+            --cor-jogo-dark: #e17000;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* =========================================
+           ÁREA PRINCIPAL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; flex: 1; 
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+
+        /* =========================================
+           O CAMINHO MÁGICO
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-jogo); z-index: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+
+        /* =========================================
+           ECRÃS BASE E MENU
+           ========================================= */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; min-height: 350px; text-align: center; flex: 1; position: relative; animation: fadeIn 0.4s ease; box-sizing: border-box;}
+        #ecra-selecao { justify-content: center; }
+        #ecra-fim { justify-content: center; align-items: center; }
+
+        .titulo-destaque { font-size: clamp(2rem, 6vw, 2.8rem); color: var(--azul-escuro); margin: 0 0 25px 0; font-weight: 900; line-height: 1.2;}
+        .texto-intro { font-size: 1.1rem; color: var(--text-main); margin-bottom: 25px; line-height: 1.5; max-width: 600px;}
+        
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 550px; margin: 15px auto 0; }
+        .cat-card { background: #ffffff; border: 3px solid #fff3e0; padding: 25px 15px; border-radius: 20px; font-size: 1.3rem; color: var(--azul-escuro); font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+        .cat-card:hover { transform: translateY(-5px) scale(1.05); border-color: var(--cor-jogo); box-shadow: 0 8px 15px rgba(255, 159, 67, 0.2); }
+        .cat-icon { font-size: 3rem; }
+
+        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 40px; font-size: 1.3rem; font-weight: 800; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 25px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        /* Botão Nav */
+        .container-nav-jogo { width: 100%; display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; margin-bottom: 20px; border-bottom: 2px dashed #fff3e0; }
+        .btn-voltar-menu { background-color: #f0f4f8; color: #334e68; border: none; padding: 10px 20px; border-radius: 30px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        .info-nivel { font-size: 1.2rem; font-weight: 800; color: var(--cor-jogo-dark); background: #fff8e1; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-jogo); }
+
+        /* =========================================
+           A MAGIA DO PUZZLE (CSS SLICING)
+           ========================================= */
+        .instrucao-jogo { font-size: clamp(1.2rem, 3vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; margin-bottom: 20px; }
+        
+        /* O Contentor do Puzzle Final (Onde se larga) */
+        .puzzle-drop-area {
+            display: flex;
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1 / 1; /* Força um quadrado perfeito */
+            background-color: #f8fafc;
+            border: 4px dashed #cbd5e1;
+            border-radius: 15px;
+            margin: 0 auto 30px auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        /* O Fundo Transparente para a Fase 3 */
+        .puzzle-guide-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            opacity: 0.2; /* A imagem quase transparente */
+            display: none;
+            z-index: 0;
+            filter: grayscale(50%);
+        }
+
+        /* Os espaços vazios verticais */
+        .puzzle-slot {
+            flex: 1;
+            height: 100%;
+            border-right: 2px dashed #cbd5e1;
+            position: relative;
+            z-index: 1;
+        }
+        .puzzle-slot:last-child { border-right: none; }
+        .puzzle-slot.drag-over { background-color: rgba(255, 159, 67, 0.2); }
+
+        /* Quando o Puzzle está concluído, limpa as bordas e junta tudo */
+        .puzzle-drop-area.completed { border: 4px solid var(--cor-jogo); border-radius: 15px; background: white; animation: popIn 0.5s ease forwards; box-shadow: 0 10px 20px rgba(255,159,67,0.3);}
+        .puzzle-drop-area.completed .puzzle-slot { border: none; }
+        .puzzle-drop-area.completed .puzzle-guide-bg { display: none; }
+
+        /* =========================================
+           AS PEÇAS (FATIAS)
+           ========================================= */
+        .pool-container {
+            display: flex; justify-content: center; gap: clamp(10px, 3vw, 20px);
+            width: 100%; max-width: 600px; margin: 0 auto;
+            padding-top: 25px; border-top: 3px dashed #e2e8f0; min-height: 120px;
+        }
+
+        .puzzle-piece {
+            /* A Altura é fixa na piscina, a largura calcula-se pelo Aspect Ratio */
+            height: clamp(100px, 20vw, 140px);
+            aspect-ratio: 1 / var(--slices);
+            
+            /* O truque do corte mágico! */
+            background-size: calc(var(--slices) * 100%) 100%;
+            background-repeat: no-repeat;
+            
+            border: 3px solid white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: grab;
+            touch-action: none;
+            transition: transform 0.1s;
+        }
+
+        .puzzle-piece:active { cursor: grabbing; transform: scale(1.05); }
+        .puzzle-piece.dragging { opacity: 0.5; }
+
+        /* Quando a peça está encaixada no Slot de cima */
+        .puzzle-slot .puzzle-piece {
+            height: 100%;
+            width: 100%;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0.9); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>O Puzzle Mágico 🧩</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Junta a cabeça ao rabo!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐒</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🍌</div> 
+    </div>
+
+    <!-- CARTÃO DO JOGO -->
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: MENU PRINCIPAL -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-destaque">O que vamos montar?</h2>
+            <div class="cat-grid">
+                <div class="cat-card" onclick="selecionarCategoria('Animais')">
+                    <span class="cat-icon">🐶</span><span>Animais</span>
+                </div>
+                <div class="cat-card" onclick="selecionarCategoria('Objetos')">
+                    <span class="cat-icon">📦</span><span>Objetos</span>
+                </div>
+                <div class="cat-card" onclick="selecionarCategoria('Alimentos')">
+                    <span class="cat-icon">🍎</span><span>Alimentos</span>
+                </div>
+                <div class="cat-card" onclick="selecionarCategoria('Mistura')">
+                    <span class="cat-icon">🎲</span><span>Tudo Misturado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: ÁREA DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="container-nav-jogo">
+                <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span> Outros Temas</button>
+                <div class="info-nivel" id="info-nivel">Fase 1</div>
+            </div>
+            
+            <div id="instrucao-texto" class="instrucao-jogo">Monta a imagem!</div>
+
+            <!-- O Puzzle Final -->
+            <div id="puzzle-drop-area" class="puzzle-drop-area">
+                <div id="puzzle-guide-bg" class="puzzle-guide-bg"></div>
+                <!-- Os Slots entram aqui via JS -->
+            </div>
+            
+            <!-- As Peças Baralhadas em baixo -->
+            <div id="pool-container" class="pool-container"></div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
+            <h2 class="titulo-destaque" style="margin-bottom: 10px;">Fantástico!</h2>
+            <p class="texto-intro" style="margin-bottom: 30px;">O puzzle ficou perfeito!</p>
+            <button class="btn-acao" onclick="voltarMenu()" style="margin-top: 0;">Jogar Outro 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Ativa drag in touch devices
+    try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    /* =========================================
+       DADOS (Embutidos para funcionar já)
+       Podes substituir isto pela chamada do teu dados.js no futuro.
+       ========================================= */
+    const palavrasLista =[
+      { palavra: "abacaxi", imagem: "img/abacaxi.png", categoria: "Alimentos" },
+      { palavra: "abelha", imagem: "img/abelha.png", categoria: "Animais" },
+      { palavra: "anel", imagem: "img/anel.png", categoria: "Objetos" },
+      { palavra: "carro", imagem: "img/carro.png", categoria: "Objetos" },
+      { palavra: "cavalo", imagem: "img/cavalo.png", categoria: "Animais" },
+      { palavra: "elefante", imagem: "img/elefante.png", categoria: "Animais" },
+      { palavra: "vaca", imagem: "img/vaca.png", categoria: "Animais" },
+      { palavra: "comboio", imagem: "img/comboio.png", categoria: "Objetos" },
+      { palavra: "morango", imagem: "img/morango.png", categoria: "Alimentos" },
+      { palavra: "banana", imagem: "img/banana.png", categoria: "Alimentos" },
+      { palavra: "óculos", imagem: "img/oculos.png", categoria: "Objetos" },
+      { palavra: "sapo", imagem: "img/sapo.png", categoria: "Animais" }
+    ];
+
+    // Mapeamento automático (Se falhar a categoria em cima, o jogo tenta adivinhar)
+    const listas = {
+        Animais:["abelha","águia","baleia","bode","burro","caracol","cavalo","cigarra","cobra","coelho","elefante","foca","galinha","gato","girafa","hipopótamo","javali","leão","macaco","mosca","ovelha","pato","pavão","peixe","porco","rato","rinoceronte","sapo","tartaruga","urso","vaca","zebra"],
+        Objetos:["anel","balde","banco","bola","boneca","bota","botão","cadeira","caixa","cama","casaco","chapéu","chave","dado","dedo","dente","escada","escola","espada","ferro","flauta","foguete","funil","guitarra","janela","jipe","laço","leque","livro","lixo","lupa","mala","mapa","mesa","moeda","mola","mota","navio","óculos","osso","piano","ponte","pote","quadro","quarto","roda","sapato","sino","taça","televisão","tesoura","tigela","vassoura","vela","violino"],
+        Alimentos:["abacaxi","banana","batata","caju","cenoura","gelado","gema","leite","limão","maçã","melão","morango","ovo","pão","pêssego","queijo","tomate","uva"]
+    };
+
+    let listaAtual =[];
+    let rondaAtual = 1;
+    const TOTAL_RONDAS = 3; 
+    let draggedElement = null;
+
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const avatar = document.getElementById('avatar-progresso');
+    const subtitulo = document.getElementById('jogo-subtitulo');
+    
+    const dropArea = document.getElementById('puzzle-drop-area');
+    const guideBg = document.getElementById('puzzle-guide-bg');
+    const poolContainer = document.getElementById('pool-container');
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarMenu() {
+        caminhoMagico.style.display = 'none';
+        subtitulo.textContent = "Junta a cabeça ao rabo!";
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function selecionarCategoria(cat) {
+        // Filtra a lista principal consoante o botão clicado
+        if (cat === 'Mistura') {
+            listaAtual = [...palavrasLista];
+        } else {
+            listaAtual = palavrasLista.filter(p => {
+                if(p.categoria) return p.categoria === cat;
+                return listas[cat].includes(p.palavra);
+            });
+            // Se a lista ficar vazia por falta de dados, carrega tudo
+            if(listaAtual.length === 0) listaAtual =[...palavrasLista];
+        }
+
+        rondaAtual = 1;
+        subtitulo.textContent = `Tema: ${cat}`;
+        caminhoMagico.style.display = 'block';
+        atualizarProgresso();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarProgresso() {
+        let percent = ((rondaAtual - 1) / TOTAL_RONDAS) * 100;
+        avatar.style.left = `${percent}%`;
+    }
+
+    /* =========================================
+       O CÉREBRO DO PUZZLE MÁGICO
+       ========================================= */
+    function prepararRonda() {
+        document.getElementById('info-nivel').textContent = `Fase ${rondaAtual}`;
+        dropArea.classList.remove('completed');
+        
+        // Limpar HTML
+        dropArea.querySelectorAll('.puzzle-slot').forEach(el => el.remove());
+        poolContainer.innerHTML = '';
+        
+        // 1. Escolhe uma palavra à sorte
+        const palavraSorteada = listaAtual[Math.floor(Math.random() * listaAtual.length)];
+        
+        // Caminho da imagem (Ajustado para procurar na pasta ../ se o ficheiro estiver numa subpasta)
+        // Se a tua estrutura não precisar do "../", apaga-o.
+        const imgSrc = `../${palavraSorteada.imagem}`; 
+
+        // 2. Define a Dificuldade (Nº de Peças)
+        let numPecas = 2; // Fase Fácil
+        if (rondaAtual === 2) numPecas = 3; // Fase Média
+        if (rondaAtual === 3) numPecas = 4; // Fase Difícil
+
+        // Define a variável de CSS para que o Aspect Ratio funcione
+        document.documentElement.style.setProperty('--slices', numPecas);
+
+        // 3. Fase 3 (Difícil): Mostra a imagem de fundo transparente como guia
+        if (rondaAtual === 3) {
+            guideBg.style.display = 'block';
+            guideBg.style.backgroundImage = `url('${imgSrc}')`;
+        } else {
+            guideBg.style.display = 'none';
+        }
+
+        // 4. Cria os Slots e as Peças (Fatias)
+        let pecasCriadas =[];
+
+        for(let i = 0; i < numPecas; i++) {
+            // Criar Slot de Cima
+            let slot = document.createElement('div');
+            slot.className = 'puzzle-slot';
+            slot.dataset.index = i;
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDropSlot);
+            dropArea.appendChild(slot);
+
+            // Criar Peça de Baixo
+            let piece = document.createElement('div');
+            piece.className = 'puzzle-piece';
+            piece.dataset.index = i;
+            piece.draggable = true;
+            
+            // O CSS Magic Cut!
+            piece.style.backgroundImage = `url('${imgSrc}')`;
+            let positionPercentage = (i / (numPecas - 1)) * 100;
+            piece.style.backgroundPosition = `${positionPercentage}% 0%`;
+
+            piece.addEventListener('dragstart', handleDragStart);
+            piece.addEventListener('dragend', handleDragEnd);
+            
+            pecasCriadas.push(piece);
+        }
+
+        // 5. Baralha e atira para a piscina
+        pecasCriadas.sort(() => Math.random() - 0.5).forEach(p => poolContainer.appendChild(p));
+    }
+
+    /* =========================================
+       DRAG & DROP E VALIDAÇÃO (UX Imediata)
+       ========================================= */
+    function handleDragStart(e) {
+        draggedElement = e.target;
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.puzzle-slot');
+        // Só permite hover se o slot estiver vazio
+        if (slot && !slot.hasChildNodes()) slot.classList.add('drag-over');
+    }
+    
+    function handleDragLeave(e) {
+        const slot = e.target.closest('.puzzle-slot');
+        if (slot) slot.classList.remove('drag-over');
+    }
+
+    function handleDropSlot(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.puzzle-slot');
+        if (!slot || !draggedElement) return;
+        slot.classList.remove('drag-over');
+
+        // VALIDAÇÃO DIRETA PARA O PRÉ-ESCOLAR
+        // Só aceita a peça se for a certa (auto-correção)
+        if (slot.dataset.index === draggedElement.dataset.index) {
+            slot.appendChild(draggedElement);
+            tocarSom('encaixe');
+            verificarVitoria();
+        } else {
+            // Se errou, a peça volta ao lugar
+            tocarSom('erro');
+        }
+    }
+
+    function verificarVitoria() {
+        const slots = Array.from(dropArea.querySelectorAll('.puzzle-slot'));
+        
+        // Se ainda há algum slot vazio, sai
+        if (slots.some(slot => !slot.hasChildNodes())) return;
+
+        // Se chegou aqui, montou o puzzle completo!
+        dropArea.classList.add('completed');
+        tocarSom('acerto');
+        
+        rondaAtual++;
+        atualizarProgresso();
+
+        setTimeout(() => {
+            if (rondaAtual > TOTAL_RONDAS) {
+                tocarSom('vitoria');
+                dispararConfetis();
+                mostrarEcra('ecra-fim');
+            } else {
+                prepararRonda();
+            }
+        }, 1500);
+    }
+
+    /* =========================================
+       SISTEMA DE SOM
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'encaixe') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(500, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.3);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = window.innerWidth; 
+        canvasConfetti.height = window.innerHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff9f43', '#10ac84', '#ee5253', '#0abde3', '#feca57'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
