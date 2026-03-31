@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Puzzle das Sílabas 🧩</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (1º ANO COM MENU)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* REGRA MOBILE: CABEÇALHO RESPONSIVO */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px 15px; gap: 15px; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; flex: 1;
+            padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        footer a { color: var(--azul-vibrante); text-decoration: none; font-weight: 700; }
+        
+        /* =========================================
+           ECRÃS BASE E MENU INICIAL
+           ========================================= */
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; }
+        
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900;}
+        
+        .btn-nivel-menu {
+            background-color: white; border: 4px solid #ced6e0; border-radius: 20px;
+            padding: 15px 25px; width: 85%; max-width: 450px; cursor: pointer; margin-bottom: 15px;
+            box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: flex-start; gap: 20px;
+        }
+        .btn-nivel-menu:hover { transform: translateY(-4px); }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        #btn-menu-1:hover { border-color: #2ed573; box-shadow: 0 6px 0 #2ed573; color: #219d53; }
+        #btn-menu-2:hover { border-color: #ffa502; box-shadow: 0 6px 0 #ffa502; color: #e69500; }
+        #btn-menu-3:hover { border-color: #ff4757; box-shadow: 0 6px 0 #ff4757; color: #e84150; }
+
+        .nivel-icon { font-size: 2.5rem; background: #f0f4f8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .nivel-text { text-align: left; }
+        .nivel-titulo { font-size: 1.4rem; font-weight: 900; display: block; color: var(--azul-escuro); }
+        .nivel-desc { font-size: 1rem; color: var(--text-main); font-weight: 500; }
+
+        /* =========================================
+           ECRÃ DO JOGO E PROGRESSO
+           ========================================= */
+        #ecra-jogo { justify-content: flex-start; }
+
+        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; width: 100%; max-width: 800px;}
+        .btn-nivel-top { background: #f0f4f8; border: 2px solid #ced6e0; padding: 10px 15px; border-radius: 15px; font-weight: 800; font-size: 0.95rem; cursor: pointer; color: var(--text-main); transition: 0.2s; flex: 1; min-width: 130px; }
+        .btn-nivel-top:hover { background: #e3f2fd; border-color: var(--azul-vibrante); color: var(--azul-escuro); }
+        .btn-nivel-top.ativo { background: var(--cor-1ano); color: white; border-color: var(--cor-1ano-dark); box-shadow: 0 4px 10px rgba(0, 145, 255, 0.3); }
+
+        .status-bar { width: 100%; max-width: 800px; margin-bottom: 25px; display: flex; flex-direction: column;}
+        .score-container { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; padding: 0 15px; margin-bottom: 10px;}
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: #f0f4f8; border-radius: 15px; height: 16px; width: 100%; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        /* =========================================
+           O PUZZLE (SLICING E SÍLABAS)
+           ========================================= */
+        .puzzle-drop-area {
+            display: flex; width: 100%; max-height: 38vh; max-width: 38vh; aspect-ratio: 1 / 1; 
+            background-color: #f8fafc; border: 4px dashed #cbd5e1; border-radius: 15px;
+            margin: 0 auto 30px auto; position: relative; overflow: hidden; box-shadow: inset 0 4px 10px rgba(0,0,0,0.02); flex-shrink: 0;
+        }
+
+        .puzzle-guide-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: 100% 100%; background-repeat: no-repeat;
+            opacity: 0.20; display: block; z-index: 0; filter: grayscale(30%);
+        }
+
+        .puzzle-slot { flex: 1; height: 100%; border-right: 2px dashed #cbd5e1; position: relative; z-index: 1; display: flex; }
+        .puzzle-slot:last-child { border-right: none; }
+        .puzzle-slot.drag-over { background-color: rgba(0, 145, 255, 0.15); }
+
+        .puzzle-drop-area.completed { border: 4px solid var(--cor-1ano); border-radius: 15px; background: white; animation: popIn 0.5s ease forwards; box-shadow: 0 10px 20px rgba(0,145,255,0.2);}
+        .puzzle-drop-area.completed .puzzle-slot { border: none; }
+        .puzzle-drop-area.completed .puzzle-guide-bg { display: none; }
+
+        /* As Peças em baixo */
+        .pool-container {
+            display: flex; justify-content: center; align-items: center; gap: clamp(8px, 2vw, 15px);
+            width: 100%; max-width: 600px; margin: 0 auto; padding: 15px 0; border-top: 3px dashed #e2e8f0;
+            flex-shrink: 0; min-height: 15vh; flex-wrap: wrap; 
+        }
+
+        .puzzle-piece {
+            position: relative;
+            height: clamp(75px, 16vh, 140px); aspect-ratio: 1 / var(--slices);
+            background-size: calc(var(--slices) * 100%) 100%; background-repeat: no-repeat;
+            border: 3px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: grab; touch-action: none; transition: transform 0.1s; overflow: hidden;
+        }
+
+        .puzzle-piece:active { cursor: grabbing; transform: scale(1.05); }
+        .puzzle-piece.dragging { opacity: 0.5; }
+        .puzzle-slot .puzzle-piece { height: 100%; width: 100%; border: none; border-radius: 0; box-shadow: none; }
+
+        /* O Texto das Sílabas na Peça */
+        .syllable-text {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.9); color: var(--azul-escuro);
+            font-size: clamp(1.2rem, 3.5vw, 2.2rem); font-weight: 900; text-align: center;
+            padding: 4px 0; border-top: 2px solid rgba(0,0,0,0.1);
+            user-select: none; pointer-events: none;
+        }
+
+        /* MODO NÍVEL 3 (ESCONDIDO -> FLIP) */
+        .puzzle-piece.modo-leitura {
+            background-image: none !important;
+            background-color: var(--azul-escuro);
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--azul-vibrante);
+        }
+        .puzzle-piece.modo-leitura .syllable-text {
+            position: static; background: transparent; color: white;
+            border: none; padding: 0; font-size: clamp(2rem, 5vw, 3rem);
+        }
+
+        /* Animação Flip quando o Nível 3 é concluído */
+        .flip-reveal { animation: flipIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes flipIn {
+            0% { transform: rotateY(90deg); opacity: 0;}
+            100% { transform: rotateY(0deg); opacity: 1;}
+        }
+
+        /* Ecrã de Fim */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #e3f2fd;}
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px; margin-bottom: 15px;}
+        .btn-menu { background-color: #ced6e0; color: #2f3542; box-shadow: 0 5px 0 #a4b0be; }
+
+        @keyframes popIn { 0% { transform: scale(0.9); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-2deg); } 75% { transform: translateX(8px) rotate(2deg); } }
+        .error-shake { animation: errorShake 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+
+        @media (max-width: 768px) {
+            .cartao-jogo-container { padding: 20px 10px; }
+            .btn-nivel-top { padding: 8px; font-size: 0.85rem; min-width: 45%; }
+            .btn-nivel-menu { width: 95%; padding: 10px 15px; gap: 15px; }
+            .nivel-icon { width: 50px; height: 50px; font-size: 2rem; }
+            .nivel-titulo { font-size: 1.2rem; }
+            .puzzle-drop-area { margin-bottom: 15px; }
+        }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+<li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+<li><a href="../../">🎒 1º Ano</a></li>
+<li><a href="../../../2/">💡 2º Ano</a></li>
+<li><a href="../../../3/">🔍 3º Ano</a></li>
+<li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Puzzle das Sílabas 🧩</h1>
+        <div class="subtitulo">Lê as sílabas e forma a palavra!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- MENU DE NÍVEIS INICIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <div class="titulo-menu">Escolhe um Nível:</div>
+            
+            <button class="btn-nivel-menu" id="btn-menu-1" onclick="iniciarJogo(1)">
+                <span class="nivel-icon">🟢</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 1 (2 Sílabas)</span>
+                    <span class="nivel-desc">Com ajuda da imagem</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel-menu" id="btn-menu-2" onclick="iniciarJogo(2)">
+                <span class="nivel-icon">🟡</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 2 (3 Sílabas)</span>
+                    <span class="nivel-desc">Com ajuda da imagem</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel-menu" id="btn-menu-3" onclick="iniciarJogo(3)">
+                <span class="nivel-icon">🔴</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 3 (Leitura)</span>
+                    <span class="nivel-desc">Só texto! Descobre a imagem.</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- ECRÃ DO JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- SELETOR DE NÍVEIS (TOPO) -->
+            <div class="level-selector" id="level-selector">
+                <button class="btn-nivel-top" id="btn-niv-top-1" onclick="mudarNivel(1)">Nível 1: 2 Sílabas</button>
+                <button class="btn-nivel-top" id="btn-niv-top-2" onclick="mudarNivel(2)">Nível 2: 3 Sílabas</button>
+                <button class="btn-nivel-top" id="btn-niv-top-3" onclick="mudarNivel(3)">Nível 3: Sem Imagem</button>
+            </div>
+
+            <!-- BARRA DE ESTADO -->
+            <div class="status-bar">
+                <div class="score-container">
+                    <span class="score-certas" style="color: #219d53;">Conta: <span id="val-progresso">1</span>/10</span>
+                    <span class="score-erradas">Erros: <span id="val-erros">0</span></span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- O Puzzle Final -->
+            <div id="puzzle-drop-area" class="puzzle-drop-area">
+                <div id="puzzle-guide-bg" class="puzzle-guide-bg"></div>
+            </div>
+            
+            <!-- As Peças Baralhadas -->
+            <div id="pool-container" class="pool-container"></div>
+        </div>
+
+        <!-- ECRÃ FINAL -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Resolveste 10 palavras!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> respostas erradas.
+            </div>
+            <button class="btn-reiniciar" onclick="reiniciarNivelAtual()">JOGAR NOVAMENTE 🔄</button>
+            <button class="btn-reiniciar btn-menu" onclick="voltarAoMenu()">VOLTAR AO MENU 🏠</button>
+        </div>
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script src="../dados.js"></script> 
+
+<script>
+    // Ativa drag in touch devices
+    try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS E DADOS
+       ========================================= */
+    const TOTAL_QUESTIONS = 10;
+    let currentLevel = 1;
+    let questionIndex = 0;
+    let errorsCount = 0;
+    let isTransitioning = false;
+    let draggedElement = null;
+    let listaRonda =[]; // As 10 palavras do nível atual
+
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elProgressFill = document.getElementById('progress-fill');
+    const dropArea = document.getElementById('puzzle-drop-area');
+    const guideBg = document.getElementById('puzzle-guide-bg');
+    const poolContainer = document.getElementById('pool-container');
+
+    /* =========================================
+       FILTRO ANTI-DÍGRAFOS
+       ========================================= */
+    function palavraValida(palavra) {
+        // Rejeita a palavra se contiver nh, lh, ch, rr, ss, qu, gu (case insensitive)
+        const regexDigrafos = /(nh|lh|ch|rr|ss|qu|gu)/i;
+        return !regexDigrafos.test(palavra.palavra);
+    }
+
+    // Listas baseadas no filtro e no número de sílabas
+    const palavrasSimples = palavras.filter(palavraValida);
+    const listaL1 = palavrasSimples.filter(p => p.num === 2);
+    const listaL2 = palavrasSimples.filter(p => p.num === 3);
+    const listaL3 = palavrasSimples.filter(p => p.num === 2 || p.num === 3); // Mistura para o Nível Difícil
+
+    /* =========================================
+       FLUXO DO JOGO
+       ========================================= */
+    function iniciarJogo(nivel) {
+        currentLevel = nivel;
+        questionIndex = 0;
+        errorsCount = 0;
+        isTransitioning = false;
+
+        // Limpa confetis caso existam
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        document.querySelectorAll('.btn-nivel-top').forEach(b => b.classList.remove('ativo'));
+        document.getElementById(`btn-niv-top-${nivel}`).classList.add('ativo');
+
+        // Seleciona 10 palavras aleatórias baseadas no nível
+        let banco = [];
+        if (nivel === 1) banco = [...listaL1];
+        if (nivel === 2) banco = [...listaL2];
+        if (nivel === 3) banco = [...listaL3];
+
+        banco.sort(() => Math.random() - 0.5);
+        listaRonda = banco.slice(0, TOTAL_QUESTIONS);
+
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        carregarPergunta();
+    }
+
+    function mudarNivel(nivel) { iniciarJogo(nivel); }
+    function reiniciarNivelAtual() { iniciarJogo(currentLevel); }
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+    function atualizarPlacar() { elErros.textContent = errorsCount; }
+
+    /* =========================================
+       CRIAR O PUZZLE DA PALAVRA
+       ========================================= */
+    function carregarPergunta() {
+        isTransitioning = false;
+        elProgressFill.style.width = `${(questionIndex / TOTAL_QUESTIONS) * 100}%`;
+        elProgresso.textContent = questionIndex + 1;
+
+        dropArea.classList.remove('completed');
+        dropArea.querySelectorAll('.puzzle-slot').forEach(el => el.remove());
+        poolContainer.innerHTML = '';
+
+        const palavraSorteada = listaRonda[questionIndex];
+        const imgSrc = `../${palavraSorteada.imagem}`; 
+        const silabas = palavraSorteada.divisao.split('-'); // Ex: ["CA", "VA", "LO"]
+        const numPecas = silabas.length;
+
+        document.documentElement.style.setProperty('--slices', numPecas);
+
+        // Nível 3 não tem imagem de fundo
+        if (currentLevel === 3) {
+            guideBg.style.display = 'none';
+        } else {
+            guideBg.style.display = 'block';
+            guideBg.style.backgroundImage = `url('${imgSrc}')`;
+        }
+
+        let pecasCriadas =[];
+
+        for(let i = 0; i < numPecas; i++) {
+            // Cria os Slots
+            let slot = document.createElement('div');
+            slot.className = 'puzzle-slot';
+            slot.dataset.index = i;
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDropSlot);
+            dropArea.appendChild(slot);
+
+            // Cria as Peças
+            let piece = document.createElement('div');
+            piece.className = 'puzzle-piece';
+            piece.dataset.index = i;
+            piece.draggable = true;
+            
+            // Texto da Sílaba
+            let spanSyllable = document.createElement('div');
+            spanSyllable.className = 'syllable-text';
+            spanSyllable.textContent = silabas[i];
+            
+            if (currentLevel === 3) {
+                piece.classList.add('modo-leitura');
+                // Guardamos a imagem numa variável CSS inline para usarmos na animação final
+                piece.style.setProperty('--bg-img', `url('${imgSrc}')`);
+            } else {
+                piece.style.backgroundImage = `url('${imgSrc}')`;
+                let positionPercentage = numPecas > 1 ? (i / (numPecas - 1)) * 100 : 0;
+                piece.style.backgroundPosition = `${positionPercentage}% 0%`;
+            }
+
+            piece.appendChild(spanSyllable);
+            piece.addEventListener('dragstart', handleDragStart);
+            piece.addEventListener('dragend', handleDragEnd);
+            
+            pecasCriadas.push(piece);
+        }
+
+        // Baralha as peças em baixo
+        pecasCriadas.sort(() => Math.random() - 0.5).forEach(p => poolContainer.appendChild(p));
+    }
+
+    /* =========================================
+       DRAG AND DROP LOGIC
+       ========================================= */
+    function handleDragStart(e) {
+        if(isTransitioning) return;
+        draggedElement = e.target.closest('.puzzle-piece'); // Garante que agarra a peça inteira
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.puzzle-slot');
+        if (slot && !slot.hasChildNodes()) slot.classList.add('drag-over');
+    }
+    
+    function handleDragLeave(e) {
+        const slot = e.target.closest('.puzzle-slot');
+        if (slot) slot.classList.remove('drag-over');
+    }
+
+    function handleDropSlot(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.puzzle-slot');
+        if (!slot || !draggedElement) return;
+        slot.classList.remove('drag-over');
+
+        if (slot.dataset.index === draggedElement.dataset.index) {
+            slot.appendChild(draggedElement);
+            tocarSom('encaixe');
+            verificarVitoria();
+        } else {
+            errorsCount++;
+            atualizarPlacar();
+            tocarSom('erro');
+            
+            // Feedback visual de erro na peça que tentou arrastar
+            draggedElement.classList.add('error-shake');
+            setTimeout(() => draggedElement.classList.remove('error-shake'), 400);
+        }
+    }
+
+    function verificarVitoria() {
+        const slots = Array.from(dropArea.querySelectorAll('.puzzle-slot'));
+        if (slots.some(slot => !slot.hasChildNodes())) return;
+
+        isTransitioning = true;
+        dropArea.classList.add('completed');
+        
+        // EFEITO MÁGICO DO NÍVEL 3 (Flip da Leitura para a Imagem)
+        if (currentLevel === 3) {
+            const pieces = dropArea.querySelectorAll('.puzzle-piece');
+            pieces.forEach(p => {
+                p.classList.remove('modo-leitura');
+                // Aplica a imagem que estava escondida na variável CSS
+                p.style.backgroundImage = p.style.getPropertyValue('--bg-img');
+                
+                // Calcula a posição do background para a imagem ficar perfeita
+                const index = parseInt(p.dataset.index);
+                const total = pieces.length;
+                let positionPercentage = total > 1 ? (index / (total - 1)) * 100 : 0;
+                p.style.backgroundPosition = `${positionPercentage}% 0%`;
+                
+                // Oculta o texto para a imagem brilhar
+                p.querySelector('.syllable-text').style.display = 'none';
+                
+                // Animação de virar o cartão
+                p.classList.add('flip-reveal');
+            });
+        }
+
+        tocarSom('acerto');
+        
+        setTimeout(() => {
+            questionIndex++;
+            if (questionIndex < TOTAL_QUESTIONS) {
+                carregarPergunta();
+            } else {
+                finalizarJogo();
+            }
+        }, 1800); // Tempo para apreciar o sucesso antes de mudar
+    }
+
+    function finalizarJogo() {
+        elProgressFill.style.width = `100%`;
+        mostrarEcra('ecra-fim');
+        
+        document.getElementById('final-erros').textContent = errorsCount;
+
+        if (errorsCount === 0) {
+            document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
+            tocarSom('vitoria'); dispararConfetis();
+        } else if (errorsCount <= 3) {
+            document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+            tocarSom('vitoria'); dispararConfetis();
+        } else {
+            document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+            tocarSom('acerto'); 
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E EFEITOS
+       ========================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'encaixe') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = window.innerWidth;
+        canvasConfetti.height = window.innerHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+    
+    // Mostra o Menu Inicial ao carregar a página
+    window.onload = () => mostrarEcra('ecra-selecao');
+</script>
+</body>
+</html>
