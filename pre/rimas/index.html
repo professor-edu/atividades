@@ -257,7 +257,6 @@
 
     /* =========================================
        DADOS: AS FAMÍLIAS DE RIMAS
-       (Basta adicionares novas palavras aqui!)
        ========================================= */
     const familiasRimas = {
         "ão": ["avião", "camião", "botão", "cão", "leão", "limão", "mão", "melão", "pão", "pavão", "televisão"],
@@ -275,7 +274,7 @@
     const TOTAL_RONDAS = 15;
     let rondaAtual = 1;
     let isVerificando = false;
-    let familiaCerta = "";
+    let alvosDestaPartida = []; // Array que vai guardar as 15 palavras únicas do topo
 
     const caminhoMagico = document.getElementById('caminho-magico');
     const avatar = document.getElementById('avatar-progresso');
@@ -287,15 +286,30 @@
         document.getElementById(id).style.display = 'flex';
     }
 
-    // Função de ajuda para ir buscar o caminho correto da imagem usando o dados.js
     function getImagemByPalavra(nomePalavra) {
         const obj = palavras.find(p => p.palavra.toLowerCase() === nomePalavra.toLowerCase());
-        return obj ? `../${obj.imagem}` : ''; // Ex: "../img/gato.png"
+        return obj ? `../${obj.imagem}` : ''; 
     }
 
     function iniciarJogo() {
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
         rondaAtual = 1;
+        
+        // 1. GERAR A LISTA DE ALVOS ÚNICOS PARA AS 15 RONDAS
+        let todosAlvosPossiveis = [];
+        // Percorre o objeto e cria uma lista com todas as palavras e a sua família
+        for (let familia in familiasRimas) {
+            familiasRimas[familia].forEach(palavra => {
+                todosAlvosPossiveis.push({ palavra: palavra, familia: familia });
+            });
+        }
+        
+        // Baralha todas as palavras possíveis
+        todosAlvosPossiveis.sort(() => Math.random() - 0.5);
+        
+        // Corta as primeiras 15 (garantindo que não há repetições)
+        alvosDestaPartida = todosAlvosPossiveis.slice(0, TOTAL_RONDAS);
+
         caminhoMagico.style.display = 'block';
         atualizarProgresso();
         mostrarEcra('ecra-jogo');
@@ -311,23 +325,22 @@
         isVerificando = false;
         opcoesContainer.innerHTML = '';
 
-        // 1. Escolher uma família à sorte
-        const chavesFamilias = Object.keys(familiasRimas);
-        familiaCerta = chavesFamilias[Math.floor(Math.random() * chavesFamilias.length)];
-        const grupoCerto = familiasRimas[familiaCerta];
-
-        // 2. Baralhar e escolher 2 palavras dessa família (A = Alvo topo, B = Resposta certa baixo)
-        const grupoBaralhado = [...grupoCerto].sort(() => Math.random() - 0.5);
-        const palavraAlvo = grupoBaralhado[0];
-        const palavraCerta = grupoBaralhado[1];
+        // 1. Ir buscar o alvo único desta ronda
+        const alvoAtual = alvosDestaPartida[rondaAtual - 1];
+        const palavraAlvo = alvoAtual.palavra;
+        const familiaCerta = alvoAtual.familia;
 
         // Colocar a imagem Alvo no topo
         imgAlvo.src = getImagemByPalavra(palavraAlvo);
-        imgAlvo.style.animation = 'popIn 0.4s ease'; // Pequeno efeito visual ao mudar
+        imgAlvo.style.animation = 'popIn 0.4s ease';
+
+        // 2. Escolher a palavra certa em baixo (tem de ser da mesma família, mas DIFERENTE do alvo)
+        const grupoRestante = familiasRimas[familiaCerta].filter(p => p !== palavraAlvo);
+        const palavraCerta = grupoRestante[Math.floor(Math.random() * grupoRestante.length)];
 
         // 3. Escolher 2 intrusos de famílias diferentes
         let outrosIntrusos = [];
-        chavesFamilias.forEach(chave => {
+        Object.keys(familiasRimas).forEach(chave => {
             if (chave !== familiaCerta) {
                 outrosIntrusos = outrosIntrusos.concat(familiasRimas[chave]);
             }
@@ -368,7 +381,6 @@
             tocarSom('acerto');
             cardElement.classList.add('correto');
             
-            // Fica um bocadinho a mostrar que acertou, depois avança
             setTimeout(() => {
                 rondaAtual++;
                 atualizarProgresso();
@@ -430,7 +442,7 @@
 
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
-    let confetis =[];
+    let confetis = [];
 
     function redimensionarCanvas() { 
         canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
@@ -439,7 +451,7 @@
     window.addEventListener('resize', redimensionarCanvas);
 
     function dispararConfetis() {
-        redimensionarCanvas(); confetis =[]; const cores =['#ff6b6b', '#ee5253', '#4fd1c5', '#ffa502', '#eccc68'];
+        redimensionarCanvas(); confetis = []; const cores = ['#ff6b6b', '#ee5253', '#4fd1c5', '#ffa502', '#eccc68'];
         for (let i = 0; i < 150; i++) {
             confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
         }
@@ -456,7 +468,6 @@
         if (ativos) requestAnimationFrame(animarConfetis);
     }
 
-    // Arranca mostrando logo a Seleção
     window.onload = () => mostrarEcra('ecra-inicial');
 
 </script>
