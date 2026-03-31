@@ -360,132 +360,154 @@
         avatar.style.left = `${percent}%`;
     }
 
-    function prepararRonda() {
+   function prepararRonda() {
         document.getElementById('info-nivel').textContent = `Desafio ${jogadaAtual} de ${TOTAL_JOGADAS}`;
         areaContagem.innerHTML = '';
         opcoesContainer.innerHTML = '';
         itemsSelecionados =[];
         
-        // 1. Reset da Imagem Instrução (limpar filtros do Nível 3 e 4 anteriores)
+        // 1. Reset visual do ecrã e da instrução
         imgInstrucao.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"; 
-        
+        if(nivelAtual === 4) {
+            areaContagem.classList.add('modo-genio');
+        } else {
+            areaContagem.classList.remove('modo-genio');
+        }
+
         let maxAlvos, minAlvos, listaDistratores =[], targetImg = "", targetCss = "";
         
-        // 2. O Sorteador: Lista de heróis possíveis e os seus nomes
+        // 2. O Sorteador: A tua nova e maior lista de heróis
         const alvosPossiveis =[
             { id: "gato", nome: "gatinhos" },
             { id: "rato", nome: "ratinhos" },
             { id: "porco", nome: "porquinhos" },
             { id: "tartaruga", nome: "tartarugas" },
-            { id: "cao", nome: "cães" },
-            { id: "boneca", nome: "bonecas" },
-            { id: "carro", nome: "carros" }
+            { id: "carro", nome: "carros" },
+            { id: "cao", nome: "cãezinhos" },
+            { id: "tigre", nome: "tigres" },
+            { id: "maca", nome: "maçãs" }
         ];
         
-        // 3. O Sorteador: Lista de lixo visual (que existe no teu dados.js)
-        const todosDistratores =["arvore", "flor", "sol", "casa", "burro", "leao", "maca", "bola", "barco", "mota", "galinha", "urso",];
+        // 3. O Sorteador: Um "pote" gigante de imagens para servir de lixo visual
+        const todosDistratores =[
+            "arvore", "flor", "sol", "casa", "burro", "leao", 
+            "nuvem", "barco", "boneca", "bola", "gato", "rato", 
+            "porco", "tartaruga", "carro", "cao", "tigre", "maca"
+        ];
 
+        // LÓGICA PARA OS NÍVEIS 1, 2 e 4 (Sem magia de cores)
         if (nivelAtual === 1 || nivelAtual === 2 || nivelAtual === 4) {
             
-            // Sorteia o herói desta ronda!
+            // Sorteia um herói ao calhas
             let alvoSorteado = alvosPossiveis[Math.floor(Math.random() * alvosPossiveis.length)];
             targetImg = alvoSorteado.id;
+            targetCss = ""; // Não há filtros de cor
             
-            // Tira o herói da lista de distratores (para não haver dois iguais) e baralha
+            // Retira o herói da lista de lixo (para não gerar confusão) e baralha
             let distLivres = todosDistratores.filter(d => d !== targetImg).sort(() => Math.random() - 0.5);
 
             if (nivelAtual === 1) {
                 minAlvos = 1; maxAlvos = 5;
                 listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""} ];
-                document.getElementById('texto-instrucao').textContent = `Conta os ${alvoSorteado.nome}!`;
+                document.getElementById('texto-instrucao').textContent = `Conta os(as) ${alvoSorteado.nome}!`;
             } 
             else if (nivelAtual === 2) {
                 minAlvos = 4; maxAlvos = 10;
-                listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
-                document.getElementById('texto-instrucao').textContent = `Conta os ${alvoSorteado.nome}!`;
+                listaDistratores = [ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
+                document.getElementById('texto-instrucao').textContent = `Conta os(as) ${alvoSorteado.nome}!`;
             }
             else if (nivelAtual === 4) {
                 minAlvos = 5; maxAlvos = 10;
-                listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
+                listaDistratores = [ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
                 document.getElementById('texto-instrucao').textContent = "Quantas sombras são iguais a esta?";
             }
         }
+        // LÓGICA EXCLUSIVA DO NÍVEL 3 (Magia de Cores!)
         else if (nivelAtual === 3) {
             minAlvos = 5; maxAlvos = 10;
             
-            // O Nível 3 precisa de cenários construídos à mão por causa dos filtros de cor
+            // Criei cenários novos já a usar o cão, tigre e a nuvem!
             const cenariosNv3 =[
                 {
                     target: "gato", targetNome: "gato cor de laranja", targetCss: "hue-rotate(60deg) saturate(2)",
-                    dist:[ {img: "gato", css: "hue-rotate(180deg)"}, {img: "rato", css: "sepia(1) hue-rotate(-20deg) saturate(3)"}, {img: "leao", css: ""} ]
+                    dist:[ {img: "gato", css: "hue-rotate(180deg)"}, {img: "rato", css: "sepia(1) hue-rotate(-20deg) saturate(3)"}, {img: "tigre", css: ""} ]
                 },
                 {
                     target: "carro", targetNome: "carro verde", targetCss: "hue-rotate(90deg) saturate(2)",
-                    dist:[ {img: "carro", css: "hue-rotate(-90deg)"}, {img: "jipe", css: "hue-rotate(90deg) saturate(2)"}, {img: "autocarro", css: ""} ]
+                    dist:[ {img: "carro", css: "hue-rotate(-90deg)"}, {img: "carro", css: "hue-rotate(180deg)"}, {img: "casa", css: ""} ]
+                },
+                {
+                    target: "cao", targetNome: "cão azul", targetCss: "hue-rotate(180deg) saturate(2)",
+                    dist:[ {img: "cao", css: ""}, {img: "cao", css: "hue-rotate(90deg)"}, {img: "nuvem", css: ""} ]
                 },
                 {
                     target: "maca", targetNome: "maçã amarela", targetCss: "hue-rotate(60deg) saturate(2)",
-                    dist:[ {img: "maca", css: ""}, {img: "limao", css: ""}, {img: "morango", css: ""} ]
+                    dist:[ {img: "maca", css: ""}, {img: "flor", css: "hue-rotate(90deg)"}, {img: "sol", css: ""} ]
                 }
             ];
             
             let cenario = cenariosNv3[Math.floor(Math.random() * cenariosNv3.length)];
             targetImg = cenario.target;
-            targetCss = cenario.targetCss;
+            targetCss = cenario.targetCss; // Guarda a cor mágica!
             listaDistratores = cenario.dist;
             
             document.getElementById('texto-instrucao').textContent = `Cuidado! Conta apenas o(a) ${cenario.targetNome}!`;
         }
 
-        // Definir a Imagem Pista (Target) com as cores do CSS
+        // 4. Aplicar a imagem e cor nas instruções (em cima)
         imgInstrucao.src = getImg(targetImg);
         if (nivelAtual === 3) imgInstrucao.style.filter = targetCss + " drop-shadow(0 2px 4px rgba(0,0,0,0.1))";
         if (nivelAtual === 4) imgInstrucao.style.filter = "brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))";
         
+        // 5. Gerar a matemática (quantos aparecem)
         alvosCorretosTotal = Math.floor(Math.random() * (maxAlvos - minAlvos + 1)) + minAlvos;
-        
-        // Limitar a quantidade máxima do lixo visual no ecrã para evitar Scroll!
         let numDistratores = (nivelAtual <= 2) ? Math.floor(Math.random() * 4) + (nivelAtual * 2) : Math.floor(Math.random() * 3) + 4; 
 
         let elementosArr =[];
         
-        // Inserir Alvos
-        for(let i=0; i < alvosCorretosTotal; i++) {
-            elementosArr.push({ isTarget: true, img: targetImg, css: "" });
+        // Inserir os Alvos Certos (agora com a cor certa no Nível 3!)
+        for(let i = 0; i < alvosCorretosTotal; i++) {
+            elementosArr.push({ isTarget: true, img: targetImg, css: targetCss }); 
         }
-        // Inserir Distratores
-        for(let i=0; i < numDistratores; i++) {
+        
+        // Inserir os Distratores
+        for(let i = 0; i < numDistratores; i++) {
             let distAleatorio = listaDistratores[Math.floor(Math.random() * listaDistratores.length)];
             elementosArr.push({ isTarget: false, img: distAleatorio.img, css: distAleatorio.css });
         }
 
-        // Baralhar o array visual
+        // Baralhar o quadro
         elementosArr.sort(() => Math.random() - 0.5);
 
-        // Renderizar Elementos
+        // 6. Colocar as imagens todas no ecrã
         elementosArr.forEach(item => {
             let divItem = document.createElement('div');
             divItem.className = 'item-contagem';
             divItem.dataset.target = item.isTarget;
             
-            // Randomizar ligeiramente a rotação e margem para parecerem espalhados orgânicos
-            let rAngle = Math.floor(Math.random() * 30) - 15; // -15 a +15 graus
-            let rTx = Math.floor(Math.random() * 20) - 10;    // -10 a +10 px
+            // Espalhar ligeiramente para não ficar muito direito
+            let rAngle = Math.floor(Math.random() * 30) - 15;
+            let rTx = Math.floor(Math.random() * 20) - 10;
             let rTy = Math.floor(Math.random() * 20) - 10;
             divItem.style.transform = `translate(${rTx}px, ${rTy}px) rotate(${rAngle}deg)`;
 
             let img = document.createElement('img');
             img.src = getImg(item.img);
             img.className = 'item-img';
-            if (item.css !== "") img.style.filter = item.css;
+            
+            // Aplica os filtros visuais
+            if (nivelAtual === 4) {
+                img.style.filter = "brightness(0)"; // Sombras
+            } else if (item.css !== "") {
+                img.style.filter = item.css; // As cores do Nível 3
+            }
             
             divItem.appendChild(img);
-            
-            // Adicionar evento de Clique
             divItem.addEventListener('click', (e) => lidarComCliqueItem(divItem, e));
             areaContagem.appendChild(divItem);
         });
 
+        // 7. Gerar os botões em baixo para a resposta
         gerarOpcoesResposta();
     }
 
