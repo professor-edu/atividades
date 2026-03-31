@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Vogais🧸</title>
+    <title>Pré-Escolar - Vogais 🧸</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -391,10 +391,10 @@
             btn.style.pointerEvents = 'auto';
         });
 
-        // Escolhe palavra à sorte para a imagem
-        alvoFase1 = bancoPalavras[Math.floor(Math.random() * bancoPalavras.length)];
+        // USA A PALAVRA ÚNICA DESTA RONDA (em vez do random)
+        alvoFase1 = palavrasDesteJogo[rondaGlobal - 1];
         
-        imgAlvoF1.src = `img/${alvoFase1}.svg`;
+        imgAlvoF1.src = `../img/${alvoFase1}.svg`;
         containerAlvoF1.style.animation = 'popIn 0.4s ease';
         setTimeout(() => containerAlvoF1.style.animation = '', 400);
     }
@@ -421,30 +421,28 @@
     }
 
     /* --- FASE 2 --- */
-    function prepararRondaFase2() {
+   function prepararRondaFase2() {
         isVerificando = false;
         opcoesContainerF2.innerHTML = '';
 
-        // 1. Escolher uma vogal à sorte
-        const vogais = ['a', 'e', 'i', 'o', 'u'];
-        vogalFase2 = vogais[Math.floor(Math.random() * vogais.length)];
+        // 1. USA A PALAVRA ÚNICA DESTA RONDA E EXTRAI A SUA VOGAL
+        const imgCerta = palavrasDesteJogo[rondaGlobal - 1];
+        vogalFase2 = getVogal(imgCerta);
         
         // 2. Escrever no cartão topo: minúscula - Maiúscula
         txtAlvoF2.textContent = `${vogalFase2} - ${vogalFase2.toUpperCase()}`;
         txtAlvoF2.style.animation = 'popIn 0.4s ease';
         setTimeout(() => txtAlvoF2.style.animation = '', 400);
 
-        // 3. Escolher 1 imagem certa e 3 intrusas (de vogais diferentes)
-        const palavrasCertas = bancoPalavras.filter(p => getVogal(p) === vogalFase2);
-        const imgCerta = palavrasCertas[Math.floor(Math.random() * palavrasCertas.length)];
-
+        // 3. Escolher 3 intrusas (de vogais diferentes da correta)
         let imagensIntrusas = [];
         let vogaisUsadas = [vogalFase2];
 
-        // Vai buscar 3 intrusas de vogais iniciais completamente diferentes
         while (imagensIntrusas.length < 3) {
             let candidata = bancoPalavras[Math.floor(Math.random() * bancoPalavras.length)];
             let vogalCandidata = getVogal(candidata);
+            
+            // Só aceita se for de uma vogal que ainda não está nos cartões
             if (!vogaisUsadas.includes(vogalCandidata)) {
                 imagensIntrusas.push(candidata);
                 vogaisUsadas.push(vogalCandidata);
@@ -464,7 +462,7 @@
             btn.className = 'btn-imagem';
             
             const imgHTML = document.createElement('img');
-            imgHTML.src = `img/${op.img}.svg`;
+            imgHTML.src = `../img/${op.img}.svg`;
             
             btn.appendChild(imgHTML);
             btn.onclick = () => verificarRespostaFase2(op.correta, btn);
