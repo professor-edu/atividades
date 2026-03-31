@@ -367,56 +367,84 @@
         itemsSelecionados =[];
         
         // Ativa ou Desativa o Modo Sombras no Nível 4
-        if(nivelAtual === 4) {
-            areaContagem.classList.add('modo-genio');
-            imgInstrucao.style.filter = "brightness(0)";
-        } else {
-            areaContagem.classList.remove('modo-genio');
-            imgInstrucao.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"; // Reset normal
-        }
-
-        // Lógicas de Quantidades e Distratores baseadas no nível
-        let maxAlvos, minAlvos, listaDistratores =[], targetImg = "gato";
+        // 1. Reset da Imagem Instrução (limpar filtros do Nível 3 e 4 anteriores)
+        imgInstrucao.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"; 
         
-        if (nivelAtual === 1) {
-            minAlvos = 1; maxAlvos = 5;
-            listaDistratores =[{img: "arvore", css: ""}, {img: "chuva", css: ""}, {img: "sol", css: ""}, {img: "macaco", css: ""}];
-            document.getElementById('texto-instrucao').textContent = "Conta os ";
-        } 
-        else if (nivelAtual === 2) {
-            minAlvos = 4; maxAlvos = 10;
-            listaDistratores =[{img: "arvore", css: ""}, {img: "chuva", css: ""}, {img: "casa", css: ""}, {img: "ovelha", css: ""}, {img: "rato", css: ""}];
-            document.getElementById('texto-instrucao').textContent = "Conta os ";
+        let maxAlvos, minAlvos, listaDistratores =[], targetImg = "", targetCss = "";
+        
+        // 2. O Sorteador: Lista de heróis possíveis e os seus nomes
+        const alvosPossiveis =[
+            { id: "gato", nome: "gatinhos" },
+            { id: "rato", nome: "ratinhos" },
+            { id: "porco", nome: "porquinhos" },
+            { id: "tartaruga", nome: "tartarugas" },
+            { id: "carro", nome: "carros" }
+        ];
+        
+        // 3. O Sorteador: Lista de lixo visual (que existe no teu dados.js)
+        const todosDistratores =["arvore", "flor", "sol", "casa", "burro", "leao", "maca", "bola", "barco", "boneca"];
+
+        if (nivelAtual === 1 || nivelAtual === 2 || nivelAtual === 4) {
+            
+            // Sorteia o herói desta ronda!
+            let alvoSorteado = alvosPossiveis[Math.floor(Math.random() * alvosPossiveis.length)];
+            targetImg = alvoSorteado.id;
+            
+            // Tira o herói da lista de distratores (para não haver dois iguais) e baralha
+            let distLivres = todosDistratores.filter(d => d !== targetImg).sort(() => Math.random() - 0.5);
+
+            if (nivelAtual === 1) {
+                minAlvos = 1; maxAlvos = 5;
+                listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""} ];
+                document.getElementById('texto-instrucao').textContent = `Conta os ${alvoSorteado.nome}!`;
+            } 
+            else if (nivelAtual === 2) {
+                minAlvos = 4; maxAlvos = 10;
+                listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
+                document.getElementById('texto-instrucao').textContent = `Conta os ${alvoSorteado.nome}!`;
+            }
+            else if (nivelAtual === 4) {
+                minAlvos = 5; maxAlvos = 10;
+                listaDistratores =[ {img: distLivres[0], css: ""}, {img: distLivres[1], css: ""}, {img: distLivres[2], css: ""}, {img: distLivres[3], css: ""} ];
+                document.getElementById('texto-instrucao').textContent = "Quantas sombras são iguais a esta?";
+            }
         }
         else if (nivelAtual === 3) {
             minAlvos = 5; maxAlvos = 10;
-            // Target: Gato normal. Distratores: Gato Amarelo, Cão Laranja, Tigre.
-            listaDistratores =[
-                {img: "gato", css: "hue-rotate(60deg) saturate(2)"}, // Gato Amarelo
-                {img: "cao", css: "sepia(1) hue-rotate(-20deg) saturate(3)"}, // Cão Laranja
-                {img: "tigre", css: ""}
+            
+            // O Nível 3 precisa de cenários construídos à mão por causa dos filtros de cor
+            const cenariosNv3 =[
+                {
+                    target: "gato", targetNome: "gato cor de laranja", targetCss: "hue-rotate(60deg) saturate(2)",
+                    dist:[ {img: "gato", css: "hue-rotate(180deg)"}, {img: "rato", css: "sepia(1) hue-rotate(-20deg) saturate(3)"}, {img: "leao", css: ""} ]
+                },
+                {
+                    target: "carro", targetNome: "carro verde", targetCss: "hue-rotate(90deg) saturate(2)",
+                    dist:[ {img: "carro", css: "hue-rotate(-90deg)"}, {img: "jipe", css: "hue-rotate(90deg) saturate(2)"}, {img: "autocarro", css: ""} ]
+                },
+                {
+                    target: "maca", targetNome: "maçã amarela", targetCss: "hue-rotate(60deg) saturate(2)",
+                    dist:[ {img: "maca", css: ""}, {img: "limao", css: ""}, {img: "morango", css: ""} ]
+                }
             ];
-            document.getElementById('texto-instrucao').textContent = "Cuidado! Conta apenas o gato cor de laranja!";
-        }
-        else if (nivelAtual === 4) {
-            minAlvos = 5; maxAlvos = 10;
-            listaDistratores =[{img: "flor", css: ""}, {img: "porco", css: ""}, {img: "tartaruga", css: ""}, {img: "rato", css: ""}];
-            document.getElementById('texto-instrucao').textContent = "Quantas sombras são iguais a esta?";
+            
+            let cenario = cenariosNv3[Math.floor(Math.random() * cenariosNv3.length)];
+            targetImg = cenario.target;
+            targetCss = cenario.targetCss;
+            listaDistratores = cenario.dist;
+            
+            document.getElementById('texto-instrucao').textContent = `Cuidado! Conta apenas o(a) ${cenario.targetNome}!`;
         }
 
-        // Definir a Imagem Pista (Target)
+        // Definir a Imagem Pista (Target) com as cores do CSS
         imgInstrucao.src = getImg(targetImg);
+        if (nivelAtual === 3) imgInstrucao.style.filter = targetCss + " drop-shadow(0 2px 4px rgba(0,0,0,0.1))";
+        if (nivelAtual === 4) imgInstrucao.style.filter = "brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))";
+        
         alvosCorretosTotal = Math.floor(Math.random() * (maxAlvos - minAlvos + 1)) + minAlvos;
         
-        // Definir quantidade de distratores (Para haver "lixo" visual no quadro)
-        // Definir quantidade de distratores (Para haver "lixo" visual no quadro)
-        let numDistratores;
-        if (nivelAtual <= 2) {
-            numDistratores = Math.floor(Math.random() * 4) + (nivelAtual * 2); 
-        } else {
-            // Nos níveis 3 e 4, limita o lixo visual a um máximo de 6 elementos
-            numDistratores = Math.floor(Math.random() * 3) + 4; 
-        } 
+        // Limitar a quantidade máxima do lixo visual no ecrã para evitar Scroll!
+        let numDistratores = (nivelAtual <= 2) ? Math.floor(Math.random() * 4) + (nivelAtual * 2) : Math.floor(Math.random() * 3) + 4; 
 
         let elementosArr =[];
         
