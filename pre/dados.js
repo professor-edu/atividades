@@ -56,6 +56,7 @@ const palavras = [
   { palavra: "escavadora", imagem: "img/escavadora.png", num: 5, divisao: "ES-CA-VA-DO-RA" },
   { palavra: "escola", imagem: "img/escola.png", num: 3, divisao: "ES-CO-LA" },
   { palavra: "espada", imagem: "img/espada.png", num: 3, divisao: "ES-PA-DA" },
+  { palavra: "espelho", imagem: "img/espelho.png", num: 3, divisao: "ES-PE-LHO" },
   { palavra: "fada", imagem: "img/fada.png", num: 2, divisao: "FA-DA" },
   { palavra: "ferro", imagem: "img/ferro.png", num: 2, divisao: "FER-RO" },
   { palavra: "flauta", imagem: "img/flauta.png", num: 2, divisao: "FLAU-TA" },
@@ -156,6 +157,7 @@ const palavras = [
   { palavra: "vaca", imagem: "img/vaca.png", num: 2, divisao: "VA-CA" },
   { palavra: "vassoura", imagem: "img/vassoura.png", num: 3, divisao: "VAS-SOU-RA" },
   { palavra: "vela", imagem: "img/vela.png", num: 2, divisao: "VE-LA" },
+  { palavra: "vermelho", imagem: "img/vermelho.png", num: 3, divisao: "VER-ME-LHO" },
   { palavra: "violino", imagem: "img/violino.png", num: 4, divisao: "VI-O-LI-NO" },
   { palavra: "zebra", imagem: "img/zebra.png", num: 2, divisao: "ZE-BRA" },
   { palavra: "zero", imagem: "img/zero.png", num: 2, divisao: "ZE-RO" }
