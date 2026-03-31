@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Sei Contar 🐱</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (PRE COM MENU)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-jogo: #ff9f43;      
+            --cor-jogo-dark: #e17000;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem;}
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 15px; gap: 10px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; flex: 1; 
+            padding: 20px 15px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-jogo); display: flex; flex-direction: column; 
+            align-items: center; position: relative; overflow: hidden; box-sizing: border-box;
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+
+        /* =========================================
+           O CAMINHO MÁGICO 🐱 -> 🥛
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-jogo); z-index: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+
+        /* =========================================
+           MENU E ECRÃS BASE
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        
+        #ecra-jogo { justify-content: flex-start; }
+
+        .titulo-destaque { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0;}
+        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 20px; }
+        
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 600px; margin: 15px auto 0 auto; }
+        .cat-card { background: #ffffff; border: 3px solid #fff3e0; padding: 15px; border-radius: 20px; color: var(--azul-escuro); cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+        .cat-card:hover { transform: translateY(-5px); border-color: var(--cor-jogo); box-shadow: 0 8px 15px rgba(255, 159, 67, 0.2); }
+        .cat-icon { font-size: 2.5rem; line-height: 1; }
+        .cat-titulo { font-size: 1.2rem; font-weight: 900; }
+        .cat-desc { font-size: 0.9rem; font-weight: 500; color: var(--text-main); }
+
+        .btn-acao { background-color: var(--cor-jogo); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-jogo-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+
+        /* =========================================
+           ÁREA DO JOGO DE CONTAGEM
+           ========================================= */
+        .container-nav-jogo { width: 100%; display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 2px dashed #fff3e0; flex-shrink: 0;}
+        .btn-voltar-menu { background-color: #f0f4f8; color: #334e68; border: none; padding: 8px 15px; border-radius: 30px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+        
+        .info-nivel { font-size: 1rem; font-weight: 800; color: var(--cor-jogo-dark); background: #fff8e1; padding: 6px 12px; border-radius: 20px; border: 2px solid var(--cor-jogo); white-space: nowrap;}
+
+        .instrucao-container {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #f8fafc; padding: 10px 20px; border-radius: 20px; margin-bottom: 15px;
+            border: 2px solid #e2e8f0; width: 100%; max-width: 600px; box-sizing: border-box;
+        }
+        .instrucao-texto { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: 900; color: var(--azul-escuro); margin: 0; }
+        .instrucao-img { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+
+        /* O Quadro Mágico onde os elementos estão espalhados */
+        .area-contagem {
+            flex: 1; width: 100%; max-width: 700px; background: #f0fdf4; 
+            border: 4px dashed #86efac; border-radius: 25px; 
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 15px;
+            padding: 20px; box-sizing: border-box; position: relative; margin-bottom: 15px;
+        }
+
+        /* Cada elemento clicável */
+        .item-contagem {
+            position: relative; width: clamp(55px, 12vw, 85px); height: clamp(55px, 12vw, 85px);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .item-contagem:hover { transform: scale(1.1); }
+        .item-contagem:active { transform: scale(0.9); }
+        
+        .item-img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transition: 0.3s; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+
+        /* O número que aparece quando se clica */
+        .badge-numero {
+            position: absolute; top: -10px; right: -10px;
+            background: #ff4757; color: white; width: 32px; height: 32px;
+            border-radius: 50%; font-size: 1.2rem; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            border: 3px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            animation: popIn 0.3s ease; z-index: 5; pointer-events: none;
+        }
+
+        /* Efeito visual quando um item está marcado */
+        .item-contagem.marcado .item-img { opacity: 0.6; transform: scale(0.9); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1)); }
+
+        /* MODO GÊNIO (Sombreado) */
+        .modo-genio .item-img { filter: brightness(0) drop-shadow(0 3px 3px rgba(0,0,0,0.2)); }
+        .modo-genio .item-contagem.marcado .item-img { opacity: 0.4; }
+
+        /* Botões Numéricos de Validação */
+        .opcoes-numeros {
+            display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap;
+            padding-bottom: 10px;
+        }
+        .btn-numero {
+            background: white; border: 4px solid #ced6e0; border-radius: 20px;
+            width: clamp(65px, 15vw, 80px); height: clamp(65px, 15vw, 80px);
+            font-size: 2.2rem; font-weight: 900; color: var(--azul-escuro);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s;
+        }
+        .btn-numero:hover { border-color: var(--cor-jogo); color: var(--cor-jogo-dark); transform: translateY(-4px); box-shadow: 0 10px 0 var(--cor-jogo); }
+        .btn-numero:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+
+        @media (max-width: 600px) {
+            .cat-grid { grid-template-columns: 1fr; gap: 10px; }
+            .cat-card { padding: 10px; flex-direction: row; text-align: left; }
+            .area-contagem { gap: 8px; padding: 10px; }
+            .opcoes-numeros { gap: 10px; }
+        }
+
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        .error-shake { animation: errorShake 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important;}
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Sei Contar 🐱</h1>
+        <div class="subtitulo" id="jogo-subtitulo">Vamos contar juntos!</div>
+    </div>
+</header>
+
+<main>
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐱</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">🥛</div> 
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: MENU -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-destaque">Escolhe o teu nível</h2>
+            <div class="cat-grid">
+                <div class="cat-card" onclick="iniciarJogo(1)">
+                    <span class="cat-icon">🟢</span>
+                    <div><div class="cat-titulo">Nível 1 (Fácil)</div><div class="cat-desc">Até 5. Imagens fáceis.</div></div>
+                </div>
+                <div class="cat-card" onclick="iniciarJogo(2)">
+                    <span class="cat-icon">🟡</span>
+                    <div><div class="cat-titulo">Nível 2 (Médio)</div><div class="cat-desc">Até 10. Muitas imagens.</div></div>
+                </div>
+                <div class="cat-card" onclick="iniciarJogo(3)">
+                    <span class="cat-icon">🟠</span>
+                    <div><div class="cat-titulo">Nível 3 (Difícil)</div><div class="cat-desc">Cuidado com as cores parecidas!</div></div>
+                </div>
+                <div class="cat-card" onclick="iniciarJogo(4)">
+                    <span class="cat-icon">⚫</span>
+                    <div><div class="cat-titulo">Nível 4 (Génio)</div><div class="cat-desc">O mundo das Sombras.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="container-nav-jogo">
+                <button class="btn-voltar-menu" onclick="voltarMenu()"><span>🔄</span><span>Menu</span></button>
+                <div class="info-nivel" id="info-nivel">Fase 1</div>
+            </div>
+
+            <div class="instrucao-container">
+                <h3 class="instrucao-texto" id="texto-instrucao">Conta os Gatinhos!</h3>
+                <img src="" id="img-instrucao" class="instrucao-img">
+            </div>
+
+            <div id="area-contagem" class="area-contagem">
+                <!-- Imagens são geradas aqui -->
+            </div>
+
+            <div class="opcoes-numeros" id="opcoes-numeros">
+                <!-- Botões de números (respostas) -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 10px; line-height: 1;">🏆</div>
+            <h2 class="titulo-destaque">Fantástico!</h2>
+            <p class="texto-intro">És um mestre a contar!</p>
+            <button class="btn-acao" onclick="voltarMenu()">Voltar ao Menu 🔄</button>
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // Utilitário para ficheiros do dados.js (simulado aqui caso n tenhas as mesmas no servidor)
+    const getImg = (nome) => `../img/${nome}.png`;
+
+    /* =========================================
+       VARIÁVEIS DE JOGO
+       ========================================= */
+    let nivelAtual = 1;
+    let jogadaAtual = 1;
+    const TOTAL_JOGADAS = 5;
+    
+    let alvosCorretosTotal = 0;
+    let itemsSelecionados =[]; // Guarda a ordem dos cliques para a numeração
+    
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const avatar = document.getElementById('avatar-progresso');
+    const areaContagem = document.getElementById('area-contagem');
+    const opcoesContainer = document.getElementById('opcoes-numeros');
+    const imgInstrucao = document.getElementById('img-instrucao');
+    
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarMenu() {
+        caminhoMagico.style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        document.getElementById('jogo-subtitulo').textContent = "Vamos contar juntos!";
+        mostrarEcra('ecra-selecao');
+    }
+
+    /* =========================================
+       GERADOR DE NÍVEIS
+       ========================================= */
+    function iniciarJogo(nivel) {
+        nivelAtual = nivel;
+        jogadaAtual = 1;
+        
+        let sub = "Nível Fácil";
+        if(nivel===2) sub = "Nível Médio";
+        if(nivel===3) sub = "Nível Difícil";
+        if(nivel===4) sub = "Nível Génio (Sombras)";
+        
+        document.getElementById('jogo-subtitulo').textContent = sub;
+        caminhoMagico.style.display = 'block';
+        atualizarProgresso();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarProgresso() {
+        let percent = ((jogadaAtual - 1) / TOTAL_JOGADAS) * 100;
+        avatar.style.left = `${percent}%`;
+    }
+
+    function prepararRonda() {
+        document.getElementById('info-nivel').textContent = `Desafio ${jogadaAtual} de ${TOTAL_JOGADAS}`;
+        areaContagem.innerHTML = '';
+        opcoesContainer.innerHTML = '';
+        itemsSelecionados =[];
+        
+        // Ativa ou Desativa o Modo Sombras no Nível 4
+        if(nivelAtual === 4) {
+            areaContagem.classList.add('modo-genio');
+            imgInstrucao.style.filter = "brightness(0)";
+        } else {
+            areaContagem.classList.remove('modo-genio');
+            imgInstrucao.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"; // Reset normal
+        }
+
+        // Lógicas de Quantidades e Distratores baseadas no nível
+        let maxAlvos, minAlvos, listaDistratores =[], targetImg = "gato";
+        
+        if (nivelAtual === 1) {
+            minAlvos = 1; maxAlvos = 5;
+            listaDistratores =[{img: "arvore", css: ""}, {img: "nuvem", css: ""}];
+            document.getElementById('texto-instrucao').textContent = "Conta os gatinhos!";
+        } 
+        else if (nivelAtual === 2) {
+            minAlvos = 4; maxAlvos = 10;
+            listaDistratores =[{img: "arvore", css: ""}, {img: "nuvem", css: ""}, {img: "casa", css: ""}, {img: "cao", css: ""}];
+            document.getElementById('texto-instrucao').textContent = "Conta os gatinhos!";
+        }
+        else if (nivelAtual === 3) {
+            minAlvos = 5; maxAlvos = 10;
+            // Target: Gato normal. Distratores: Gato Amarelo, Cão Laranja, Tigre.
+            listaDistratores =[
+                {img: "gato", css: "hue-rotate(60deg) saturate(2)"}, // Gato Amarelo
+                {img: "cao", css: "sepia(1) hue-rotate(-20deg) saturate(3)"}, // Cão Laranja
+                {img: "tigre", css: ""}
+            ];
+            document.getElementById('texto-instrucao').textContent = "Cuidado! Conta apenas o gato cor de laranja!";
+        }
+        else if (nivelAtual === 4) {
+            minAlvos = 5; maxAlvos = 10;
+            listaDistratores =[{img: "cao", css: ""}, {img: "porco", css: ""}, {img: "tartaruga", css: ""}, {img: "rato", css: ""}];
+            document.getElementById('texto-instrucao').textContent = "Quantas sombras são iguais a esta?";
+        }
+
+        // Definir a Imagem Pista (Target)
+        imgInstrucao.src = getImg(targetImg);
+        alvosCorretosTotal = Math.floor(Math.random() * (maxAlvos - minAlvos + 1)) + minAlvos;
+        
+        // Definir quantidade de distratores (Para haver "lixo" visual no quadro)
+        let numDistratores = Math.floor(Math.random() * 4) + (nivelAtual * 2); 
+
+        let elementosArr =[];
+        
+        // Inserir Alvos
+        for(let i=0; i < alvosCorretosTotal; i++) {
+            elementosArr.push({ isTarget: true, img: targetImg, css: "" });
+        }
+        // Inserir Distratores
+        for(let i=0; i < numDistratores; i++) {
+            let distAleatorio = listaDistratores[Math.floor(Math.random() * listaDistratores.length)];
+            elementosArr.push({ isTarget: false, img: distAleatorio.img, css: distAleatorio.css });
+        }
+
+        // Baralhar o array visual
+        elementosArr.sort(() => Math.random() - 0.5);
+
+        // Renderizar Elementos
+        elementosArr.forEach(item => {
+            let divItem = document.createElement('div');
+            divItem.className = 'item-contagem';
+            divItem.dataset.target = item.isTarget;
+            
+            // Randomizar ligeiramente a rotação e margem para parecerem espalhados orgânicos
+            let rAngle = Math.floor(Math.random() * 30) - 15; // -15 a +15 graus
+            let rTx = Math.floor(Math.random() * 20) - 10;    // -10 a +10 px
+            let rTy = Math.floor(Math.random() * 20) - 10;
+            divItem.style.transform = `translate(${rTx}px, ${rTy}px) rotate(${rAngle}deg)`;
+
+            let img = document.createElement('img');
+            img.src = getImg(item.img);
+            img.className = 'item-img';
+            if (item.css !== "") img.style.filter = item.css;
+            
+            divItem.appendChild(img);
+            
+            // Adicionar evento de Clique
+            divItem.addEventListener('click', (e) => lidarComCliqueItem(divItem, e));
+            areaContagem.appendChild(divItem);
+        });
+
+        gerarOpcoesResposta();
+    }
+
+    /* =========================================
+       LÓGICA DE CLIQUE E CONTAGEM NA IMAGEM
+       ========================================= */
+    function lidarComCliqueItem(elementoDiv, evento) {
+        // Ignora se tentarem clicar quando estiver nas animações
+        if (elementoDiv.classList.contains('error-shake')) return;
+
+        let isTarget = (elementoDiv.dataset.target === "true");
+
+        if (!isTarget) {
+            // CLICOU NUM DISTRATOR! (Erro)
+            tocarSom('erro');
+            elementoDiv.classList.add('error-shake');
+            setTimeout(() => elementoDiv.classList.remove('error-shake'), 400);
+            return;
+        }
+
+        // CLICOU NO ALVO CORRETO!
+        let jaMarcado = itemsSelecionados.indexOf(elementoDiv);
+
+        if (jaMarcado > -1) {
+            // DESMARCAR
+            itemsSelecionados.splice(jaMarcado, 1);
+            elementoDiv.classList.remove('marcado');
+            let badge = elementoDiv.querySelector('.badge-numero');
+            if (badge) badge.remove();
+            tocarSom('desmarcar');
+        } else {
+            // MARCAR
+            itemsSelecionados.push(elementoDiv);
+            elementoDiv.classList.add('marcado');
+            let badge = document.createElement('div');
+            badge.className = 'badge-numero';
+            elementoDiv.appendChild(badge);
+            tocarSom('marcar');
+        }
+
+        // Reajustar a numeração de todos (se desmarcou o "2", o "3" vira "2" instantaneamente)
+        itemsSelecionados.forEach((item, index) => {
+            let bg = item.querySelector('.badge-numero');
+            if(bg) bg.textContent = index + 1;
+        });
+    }
+
+    /* =========================================
+       GERAR E VERIFICAR BOTÕES DE RESPOSTA (RODAPÉ)
+       ========================================= */
+    function gerarOpcoesResposta() {
+        let opCerta = alvosCorretosTotal;
+        let distratores =[opCerta - 1, opCerta + 1, opCerta + 2];
+        
+        // Proteção contra números <= 0
+        if (opCerta === 1) distratores = [2, 3, 4];
+        if (opCerta === 2) distratores = [1, 3, 4];
+        
+        let opcoesArr =[opCerta, ...distratores].sort(() => Math.random() - 0.5);
+
+        opcoesArr.forEach(num => {
+            let btn = document.createElement('button');
+            btn.className = 'btn-numero';
+            btn.textContent = num;
+            btn.onclick = () => verificarRespostaFinal(num, btn);
+            opcoesContainer.appendChild(btn);
+        });
+    }
+
+    function verificarRespostaFinal(numeroEscolhido, botao) {
+        if (numeroEscolhido === alvosCorretosTotal) {
+            // ACERTOU O NÍVEL
+            botao.style.borderColor = "#2ed573";
+            botao.style.color = "#219d53";
+            botao.style.backgroundColor = "#eafff0";
+            
+            tocarSom('acerto');
+            jogadaAtual++;
+            atualizarProgresso();
+
+            // Bloquear todos os botões durante a transição
+            document.querySelectorAll('.btn-numero').forEach(b => b.style.pointerEvents = 'none');
+
+            setTimeout(() => {
+                if (jogadaAtual > TOTAL_JOGADAS) {
+                    tocarSom('vitoria');
+                    dispararConfetis();
+                    mostrarEcra('ecra-fim');
+                } else {
+                    prepararRonda();
+                }
+            }, 1200);
+
+        } else {
+            // ERROU O NÚMERO
+            tocarSom('erro');
+            botao.classList.add('error-shake');
+            setTimeout(() => botao.classList.remove('error-shake'), 400);
+        }
+    }
+
+    /* =========================================
+       ÁUDIO E EFEITOS (CONFETIS)
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'marcar') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'desmarcar') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(1000, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(500, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.3);
+            gain.gain.setValueAtTime(0.08, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#ff9f43', '#ee5253', '#feca57'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arranque Inicial
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
