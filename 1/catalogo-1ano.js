@@ -34,6 +34,7 @@ const todosOsJogos =[
 	{ nome: "Caixa das Adivinhas", icone: "🎁", link: "pt/caixa-adivinhas", cat: "pt" },
 	{ nome: "Jogo da Forca", icone: "🎈", link: "pt/forca", cat: "pt" },
 	{ nome: "Puzzle das Sílabas", icone: "🧩", link: "pt/puzzle-silabas", cat: "pt" },
+	{ nome: "Vogais", icone: "🅰️", link: "pt/vogais", cat: "pt" },
     
 	
 	
