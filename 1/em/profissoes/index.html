@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Aldeia das Profissões 👨‍🚒</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (1º ANO COM MENU)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* REGRA MOBILE: CABEÇALHO RESPONSIVO (Botão Centrado) */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px 15px; gap: 15px; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; flex: 1;
+            padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; box-sizing: border-box;
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        footer a { color: var(--azul-vibrante); text-decoration: none; font-weight: 700; }
+        
+        /* =========================================
+           ECRÃS BASE E MENU INICIAL
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900;}
+        
+        .btn-nivel-menu {
+            background-color: white; border: 4px solid #ced6e0; border-radius: 20px;
+            padding: 15px 25px; width: 85%; max-width: 450px; cursor: pointer; margin-bottom: 15px;
+            box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: flex-start; gap: 20px; touch-action: manipulation;
+        }
+        @media (hover: hover) { .btn-nivel-menu:hover { transform: translateY(-4px); border-color: var(--cor-1ano); box-shadow: 0 6px 0 var(--cor-1ano); color: var(--cor-1ano-dark); } }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .nivel-icon { font-size: 2.5rem; background: #e3f2fd; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .nivel-text { text-align: left; }
+        .nivel-titulo { font-size: 1.4rem; font-weight: 900; display: block; color: var(--azul-escuro); }
+        .nivel-desc { font-size: 1rem; color: var(--text-main); font-weight: 500; }
+
+        /* =========================================
+           ECRÃ DO JOGO E PROGRESSO
+           ========================================= */
+        #ecra-jogo { justify-content: flex-start; }
+
+        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; width: 100%; max-width: 800px;}
+        .btn-nivel-top { background: #f0f4f8; border: 2px solid #ced6e0; padding: 10px 15px; border-radius: 15px; font-weight: 800; font-size: 0.95rem; cursor: pointer; color: var(--text-main); transition: 0.2s; flex: 1; min-width: 130px; touch-action: manipulation; }
+        @media (hover: hover) { .btn-nivel-top:hover { background: #e3f2fd; border-color: var(--azul-vibrante); color: var(--azul-escuro); } }
+        .btn-nivel-top.ativo { background: var(--cor-1ano); color: white; border-color: var(--cor-1ano-dark); box-shadow: 0 4px 10px rgba(0, 145, 255, 0.3); }
+
+        .status-bar { width: 100%; max-width: 800px; margin-bottom: 25px; display: flex; flex-direction: column;}
+        .score-container { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.3rem; padding: 0 15px; margin-bottom: 10px;}
+        .score-erradas { color: #d0303f; }
+        .progress-bg { background-color: #f0f4f8; border-radius: 15px; height: 16px; width: 100%; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .progress-fill { background-color: var(--cor-1ano); height: 100%; width: 0%; border-radius: 15px; transition: width 0.4s ease-out; }
+
+        .instrucao-jogo { font-size: clamp(1.2rem, 4vw, 1.5rem); color: var(--azul-escuro); font-weight: 900; margin-bottom: 20px; }
+
+        /* =========================================
+           MECÂNICA: ALDEIA DAS PROFISSÕES (DRAG & DROP)
+           ========================================= */
+        
+        /* Zonas Superiores (Os Profissionais) */
+        .aldeia-container { 
+            display: flex; gap: clamp(10px, 2vw, 20px); justify-content: center; 
+            width: 100%; max-width: 800px; margin-bottom: 30px; 
+        }
+
+        .prof-card {
+            flex: 1;
+            background: #fff; border: 4px solid #e3f2fd; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; padding: 15px 10px;
+            box-shadow: 0 6px 15px rgba(0, 145, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .prof-img {
+            width: clamp(70px, 15vw, 120px); height: clamp(70px, 15vw, 120px);
+            object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+        }
+
+        .prof-name {
+            font-size: clamp(1rem, 2.5vw, 1.4rem); font-weight: 900; color: var(--azul-escuro);
+            text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px;
+        }
+
+        .prof-slot {
+            width: clamp(65px, 14vw, 100px); height: clamp(65px, 14vw, 100px);
+            background: #f8fafc; border: 4px dashed #ced6e0; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .prof-slot.drag-over { background: #e3f2fd; border-color: var(--cor-1ano); transform: scale(1.05); }
+
+        /* Piscina de Objetos (Em baixo) */
+        .objetos-pool {
+            display: flex; gap: clamp(15px, 3vw, 25px); justify-content: center; 
+            width: 100%; max-width: 800px; padding-top: 25px; border-top: 3px dashed #e2e8f0; 
+            min-height: 120px; flex-wrap: wrap;
+        }
+
+        .drag-item {
+            width: clamp(75px, 16vw, 110px); height: clamp(75px, 16vw, 110px);
+            background: #fff; border: 4px solid var(--cor-1ano); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; padding: 10px;
+            cursor: grab; box-shadow: 0 6px 0 var(--cor-1ano-dark);
+            transition: transform 0.1s, box-shadow 0.1s; user-select: none; touch-action: none;
+        }
+        .drag-item:active { cursor: grabbing; transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .drag-item.dragging { opacity: 0.5; transform: scale(0.9); }
+        .drag-item img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+
+        /* Item encaixado no slot */
+        .prof-slot .drag-item { width: 100%; height: 100%; border: none; box-shadow: none; background: transparent; cursor: default; }
+        .prof-slot .drag-item:active { transform: none; }
+
+        /* Feedback Visual */
+        .slot-success { border-style: solid !important; border-color: #2ed573 !important; background: #eafff0 !important; animation: popIn 0.4s ease; }
+        .error-shake { animation: shakeError 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; }
+
+        /* MODO NÍVEL 3 (Leitura Pura) */
+        .prof-card.modo-leitura { justify-content: center; border-color: var(--cor-1ano); background: #f0f4f8;}
+        .prof-card.modo-leitura .prof-img { display: none; }
+        .prof-card.modo-leitura .prof-name { font-size: clamp(1.2rem, 3.5vw, 1.8rem); color: var(--cor-1ano-dark); }
+
+        /* =========================================
+           ECRÃ FIM E MODAIS
+           ========================================= */
+        #ecra-fim { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; }
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #e3f2fd;}
+        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); display: flex; gap: 10px; margin-bottom: 15px; touch-action: manipulation;}
+        .btn-menu { background-color: #ced6e0; color: #2f3542; box-shadow: 0 5px 0 #a4b0be; }
+
+        @media (max-width: 768px) {
+            .cartao-jogo-container { padding: 20px 10px; }
+            .btn-nivel-top { padding: 8px; font-size: 0.85rem; min-width: 45%; }
+            .btn-nivel-menu { width: 95%; padding: 10px 15px; gap: 15px; }
+            .nivel-icon { width: 50px; height: 50px; font-size: 2rem; }
+            .aldeia-container { gap: 8px; margin-bottom: 20px;}
+            .prof-card { padding: 10px 5px; border-width: 3px; border-radius: 15px;}
+            .prof-slot { border-width: 3px; border-radius: 10px; }
+            .objetos-pool { padding-top: 15px; gap: 10px;}
+            .drag-item { border-width: 3px; border-radius: 10px; box-shadow: 0 4px 0 var(--cor-1ano-dark); }
+            .drag-item:active { transform: translateY(4px); }
+        }
+
+        @keyframes popIn { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+         <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Aldeia das Profissões 👨‍🚒</h1>
+        <div class="subtitulo">Descobre as ferramentas e os veículos de cada um!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: MENU DE NÍVEIS -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <div class="titulo-menu">Escolhe um Nível:</div>
+            
+            <button class="btn-nivel-menu" onclick="iniciarJogo(1)">
+                <span class="nivel-icon">🛠️</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 1: As Ferramentas</span>
+                    <span class="nivel-desc">Liga o profissional ao seu objeto.</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel-menu" onclick="iniciarJogo(2)">
+                <span class="nivel-icon">🚒</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 2: Os Veículos</span>
+                    <span class="nivel-desc">Liga o profissional ao seu veículo/local.</span>
+                </span>
+            </button>
+            
+            <button class="btn-nivel-menu" onclick="iniciarJogo(3)">
+                <span class="nivel-icon">📖</span>
+                <span class="nivel-text">
+                    <span class="nivel-titulo">Nível 3: Mestre da Leitura</span>
+                    <span class="nivel-desc">Sem imagens! Lê a profissão.</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- ECRÃ 2: O JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- SELETOR DE NÍVEIS (TOPO) -->
+            <div class="level-selector" id="level-selector">
+                <button class="btn-nivel-top" id="btn-niv-top-1" onclick="iniciarJogo(1)">Nível 1: Ferramentas</button>
+                <button class="btn-nivel-top" id="btn-niv-top-2" onclick="iniciarJogo(2)">Nível 2: Veículos</button>
+                <button class="btn-nivel-top" id="btn-niv-top-3" onclick="iniciarJogo(3)">Nível 3: Leitura</button>
+            </div>
+
+            <!-- BARRA DE ESTADO -->
+            <div class="status-bar">
+                <div class="score-container">
+                    <span class="score-certas" style="color: #219d53;">Ronda: <span id="val-progresso">1</span>/10</span>
+                    <span class="score-erradas">Erros: <span id="val-erros">0</span></span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="instrucao-jogo" id="instrucao-jogo">Quem usa esta ferramenta?</div>
+
+            <!-- ZONAS ALVO (PROFISSIONAIS) -->
+            <div class="aldeia-container" id="aldeia-container">
+                <!-- Gerado via JS -->
+            </div>
+            
+            <!-- PISCINA DE OBJETOS -->
+            <div class="objetos-pool" id="objetos-pool">
+                <!-- Gerado via JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Completaste 10 Rondas!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-reiniciar" onclick="iniciarJogo(currentLevel)">JOGAR NOVAMENTE 🔄</button>
+            <button class="btn-reiniciar btn-menu" onclick="voltarAoMenu()">VOLTAR AO MENU 🏠</button>
+        </div>
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Ativa drag in touch devices
+    try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    /* =========================================
+       DADOS EMBUTIDOS (AS 12 PROFISSÕES)
+       ========================================= */
+    const profissoes = [
+        { id: "bombeiro", nome: "Bombeiro", imgProfissional: "bombeiro", imgFerramenta: "mangueira", imgVeiculo: "carro_bombeiros" },
+        { id: "medico", nome: "Médico", imgProfissional: "medico", imgFerramenta: "estetoscopio", imgVeiculo: "ambulancia" },
+        { id: "padeiro", nome: "Padeiro", imgProfissional: "padeiro", imgFerramenta: "pao", imgVeiculo: "padaria" },
+        { id: "policia", nome: "Polícia", imgProfissional: "policia", imgFerramenta: "apito", imgVeiculo: "carro_patrulha" },
+        { id: "professor", nome: "Professor", imgProfissional: "professor", imgFerramenta: "quadro", imgVeiculo: "escola" },
+        { id: "agricultor", nome: "Agricultor", imgProfissional: "agricultor", imgFerramenta: "enxada", imgVeiculo: "trator" },
+        { id: "construtor", nome: "Construtor", imgProfissional: "construtor", imgFerramenta: "martelo", imgVeiculo: "grua" },
+        { id: "carteiro", nome: "Carteiro", imgProfissional: "carteiro", imgFerramenta: "carta", imgVeiculo: "mota_correios" },
+        { id: "cozinheiro", nome: "Cozinheiro", imgProfissional: "cozinheiro", imgFerramenta: "panela", imgVeiculo: "restaurante" },
+        { id: "dentista", nome: "Dentista", imgProfissional: "dentista", imgFerramenta: "escova_dentes", imgVeiculo: "cadeira_dentista" },
+        { id: "mecanico", nome: "Mecânico", imgProfissional: "mecanico", imgFerramenta: "chave_inglesa", imgVeiculo: "oficina" },
+        { id: "piloto", nome: "Piloto", imgProfissional: "piloto", imgFerramenta: "capacete_voo", imgVeiculo: "aviao" }
+    ];
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS
+       ========================================= */
+    const TOTAL_RONDAS = 10;
+    let currentLevel = 1;
+    let rondaAtual = 1;
+    let errorsCount = 0;
+    let acertosNaRonda = 0;
+    let isTransitioning = false;
+    let draggedElement = null;
+
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elProgressFill = document.getElementById('progress-fill');
+    const labelInstrucao = document.getElementById('instrucao-jogo');
+    const aldeiaContainer = document.getElementById('aldeia-container');
+    const objetosPool = document.getElementById('objetos-pool');
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    /* =========================================
+       FLUXO DO JOGO
+       ========================================= */
+    function iniciarJogo(nivel) {
+        currentLevel = nivel;
+        rondaAtual = 1;
+        errorsCount = 0;
+        isTransitioning = false;
+        
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+
+        document.querySelectorAll('.btn-nivel-top').forEach(b => b.classList.remove('ativo'));
+        document.getElementById(`btn-niv-top-${nivel}`).classList.add('ativo');
+
+        if (nivel === 1) labelInstrucao.textContent = "Quem usa esta ferramenta?";
+        if (nivel === 2) labelInstrucao.textContent = "Quem usa este veículo/local?";
+        if (nivel === 3) labelInstrucao.textContent = "Lê o nome e arrasta o objeto!";
+
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarPlacar() {
+        elErros.textContent = errorsCount;
+        elProgresso.textContent = rondaAtual;
+        elProgressFill.style.width = `${((rondaAtual - 1) / TOTAL_RONDAS) * 100}%`;
+    }
+
+    function prepararRonda() {
+        isTransitioning = false;
+        acertosNaRonda = 0;
+        aldeiaContainer.innerHTML = '';
+        objetosPool.innerHTML = '';
+
+        // 1. Seleciona 3 Profissões à Sorte (Garante que não repete na mesma ronda)
+        let profsBaralhadas = [...profissoes].sort(() => Math.random() - 0.5).slice(0, 3);
+        let ferramentasDaRonda = [];
+
+        // 2. Constrói o Topo (Os Profissionais)
+        profsBaralhadas.forEach(prof => {
+            const card = document.createElement('div');
+            card.className = `prof-card ${currentLevel === 3 ? 'modo-leitura' : ''}`;
+            
+            card.innerHTML = `
+                <img src="../img/${prof.imgProfissional}.svg" class="prof-img" alt="${prof.nome}">
+                <div class="prof-name">${prof.nome}</div>
+                <div class="prof-slot" data-expected="${prof.id}"></div>
+            `;
+            
+            // Eventos do Slot
+            const slot = card.querySelector('.prof-slot');
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDropSlot);
+
+            aldeiaContainer.appendChild(card);
+
+            // 3. Prepara o que vai para baixo
+            let imagemObjeto = "";
+            if (currentLevel === 1) imagemObjeto = prof.imgFerramenta;
+            else if (currentLevel === 2) imagemObjeto = prof.imgVeiculo;
+            else if (currentLevel === 3) {
+                // Nível 3: Mistura ferramenta ou veículo à sorte para ser mais divertido
+                imagemObjeto = Math.random() > 0.5 ? prof.imgFerramenta : prof.imgVeiculo;
+            }
+            
+            ferramentasDaRonda.push({ idProf: prof.id, imgObjeto: imagemObjeto });
+        });
+
+        // 4. Baralha os Objetos e põe em baixo
+        ferramentasDaRonda.sort(() => Math.random() - 0.5).forEach(ferramenta => {
+            const item = document.createElement('div');
+            item.className = 'drag-item';
+            item.dataset.id = ferramenta.idProf;
+            item.draggable = true;
+            item.innerHTML = `<img src="../img/${ferramenta.imgObjeto}.svg" alt="Objeto">`;
+            
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+
+            objetosPool.appendChild(item);
+        });
+    }
+
+    /* =========================================
+       DRAG AND DROP LOGIC
+       ========================================= */
+    function handleDragStart(e) {
+        if(isTransitioning) return;
+        draggedElement = e.target.closest('.drag-item');
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.prof-slot');
+        // Só permite hover se o slot estiver vazio
+        if (slot && !slot.hasChildNodes()) slot.classList.add('drag-over');
+    }
+    
+    function handleDragLeave(e) {
+        const slot = e.target.closest('.prof-slot');
+        if (slot) slot.classList.remove('drag-over');
+    }
+
+    function handleDropSlot(e) {
+        e.preventDefault();
+        const slot = e.target.closest('.prof-slot');
+        if (!slot || !draggedElement || slot.hasChildNodes()) return;
+        
+        slot.classList.remove('drag-over');
+
+        if (slot.dataset.expected === draggedElement.dataset.id) {
+            // ACERTOU
+            tocarSom('encaixe');
+            slot.appendChild(draggedElement);
+            slot.classList.add('slot-success');
+            draggedElement.draggable = false; // Tranca o item
+            
+            acertosNaRonda++;
+            verificarVitoriaRonda();
+        } else {
+            // ERROU
+            errorsCount++;
+            atualizarPlacar();
+            tocarSom('erro');
+            
+            draggedElement.classList.add('error-shake');
+            slot.classList.add('error-shake');
+            
+            setTimeout(() => {
+                if(draggedElement) draggedElement.classList.remove('error-shake');
+                slot.classList.remove('error-shake');
+            }, 400);
+        }
+    }
+
+    function verificarVitoriaRonda() {
+        if (acertosNaRonda === 3) {
+            isTransitioning = true;
+            tocarSom('acerto');
+            
+            setTimeout(() => {
+                rondaAtual++;
+                if (rondaAtual > TOTAL_RONDAS) {
+                    finalizarJogo();
+                } else {
+                    atualizarPlacar();
+                    prepararRonda();
+                }
+            }, 1200);
+        }
+    }
+
+    function finalizarJogo() {
+        elProgressFill.style.width = `100%`;
+        mostrarEcra('ecra-fim');
+        
+        document.getElementById('final-erros').textContent = errorsCount;
+
+        if (errorsCount === 0) {
+            document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
+            tocarSom('vitoria'); dispararConfetis();
+        } else if (errorsCount <= 3) {
+            document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+            tocarSom('vitoria'); dispararConfetis();
+        } else {
+            document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+            tocarSom('acerto'); 
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'encaixe') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = window.innerWidth;
+        canvasConfetti.height = window.innerHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+    
+    window.onload = () => mostrarEcra('ecra-selecao');
+</script>
+</body>
+</html>
