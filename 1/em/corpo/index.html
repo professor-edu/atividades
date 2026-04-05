@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Memória do Corpo 🧠</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (1º ANO SEM MENU)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        @media (min-width: 769px) { body { height: 100vh; overflow: hidden; } }
+        
+        header { background-color: var(--bg-header); padding: 15px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Como não há menu lateral, o botão voltar fica à esquerda (PC) ou centrado (Mobile) */
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1rem); font-weight: 500; opacity: 0.8; margin-top: 5px; }
+        
+        @media (max-width: 768px) {
+            header { padding: 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.6rem; }
+            .subtitulo { text-align: center; margin-top: 2px; }
+        }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 10px 15px; gap: 10px; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 750px; flex: 1;
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        /* =========================================
+           ECRÃS (INSTRUÇÕES E FIM)
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        
+        /* Instruções */
+        .tutorial-gif { max-width: 100%; width: 280px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); margin: 15px 0; border: 4px solid #e3f2fd; }
+        .texto-instrucoes { font-size: 1.2rem; color: var(--text-main); margin-bottom: 25px; max-width: 450px; line-height: 1.5; }
+        
+        .btn-acao { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 40px; font-size: 1.4rem; font-weight: 900; border-radius: 20px; cursor: pointer; box-shadow: 0 6px 0 var(--cor-1ano-dark); transition: 0.2s; text-transform: uppercase;}
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+
+        /* Fim */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #e3f2fd;}
+        .tempo-final { font-size: 2.5rem; font-weight: 900; color: var(--cor-1ano); display: block; margin-top: 10px; }
+
+        /* =========================================
+           BARRA SUPERIOR (PROGRESSO + CRONÓMETRO)
+           ========================================= */
+        #ecra-jogo { justify-content: flex-start; }
+
+        .top-bar-compacta {
+            display: flex; align-items: center; justify-content: space-between; gap: 15px;
+            width: 100%; max-width: 600px; margin-bottom: 20px; background: #f8fafc;
+            padding: 10px 15px; border-radius: 20px; border: 2px solid #e2e8f0;
+        }
+
+        .progress-bg { 
+            flex: 1; background-color: #e2e8f0; border-radius: 15px; height: 18px; 
+            overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 2px solid white; 
+        }
+        .progress-fill { 
+            height: 100%; width: 0%; border-radius: 15px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            background-color: var(--cor-1ano);
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+            background-size: 30px 30px; animation: moverRiscas 2s linear infinite;
+        }
+        
+        .cronometro {
+            font-size: 1.4rem; font-weight: 900; color: var(--azul-escuro);
+            background: white; padding: 5px 12px; border-radius: 10px; border: 2px solid #ced6e0;
+            display: flex; align-items: center; gap: 5px; min-width: 90px; justify-content: center;
+        }
+
+        /* =========================================
+           GRELHA DE MEMÓRIA (Cartas)
+           ========================================= */
+        .memory-grid {
+            display: grid; 
+            /* 5 colunas em ecrãs largos, 4 em telemóveis */
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; width: 100%; max-width: 600px; margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        @media (max-width: 600px) {
+            .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .top-bar-compacta { padding: 8px 10px; gap: 10px; margin-bottom: 15px;}
+            .cronometro { font-size: 1.2rem; min-width: 80px; padding: 5px 8px; }
+        }
+
+        .memory-card {
+            aspect-ratio: 1 / 1.1; position: relative; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card-inner {
+            width: 100%; height: 100%; position: absolute;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 15px;
+        }
+        
+        .memory-card:active .card-inner { transform: scale(0.95); transition: 0.1s; }
+        
+        /* A classe .flipped faz a carta virar */
+        .memory-card.flipped .card-inner { transform: rotateY(180deg); }
+        /* A classe .matched mantém virada e dá um brilhozinho verde */
+        .memory-card.matched .card-inner { transform: rotateY(180deg) scale(0.95); opacity: 0.8; }
+
+        .card-front, .card-back {
+            width: 100%; height: 100%; position: absolute;
+            backface-visibility: hidden; border-radius: 15px; 
+            border: 3px solid #cbd5e1; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Face Traseira (A que vemos inicialmente) */
+        .card-back {
+            background: linear-gradient(135deg, #f0f4f8, #e3f2fd);
+            border-color: #a4b0be;
+        }
+        
+        .card-back::before {
+            content: '?'; font-size: 2.5rem; font-weight: 900; color: #ced6e0; opacity: 0.5;
+        }
+
+        /* Badge do número na traseira */
+        .badge-number {
+            position: absolute; bottom: 5px; right: 5px;
+            background: white; color: var(--azul-escuro);
+            width: 24px; height: 24px; border-radius: 50%;
+            font-size: 0.9rem; font-weight: 900; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #ced6e0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Face Frontal (A que esconde a Imagem ou o Som) */
+        .card-front {
+            background: white; border-color: var(--cor-1ano);
+            transform: rotateY(180deg); padding: 5px;
+        }
+        
+        .card-img { width: 90%; height: 90%; object-fit: contain; pointer-events: none;}
+        .card-sound { font-size: clamp(2.5rem, 8vw, 3.5rem); pointer-events: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));}
+
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+        @keyframes popIn { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Memória do Corpo 🧠</h1>
+        <div class="subtitulo">Abre bem os olhos e os ouvidos!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: INSTRUÇÕES / TUTORIAL -->
+        <div id="ecra-instrucoes" class="ecra" style="display: flex;">
+            <h2 class="end-title" style="margin:0;">Como Jogar?</h2>
+            
+            <img src="img/tutorial.gif" alt="Tutorial" class="tutorial-gif" onerror="this.src='https://via.placeholder.com/280x150?text=Tutorial+GIF'">
+            
+            <p class="texto-instrucoes">
+                Encontra os <strong>10 pares</strong> mágicos!<br>
+                Uma carta tem a <strong>imagem</strong>, a outra carta tem o <strong>som</strong> 🔊 da palavra. Encontra as duas iguais!
+            </p>
+            
+            <button class="btn-acao" onclick="iniciarJogo()">COMEÇAR O JOGO ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE PROGRESSO & CRONÓMETRO -->
+            <div class="top-bar-compacta">
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="cronometro">
+                    ⏱️ <span id="timer-display">00:00</span>
+                </div>
+            </div>
+
+            <!-- GRELHA DOS CARTÕES -->
+            <div class="memory-grid" id="memory-grid">
+                <!-- Cartões gerados pelo JS -->
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title">Fantástico! 🎉</h2>
+            <div class="end-stats">
+                Encontraste todos os pares do corpo!<br>
+                <span class="tempo-final" id="tempo-final-texto">00:00</span>
+            </div>
+            <button class="btn-acao" onclick="voltarAsInstrucoes()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    /* =========================================
+       DADOS DO JOGO
+       ========================================= */
+    const paresCorpo =[
+        { palavra: "mão", img: "mao" },
+        { palavra: "pé", img: "pe" },
+        { palavra: "braço", img: "braco" },
+        { palavra: "perna", img: "perna" },
+        { palavra: "cabeça", img: "cabeca" },
+        { palavra: "orelha", img: "orelha" },
+        { palavra: "nariz", img: "nariz" },
+        { palavra: "olho", img: "olho" },
+        { palavra: "boca", img: "boca" },
+        { palavra: "cabelo", img: "cabelo" }
+    ];
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS
+       ========================================= */
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
+    let paresEncontrados = 0;
+    const TOTAL_PARES = paresCorpo.length;
+    
+    // Cronómetro
+    let segundos = 0;
+    let timerInterval;
+
+    const grid = document.getElementById('memory-grid');
+    const progresso = document.getElementById('progress-fill');
+    const timerDisplay = document.getElementById('timer-display');
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAsInstrucoes() {
+        pararCronometro();
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-instrucoes');
+    }
+
+    /* =========================================
+       INICIALIZAR JOGO
+       ========================================= */
+    function iniciarJogo() {
+        paresEncontrados = 0;
+        progresso.style.width = '0%';
+        resetBoard();
+        gerarCartas();
+        iniciarCronometro();
+        mostrarEcra('ecra-jogo');
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        
+        // Pede permissão passiva ao motor de voz (resolve bugs em Safari/iOS)
+        if ('speechSynthesis' in window) {
+            let u = new SpeechSynthesisUtterance("");
+            window.speechSynthesis.speak(u);
+        }
+    }
+
+    function gerarCartas() {
+        grid.innerHTML = '';
+        let baralho =[];
+
+        // Cria 2 cartas para cada par (1 Imagem, 1 Som)
+        paresCorpo.forEach(item => {
+            baralho.push({ type: 'img', word: item.palavra, src: item.img });
+            baralho.push({ type: 'audio', word: item.palavra });
+        });
+
+        // Baralhar
+        baralho.sort(() => Math.random() - 0.5);
+
+        // Criar no DOM (adicionando os números de 1 a 20 nas costas)
+        baralho.forEach((carta, index) => {
+            const cardEl = document.createElement('div');
+            cardEl.classList.add('memory-card');
+            cardEl.dataset.word = carta.word; // A ligação entre o par
+            cardEl.dataset.type = carta.type;
+
+            let faceHTML = '';
+            if (carta.type === 'img') {
+                faceHTML = `<img src="img/${carta.src}.png" class="card-img" alt="Imagem">`;
+            } else {
+                faceHTML = `<div class="card-sound">🔊</div>`;
+            }
+
+            cardEl.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">${faceHTML}</div>
+                    <div class="card-back"><div class="badge-number">${index + 1}</div></div>
+                </div>
+            `;
+
+            cardEl.addEventListener('click', flipCard);
+            grid.appendChild(cardEl);
+        });
+    }
+
+    /* =========================================
+       LÓGICA DO JOGO (MEMÓRIA)
+       ========================================= */
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
+
+        this.classList.add('flipped');
+        tocarSom('flip');
+
+        // Se for a carta de Áudio, diz a palavra
+        if (this.dataset.type === 'audio') {
+            dizerPalavra(this.dataset.word);
+        }
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
+        }
+
+        secondCard = this;
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        let isMatch = firstCard.dataset.word === secondCard.dataset.word;
+
+        if (isMatch) {
+            disableCards();
+        } else {
+            unflipCards();
+        }
+    }
+
+    function disableCards() {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        
+        paresEncontrados++;
+        progresso.style.width = `${(paresEncontrados / TOTAL_PARES) * 100}%`;
+        
+        tocarSom('acerto');
+        resetBoard();
+
+        if (paresEncontrados === TOTAL_PARES) {
+            setTimeout(finalizarJogo, 1000);
+        }
+    }
+
+    function unflipCards() {
+        lockBoard = true;
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetBoard();
+        }, 1200); // Dá 1.2 segundos para a criança memorizar o erro
+    }
+
+    function resetBoard() {[hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+
+    /* =========================================
+       CRONÓMETRO E SINTETIZADOR DE VOZ
+       ========================================= */
+    function iniciarCronometro() {
+        segundos = 0;
+        atualizarDisplayCronometro();
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            segundos++;
+            atualizarDisplayCronometro();
+        }, 1000);
+    }
+
+    function pararCronometro() {
+        clearInterval(timerInterval);
+    }
+
+    function atualizarDisplayCronometro() {
+        let m = Math.floor(segundos / 60).toString().padStart(2, '0');
+        let s = (segundos % 60).toString().padStart(2, '0');
+        timerDisplay.textContent = `${m}:${s}`;
+    }
+
+    function dizerPalavra(palavra) {
+        if ('speechSynthesis' in window) {
+            // Cancela se já estiver algo a ser dito
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(palavra);
+            utterance.lang = 'pt-PT';
+            utterance.rate = 0.9; // Um bocadinho mais devagar
+            utterance.pitch = 1.2; // Uma voz ligeiramente mais aguda/infantil
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function finalizarJogo() {
+        pararCronometro();
+        document.getElementById('tempo-final-texto').textContent = timerDisplay.textContent;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria'); 
+        dispararConfetis();
+    }
+
+    /* =========================================
+       AUDIO E CONFETIS BASE
+       ========================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(500, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+    
+    // Mostra o Ecrã de Instruções ao arrancar
+    window.onload = () => mostrarEcra('ecra-instrucoes');
+</script>
+</body>
+</html>
