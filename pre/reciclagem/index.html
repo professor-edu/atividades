@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Mestres da Reciclagem ♻️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (PRE SEM MENU)
+           ========================================= */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation;}
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        /* REGRA MOBILE: CABEÇALHO RESPONSIVO */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           ÁREA PRINCIPAL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 15px 20px; gap: 15px; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 900px; 
+            flex: 1; 
+            padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pre); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; overflow: hidden; box-sizing: border-box;
+        }
+        
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; }
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* =========================================
+           O CAMINHO MÁGICO 🐦 -> 🪹
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 700px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed var(--cor-pre); z-index: 1; }
+        .caminho-avatar { position: absolute; left: 0%; bottom: -5px; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 3; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+        .caminho-alvo { position: absolute; right: -10px; bottom: -2px; font-size: 2.5rem; z-index: 2; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15)); line-height: 1; }
+
+        /* =========================================
+           ECRÃS BASE E BOTÕES
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        #ecra-jogo { justify-content: flex-start; }
+        
+        .titulo-destaque { font-size: clamp(2rem, 5vw, 3rem); color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0; line-height: 1.1;}
+        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 30px; }
+        
+        .btn-acao { 
+            background-color: var(--cor-pre); color: white; border: none; padding: 15px 45px; 
+            font-size: 1.5rem; font-weight: 900; border-radius: 30px; cursor: pointer; 
+            box-shadow: 0 6px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; touch-action: manipulation;
+        }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        @media (hover: hover) { .btn-acao:hover { filter: brightness(1.05); } }
+
+        /* =========================================
+           MECÂNICA DO JOGO: RECICLAGEM
+           ========================================= */
+           
+        /* Barra de Progresso Animada Premium */
+        .status-bar { width: 100%; max-width: 800px; margin-bottom: 25px; display: none; flex-direction: column;}
+        .score-container { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; padding: 0 10px; margin-bottom: 10px;}
+        .score-certas { color: var(--azul-escuro); }
+        .score-erradas { color: #d0303f; }
+        
+        .progress-bg { 
+            background-color: #e2e8f0;
+            border-radius: 20px; 
+            height: 20px;
+            width: 100%; 
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white;
+        }
+
+        .progress-fill { 
+            height: 100%; 
+            width: 0%; 
+            border-radius: 20px; 
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            background-color: var(--cor-pre);
+            background-image: linear-gradient(
+                45deg, 
+                rgba(255, 255, 255, 0.2) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.2) 50%, 
+                rgba(255, 255, 255, 0.2) 75%, 
+                transparent 75%, 
+                transparent
+            );
+            background-size: 30px 30px;
+            animation: moverRiscas 2s linear infinite;
+        }
+
+        @keyframes moverRiscas {
+            0% { background-position: 0 0; }
+            100% { background-position: 30px 0; }
+        }
+
+        /* 1. O Palco Central (Objeto a arrastar) */
+        .palco-central {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; margin-bottom: 20px; flex: 1; min-height: 180px;
+        }
+
+        .item-arrastavel {
+            width: clamp(100px, 25vw, 160px); height: clamp(100px, 25vw, 160px);
+            background: #fff; border: 4px solid #e1f5f2; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: grab; box-shadow: 0 10px 20px rgba(79, 209, 197, 0.15);
+            /* Transição elástica e suave */
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+            touch-action: none; /* Bloqueia scroll na peça para mobile drag */
+            user-select: none; z-index: 10; padding: 15px; position: relative;
+        }
+        
+        .item-arrastavel img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .item-arrastavel:active { cursor: grabbing; transform: scale(0.95); box-shadow: 0 5px 10px rgba(79, 209, 197, 0.2); }
+        .item-arrastavel.dragging { opacity: 0.8; transform: scale(0.9); }
+
+        /* O Hover suave para quem usa Rato/PC */
+        @media (hover: hover) {
+            .item-arrastavel:hover {
+                transform: scale(1.08) translateY(-5px);
+                box-shadow: 0 15px 30px rgba(79, 209, 197, 0.3);
+                border-color: var(--cor-pre);
+            }
+        }
+
+        /* Animação quando acerta e é "sugado" para o ecoponto */
+        .item-sucesso { animation: suckIn 0.5s forwards ease-in; pointer-events: none; }
+        @keyframes suckIn { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.1) translateY(150px); opacity: 0; } }
+
+        .nome-item {
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem); font-weight: 900; color: var(--azul-escuro);
+            text-transform: uppercase; margin-top: 15px; letter-spacing: 1px;
+        }
+
+        /* 2. Grelha dos Contentores */
+        .contentores-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px; width: 100%; max-width: 850px;
+            padding-top: 20px; border-top: 3px dashed #e2e8f0;
+        }
+
+        .bin-card {
+            background: #f8fafc; border: 4px dashed #ced6e0; border-radius: 25px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding: 15px 10px; transition: all 0.3s ease; position: relative;
+        }
+
+        .bin-img {
+            width: clamp(70px, 16vw, 110px); height: clamp(70px, 16vw, 110px);
+            object-fit: contain; margin-bottom: 10px; pointer-events: none;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); transition: transform 0.3s;
+        }
+
+        .bin-label {
+            font-size: clamp(1rem, 2.5vw, 1.3rem); font-weight: 900; color: white;
+            padding: 5px 15px; border-radius: 15px; text-transform: uppercase;
+        }
+
+        /* Cores dos Ecopontos Nacionais */
+        .bin-card[data-tipo="papelao"] .bin-label { background: #3b82f6; } /* Azul */
+        .bin-card[data-tipo="embalao"] .bin-label { background: #eab308; } /* Amarelo */
+        .bin-card[data-tipo="vidrao"] .bin-label { background: #22c55e; } /* Verde */
+        .bin-card[data-tipo="pilhao"] .bin-label { background: #ef4444; } /* Vermelho */
+
+        /* Efeitos Drag Over */
+        .bin-card.drag-over { transform: scale(1.05); }
+        .bin-card.drag-over[data-tipo="papelao"] { border-color: #3b82f6; background: #eff6ff; }
+        .bin-card.drag-over[data-tipo="embalao"] { border-color: #eab308; background: #fefce8; }
+        .bin-card.drag-over[data-tipo="vidrao"] { border-color: #22c55e; background: #f0fdf4; }
+        .bin-card.drag-over[data-tipo="pilhao"] { border-color: #ef4444; background: #fef2f2; }
+
+        /* Apenas um Bounce ao receber lixo */
+        .bin-card.bounce { animation: binBounce 0.4s ease; }
+        @keyframes binBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* =========================================
+           RESPONSIVIDADE (GRELHA 2x2 MOBILE)
+           ========================================= */
+        @media (max-width: 600px) {
+            .cartao-jogo-container { padding: 20px 10px; }
+            .caminho-trilho { left: 30px; right: 40px; }
+            .contentores-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding-top: 15px; }
+            .bin-card { border-width: 3px; padding: 10px 5px; border-radius: 20px; }
+            .palco-central { min-height: 140px; margin-bottom: 15px; }
+            .item-arrastavel { border-width: 3px; padding: 10px; }
+            .nome-item { font-size: 1.1rem; margin-top: 10px; }
+        }
+
+        /* Ecrã de Fim */
+        #ecra-fim { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #e1f5f2;}
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        .error-shake { animation: shakeError 0.4s ease; border-color: #ff4757 !important; background-color: #ffefef !important; }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../">🏠 Início</a></li>
+        <li><a href="../">🎨 Pré-Escolar</a></li>
+        <li><a href="../../1/">🎒 1º Ano</a></li>
+        <li><a href="../../2/">💡 2º Ano</a></li>
+        <li><a href="../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Mestres da Reciclagem ♻️</h1>
+        <div class="subtitulo">Coloca o lixo no contentor certo!</div>
+    </div>
+</header>
+
+<main>
+    <!-- O CAMINHO MÁGICO -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-avatar" id="avatar-progresso">🐦</div> 
+        </div>
+        <div class="caminho-alvo" id="alvo-progresso">&#129853;</div> <!-- Ninho -->
+    </div>
+
+    <div class="cartao-jogo-container">
+        
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-inicial" class="ecra" style="display: flex;">
+            <img src="../img/reciclagem.png" alt="Reciclagem" style="width: clamp(150px, 40vw, 250px); object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));">
+            <h2 class="titulo-destaque">Vamos Limpar o Planeta!</h2>
+            <p class="texto-intro">Arrasta os objetos para o ecoponto com a cor correta.</p>
+            <button class="btn-acao" onclick="iniciarJogo()">Jogar ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: O JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO (COM O NOVO DESIGN) -->
+            <div class="status-bar" id="status-bar">
+                <div class="score-container">
+                    <span class="score-certas">Ronda: <span id="val-progresso">1</span>/10</span>
+                    <span class="score-erradas">Erros: <span id="val-erros">0</span></span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- PALCO CENTRAL (OBJETO A ARRASTAR) -->
+            <div class="palco-central" id="palco-central">
+                <!-- O item é gerado via JavaScript -->
+            </div>
+            
+            <!-- CONTENTORES DE RECICLAGEM (A GRELHA 2x2 MOBILE) -->
+            <div class="contentores-grid">
+                
+                <div class="bin-card" data-tipo="papelao">
+                    <img src="../img/contentor_papel.png" class="bin-img" alt="Ecoponto Azul">
+                    <div class="bin-label">Papelão</div>
+                </div>
+                
+                <div class="bin-card" data-tipo="embalao">
+                    <img src="../img/contentor_plastico.png" class="bin-img" alt="Ecoponto Amarelo">
+                    <div class="bin-label">Embalão</div>
+                </div>
+                
+                <div class="bin-card" data-tipo="vidrao">
+                    <img src="../img/contentor_verde.png" class="bin-img" alt="Ecoponto Verde">
+                    <div class="bin-label">Vidrão</div>
+                </div>
+                
+                <div class="bin-card" data-tipo="pilhao">
+                    <img src="../img/contentor_pilhas.png" class="bin-img" alt="Pilhão">
+                    <div class="bin-label">Pilhão</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 10px; line-height: 1;">🌍</div>
+            <h2 class="titulo-destaque" style="margin-bottom: 10px;">O Planeta Agradece!</h2>
+            <div class="end-stats">
+                Reciclaste 10 objetos!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="iniciarJogo()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+    </div>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Ativa drag in touch devices
+    try { if (typeof MobileDragDrop !== 'undefined') { MobileDragDrop.polyfill({ holdToDrag: 0 }); } } catch(e) {}
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    }
+
+    /* =========================================
+       DADOS DO LIXO (22 Itens)
+       ========================================= */
+    const bancoLixo =[
+        // Papelão (Azul)
+        { id: "caixa_ovos", nome: "Caixa de Ovos", tipo: "papelao" },
+        { id: "caixa_papelao", nome: "Caixa de Cartão", tipo: "papelao" },
+        { id: "jornal", nome: "Jornal", tipo: "papelao" },
+        { id: "papel_amarrotado", nome: "Papel", tipo: "papelao" },
+        { id: "sacos_papel", nome: "Sacos de Papel", tipo: "papelao" },
+        
+        // Embalão (Amarelo)
+        { id: "esferovite", nome: "Esferovite", tipo: "embalao" },
+        { id: "garrafa_agua", nome: "Garrafa de Plástico", tipo: "embalao" },
+        { id: "garrafao_agua", nome: "Garrafão", tipo: "embalao" },
+        { id: "garrafas_plastico", nome: "Garrafas de Sumo", tipo: "embalao" },
+        { id: "iogurte", nome: "Copo de Iogurte", tipo: "embalao" },
+        { id: "lata_aluminio", nome: "Lata de Alumínio", tipo: "embalao" },
+        { id: "lata_atum", nome: "Lata de Conserva", tipo: "embalao" },
+        { id: "pacote_leite", nome: "Pacote de Leite", tipo: "embalao" },
+        { id: "pacote_sumo", nome: "Pacote de Sumo", tipo: "embalao" },
+        { id: "refrigerante", nome: "Lata de Sumo", tipo: "embalao" },
+        { id: "saco_plastico", nome: "Saco de Plástico", tipo: "embalao" },
+        
+        // Vidrão (Verde)
+        { id: "frasco_vidro", nome: "Frasco de Vidro", tipo: "vidrao" },
+        { id: "garrafa_vidro", nome: "Garrafa de Vidro", tipo: "vidrao" },
+        
+        // Pilhão (Vermelho)
+        { id: "bateria", nome: "Bateria", tipo: "pilhao" },
+        { id: "pilha", nome: "Pilha", tipo: "pilhao" },
+        { id: "pilhas", nome: "Pilhas Médias", tipo: "pilhao" },
+        { id: "pilhas_a4", nome: "Pilhas Pequenas", tipo: "pilhao" }
+    ];
+
+    /* =========================================
+       VARIÁVEIS GLOBAIS E ESTADO
+       ========================================= */
+    const TOTAL_RONDAS = 10; // Adaptado para a Pré-Escolar
+    let rondaAtual = 1;
+    let errorsCount = 0;
+    let isTransitioning = false;
+    let draggedElement = null;
+    let itensDaPartida =[];
+
+    // DOM
+    const caminhoMagico = document.getElementById('caminho-magico');
+    const avatar = document.getElementById('avatar-progresso');
+    const elStatus = document.getElementById('status-bar');
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elProgressFill = document.getElementById('progress-fill');
+    const palcoCentral = document.getElementById('palco-central');
+    const binCards = document.querySelectorAll('.bin-card');
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    /* =========================================
+       LÓGICA PRINCIPAL DO JOGO
+       ========================================= */
+    function iniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        rondaAtual = 1;
+        errorsCount = 0;
+        
+        // 1. Misturar todo o banco de lixo e tirar as 10 rondas para não repetir
+        itensDaPartida = [...bancoLixo].sort(() => Math.random() - 0.5).slice(0, TOTAL_RONDAS);
+        
+        // Ativar listeners nos contentores limpos
+        binCards.forEach(bin => {
+            bin.replaceWith(bin.cloneNode(true));
+        });
+        document.querySelectorAll('.bin-card').forEach(bin => {
+            bin.addEventListener('dragover', handleDragOver);
+            bin.addEventListener('dragleave', handleDragLeave);
+            bin.addEventListener('drop', handleDrop);
+        });
+
+        caminhoMagico.style.display = 'block';
+        elStatus.style.display = 'flex'; // Exibe as riscas animadas também
+        
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        
+        prepararRonda();
+    }
+
+    function atualizarPlacar() {
+        elErros.textContent = errorsCount;
+        elProgresso.textContent = rondaAtual;
+        
+        let percent = ((rondaAtual - 1) / TOTAL_RONDAS) * 100;
+        elProgressFill.style.width = `${percent}%`;
+        avatar.style.left = `${percent}%`; // Move o pássaro
+    }
+
+    function prepararRonda() {
+        isTransitioning = false;
+        palcoCentral.innerHTML = '';
+
+        const itemAtual = itensDaPartida[rondaAtual - 1];
+
+        // Cria o elemento arrastável
+        const divItem = document.createElement('div');
+        divItem.className = 'item-arrastavel';
+        divItem.dataset.tipo = itemAtual.tipo;
+        divItem.draggable = true;
+        
+        // Usa .png conforme o teu print original, atualiza para .svg se as imagens de facto forem svg.
+        divItem.innerHTML = `<img src="img/${itemAtual.id}.png" alt="${itemAtual.nome}" onerror="this.src='img/${itemAtual.id}.png'">`;
+        
+        // Eventos de Drag
+        divItem.addEventListener('dragstart', handleDragStart);
+        divItem.addEventListener('dragend', handleDragEnd);
+
+        // O Nome em baixo
+        const txtNome = document.createElement('div');
+        txtNome.className = 'nome-item';
+        txtNome.textContent = itemAtual.nome;
+
+        palcoCentral.appendChild(divItem);
+        palcoCentral.appendChild(txtNome);
+        
+        // Animação de entrada
+        divItem.style.animation = 'fadeIn 0.3s ease-out';
+    }
+
+    /* =========================================
+       MECÂNICA DE DRAG & DROP
+       ========================================= */
+    function handleDragStart(e) {
+        if(isTransitioning) return;
+        draggedElement = e.target.closest('.item-arrastavel');
+        draggedElement.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        tocarSom('flip');
+    }
+
+    function handleDragEnd(e) {
+        if(draggedElement) draggedElement.classList.remove('dragging');
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault(); 
+        const bin = e.target.closest('.bin-card');
+        if (bin) bin.classList.add('drag-over');
+    }
+    
+    function handleDragLeave(e) {
+        const bin = e.target.closest('.bin-card');
+        if (bin) bin.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        const bin = e.target.closest('.bin-card');
+        if (!bin || !draggedElement) return;
+        
+        bin.classList.remove('drag-over');
+
+        const tipoLixo = draggedElement.dataset.tipo;
+        const tipoContentor = bin.dataset.tipo;
+
+        if (tipoLixo === tipoContentor) {
+            // ACERTOU
+            isTransitioning = true;
+            tocarSom('acerto');
+            
+            bin.classList.add('bounce');
+            setTimeout(() => bin.classList.remove('bounce'), 400);
+
+            draggedElement.classList.add('item-sucesso');
+            document.querySelector('.nome-item').style.opacity = '0';
+            
+            setTimeout(() => {
+                rondaAtual++;
+                if (rondaAtual > TOTAL_RONDAS) {
+                    finalizarJogo();
+                } else {
+                    atualizarPlacar();
+                    prepararRonda();
+                }
+            }, 800); 
+            
+        } else {
+            // ERROU
+            errorsCount++;
+            atualizarPlacar();
+            tocarSom('erro');
+            
+            draggedElement.classList.add('error-shake');
+            setTimeout(() => {
+                draggedElement.classList.remove('error-shake');
+            }, 400);
+        }
+    }
+
+    /* =========================================
+       FIM DO JOGO E CONFETIS
+       ========================================= */
+    function finalizarJogo() {
+        elProgressFill.style.width = `100%`;
+        avatar.style.left = `100%`; // Pássaro no ninho
+        caminhoMagico.style.display = 'none';
+        elStatus.style.display = 'none';
+        
+        mostrarEcra('ecra-fim');
+        
+        document.getElementById('final-erros').textContent = errorsCount;
+        tocarSom('vitoria'); 
+        dispararConfetis();
+    }
+
+    /* =========================================
+       SISTEMA DE SOM
+       ========================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    /* =========================================
+       CONFETIS
+       ========================================= */
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+
+    function redimensionarCanvas() {
+        canvasConfetti.width = window.innerWidth;
+        canvasConfetti.height = window.innerHeight;
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#4fd1c5', '#2ed573', '#ff4757', '#eab308', '#3b82f6'];
+        for (let i = 0; i < 100; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+    
+    window.onload = () => mostrarEcra('ecra-inicial');
+</script>
+</body>
+</html>
