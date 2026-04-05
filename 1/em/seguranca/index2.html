@@ -67,15 +67,19 @@
         }
 
         /* Passadeira desenhada em CSS */
+       
         .cenario-window::after {
             content: "";
             position: absolute;
-            bottom: 20px;
-            width: 100%;
-            height: 50px;
-            background-image: linear-gradient(90deg, #fff 50%, transparent 50%);
-            background-size: 60px 100%;
+            bottom: 20px; /* Começa logo acima do passeio */
+            left: 50%;    /* Centrado no ecrã */
+            transform: translateX(-50%);
+            width: 140px; /* Largura do caminho da passadeira */
+            height: calc(100% - 20px); /* Atravessa a rua toda até cima */
+            /* Cria as riscas horizontais empilhadas verticalmente */
+            background-image: repeating-linear-gradient(0deg, #fff, #fff 25px, transparent 25px, transparent 50px);
             opacity: 0.8;
+            z-index: 1; /* Fica atrás do boneco e do poste */
         }
 
         /* Passeio onde o Leo começa */
@@ -353,8 +357,22 @@
         
         // As situações (fases) que o aluno tem de resolver
         const situacoes = [
-            { id: "transito", nome: "Rua com Muito Trânsito!", segurancaBase: -2, bgCor: "#7f8c8d", fx: "🚗" },
-            { id: "passadeira_simples", nome: "Passadeira sem Sinais", segurancaBase: -1, bgCor: "#95a5a6", fx: "🚶‍♂️" }
+            { 
+                id: "semaforo", 
+                nome: "Fase 1: O Semáforo de Peões", 
+                bgCor: "#95a5a6", 
+                fx: "🚗",
+                // Para passar, TEM de ser o sinal verde e o Leo parado a olhar
+                solucao: { poste: "sinal_verde", leo: "parar" } 
+            },
+            { 
+                id: "passadeira", 
+                nome: "Fase 2: Passadeira sem Semáforo", 
+                bgCor: "#7f8c8d", 
+                fx: "🚚",
+                // Aqui não há semáforo. Tem de usar o Sinal de Stop para parar os carros!
+                solucao: { poste: "sinal_stop", leo: "parar" } 
+            }
         ];
 
         let faseAtual = 0;
@@ -445,49 +463,41 @@
 
         function atualizarMedidor() {
             const situacao = situacoes[faseAtual];
-            let segurancaTotal = situacao.segurancaBase;
+            
+            // Verifica se as escolhas do aluno são IGUAIS à solução da fase atual
+            const acertouPoste = equipados.poste === situacao.solucao.poste;
+            const acertouLeo = equipados.leo === situacao.solucao.leo;
 
-            // Soma a segurança dos itens equipados
-            Object.values(equipados).forEach(idItem => {
-                if (idItem) {
-                    const item = ferramentasTransito.find(i => i.id === idItem);
-                    segurancaTotal += item.seguranca;
-                }
-            });
-
-            // Lógica Visual da Barra
             const barra = document.getElementById("barra-seguranca");
             const emoji = document.getElementById("emoji-seguranca");
             const texto = document.getElementById("texto-seguranca");
             const btnAtravessar = document.getElementById("btn-atravessar");
 
-            // Converter a escala (-2 a +2) para percentagem da barra (0% a 100%)
-            // -2 = 10% (Perigo), 0 = 50% (Equilíbrio/Seguro), +2 = 90%
-            let percentagem = 50 + (segurancaTotal * 20);
-            if (percentagem < 5) percentagem = 5;
-            if (percentagem > 95) percentagem = 95;
-            
-            barra.style.width = `${percentagem}%`;
-
-            if (segurancaTotal < 0) {
-                barra.style.backgroundColor = "var(--cor-perigo)";
-                emoji.innerText = "🚗💨";
-                texto.innerText = "Perigo! Não atravesses!";
-                texto.style.color = "var(--cor-perigo)";
-                btnAtravessar.classList.remove("pronto");
-                
-            } else if (segurancaTotal === 0 || segurancaTotal === 1) {
+            // Se acertou nos dois (Poste e Leo)
+            if (acertouPoste && acertouLeo) {
+                barra.style.width = "100%";
                 barra.style.backgroundColor = "var(--cor-seguro)";
-                emoji.innerText = "✅😊";
+                emoji.innerText = "✅";
                 texto.innerText = "Caminho Seguro!";
                 texto.style.color = "var(--cor-seguro)";
-                btnAtravessar.classList.add("pronto"); // ATIVA O BOTÃO
+                btnAtravessar.classList.add("pronto"); // Liberta o botão!
                 
-            } else {
+            // Se escolheu pelo menos um, mas falta o outro ou errou
+            } else if (equipados.poste !== null || equipados.leo !== null) {
+                barra.style.width = "50%";
                 barra.style.backgroundColor = "var(--cor-alerta)";
-                emoji.innerText = "🛑";
-                texto.innerText = "Demasiado parado...";
+                emoji.innerText = "🤔";
+                texto.innerText = "Falta algo, ou está errado...";
                 texto.style.color = "var(--cor-alerta)";
+                btnAtravessar.classList.remove("pronto");
+                
+            // Se ainda não escolheu nada
+            } else {
+                barra.style.width = "10%";
+                barra.style.backgroundColor = "var(--cor-perigo)";
+                emoji.innerText = "🚗";
+                texto.innerText = "Muito Perigoso!";
+                texto.style.color = "var(--cor-perigo)";
                 btnAtravessar.classList.remove("pronto");
             }
         }
