@@ -59,5 +59,7 @@ const todosOsJogos =[
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
     { nome: "Reciclagem", icone: "♻️", link: "em/reciclagem/", cat: "em" },
-    { nome: "Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" }
+    { nome: "Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" },
+	{ nome: "Roupas e Estações", icone: "🧑‍🚒", link: "em/roupas-estacoes/", cat: "em" },
+	{ nome: "Caminho Seguro", icone: "🧑‍🚒", link: "em/seguranca/", cat: "em" }
 ];
