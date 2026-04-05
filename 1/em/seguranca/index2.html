@@ -356,52 +356,54 @@
         // ==========================================
         
         // As situações (fases) que o aluno tem de resolver
+        // AS SITUAÇÕES (FASES)
         const situacoes = [
             { 
-                id: "semaforo", 
-                nome: "Fase 1: O Semáforo de Peões", 
+                id: "fase1", 
+                nome: "Fase 1: O Semáforo", 
                 bgCor: "#95a5a6", 
                 fx: "🚗",
-                // Para passar, TEM de ser o sinal verde e o Leo parado a olhar
-                solucao: { poste: "sinal_verde", leo: "parar" } 
+                dica: "O que precisas para os carros pararem e poderes avançar?",
+                solucao: { ferramenta: "sinal_verde", acao: "andar" } 
             },
             { 
-                id: "passadeira", 
-                nome: "Fase 2: Passadeira sem Semáforo", 
-                bgCor: "#7f8c8d", 
-                fx: "🚚",
-                // Aqui não há semáforo. Tem de usar o Sinal de Stop para parar os carros!
-                solucao: { poste: "sinal_stop", leo: "parar" } 
+                id: "fase2", 
+                nome: "Fase 2: Rua Escura (Noite)", 
+                bgCor: "#2c3e50", // Fundo azul escuro (noite)
+                fx: "🌙",
+                dica: "Está muito escuro! Como é que os carros te podem ver?",
+                solucao: { ferramenta: "colete", acao: "parar" } // À noite, tem o colete e tem de parar para olhar primeiro
             },
             { 
-                id: "avaria", 
-                nome: "Fase 3: Semáforo Avariado!", 
-                bgCor: "#e67e22", // Fundo mais cor-de-laranja/alerta
-                fx: "⚠️", // Chovem sinais de perigo
-                // Solução: Só o Polícia Sinaleiro pode ajudar os peões!
-                solucao: { poste: "policia", leo: "parar" } 
+                id: "fase3", 
+                nome: "Fase 3: Trânsito e Confusão", 
+                bgCor: "#e67e22", 
+                fx: "🚚💨",
+                dica: "Não há sinais e os carros não param! Quem pode ajudar?",
+                solucao: { ferramenta: "policia", acao: "mao" } // Precisa do polícia e de dar a mão a um adulto
             }
         ];
 
         let faseAtual = 0;
 
-        // O nosso "Guarda-Roupa" agora são Ferramentas de Trânsito
-        // Nota: Deves garantir que crias estas imagens na pasta 'img/'
+        // O NOVO "GUARDA-ROUPA"
         const ferramentasTransito = [
-            // Sinais para o Poste
-            { id: "sinal_verde", nome: "Semáforo Verde", img: "img/sinal_verde.svg", slot: "poste", seguranca: 1 },
-            { id: "sinal_vermelho", nome: "Semáforo Vermelho", img: "img/sinal_vermelho.svg", slot: "poste", seguranca: -1 },
-            { id: "sinal_stop", nome: "Sinal de STOP", img: "img/sinal_stop.svg", slot: "poste", seguranca: 2 },
-            { id: "policia", nome: "Polícia Sinaleiro", img: "img/policia.svg", slot: "poste", seguranca: 2 },
-            // Ações para o Leo
-            { id: "parar", nome: "Parar e Olhar", img: "img/leo_parar.png", slot: "leo", seguranca: 1 },
-            { id: "correr", nome: "Correr à toa", img: "img/leo_correr.png", slot: "leo", seguranca: -2 }
+            // Categoria 1: Ações do Leo (slot: "acao")
+            { id: "andar", nome: "Andar Devagar", img: "img/leo_andar.svg", slot: "acao" },
+            { id: "parar", nome: "Parar e Olhar", img: "img/leo_parar.svg", slot: "acao" },
+            { id: "correr", nome: "Correr Rápido", img: "img/leo_correr.svg", slot: "acao" },
+            { id: "mao", nome: "Dar a mão", img: "img/leo_mao.svg", slot: "acao" },
+
+            // Categoria 2: Ferramentas / Ajuda (slot: "ferramenta")
+            { id: "sinal_verde", nome: "Sinal Verde", img: "img/sinal_verde.svg", slot: "ferramenta" },
+            { id: "policia", nome: "Polícia Sinaleiro", img: "img/policia.svg", slot: "ferramenta" },
+            { id: "colete", nome: "Colete Refletor", img: "img/colete.svg", slot: "ferramenta" }
         ];
 
-        // Estado atual dos slots
+        // O estado inicial dos slots atualizado
         let equipados = {
-            poste: null,
-            leo: null
+            ferramenta: null,
+            acao: null
         };
 
         // ==========================================
@@ -414,10 +416,10 @@
             document.getElementById("cenario-bg").style.backgroundColor = situacao.bgCor;
             
             // Limpa as escolhas
-            equipados.poste = null;
-            equipados.leo = null;
-            document.getElementById("slot-poste").classList.remove("ativo");
-            document.getElementById("slot-leo").classList.remove("ativo");
+            equipados.ferramenta = null;
+            equipados.acao = null;
+            document.getElementById("slot-ferramenta").classList.remove("ativo");
+            document.getElementById("slot-acao").classList.remove("ativo");
 
             iniciarClima(situacao.fx);
             renderizarArmario("poste"); // Começa a mostrar os sinais do poste
@@ -472,40 +474,59 @@
         function atualizarMedidor() {
             const situacao = situacoes[faseAtual];
             
-            // Verifica se as escolhas do aluno são IGUAIS à solução da fase atual
-            const acertouPoste = equipados.poste === situacao.solucao.poste;
-            const acertouLeo = equipados.leo === situacao.solucao.leo;
-
             const barra = document.getElementById("barra-seguranca");
             const emoji = document.getElementById("emoji-seguranca");
             const texto = document.getElementById("texto-seguranca");
             const btnAtravessar = document.getElementById("btn-atravessar");
 
-            // Se acertou nos dois (Poste e Leo)
-            if (acertouPoste && acertouLeo) {
-                barra.style.width = "100%";
-                barra.style.backgroundColor = "var(--cor-seguro)";
-                emoji.innerText = "✅";
-                texto.innerText = "Caminho Seguro!";
-                texto.style.color = "var(--cor-seguro)";
-                btnAtravessar.classList.add("pronto"); // Liberta o botão!
+            // 1. Verificação de Perigo Crítico (Correr)
+            if (equipados.acao === "correr") {
+                barra.style.width = "5%";
+                barra.style.backgroundColor = "var(--cor-perigo)";
+                emoji.innerText = "⚠️";
+                texto.innerText = "Nunca corras a atravessar a rua!";
+                texto.style.color = "var(--cor-perigo)";
+                btnAtravessar.classList.remove("pronto");
+                return; // Pára a função aqui, o erro é demasiado grave
+            }
+
+            // 2. Verifica se o aluno já escolheu as duas coisas
+            if (equipados.ferramenta && equipados.acao) {
                 
-            // Se escolheu pelo menos um, mas falta o outro ou errou
-            } else if (equipados.poste !== null || equipados.leo !== null) {
-                barra.style.width = "50%";
+                // Se acertou na combinação exata para esta fase
+                if (equipados.ferramenta === situacao.solucao.ferramenta && equipados.acao === situacao.solucao.acao) {
+                    barra.style.width = "100%";
+                    barra.style.backgroundColor = "var(--cor-seguro)";
+                    emoji.innerText = "✅";
+                    texto.innerText = "Tudo certo! Podes avançar.";
+                    texto.style.color = "var(--cor-seguro)";
+                    btnAtravessar.classList.add("pronto");
+                } else {
+                    // Escolheu duas coisas, mas é a combinação errada para a fase
+                    barra.style.width = "40%";
+                    barra.style.backgroundColor = "var(--cor-alerta)";
+                    emoji.innerText = "🤔";
+                    texto.innerText = "Pensa bem. Lê a dica da fase!";
+                    texto.style.color = "var(--cor-alerta)";
+                    btnAtravessar.classList.remove("pronto");
+                }
+
+            } else if (equipados.ferramenta || equipados.acao) {
+                // Escolheu apenas um dos elementos
+                barra.style.width = "20%";
                 barra.style.backgroundColor = "var(--cor-alerta)";
-                emoji.innerText = "🤔";
-                texto.innerText = "Falta algo, ou está errado...";
+                emoji.innerText = "👀";
+                texto.innerText = "Ainda falta escolher algo...";
                 texto.style.color = "var(--cor-alerta)";
                 btnAtravessar.classList.remove("pronto");
-                
-            // Se ainda não escolheu nada
+
             } else {
+                // Ecrã inicial da fase (Tudo vazio)
                 barra.style.width = "10%";
                 barra.style.backgroundColor = "var(--cor-perigo)";
-                emoji.innerText = "🚗";
-                texto.innerText = "Muito Perigoso!";
-                texto.style.color = "var(--cor-perigo)";
+                emoji.innerText = situacao.fx.charAt(0); // Usa o emoji da fase
+                texto.innerText = situacao.dica; // Mostra a dica no início
+                texto.style.color = "var(--text-main)";
                 btnAtravessar.classList.remove("pronto");
             }
         }
