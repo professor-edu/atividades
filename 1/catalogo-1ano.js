@@ -58,9 +58,6 @@ const todosOsJogos =[
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
-    { nome: "O Meu Corpo", icone: "🧍", link: "em/corpo/", cat: "em" },
-    { nome: "Os Ecopontos", icone: "♻️", link: "em/ecopontos/", cat: "em" },
-    { nome: "Estações do Ano", icone: "🍂", link: "em/estacoes/", cat: "em" },
-    { nome: "Sons da Natureza", icone: "👂", link: "em/sons-natureza/", cat: "em" },
-    { nome: "As Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" }
+    { nome: "Reciclagem", icone: "♻️", link: "em/reciclagem/", cat: "em" },
+    { nome: "Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" }
 ];
