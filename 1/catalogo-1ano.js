@@ -63,7 +63,8 @@ const todosOsJogos =[
 	{ nome: "Roupas e Estações", icone: "⛅", link: "em/roupas-estacoes/", cat: "em" },
 	{ nome: "Memória do Corpo", icone: "🧠", link: "em/corpo/", cat: "em" },
 	{ nome: "Memória Saudável", icone: "💪", link: "em/vida-saudavel/", cat: "em" },
-	{ nome: "Memória de Vestuário", icone: "👔", link: "em/vestuario/", cat: "em" },
-	{ nome: "Memória de Alimentos", icone: "🍎", link: "em/alimentos/", cat: "em" },
-	{ nome: "Memória de Animais", icone: "🐱", link: "em/animais/", cat: "em" }
+	{ nome: "Memória do Vestuário", icone: "👔", link: "em/vestuario/", cat: "em" },
+	{ nome: "Memória dos Alimentos", icone: "🍎", link: "em/alimentos/", cat: "em" },
+	{ nome: "Memória dos Animais", icone: "🐱", link: "em/animais/", cat: "em" },
+	{ nome: "Memória do Tempo", icone: "☀️", link: "em/tempo/", cat: "em" }
 ];
