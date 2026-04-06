@@ -1,0 +1,22 @@
+const palavras =[
+  { palavra: "águia", imagem: "img/aguia.png", num: 3, divisao: "Á-GUI-A" },
+  { palavra: "andorinha", imagem: "img/andorinha.png", num: 4, divisao: "AN-DO-RI-NHA" },
+  { palavra: "baleia", imagem: "img/baleia.png", num: 3, divisao: "BA-LEI-A" },
+  { palavra: "burro", imagem: "img/burro.png", num: 2, divisao: "BUR-RO" },
+  { palavra: "cabra", imagem: "img/cabra.png", num: 2, divisao: "CA-BRA" },
+  { palavra: "cão", imagem: "img/cao.png", num: 1, divisao: "CÃO" },
+  { palavra: "cavalo", imagem: "img/cavalo.png", num: 3, divisao: "CA-VA-LO" },
+  { palavra: "coelho", imagem: "img/coelho.png", num: 3, divisao: "CO-E-LHO" },
+  { palavra: "elefante", imagem: "img/elefante.png", num: 4, divisao: "E-LE-FAN-TE" },
+  { palavra: "foca", imagem: "img/foca.png", num: 2, divisao: "FO-CA" },
+  { palavra: "galinha", imagem: "img/galinha.png", num: 3, divisao: "GA-LI-NHA" },
+  { palavra: "gato", imagem: "img/gato.png", num: 2, divisao: "GA-TO" },
+  { palavra: "girafa", imagem: "img/girafa.png", num: 3, divisao: "GI-RA-FA" },
+  { palavra: "golfinho", imagem: "img/golfinho.png", num: 3, divisao: "GOL-FI-NHO" },
+  { palavra: "leão", imagem: "img/leao.png", num: 2, divisao: "LE-ÃO" },
+  { palavra: "ovelha", imagem: "img/ovelha.png", num: 3, divisao: "O-VE-LHA" },
+  { palavra: "porco", imagem: "img/porco.png", num: 2, divisao: "POR-CO" },
+  { palavra: "tigre", imagem: "img/tigre.png", num: 2, divisao: "TI-GRE" },
+  { palavra: "tubarão", imagem: "img/tubarao.png", num: 3, divisao: "TU-BA-RÃO" },
+  { palavra: "vaca", imagem: "img/vaca.png", num: 2, divisao: "VA-CA" }
+];
