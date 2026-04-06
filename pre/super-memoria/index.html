@@ -487,10 +487,34 @@
        LÓGICA DA MEMÓRIA
        ========================================= */
     function flipCard() {
-        if (lockBoard) return;
-        if (this === firstCard) return; 
-        if (this.classList.contains('matched')) return; 
+        // Se o tabuleiro estiver trancado (a aguardar que duas cartas se desvirem), não faz nada
+        if (lockBoard) return; 
 
+        // 1. Se a criança clicar na primeira carta que acabou de virar (ou que ainda está a girar!)
+        if (this === firstCard) {
+            // Se for a carta de som, repete a palavra imediatamente!
+            if (this.dataset.type === 'audio') {
+                dizerPalavra(this.dataset.word);
+                
+                // Faz o ícone do som dar um pequeno pulinho visual
+                const icon = this.querySelector('.card-sound');
+                if (icon) {
+                    icon.style.transform = "scale(0.85)";
+                    setTimeout(() => icon.style.transform = "scale(1)", 100);
+                }
+            }
+            return; 
+        } 
+        
+        // 2. (BÓNUS) Se a criança clicar num par que já está certo e verde!
+        if (this.classList.contains('matched')) {
+            if (this.dataset.type === 'audio') {
+                dizerPalavra(this.dataset.word); // Permite ouvir a palavra novamente
+            }
+            return; 
+        } 
+
+        // 3. Comportamento normal de virar a carta pela primeira vez
         this.classList.add('flipped');
         tocarSom('flip');
 
