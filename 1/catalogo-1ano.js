@@ -60,6 +60,7 @@ const todosOsJogos =[
     // ------------------------------------
     { nome: "Reciclagem", icone: "♻️", link: "em/reciclagem/", cat: "em" },
     { nome: "Profissões", icone: "🧑‍🚒", link: "em/profissoes/", cat: "em" },
-	{ nome: "Roupas e Estações", icone: "🧑‍🚒", link: "em/roupas-estacoes/", cat: "em" },
-	{ nome: "Caminho Seguro", icone: "🧑‍🚒", link: "em/seguranca/", cat: "em" }
+	{ nome: "Roupas e Estações", icone: "⛅", link: "em/roupas-estacoes/", cat: "em" },
+	{ nome: "Memória do Corpo", icone: "🧠", link: "em/corpo/", cat: "em" },
+	{ nome: "Memória dSaudável", icone: "💪", link: "em/vida-saudavel/", cat: "em" }
 ];
