@@ -66,5 +66,6 @@ const todosOsJogos =[
 	{ nome: "Memória do Vestuário", icone: "👔", link: "em/vestuario/", cat: "em" },
 	{ nome: "Memória dos Alimentos", icone: "🍎", link: "em/alimentos/", cat: "em" },
 	{ nome: "Memória dos Animais", icone: "🐱", link: "em/animais/", cat: "em" },
-	{ nome: "Memória do Tempo", icone: "☀️", link: "em/tempo/", cat: "em" }
+	{ nome: "Memória do Tempo", icone: "☀️", link: "em/tempo/", cat: "em" },
+	{ nome: "Cruzadas de Animais", icone: "🐾", link: "em/cruzadas-animais/", cat: "em" }
 ];
