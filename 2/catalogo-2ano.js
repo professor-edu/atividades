@@ -10,6 +10,9 @@ const todosOsJogos =[
     // ------------------------------------
     { nome: "Masculino e Feminino", icone: "🕵️‍♂️", link: "pt/genero/", cat: "pt" },
     { nome: "Singular e Plural", icone: "🕵️‍♂️", link: "pt/numero", cat: "pt" },
+	{ nome: "Sinónimos", icone: "🕵️‍♂️", link: "pt/sinonimos", cat: "pt" },
+	{ nome: "Antónimos", icone: "🕵️‍♂️", link: "pt/antonimos", cat: "pt" },
+	{ nome: "Sinónimos e Antónimos", icone: "🕵️‍♂️", link: "pt/sinonimos-antonimos", cat: "pt" },
     
 	
 	
