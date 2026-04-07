@@ -8,9 +8,8 @@ const todosOsJogos =[
     // ------------------------------------
     // PORTUGUÊS (cat: "pt")
     // ------------------------------------
-    { nome: "Jogo 1 PT", icone: "⌨️", link: "pt/meu-teclado/", cat: "pt" },
-    
-	{ nome: "Jogo 2 PT", icone: "🅰️", link: "pt/vogais", cat: "pt" },
+    { nome: "Masculino e Feminino", icone: "🕵️‍♂️", link: "pt/genero/", cat: "pt" },
+    { nome: "Singular e Plural", icone: "🕵️‍♂️", link: "pt/numero", cat: "pt" },
     
 	
 	
