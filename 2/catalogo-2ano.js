@@ -28,7 +28,7 @@ const todosOsJogos =[
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
-    { nome: "Jogo 1 EM", icone: "♻️", link: "em/reciclagem/", cat: "em" },
+    { nome: "Animais", icone: "🕵️‍♂️", link: "em/animais/", cat: "em" },
    
 	{ nome: "Jogo 1 EM", icone: "🐾", link: "em/cruzadas-animais/", cat: "em" }
 ];
