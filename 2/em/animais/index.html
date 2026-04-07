@@ -677,7 +677,12 @@
     function atualizarPlacar() {
         elErros.textContent = errorsCount;
         elProgresso.textContent = rondaAtual;
-        elProgressFill.style.width = `${((rondaAtual - 1) / TOTAL_RONDAS) * 100}%`;
+        
+        // Em vez de medir a ronda, mede o número exato de animais encontrados!
+        let totalAnimaisJogo = TOTAL_RONDAS * PARES_POR_RONDA; // 3 rondas * 6 = 18 animais
+        let animaisEncontrados = ((rondaAtual - 1) * PARES_POR_RONDA) + acertosNaRonda;
+        
+        elProgressFill.style.width = `${(animaisEncontrados / totalAnimaisJogo) * 100}%`;
     }
 
     function prepararRonda() {
@@ -959,7 +964,9 @@
             pendingWord = null;
             pendingCells =[];
             acertosNaRonda++;
-
+			
+			atualizarPlacar();
+			
             if (acertosNaRonda === PARES_POR_RONDA) {
                 setTimeout(avancarRonda, 3200);
             }
@@ -977,7 +984,9 @@
 
     function avancarRonda() {
         rondaAtual++;
-        if (rondaAtual > TOTAL_RONDAS) {
+        acertosNaRonda = 0;
+		
+		if (rondaAtual > TOTAL_RONDAS) {
             finalizarJogo();
         } else {
             tocarSom('vitoria');
@@ -1090,4 +1099,3 @@
 </script>
 </body>
 </html>
-
