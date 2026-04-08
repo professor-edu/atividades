@@ -452,6 +452,7 @@
         opcaoSelecionada = opcao;
         rondaAtual = 0;
         errosTotais = 0;
+		isEnding = false;
         
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
 
@@ -528,7 +529,8 @@
     }
 
     function spawnWord() {
-        // Fallback array in case dados_gramatica.js is missing or empty
+        if (isEnding) return; // Corta a chuva de palavras quando a barra chega ao fim
+
         let basePalavras =[
             { palavra: "Maria", categoria: "Nomes Próprios" }, { palavra: "gato", categoria: "Nomes Comuns" },
             { palavra: "saltar", categoria: "Verbos" }, { palavra: "lindo", categoria: "Adjetivos" }
@@ -538,7 +540,8 @@
             basePalavras = palavrasGramatica;
         }
 
-        let isTarget = Math.random() > 0.4; // 60% chance de sair a palavra certa
+        // MAIS INTRUSOS: Agora há 70% de chance de cair uma palavra errada e só 30% da certa!
+        let isTarget = Math.random() > 0.7; 
         
         let listaCandidata = isTarget 
             ? basePalavras.filter(p => p.categoria === opcaoSelecionada)
@@ -587,6 +590,8 @@
     }
 
     function checkCollisions() {
+        if (isEnding) return; // Ignora as colisões enquanto a barra enche no final
+        
         let mochilaRect = mochilaEl.getBoundingClientRect();
         
         for (let i = palavrasCaindo.length - 1; i >= 0; i--) {
@@ -621,8 +626,14 @@
     function avancarRonda() {
         rondaAtual++;
         atualizarPlacarUI();
+        
         if (rondaAtual >= totalRondas) {
-            finalizarJogo();
+            isEnding = true; // O jogo entra em modo "final"
+            
+            // Dá 1.5 segundos de magia para a criança ver a barra encher antes de mudar de ecrã
+            setTimeout(() => {
+                finalizarJogo();
+            }, 1500);
         }
     }
 
