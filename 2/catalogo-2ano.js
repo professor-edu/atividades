@@ -13,7 +13,7 @@ const todosOsJogos =[
 	{ nome: "Sinónimos", icone: "🕵️‍♂️", link: "pt/sinonimos", cat: "pt" },
 	{ nome: "Antónimos", icone: "🕵️‍♂️", link: "pt/antonimos", cat: "pt" },
 	{ nome: "Sinónimos e Antónimos", icone: "🕵️‍♂️", link: "pt/sinonimos-antonimos", cat: "pt" },
-	{ nome: "Pontuação e Acentuação", icone: "✏️", link: "pt/pontos-acentos", cat: "pt" },
+	{ nome: "Pontos e Acentos", icone: "✏️", link: "pt/pontos-acentos", cat: "pt" },
     { nome: "Chuva de Palavras", icone: "🎒", link: "pt/classes", cat: "pt" },
 	
 	
