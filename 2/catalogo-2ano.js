@@ -15,6 +15,8 @@ const todosOsJogos =[
 	{ nome: "Sinónimos e Antónimos", icone: "🕵️‍♂️", link: "pt/sinonimos-antonimos", cat: "pt" },
 	{ nome: "Pontos e Acentos", icone: "✏️", link: "pt/pontos-acentos", cat: "pt" },
     { nome: "Chuva de Palavras", icone: "🎒", link: "pt/classes", cat: "pt" },
+	{ nome: "Ler e Copiar", icone: "⌨️", link: "pt/escrita-textos", cat: "pt" },
+	{ nome: "Letras Mágicas", icone: "🪄", link: "pt/letras-magicas", cat: "pt" },
 	
 	
     // ------------------------------------

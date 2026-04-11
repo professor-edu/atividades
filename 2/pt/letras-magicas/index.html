@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Letras Mágicas 🪄</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D; 
+            --cor-borda: #E3C40D;
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+			--borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        @media (min-width: 769px) { body { height: 100vh; overflow: hidden; } }
+        
+        /* =========================================
+           HEADER E NAVEGAÇÃO
+           ========================================= */
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-2ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 30px 20px; min-height: 350px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; min-height: 0;}
+        #ecra-selecao .grelha-opcoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 900px; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        
+        /* Cartões do Menu - Todos configurados para a cor de Português */
+        .btn-nivel-menu {
+            background-color: white; 
+            border: 4px solid var(--borda-cartao); 
+            border-radius: 20px;
+            padding: 20px; width: 100%; cursor: pointer;
+            box-shadow: 0 6px 0 var(--borda-cartao); 
+            transition: all 0.2s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; touch-action: manipulation;
+        }
+        @media (hover: hover) {
+            #ecra-selecao .grelha-opcoes .btn-nivel-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--cor-pt); border-color: var(--cor-pt); opacity: 0.95; }
+        }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .nivel-icon { font-size: 3rem; background: #fff0f0; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 auto;}
+        .nivel-text { text-align: center; }
+        .nivel-titulo { font-size: 1.3rem; font-weight: 900; display: block; color: var(--azul-escuro); margin-bottom: 5px;}
+        .nivel-desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
+
+        @media (max-width: 600px) {
+            #ecra-selecao .grelha-opcoes { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .btn-nivel-menu { padding: 15px 10px; }
+        }
+        @media (max-width: 360px) {
+            #ecra-selecao .grelha-opcoes { grid-template-columns: 1fr; }
+        }
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid #fecaca; margin-bottom: 15px; box-sizing: border-box;
+            flex-shrink: 0;
+        }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 20px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        /* TOAST E ANIMAÇÕES */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        @keyframes shakeError { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(calc(-50% - 6px)) rotate(-2deg); } 75% { transform: translateX(calc(-50% + 6px)) rotate(2deg); } }
+        
+        .elemento-erro { animation: shakeElement 0.4s ease !important; }
+        @keyframes shakeElement { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        
+        /* MAGIA VISUAL: A animação de quando a letra encaixa */
+        @keyframes popMagico {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); background-color: #ffeaa7; color: #fdcb6e; border-color: #fdcb6e; box-shadow: 0 0 20px rgba(253, 203, 110, 0.5); }
+            100% { transform: scale(1); background-color: #eafff0; color: #2ecc71; border-color: #2ecc71; box-shadow: none; }
+        }
+        .pop-magico {
+            animation: popMagico 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           BANNER INFORMATIVO ESTRUTURADO 
+           ========================================= */
+        .info-banner {
+            width: 100%;
+            max-width: 900px;
+            flex-shrink: 0;
+            background: #e3f2fd;
+            border: 2px dashed #4dabf7;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: #0d47a1;
+            padding: 15px;
+        }
+
+        .info-banner-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            width: 100%;
+            flex-wrap: wrap; 
+        }
+        
+        .info-banner h3 { margin: 0; font-size: 1.2rem; font-weight: 900; }
+        
+        .info-destaque { 
+            font-size: 1.05rem; 
+            font-weight: 500; 
+            background: white; 
+            padding: 5px 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06); 
+            margin: 0;
+        }
+
+        /* Garante que todos os strong na destaque ficam na cor de estudo do meio / verde */
+        .info-destaque strong { color: var(--cor-em); font-weight: 900; }
+
+        /* O efeito Marcador Amarelo nas áreas de perigo */
+        .marcador-amarelo {
+            background-color: #fff200;
+            color: #d63031;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 900;
+            display: inline-block;
+            margin: 2px 0;
+            box-shadow: 0 2px 0 #eccc68;
+			align-self: center; 
+			width: fit-content;
+        }
+
+        .info-colunas {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .info-col {
+            flex: 1; 
+            text-align: center;
+            padding: 0 10px;
+            font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            line-height: 1.5;
+        }
+
+        .info-col:not(:last-child) {
+            border-right: 1px solid rgba(13, 71, 161, 0.15);
+        }
+
+        .info-col.alerta-vermelho {
+            color: #ff4757;
+            font-weight: 700;
+        }
+
+        .linha-unica {
+            white-space: nowrap;
+        }
+
+        .info-ex {
+            display: inline-block;
+            margin-top: 5px;
+            opacity: 0.8;
+            font-weight: 500;
+            color: #455a64;
+        }
+
+        @media (max-width: 768px), (max-height: 600px) {
+            .info-banner { display: none; }
+        }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE
+           ========================================= */
+        .area-jogo-custom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            flex: 1; 
+            background: #f2f6fb;
+            border: 2px dashed #ced6e0;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 0; 
+            overflow: hidden; 
+        }
+        
+        /* =================================================
+           JOGOS DE ARRASTAR
+           ================================================= */
+        .jogo-arrastar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(15px, 3vh, 30px);
+            width: 100%;
+            height: 100%;
+        }
+
+        .pergunta-container {
+            display: flex;
+            flex-direction: row; 
+            align-items: center;
+            justify-content: center;
+            gap: clamp(20px, 4vw, 50px);
+            width: 100%;
+        }
+
+        .imagem-container {
+            background: white;
+            padding: clamp(10px, 2vh, 15px);
+            border-radius: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            border: 3px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .imagem-arrastar {
+            width: clamp(100px, 15vh, 160px);
+            height: clamp(100px, 15vh, 160px);
+            object-fit: contain;
+            display: block;
+        }
+
+        .palavra-container {
+            background: white;
+            padding: clamp(10px, 2vh, 20px) clamp(20px, 4vw, 40px);
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .palavra-arrastar {
+            display: flex;
+            align-items: center;
+            font-size: clamp(2.2rem, 5vh, 3.5rem);
+            font-weight: 900;
+            color: var(--azul-escuro);
+            letter-spacing: 2px;
+        }
+
+        .lacuna {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: clamp(50px, 8vw, 70px);
+            height: clamp(50px, 8vh, 65px);
+            margin: 0 8px;
+            border: 3px dashed #a4b0be;
+            border-radius: 12px;
+            background: #f1f2f6;
+            color: transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .lacuna.hovered { background: #fff9c4; border-color: var(--cor-2ano-dark); transform: scale(1.1); }
+
+        .opcoes-arrastar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: clamp(10px, 2vw, 20px);
+        }
+
+        .opcao-arrastar {
+            padding: clamp(10px, 2vh, 15px) clamp(20px, 4vw, 35px);
+            background: #e3f2fd;
+            border: 3px solid #ced6e0;
+            border-radius: 15px;
+            font-size: clamp(1.6rem, 4vh, 2.3rem);
+            font-weight: 800;
+            color: var(--azul-escuro);
+            cursor: grab;
+            box-shadow: 0 6px 0 #ced6e0;
+            transition: transform 0.1s, box-shadow 0.1s, border-color 0.2s, background-color 0.2s;
+            touch-action: none; 
+        }
+
+        .opcao-arrastar:active { cursor: grabbing; transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .opcao-arrastar.certo { border-color: #2ecc71; color: #2ecc71; box-shadow: 0 6px 0 #2ecc71; }
+        .opcao-arrastar.erro { border-color: #ff4757; color: #ff4757; box-shadow: 0 6px 0 #ff4757; }
+        .opcao-arrastar.selecionada { border-color: var(--azul-vibrante); background-color: #e3f2fd; transform: scale(1.1); box-shadow: 0 8px 15px rgba(0,145,255,0.2); }
+
+        @media (max-width: 768px), (max-height: 600px) {
+            .pergunta-container { flex-direction: column; gap: 15px; }
+        }
+
+        /* =================================================
+           ECRÃ FIM
+           ================================================= */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: transform 0.18s ease, box-shadow 0.18s ease;}
+        .btn-acao:hover { transform: scale(1.04); box-shadow: 0 7px 16px rgba(0, 0, 0, 0.15); }
+        .btn-acao:active { transform: scale(0.98); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15); }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+        
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }	
+        
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Letras Mágicas 🪄</h1>
+        <div class="subtitulo">Vamos praticar alguns casos de leitura e escrita?</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Escolhe um desafio:</h2>
+            
+            <div class="grelha-opcoes">
+                <!-- R -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_R, 'R')">
+                    <span class="nivel-icon" style="background:#e3f2fd; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/letra-r-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+						<span class="nivel-text">
+                        <span class="nivel-titulo">Sons do R</span>
+                        <span class="nivel-desc">Forte ou Fraco?</span>
+                    </span>
+                </button>
+                
+                <!-- S -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_S, 'S')">
+                    <span class="nivel-icon" style="background:#ffebeb; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/letra-s-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Sons do S</span>
+                        <span class="nivel-desc">S ou SS?</span>
+                    </span>
+                </button>
+                
+                <!-- X -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_X, 'X')">
+                    <span class="nivel-icon" style="background:#eafff0; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/letra-x-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+                        <span class="nivel-titulo">Sons do X</span>
+                        <span class="nivel-desc">Qual é a letra?</span>
+                    </span>
+                </button>
+
+                <!-- C ou Ç -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_C_CEDILHA, 'C_CEDILHA')">
+                    <span class="nivel-icon" style="background:#fff3e0; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/maca-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Sons do C</span>
+                        <span class="nivel-desc">C ou Ç?</span>
+                    </span>
+                </button>
+
+                <!-- G ou J -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_G_J, 'G_J')">
+                    <span class="nivel-icon" style="background:#e0f7fa; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/girafa-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Sons do J</span>
+                        <span class="nivel-desc">G ou J?</span>
+                    </span>
+                </button>
+				
+				<!-- NH/LH/CH -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar('arrastar', DADOS_SONS_NH_LH_CH, 'NH_LH_CH')">
+                    <span class="nivel-icon" style="background:#f3e5f5; display: inline-flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%;">
+						<img src="../../img/joaninha-1.svg" alt="Descrição" style="width: 58px; height: 58px; object-fit: contain;">
+					</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Dígrafos</span>
+                        <span class="nivel-desc">CH, NH ou LH?</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg"></div>
+
+            <div class="info-banner" id="info-banner"></div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <!-- O Jogo é injetado aqui -->
+            </div>
+            
+        </div>
+
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Completaste o jogo!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">OUTRO NÍVEL 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // UI DA PÁGINA
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        resetEstadoJogo();
+        mostrarEcra('ecra-selecao');
+    }
+
+    function resetEstadoJogo() {
+        const areaJogo = document.getElementById('area-jogo');
+        if (areaJogo) { areaJogo.innerHTML = ''; areaJogo.onclick = null; }
+
+        const erros = document.getElementById('val-erros');
+        if (erros) erros.textContent = '0';
+
+        const progresso = document.getElementById('val-progresso');
+        if (progresso) progresso.textContent = '1';
+
+        const barra = document.getElementById('progress-fill');
+        if (barra) barra.style.width = '0%';
+
+        const toast = document.getElementById('toast-msg');
+        if (toast) toast.classList.remove('active');
+    }
+
+    function reiniciarJogo() {
+        if (Motor && typeof Motor.reiniciarJogo === 'function') { Motor.reiniciarJogo(); }
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        if (!toast) return;
+        
+        toast.textContent = msg;
+        if (isError) {
+            toast.classList.add('error-shake');
+        } else {
+            toast.classList.remove('error-shake');
+        }
+        
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2000);
+    }
+
+    // =========================================
+    // MÓDULOS DOS MINIJOGOS
+    // =========================================
+    const JogoArrastar = {
+        dadosAtuais: null,
+        elementoArrastado: null,
+        opcaoSelecionada: null,
+
+        render(dadosRonda) {
+            this.dadosAtuais = dadosRonda;
+            this.elementoArrastado = null;
+            this.opcaoSelecionada = null;
+            
+            const area = document.getElementById('area-jogo');
+            area.innerHTML = '';
+
+            const inicio = dadosRonda.palavra.slice(0, dadosRonda.lacuna.inicio);
+            const fim = dadosRonda.palavra.slice(dadosRonda.lacuna.fim);
+
+            // Geração visual das opções (Mágica para os botões do X)
+            const htmlOpcoes = dadosRonda.opcoes.map(opcao => {
+                let opcaoVisal = opcao;
+                if(opcao.includes('=')) {
+                    let partes = opcao.split('=');
+                    opcaoVisal = `<span style="opacity:0.5; font-size:0.8em; margin-right:5px;">${partes[0].trim()} =</span><strong>${partes[1].trim()}</strong>`;
+                }
+                return `
+                    <div class="opcao-arrastar"
+                         draggable="true"
+                         data-valor="${opcao}"
+                         ondragstart="JogoArrastar.handleDragStart(event)"
+                         onclick="JogoArrastar.handleOpcaoClick(event)">
+                        ${opcaoVisal}
+                    </div>
+                `;
+            }).join('');
+
+            area.innerHTML = `
+                <div class="jogo-arrastar">
+                    <div class="pergunta-container">
+                        <div class="imagem-container">
+                            <img src="../../img/${dadosRonda.imagem}" class="imagem-arrastar" alt="${dadosRonda.palavra}" onerror="this.src='../../logo.png'">
+                        </div>
+
+                        <div class="palavra-container">
+                            <div class="palavra-arrastar">
+                                ${inicio}
+                                <span class="lacuna"
+                                      ondragover="event.preventDefault(); this.classList.add('hovered')"
+                                      ondragenter="event.preventDefault(); this.classList.add('hovered')"
+                                      ondragleave="this.classList.remove('hovered')"
+                                      ondrop="JogoArrastar.handleDrop(event)"
+                                      onclick="JogoArrastar.handleLacunaClick()">
+                                </span>
+                                ${fim}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="opcoes-arrastar">
+                        ${htmlOpcoes}
+                    </div>
+                </div>
+            `;
+        },
+
+        handleDragStart(event) {
+            const alvo = event.currentTarget;
+            JogoArrastar.elementoArrastado = alvo;
+            event.dataTransfer.clearData();
+            event.dataTransfer.setData("text/plain", alvo.dataset.valor);
+            event.dataTransfer.effectAllowed = "move";
+        },
+
+        handleDrop(event) {
+            event.preventDefault();
+            event.target.classList.remove('hovered');
+            const valorArrastado = event.dataTransfer.getData('text/plain') || JogoArrastar.elementoArrastado.dataset.valor;
+            this.avaliarArrasto(valorArrastado, JogoArrastar.elementoArrastado);
+        },
+
+        handleOpcaoClick(event) {
+            document.querySelectorAll('.opcao-arrastar').forEach(el => el.classList.remove('selecionada'));
+            const alvo = event.currentTarget;
+            alvo.classList.add('selecionada');
+            this.opcaoSelecionada = alvo;
+        },
+
+        handleLacunaClick() {
+            if (this.opcaoSelecionada) {
+                this.avaliarArrasto(this.opcaoSelecionada.dataset.valor, this.opcaoSelecionada);
+                this.opcaoSelecionada.classList.remove('selecionada');
+                this.opcaoSelecionada = null;
+            } else {
+                showToast("Clica primeiro numa opção em baixo!", true);
+            }
+        },
+
+        avaliarArrasto(valorArrastado, elemento) {
+            const lacuna = document.querySelector('.lacuna');
+
+            if (valorArrastado !== this.dadosAtuais.correta) {
+                if (elemento) elemento.classList.add('erro');
+                Motor.erro(elemento, "Ups! Tenta outra vez.");
+                setTimeout(() => { if (elemento) elemento.classList.remove('erro'); }, 600);
+                return;
+            }
+
+            // ACERTO
+            if (elemento) elemento.classList.add('certo');
+            tocarSom('acerto');
+            
+            const letraFinal = this.dadosAtuais.letraVisual || this.dadosAtuais.correta;
+            
+            lacuna.textContent = letraFinal;
+            lacuna.style.borderColor = '#2ecc71';
+            lacuna.style.backgroundColor = '#eafff0';
+            lacuna.style.color = '#2ecc71';
+            lacuna.classList.add('pop-magico');
+
+            setTimeout(() => { Motor.acerto(); }, 1200); 
+        }
+    };
+
+    // =========================================
+    // BASE DE DADOS DOS JOGOS
+    // =========================================
+    
+    // R
+    const DADOS_SONS_R =[
+        { imagem: "pirata.png", palavra: "pirata", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "passaro.png", palavra: "pássaro", lacuna: { inicio: 5, fim: 6 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "carro.png", palavra: "carro", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "barata.png", palavra: "barata", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "ferro.png", palavra: "ferro", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "coroa.png", palavra: "coroa", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "rato.png", palavra: "rato", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "rei.png", palavra: "rei", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "roda.png", palavra: "roda", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "robo.png", palavra: "robô", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "jarra.png", palavra: "jarra", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "torre.png", palavra: "torre", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "girafa.png", palavra: "girafa", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "touro.png", palavra: "touro", lacuna: { inicio: 3, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "aranha.png", palavra: "aranha", lacuna: { inicio: 1, fim: 2 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "raposa.png", palavra: "raposa", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "relogio.png", palavra: "relógio", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "rede.png", palavra: "rede", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "serra.png", palavra: "serra", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "burro.png", palavra: "burro", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "cadeira.png", palavra: "cadeira", lacuna: { inicio: 5, fim: 6 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "tesoura.png", palavra: "tesoura", lacuna: { inicio: 5, fim: 6 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "radio.png", palavra: "rádio", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "regador.png", palavra: "regador", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "rua.png", palavra: "rua", lacuna: { inicio: 0, fim: 1 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "enrolado.png", palavra: "enrolado", lacuna: { inicio: 2, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "enrugado.png", palavra: "enrugado", lacuna: { inicio: 2, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "guelra.png", palavra: "guelra", lacuna: { inicio: 3, fim: 5 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "corrida.png", palavra: "corrida", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "terra.png", palavra: "Terra", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "marreta.png", palavra: "marreta", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+		{ imagem: "henrique.png", palavra: "Henrique", lacuna: { inicio: 3, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+		{ imagem: "maria.png", palavra: "Maria", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "corrimao.png", palavra: "corrimão", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+		{ imagem: "carrossel.png", palavra: "carrossel", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] },
+	    { imagem: "jacare.png", palavra: "jacaré", lacuna: { inicio: 4, fim: 5 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "peru.png", palavra: "peru", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "amora.png", palavra: "amora", lacuna: { inicio: 3, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "melro.png", palavra: "melro", lacuna: { inicio: 3, fim: 4 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "heroi.png", palavra: "herói", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "caracol.png", palavra: "caracol", lacuna: { inicio: 2, fim: 3 }, correta: "r", opcoes: ["r", "rr"] },
+	    { imagem: "garrafa.png", palavra: "garrafa", lacuna: { inicio: 2, fim: 4 }, correta: "rr", opcoes: ["r", "rr"] }
+    ];
+
+    // S
+    const DADOS_SONS_S =[
+        { imagem: "sapo.png", palavra: "sapo", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "urso.png", palavra: "urso", lacuna: { inicio: 2, fim: 3 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "passaro.png", palavra: "pássaro", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+        { imagem: "osso.png", palavra: "osso", lacuna: { inicio: 1, fim: 3 }, correta: "ss", opcoes: ["s", "ss"] },
+        { imagem: "sino.png", palavra: "sino", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "pessego.png", palavra: "pêssego", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+        { imagem: "pulseira.png", palavra: "pulseira", lacuna: { inicio: 3, fim: 4 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "girassol.png", palavra: "girassol", lacuna: { inicio: 4, fim: 6 }, correta: "ss", opcoes: ["s", "ss"] },
+        { imagem: "sopa.png", palavra: "sopa", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes:["s", "ss"] },
+		{ imagem: "sumo.png", palavra: "sumo", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes:["s", "ss"] },
+		{ imagem: "salada.png", palavra: "salada", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes:["s", "ss"] },
+        { imagem: "tosse.png", palavra: "tosse", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes:["s", "ss"] },
+        { imagem: "sol.png", palavra: "sol", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "bolsa.png", palavra: "bolsa", lacuna: { inicio: 3, fim: 4 }, correta: "s", opcoes: ["s", "ss"] },
+        { imagem: "vassoura.png", palavra: "vassoura", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+        { imagem: "massa.png", palavra: "massa", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+	    { imagem: "serpente.png", palavra: "serpente", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },
+	    { imagem: "selo.png", palavra: "selo", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },
+	    { imagem: "carrossel.png", palavra: "carrossel", lacuna: { inicio: 5, fim: 7 }, correta: "ss", opcoes: ["s", "ss"] },
+	    { imagem: "bussola.png", palavra: "bússola", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+	    { imagem: "penso.png", palavra: "penso", lacuna: { inicio: 3, fim: 4 }, correta: "s", opcoes: ["s", "ss"] },
+	    { imagem: "gesso.png", palavra: "gesso", lacuna: { inicio: 2, fim: 4 }, correta: "ss", opcoes: ["s", "ss"] },
+	    { imagem: "professora.png", palavra: "professora", lacuna: { inicio: 5, fim: 7 }, correta: "ss", opcoes: ["s", "ss"] },
+		{ imagem: "dinossauro.png", palavra: "dinossauro", lacuna: { inicio: 4, fim: 6 }, correta: "ss", opcoes: ["s", "ss"] },
+	    { imagem: "sereia.png", palavra: "sereia", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] },	
+		{ imagem: "sofa.png", palavra: "sofá", lacuna: { inicio: 0, fim: 1 }, correta: "s", opcoes: ["s", "ss"] }
+    ];
+
+    // X
+    const DADOS_SONS_X =[
+        { imagem: "abacaxi.png", palavra: "abacaxi", lacuna: { inicio: 5, fim: 6 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "xarope.png", palavra: "xarope", lacuna: { inicio: 0, fim: 1 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "xadrez.png", palavra: "xadrez", lacuna: { inicio: 0, fim: 1 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "roxo.png", palavra: "roxo", lacuna: { inicio: 2, fim: 3 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "proximo.png", palavra: "próximo", lacuna: { inicio: 3, fim: 4 }, correta: "x = s", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "exaustor.png", palavra: "exaustor", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "exercicio.png", palavra: "exercício", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "exausto.png", palavra: "exausto", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "exatidao.png", palavra: "exatidão", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "exagero.png", palavra: "exagero", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "auxilio.png", palavra: "auxílio", lacuna: { inicio: 2, fim: 3 }, correta: "x = s", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "maximo.png", palavra: "máximo", lacuna: { inicio: 2, fim: 3 }, correta: "x = s", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "proximo.png", palavra: "próximo", lacuna: { inicio: 3, fim: 4 }, correta: "x = s", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "exercito.png", palavra: "exército", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "exame.png", palavra: "exame", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "exemplo.png", palavra: "exemplo", lacuna: { inicio: 1, fim: 2 }, correta: "x = z", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "taxi.png", palavra: "táxi", lacuna: { inicio: 2, fim: 3 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "crucifixo.png", palavra: "crucifixo", lacuna: { inicio: 7, fim: 8 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "bruxa.png", palavra: "bruxa", lacuna: { inicio: 3, fim: 4 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "xicara.png", palavra: "xícara", lacuna: { inicio: 0, fim: 1 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "caixa.png", palavra: "caixa", lacuna: { inicio: 3, fim: 4 }, correta: "x = x", letraVisual: "x", opcoes: ["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "lixo.png", palavra: "lixo", lacuna: { inicio: 2, fim: 3 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "alexandre.png", palavra: "Alexandre", lacuna: { inicio: 3, fim: 4 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "alexandra.png", palavra: "Alexandra", lacuna: { inicio: 3, fim: 4 }, correta: "x = x", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+        { imagem: "oxigenio.png", palavra: "oxigénio", lacuna: { inicio: 1, fim: 2 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "maxilar.png", palavra: "maxilar", lacuna: { inicio: 2, fim: 3 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "boxe.png", palavra: "boxe", lacuna: { inicio: 2, fim: 3 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "reflexo.png", palavra: "reflexo", lacuna: { inicio: 5, fim: 6 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "axila.png", palavra: "axila", lacuna: { inicio: 1, fim: 2 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] },
+		{ imagem: "saxofone.png", palavra: "saxofone", lacuna: { inicio: 2, fim: 3 }, correta: "x = cs", letraVisual: "x", opcoes:["x = x", "x = s", "x = z", "x = cs"] }
+    ];
+
+    // NH, LH, CH
+    const DADOS_SONS_NH_LH_CH =[
+        { imagem: "galinha.png", palavra: "galinha", lacuna: { inicio: 4, fim: 6 }, correta: "nh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "aranha.png", palavra: "aranha", lacuna: { inicio: 3, fim: 5 }, correta: "nh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "joaninha.png", palavra: "joaninha", lacuna: { inicio: 5, fim: 7 }, correta: "nh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "ninho.png", palavra: "ninho", lacuna: { inicio: 2, fim: 4 }, correta: "nh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "moinho.png", palavra: "moinho", lacuna: { inicio: 3, fim: 5 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "cegonha.png", palavra: "cegonha", lacuna: { inicio: 4, fim: 6 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "unhas.svg", palavra: "unha", lacuna: { inicio: 1, fim: 3 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "rainha.png", palavra: "rainha", lacuna: { inicio: 3, fim: 5 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "golfinho.png", palavra: "golfinho", lacuna: { inicio: 5, fim: 7 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "montanha.png", palavra: "montanha", lacuna: { inicio: 5, fim: 7 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "canhao.png", palavra: "canhão", lacuna: { inicio: 2, fim: 4 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "desenho.png", palavra: "desenho", lacuna: { inicio: 4, fim: 6 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "dinheiro.png", palavra: "dinheiro", lacuna: { inicio: 2, fim: 4 }, correta: "nh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "chapeu.png", palavra: "chapéu", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "fechadura.png", palavra: "fechadura", lacuna: { inicio: 2, fim: 4 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "salsichas.png", palavra: "salsichas", lacuna: { inicio: 5, fim: 7 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "chocolate.png", palavra: "chocolate", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "chave.png", palavra: "chave", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "mochila.png", palavra: "mochila", lacuna: { inicio: 2, fim: 4 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "chupeta.png", palavra: "chupeta", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "chuva.png", palavra: "chuva", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "chamine.png", palavra: "chaminé", lacuna: { inicio: 0, fim: 2 }, correta: "ch", opcoes:["nh", "lh", "ch"] },
+        { imagem: "concha.png", palavra: "concha", lacuna: { inicio: 3, fim: 5 }, correta: "ch", opcoes:["nh", "lh", "ch"] },
+        { imagem: "bolacha.png", palavra: "bolacha", lacuna: { inicio: 4, fim: 6 }, correta: "ch", opcoes:["nh", "lh", "ch"] },
+        { imagem: "milho.png", palavra: "milho", lacuna: { inicio: 2, fim: 4 }, correta: "lh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "barulho.png", palavra: "barulho", lacuna: { inicio: 4, fim: 6 }, correta: "lh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "joelho.png", palavra: "joelho", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "agulha.png", palavra: "agulha", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "mealheiro.png", palavra: "mealheiro", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes:["nh", "lh", "ch"] },
+        { imagem: "abelha.png", palavra: "abelha", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "coelho.png", palavra: "coelho", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "espantalho.png", palavra: "espantalho", lacuna: { inicio: 7, fim: 9 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "ilha.png", palavra: "ilha", lacuna: { inicio: 1, fim: 3 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "olhos.png", palavra: "olhos", lacuna: { inicio: 1, fim: 3 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "palhaco.png", palavra: "palhaço", lacuna: { inicio: 2, fim: 4 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "espelho.png", palavra: "espelho", lacuna: { inicio: 4, fim: 6 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "telhado.png", palavra: "telhado", lacuna: { inicio: 2, fim: 4 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "orelha.png", palavra: "orelha", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "colher.png", palavra: "colher", lacuna: { inicio: 2, fim: 4 }, correta: "lh", opcoes: ["nh", "lh", "ch"] },
+        { imagem: "ovelha.png", palavra: "ovelha", lacuna: { inicio: 3, fim: 5 }, correta: "lh", opcoes: ["nh", "lh", "ch"] }
+    ];
+
+    // C ou Ç
+    const DADOS_SONS_C_CEDILHA =[
+        { imagem: "cacador.png", palavra: "caçador", lacuna: { inicio: 2, fim: 3 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "cenoura.png", palavra: "cenoura", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "taca.png", palavra: "taça", lacuna: { inicio: 2, fim: 3 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "acucar.png", palavra: "açúcar", lacuna: { inicio: 1, fim: 2 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "lenco.png", palavra: "lenço", lacuna: { inicio: 3, fim: 4 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "cinema.png", palavra: "cinema", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes:["c", "ç"] },
+        { imagem: "circo.png", palavra: "circo", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes:["c", "ç"] },
+        { imagem: "cereja.png", palavra: "cereja", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes:["c", "ç"] },
+        { imagem: "cidade.png", palavra: "cidade", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "coracao.png", palavra: "coração", lacuna: { inicio: 4, fim: 5 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "laco.png", palavra: "laço", lacuna: { inicio: 2, fim: 3 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "maca.png", palavra: "maçã", lacuna: { inicio: 2, fim: 3 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "melancia.png", palavra: "melancia", lacuna: { inicio: 6, fim: 7 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "palhaco.png", palavra: "palhaço", lacuna: { inicio: 5, fim: 6 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "capacete.png", palavra: "capacete", lacuna: { inicio: 4, fim: 5 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "calcas.png", palavra: "calças", lacuna: { inicio: 3, fim: 4 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "cegonha.png", palavra: "cegonha", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "morcego.png", palavra: "morcego", lacuna: { inicio: 3, fim: 4 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "cisne.png", palavra: "cisne", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "cinto.png", palavra: "cinto", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "balanca.png", palavra: "balança", lacuna: { inicio: 5, fim: 6 }, correta: "ç", opcoes:["c", "ç"] },
+        { imagem: "alface.png", palavra: "alface", lacuna: { inicio: 4, fim: 5 }, correta: "c", opcoes:["c", "ç"] },
+        { imagem: "licao.png", palavra: "lição", lacuna: { inicio: 2, fim: 3 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "rebucado.png", palavra: "rebuçado", lacuna: { inicio: 4, fim: 5 }, correta: "ç", opcoes: ["c", "ç"] },
+        { imagem: "doce.png", palavra: "doce", lacuna: { inicio: 2, fim: 3 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "vacina.png", palavra: "vacina", lacuna: { inicio: 2, fim: 3 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "ciprestre.png", palavra: "ciprestre", lacuna: { inicio: 0, fim: 1 }, correta: "c", opcoes: ["c", "ç"] },
+        { imagem: "pincel.png", palavra: "pincel", lacuna: { inicio: 3, fim: 4 }, correta: "c", opcoes: ["c", "ç"] }
+    ];
+
+    // G ou J
+    const DADOS_SONS_G_J =[
+        { imagem: "janela.png", palavra: "janela", lacuna: { inicio: 0, fim: 1 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "tigela.png", palavra: "tigela", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "gelo.png", palavra: "gelo", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "pagina.png", palavra: "página", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "jacare.png", palavra: "jacaré", lacuna: { inicio: 0, fim: 1 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "jogo.png", palavra: "jogo", lacuna: { inicio: 0, fim: 1 }, correta: "j", opcoes:["g", "j"] },
+        { imagem: "gemeos.png", palavra: "gémeos", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes:["g", "j"] },
+        { imagem: "girafa.png", palavra: "girafa", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "beijo.png", palavra: "beijo", lacuna: { inicio: 3, fim: 4 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "gelado.png", palavra: "gelado", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "jipe.png", palavra: "jipe", lacuna: { inicio: 0, fim: 1 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "girassol.png", palavra: "girassol", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "laranja.png", palavra: "laranja", lacuna: { inicio: 5, fim: 6 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "magico.png", palavra: "mágico", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "relogio.png", palavra: "relógio", lacuna: { inicio: 4, fim: 5 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "genio.png", palavra: "génio", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "caju.png", palavra: "caju", lacuna: { inicio: 2, fim: 3 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "genero.png", palavra: "género", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "viagem.png", palavra: "viagem", lacuna: { inicio: 3, fim: 4 }, correta: "g", opcoes:["g", "j"] },
+        { imagem: "fugir.png", palavra: "fugir", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes:["g", "j"] },
+        { imagem: "algemas.png", palavra: "algemas", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes:["g", "j"] },
+        { imagem: "vagem.png", palavra: "vagem", lacuna: { inicio: 2, fim: 3 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "ferrugem.png", palavra: "ferrugem", lacuna: { inicio: 5, fim: 6 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "gema.png", palavra: "gema", lacuna: { inicio: 0, fim: 1 }, correta: "g", opcoes: ["g", "j"] },
+        { imagem: "gorjeta.png", palavra: "gorjeta", lacuna: { inicio: 3, fim: 4 }, correta: "j", opcoes: ["g", "j"] },
+        { imagem: "jiboia.png", palavra: "jiboia", lacuna: { inicio: 0, fim: 1 }, correta: "j", opcoes: ["g", "j"] }
+    ];
+
+
+    // =========================================
+    // MOTOR PRINCIPAL
+    // =========================================
+    const Motor = {
+        tipoJogo: null, 
+        letraAtiva: null,
+        totalRondas: 10,
+        rondaAtual: 0,
+        errosTotais: 0,
+        dadosAtuais:[], 
+        isVerificando: false,
+
+        iniciar: function(tipoJogo, dadosJogo, letraRegra) {
+            if (!dadosJogo || dadosJogo.length === 0) {
+                showToast("⚠️ Nível em construção!", true);
+                return;
+            }
+
+            resetEstadoJogo();
+            this.tipoJogo = tipoJogo;
+            this.letraAtiva = letraRegra;
+            
+            // Atualiza a barra de informação
+            this.atualizarBanner(letraRegra);
+
+            // Baralha as perguntas e escolhe APENAS 10
+            let poolEmbaralhado = [...dadosJogo].sort(() => Math.random() - 0.5);
+            this.dadosAtuais = poolEmbaralhado.slice(0, 10);
+            
+            this.totalRondas = 10;
+            this.rondaAtual = 0;
+            this.errosTotais = 0;
+
+            mostrarEcra('ecra-jogo');
+            this.renderRondaAtual();
+            this.atualizarPlacarUI();
+        },
+
+        atualizarBanner: function(letra) {
+            const banner = document.getElementById('info-banner');
+            let htmlContent = '';
+
+            if (letra === 'R') {
+                htmlContent = `
+                    <div class="info-banner-top">
+                        <h3>💡 Não te esqueças!</h3>
+                        <div class="info-destaque">A letra <strong>R</strong> tem o som:</div>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo">forte</span> no início e meio</span>
+                            <span class="info-ex linha-unica">ex: rato | melro</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo">fraco</span> entre vogais</span>
+                            <span class="info-ex linha-unica">ex: coroa | cara</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo">forte</span> entre vogais (<strong>rr</strong>)</span>
+                            <span class="info-ex linha-unica">ex: carro | torre</span>
+                        </div>
+                        <div class="info-col alerta-vermelho">
+                            <p style="margin: 0; line-height: 1.8;">Nunca se escreve <span class="marcador-amarelo">rr</span> no início das palavras!</p>
+                        </div>
+                    </div>
+                `;
+            } else if (letra === 'S') {
+                htmlContent = `
+                    <div class="info-banner-top">
+                        <h3>💡 Não te esqueças!</h3>
+                        <div class="info-destaque">A letra <strong>S</strong> tem o som <strong>S</strong>:</div>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica">no <span class="marcador-amarelo">início</span> da palavra</span>
+                            <span class="info-ex linha-unica">ex: sapo | sete</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica">entre <span class="marcador-amarelo">consoante</span> e <span class="marcador-amarelo">vogal</span></span>
+                            <span class="info-ex linha-unica">ex: salsichas | pulseira</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica">repete-se <span class="marcador-amarelo">-<strong>ss</strong>-</span> entre vogais</span>
+                            <span class="info-ex linha-unica">ex: girassol | passadeira</span>
+                        </div>
+                        <div class="info-col alerta-vermelho">
+                            <p style="margin: 0; line-height: 1.8;">Nunca se escreve <span class="marcador-amarelo">ss</span> no início das palavras!</p>
+                        </div>
+                    </div>
+                `;
+            } else if (letra === 'X') {
+                htmlContent = `
+                    <div class="info-banner-top">
+                        <h3>💡 Não te esqueças!</h3>
+                        <div class="info-destaque">A letra <strong>X</strong> tem <strong>4</strong> sons:</div>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica"><strong><span class="marcador-amarelo">x = x</span></strong></span>
+                            <span class="info-ex linha-unica">ex: abacaxi | caixa</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo"><strong>x = s</span></strong></span>
+                            <span class="info-ex linha-unica">ex: auxílio | máximo</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo"><strong>x = z</span></strong></span>
+                            <span class="info-ex linha-unica">ex: exército | exemplo</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo"><strong>x = cs</span></strong></span>
+                            <span class="info-ex linha-unica">ex: táxi | saxofone</span>
+                        </div>
+                    </div>
+                `;
+            } else if (letra === 'NH_LH_CH') {
+                htmlContent = `
+                    <div class="info-banner-top" style="justify-content: center; width: 100%;">
+                        <h3>💡 Não te esqueças!</h3>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica">Os dígrafos <span class="marcador-amarelo"><strong>nh</strong></span> e <span class="marcador-amarelo"><strong>lh</strong></span> escrevem-se sempre</span>
+                            <span class="linha-unica">no meio das palavras e formam um único som.</span>
+                            <span class="info-ex linha-unica">ex: galinha | milho</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica">O dígrafo <span class="marcador-amarelo"><strong>ch</strong></span> aparece no início ou no meio</span>
+                            <span class="linha-unica">das palavras e forma um único som.</span>
+                            <span class="info-ex linha-unica">ex: chapéu | fechadura</span>
+                        </div>
+                        <div class="info-col alerta-vermelho">
+                            <p style="margin: 0; line-height: 1.8;"><span class="marcador-amarelo">nh</span> e <span class="marcador-amarelo">lh</span> nunca se escrevem no início das palavras!</p>
+                        </div>
+                    </div>
+                `;
+            } else if (letra === 'C_CEDILHA') {
+                htmlContent = `
+                    <div class="info-banner-top">
+                        <h3>💡 Não te esqueças!</h3>
+                        <div class="info-destaque">Para ter o som <strong>S</strong> escreve-se:</div>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo"><strong>c</strong></span> - antes das vogais <strong>e</strong> e <strong>i</strong></span>
+                            <span class="info-ex linha-unica">ex: cebola | cinema</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica"><span class="marcador-amarelo"><strong>ç</strong></span> - antes das vogais <strong>a</strong>, <strong>o</strong> e <strong>u</strong></span>
+                            <span class="info-ex linha-unica">ex: caçador | ouriço | açúcar</span>
+                        </div>
+                        <div class="info-col alerta-vermelho">
+                            <p style="margin: 0; line-height: 1.8;">Nunca podes iniciar uma palavra com <span class="marcador-amarelo">ç</span>!</p>
+                        </div>
+                    </div>
+                `;
+            } else if (letra === 'G_J') {
+                htmlContent = `
+                    <div class="info-banner-top" style="justify-content: center; width: 100%;">
+                        <h3>💡 Não te esqueças!</h3>
+                    </div>
+                    <div class="info-colunas">
+                        <div class="info-col">
+                            <span class="linha-unica">Escreve-se <span class="marcador-amarelo"><strong>g</strong></span> antes das vogais <span class="marcador-amarelo"><strong>e</strong></span> e <span class="marcador-amarelo"><strong>i</strong></span></span>
+                            <span class="linha-unica">para se ouvir o som <strong>j</strong>.</span>
+                            <span class="info-ex linha-unica">ex: gelo | página</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="linha-unica">Escreve-se <span class="marcador-amarelo"><strong>j</strong></span> antes de qualquer vogal</span>
+                            <span class="linha-unica">(<strong>a, e, i, o, u</strong>) para se ouvir o som j.</span>
+                            <span class="info-ex linha-unica">ex: jacaré | hoje</span>
+                        </div>
+                        <div class="info-col alerta-vermelho">
+                            <p style="margin: 0; line-height: 1.8;">
+        As sílabas <span class="marcador-amarelo">ge</span> e <span class="marcador-amarelo">gi</span> têm som igual às sílabas <span class="marcador-amarelo">je</span> e <span class="marcador-amarelo">ji</span>.
+    </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            banner.innerHTML = htmlContent;
+        },
+        
+        renderRondaAtual: function () {
+            this.isVerificando = false;
+            const dadosRonda = this.dadosAtuais[this.rondaAtual];
+            if (!dadosRonda) return;
+
+            if (this.tipoJogo === "arrastar") { JogoArrastar.render(dadosRonda); }
+        },
+
+        acerto: function () {
+            this.rondaAtual++;
+            this.atualizarPlacarUI();
+
+            if (this.rondaAtual < this.totalRondas) {
+                this.renderRondaAtual();
+            } else {
+                this.finalizar();
+            }
+        },
+
+        erro: function(elementoVisal, msgToast = null) {
+            if (this.isVerificando) return;
+            
+            this.errosTotais++;
+            document.getElementById('val-erros').textContent = this.errosTotais;
+            tocarSom('erro');
+
+            if (elementoVisal) {
+                elementoVisal.classList.add('elemento-erro');
+                setTimeout(() => elementoVisal.classList.remove('elemento-erro'), 400);
+            }
+            
+            if (msgToast) { showToast(msgToast, true); }
+        },
+
+        finalizar: function() {
+            document.getElementById('progress-fill').style.width = `100%`;
+            document.getElementById('final-erros').textContent = this.errosTotais;
+            tocarSom('vitoria'); 
+            dispararConfetis();
+            mostrarEcra('ecra-fim');
+        },
+
+        atualizarPlacarUI: function () {
+            const rondaVisual = Math.min(this.rondaAtual + 1, this.totalRondas);
+            document.getElementById('val-progresso').textContent = rondaVisual;
+            document.getElementById('val-total').textContent = this.totalRondas;
+
+            const perc = (this.rondaAtual / this.totalRondas) * 100;
+            document.getElementById('progress-fill').style.width = `${perc}%`;
+        },
+
+        reiniciarJogo: function() { 
+            let dadosCompletos =[];
+            if(this.letraAtiva === 'R') dadosCompletos = DADOS_SONS_R;
+            if(this.letraAtiva === 'S') dadosCompletos = DADOS_SONS_S;
+            if(this.letraAtiva === 'X') dadosCompletos = DADOS_SONS_X;
+            if(this.letraAtiva === 'NH_LH_CH') dadosCompletos = DADOS_SONS_NH_LH_CH;
+            if(this.letraAtiva === 'C_CEDILHA') dadosCompletos = DADOS_SONS_C_CEDILHA;
+            if(this.letraAtiva === 'G_J') dadosCompletos = DADOS_SONS_G_J;
+
+            this.iniciar(this.tipoJogo, dadosCompletos, this.letraAtiva); 
+        }
+    };
+
+    // =========================================
+    // SONS E CONFETIS (Helpers Globais)
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.createElement('canvas');
+    canvasConfetti.id = 'confetti-canvas';
+    document.querySelector('.cartao-jogo-container').appendChild(canvasConfetti);
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    function redimensionarCanvas() { canvasConfetti.width = canvasConfetti.parentElement.clientWidth; canvasConfetti.height = canvasConfetti.parentElement.clientHeight; }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis =[]; const cores =['#ff6b6b', '#4dabf7', '#51cf66', '#fbc531', '#9b59b6'];
+        for (let i = 0; i < 150; i++) confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) { requestAnimationFrame(animarConfetis); } 
+        else { ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); }
+    }
+
+    window.onload = () => mostrarEcra('ecra-selecao'); 
+
+</script>
+</body>
+</html>
