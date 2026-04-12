@@ -17,6 +17,7 @@ const todosOsJogos =[
     { nome: "Chuva de Palavras", icone: "🎒", link: "pt/classes", cat: "pt" },
 	{ nome: "Ler e Copiar", icone: "⌨️", link: "pt/escrita-textos", cat: "pt" },
 	{ nome: "Letras Mágicas", icone: "🪄", link: "pt/letras-magicas", cat: "pt" },
+	{ nome: "Aventura dos Sons", icone: "🚀", link: "pt/aventura-sons", cat: "pt" },
 	
 	
     // ------------------------------------
