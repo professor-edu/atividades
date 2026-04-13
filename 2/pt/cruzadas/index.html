@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Palavras Cruzadas ✏️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D; 
+			--cor-borda: #E3C40D;
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: auto; } }
+        
+        /* =========================================
+           HEADER E NAVEGAÇÃO
+           ========================================= */
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-2ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; min-height: 350px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL E ECRÃS
+           ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; min-height: 0;}
+        #ecra-selecao .grelha-opcoes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 700px; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.6rem; color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+        
+        /* Botões do Menu */
+        .btn-nivel-menu {
+            background-color: white; border: 4px solid var(--borda-cartao); border-radius: 20px;
+            padding: 15px; width: 100%; cursor: pointer; box-shadow: 0 6px 0 var(--borda-cartao); 
+            transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; touch-action: manipulation;
+        }
+        @media (hover: hover) {
+            #ecra-selecao .grelha-opcoes .btn-nivel-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--cor-pt); border-color: var(--cor-pt); opacity: 0.95; }
+        }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .nivel-icon { font-size: 2.5rem; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 auto; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); }
+        .nivel-text { text-align: center; }
+        .nivel-titulo { font-size: 1.2rem; font-weight: 900; display: block; color: var(--azul-escuro); margin-bottom: 5px;}
+        .nivel-desc { font-size: 0.9rem; color: var(--text-main); font-weight: 500; }
+
+        @media (max-width: 450px) { #ecra-selecao .grelha-opcoes { grid-template-columns: 1fr; } }
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 6px 12px;
+            border-radius: 20px; border: 2px solid #fecaca; margin-bottom: 10px; box-sizing: border-box; flex-shrink: 0;
+        }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 4px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 4px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 15px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        /* TOAST E ANIMAÇÕES */
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .elemento-erro { animation: shakeElement 0.4s ease !important; }
+        @keyframes shakeElement { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        
+        @keyframes popMagico {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background-color: #ffeaa7; color: #fdcb6e; border-color: #fdcb6e; box-shadow: 0 0 15px rgba(253, 203, 110, 0.5); }
+            100% { transform: scale(1); background-color: #eafff0; color: #2ecc71; border-color: #2ecc71; box-shadow: none; }
+        }
+        .pop-magico { animation: popMagico 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           ÁREA DE JOGO E NOVO LAYOUT LATERAL
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; background: #f2f6fb; border: 2px dashed #ced6e0; border-radius: 20px;
+            padding: 15px; min-height: 0; 
+        }
+
+        /* Novo Layout: Grelha à esquerda, Banco de letras à direita */
+        .area-jogo-layout {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(20px, 4vw, 50px);
+            width: 100%;
+            height: 100%;
+        }
+
+        .coluna-letras-direita {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 Colunas de letras perfeitas */
+            gap: 12px;
+            align-content: center;
+            padding: 15px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 2px solid #e2e8f0;
+        }
+
+        /* Se o ecrã for um telemóvel na vertical, atira as letras para baixo */
+        @media (max-width: 768px) {
+            .area-jogo-layout {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .coluna-letras-direita {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        /* =========================================
+           A GRELHA E AS CÉLULAS
+           ========================================= */
+        .cruzada-grid {
+            display: grid; gap: 6px; margin: 0 auto;
+            justify-content: center; align-content: center;
+            flex-shrink: 0;
+        }
+
+        .celula-vazia { width: clamp(35px, 8vw, 60px); height: clamp(35px, 8vw, 60px); }
+
+        .celula-img {
+            width: clamp(35px, 8vw, 60px); height: clamp(35px, 8vw, 60px);
+            display: flex; align-items: center; justify-content: center;
+            background: white; border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08); border: 2px solid #e2e8f0;
+            position: relative; z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, z-index 0.3s;
+        }
+
+        .celula-img:hover {
+            transform: scale(1.6);
+            z-index: 50;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+
+        .celula-img img { width: 85%; height: 85%; object-fit: contain; }
+
+        .celula-letra {
+            width: clamp(35px, 8vw, 60px); height: clamp(35px, 8vw, 60px);
+            background: white; border: 3px solid var(--azul-escuro);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.4rem, 4vw, 2.2rem); font-weight: 900; color: var(--azul-escuro);
+            text-transform: uppercase; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 0 #cbd5e1;
+        }
+        .celula-letra.hovered { background: #fff9c4; border-color: var(--cor-2ano-dark); transform: scale(1.05); }
+        .celula-letra.preenchida { background: #eafff0; border-color: #2ecc71; color: #2ecc71; box-shadow: 0 4px 0 #27ae60; cursor: default;}
+
+        /* O Banco de Letras */
+        .peca-letra {
+            width: clamp(40px, 9vw, 55px); height: clamp(40px, 9vw, 55px);
+            background: #fff; border: 3px solid #ced6e0; border-radius: 12px;
+            font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800; color: var(--azul-escuro);
+            cursor: grab; box-shadow: 0 5px 0 #ced6e0;
+            display: flex; align-items: center; justify-content: center; text-transform: uppercase;
+            transition: all 0.1s; touch-action: none;
+        }
+
+        .peca-letra:active { cursor: grabbing; transform: translateY(5px); box-shadow: 0 0 0 transparent; }
+        .peca-letra.selecionada { border-color: var(--azul-vibrante); background-color: #e3f2fd; transform: scale(1.1); box-shadow: 0 8px 15px rgba(0,145,255,0.2); }
+        .peca-letra.usada { visibility: hidden; pointer-events: none; }
+
+        /* =================================================
+           ECRÃ FIM
+           ================================================= */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: transform 0.18s ease, box-shadow 0.18s ease;}
+        .btn-acao:hover { transform: scale(1.04); box-shadow: 0 7px 16px rgba(0, 0, 0, 0.15); }
+        .btn-acao:active { transform: scale(0.98); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15); }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+        
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }	
+        
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Mini Cruzadas 🧩</h1>
+        <div class="subtitulo">Arrasta as letras e cruza as palavras!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Escolhe um desafio:</h2>
+            
+            <div class="grelha-opcoes">
+                <!-- Categoria 1 -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar(DADOS_ANIMAIS)">
+                    <span class="nivel-icon" style="background:#e3f2fd;">🦁</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Os Animais</span>
+                        <span class="nivel-desc">Selva e Quinta</span>
+                    </span>
+                </button>
+                
+                <!-- Categoria 2 -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar(DADOS_COMIDA)">
+                    <span class="nivel-icon" style="background:#ffebeb;">🍎</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Comida e Frutas</span>
+                        <span class="nivel-desc">Muito saboroso!</span>
+                    </span>
+                </button>
+                
+                <!-- Categoria 3 -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar(DADOS_ESCOLA)">
+                    <span class="nivel-icon" style="background:#eafff0;">🎒</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Escola e Casa</span>
+                        <span class="nivel-desc">Objetos do dia-a-dia</span>
+                    </span>
+                </button>
+
+                <!-- Categoria 4 -->
+                <button class="btn-nivel-menu" onclick="Motor.iniciar(DADOS_MISTO)">
+                    <span class="nivel-icon" style="background:#fff3e0;">🕵️‍♂️</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">Desafio Misto</span>
+                        <span class="nivel-desc">Pessoas e Mistérios</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">5</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg"></div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <!-- O Jogo com as Colunas Laterais é injetado aqui -->
+            </div>
+            
+        </div>
+
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Puzzle Concluído! 🎉</h2>
+            <div class="end-stats">
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.<br>
+                És um detetive de palavras fantástico!
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">OUTRO NÍVEL 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA
+    // =========================================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        mostrarEcra('ecra-selecao');
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        if (isError) {
+            toast.style.borderColor = '#ff4757'; toast.style.color = '#ff4757'; toast.style.backgroundColor = '#ffefef';
+            toast.classList.add('error-shake');
+        } else {
+            toast.style.borderColor = '#fbc531'; toast.style.color = '#b18500'; toast.style.backgroundColor = '#fff9c4';
+            toast.classList.remove('error-shake');
+        }
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2000); 
+    }
+
+    // =========================================
+    // BASE DE DADOS (10 CRUZADAS POR CATEGORIA)
+    // Matrizes Perfeitamente Calculadas 
+    // Intersecções Validadas | Imagens em Espaço Seguro
+    // =========================================
+
+    // CATEGORIA 1: ANIMAIS
+    const DADOS_ANIMAIS =[
+        // GATO/PATO -> Cruzam no 'A'. GATO[1], PATO[1]. H(2,1), V(1,2). ImgH(2,0), ImgV(0,2)
+        { cols: 5, rows: 5, imagens:[ { r:2, c:0, img:"gato.png" }, { r:0, c:2, img:"pato.png" } ], palavras:[ { t:"GATO", r:2, c:1, d:"H" }, { t:"PATO", r:1, c:2, d:"V" } ] },
+        // VACA/CAVALO -> Cruzam no primeiro 'C'. VACA[2], CAVALO[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 5, rows: 8, imagens:[ { r:2, c:0, img:"vaca.png" }, { r:1, c:3, img:"cavalo.png" } ], palavras:[ { t:"VACA", r:2, c:1, d:"H" }, { t:"CAVALO", r:2, c:3, d:"V" } ] },
+        // SAPO/URSO -> Cruzam no 'S'. SAPO[0], URSO[2]. H(3,1), V(1,1). ImgH(3,0), ImgV(0,1)
+        { cols: 5, rows: 5, imagens:[ { r:3, c:0, img:"sapo.png" }, { r:0, c:1, img:"urso.png" } ], palavras:[ { t:"SAPO", r:3, c:1, d:"H" }, { t:"URSO", r:1, c:1, d:"V" } ] },
+        // TIGRE/RATO -> Cruzam no 'R'. TIGRE[3], RATO[0]. H(2,1), V(2,4). ImgH(2,0), ImgV(1,4)
+        { cols: 6, rows: 6, imagens:[ { r:2, c:0, img:"tigre.png" }, { r:1, c:4, img:"rato.png" } ], palavras:[ { t:"TIGRE", r:2, c:1, d:"H" }, { t:"RATO", r:2, c:4, d:"V" } ] },
+        // BURRO/RAPOSA -> Cruzam no 'R'. BURRO[2], RAPOSA[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 6, rows: 8, imagens:[ { r:2, c:0, img:"burro.png" }, { r:1, c:3, img:"raposa.png" } ], palavras:[ { t:"BURRO", r:2, c:1, d:"H" }, { t:"RAPOSA", r:2, c:3, d:"V" } ] },
+        // LEÃO/ABELHA -> Cruzam no 'E'. LEÃO[1], ABELHA[2]. H(3,1), V(1,2). ImgH(3,0), ImgV(0,2)
+        { cols: 5, rows: 7, imagens:[ { r:3, c:0, img:"leao.png" }, { r:0, c:2, img:"abelha.png" } ], palavras:[ { t:"LEÃO", r:3, c:1, d:"H" }, { t:"ABELHA", r:1, c:2, d:"V" } ] },
+        // CÃO/PÃO -> Cruzam no 'Ã'. CÃO[1], PÃO[1]. H(2,1), V(1,2). ImgH(2,0), ImgV(0,2)
+        { cols: 4, rows: 4, imagens:[ { r:2, c:0, img:"cao.png" }, { r:0, c:2, img:"pao.png" } ], palavras:[ { t:"CÃO", r:2, c:1, d:"H" }, { t:"PÃO", r:1, c:2, d:"V" } ] },
+        // OVELHA/PEIXE -> Cruzam no 'E'. OVELHA[2], PEIXE[1]. H(2,1), V(1,3). ImgH(2,0), ImgV(0,3)
+        { cols: 7, rows: 6, imagens:[ { r:2, c:0, img:"ovelha.png" }, { r:0, c:3, img:"peixe.png" } ], palavras:[ { t:"OVELHA", r:2, c:1, d:"H" }, { t:"PEIXE", r:1, c:3, d:"V" } ] },
+        // PÁSSARO/SAPO -> Cruzam no primeiro 'S'. PÁSSARO[2], SAPO[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 8, rows: 6, imagens:[ { r:2, c:0, img:"passaro.png" }, { r:1, c:3, img:"sapo.png" } ], palavras:[ { t:"PÁSSARO", r:2, c:1, d:"H" }, { t:"SAPO", r:2, c:3, d:"V" } ] },
+        // ZEBRA/COBRA -> Cruzam no 'B'. ZEBRA[2], COBRA[2]. H(3,1), V(1,3). ImgH(3,0), ImgV(0,3)
+        { cols: 6, rows: 6, imagens:[ { r:3, c:0, img:"zebra.png" }, { r:0, c:3, img:"cobra.png" } ], palavras:[ { t:"ZEBRA", r:3, c:1, d:"H" }, { t:"COBRA", r:1, c:3, d:"V" } ] }
+    ];
+
+    // CATEGORIA 2: COMIDA
+    const DADOS_COMIDA =[
+        // BOLO/SOPA -> Cruzam no primeiro 'O'. BOLO[1], SOPA[1]. H(2,1), V(1,2). ImgH(2,0), ImgV(0,2)
+        { cols: 5, rows: 5, imagens:[ { r:2, c:0, img:"bolo.png" }, { r:0, c:2, img:"sopa.png" } ], palavras:[ { t:"BOLO", r:2, c:1, d:"H" }, { t:"SOPA", r:1, c:2, d:"V" } ] },
+        // PERA/MORANGO -> Cruzam no 'R'. PERA[2], MORANGO[2]. H(3,1), V(1,3). ImgH(3,0), ImgV(0,3)
+        { cols: 5, rows: 8, imagens:[ { r:3, c:0, img:"pera.png" }, { r:0, c:3, img:"morango.png" } ], palavras:[ { t:"PERA", r:3, c:1, d:"H" }, { t:"MORANGO", r:1, c:3, d:"V" } ] },
+        // SALADA/MASSA -> Cruzam no primeiro 'S'. SALADA[0], MASSA[2]. H(3,1), V(1,1). ImgH(3,0), ImgV(0,1)
+        { cols: 7, rows: 6, imagens:[ { r:3, c:0, img:"salada.png" }, { r:0, c:1, img:"massa.png" } ], palavras:[ { t:"SALADA", r:3, c:1, d:"H" }, { t:"MASSA", r:1, c:1, d:"V" } ] },
+        // PUDIM/PIZZA -> Cruzam no 'P'. PUDIM[0], PIZZA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 6, rows: 7, imagens:[ { r:2, c:0, img:"pudim.png" }, { r:1, c:1, img:"pizza.png" } ], palavras:[ { t:"PUDIM", r:2, c:1, d:"H" }, { t:"PIZZA", r:2, c:1, d:"V" } ] },
+        // DOCE/CEBOLA -> Cruzam no 'C'. DOCE[2], CEBOLA[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 5, rows: 8, imagens:[ { r:2, c:0, img:"doce.png" }, { r:1, c:3, img:"cebola.png" } ], palavras:[ { t:"DOCE", r:2, c:1, d:"H" }, { t:"CEBOLA", r:2, c:3, d:"V" } ] },
+        // MAÇÃ/MELANCIA -> Cruzam no 'M'. MAÇÃ[0], MELANCIA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 10, imagens:[ { r:2, c:0, img:"maca.png" }, { r:1, c:1, img:"melancia.png" } ], palavras:[ { t:"MAÇÃ", r:2, c:1, d:"H" }, { t:"MELANCIA", r:2, c:1, d:"V" } ] },
+        // PÃO/PEIXE -> Cruzam no 'P'. PÃO[0], PEIXE[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 4, rows: 7, imagens:[ { r:2, c:0, img:"pao.png" }, { r:1, c:1, img:"peixe.png" } ], palavras:[ { t:"PÃO", r:2, c:1, d:"H" }, { t:"PEIXE", r:2, c:1, d:"V" } ] },
+        // CAFÉ/CHÁ -> Cruzam no 'C'. CAFÉ[0], CHÁ[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 5, imagens:[ { r:2, c:0, img:"cafe.png" }, { r:1, c:1, img:"cha.png" } ], palavras:[ { t:"CAFÉ", r:2, c:1, d:"H" }, { t:"CHÁ", r:2, c:1, d:"V" } ] },
+        // LIMÃO/LEITE -> Cruzam no 'L'. LIMÃO[0], LEITE[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 6, rows: 7, imagens:[ { r:2, c:0, img:"limao.png" }, { r:1, c:1, img:"leite.png" } ], palavras:[ { t:"LIMÃO", r:2, c:1, d:"H" }, { t:"LEITE", r:2, c:1, d:"V" } ] },
+        // QUIVI/BIFE -> Cruzam no primeiro 'I'. QUIVI[2], BIFE[1]. H(2,1), V(1,3). ImgH(2,0), ImgV(0,3)
+        { cols: 6, rows: 5, imagens:[ { r:2, c:0, img:"quivi.png" }, { r:0, c:3, img:"bife.png" } ], palavras:[ { t:"QUIVI", r:2, c:1, d:"H" }, { t:"BIFE", r:1, c:3, d:"V" } ] }
+    ];
+
+    // CATEGORIA 3: ESCOLA E CASA
+    const DADOS_ESCOLA =[
+        // MESA/SOFÁ -> Cruzam no 'S'. MESA[2], SOFÁ[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 5, rows: 6, imagens:[ { r:2, c:0, img:"mesa.png" }, { r:1, c:3, img:"sofa.png" } ], palavras:[ { t:"MESA", r:2, c:1, d:"H" }, { t:"SOFÁ", r:2, c:3, d:"V" } ] },
+        // LIVRO/LIXO -> Cruzam no 'L'. LIVRO[0], LIXO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 6, rows: 6, imagens:[ { r:2, c:0, img:"livro.png" }, { r:1, c:1, img:"lixo.png" } ], palavras:[ { t:"LIVRO", r:2, c:1, d:"H" }, { t:"LIXO", r:2, c:1, d:"V" } ] },
+        // CAMA/CANETA -> Cruzam no 'C'. CAMA[0], CANETA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 8, imagens:[ { r:2, c:0, img:"cama.png" }, { r:1, c:1, img:"caneta.png" } ], palavras:[ { t:"CAMA", r:2, c:1, d:"H" }, { t:"CANETA", r:2, c:1, d:"V" } ] },
+        // CADEIRA/CADERNO -> Cruzam no 'C'. CADEIRA[0], CADERNO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 8, rows: 9, imagens:[ { r:2, c:0, img:"cadeira.png" }, { r:1, c:1, img:"caderno.png" } ], palavras:[ { t:"CADEIRA", r:2, c:1, d:"H" }, { t:"CADERNO", r:2, c:1, d:"V" } ] },
+        // PORTA/RODA -> Cruzam no 'R'. PORTA[2], RODA[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 6, rows: 6, imagens:[ { r:2, c:0, img:"porta.png" }, { r:1, c:3, img:"roda.png" } ], palavras:[ { t:"PORTA", r:2, c:1, d:"H" }, { t:"RODA", r:2, c:3, d:"V" } ] },
+        // LÁPIS/PAPEL -> Cruzam no 'P'. LÁPIS[2], PAPEL[2]. H(3,1), V(1,3). ImgH(3,0), ImgV(0,3)
+        { cols: 6, rows: 6, imagens:[ { r:3, c:0, img:"lapis.png" }, { r:0, c:3, img:"papel.png" } ], palavras:[ { t:"LÁPIS", r:3, c:1, d:"H" }, { t:"PAPEL", r:1, c:3, d:"V" } ] },
+        // RÉGUA/RÁDIO -> Cruzam no 'R'. RÉGUA[0], RÁDIO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 6, rows: 7, imagens:[ { r:2, c:0, img:"regua.png" }, { r:1, c:1, img:"radio.png" } ], palavras:[ { t:"RÉGUA", r:2, c:1, d:"H" }, { t:"RÁDIO", r:2, c:1, d:"V" } ] },
+        // MALA/MESA -> Cruzam no 'M'. MALA[0], MESA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 6, imagens:[ { r:2, c:0, img:"mala.png" }, { r:1, c:1, img:"mesa.png" } ], palavras:[ { t:"MALA", r:2, c:1, d:"H" }, { t:"MESA", r:2, c:1, d:"V" } ] },
+        // RELÓGIO/RODA -> Cruzam no 'R'. RELÓGIO[0], RODA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 8, rows: 6, imagens:[ { r:2, c:0, img:"relogio.png" }, { r:1, c:1, img:"roda.png" } ], palavras:[ { t:"RELÓGIO", r:2, c:1, d:"H" }, { t:"RODA", r:2, c:1, d:"V" } ] },
+        // COPO/COLA -> Cruzam no 'C'. COPO[0], COLA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 6, imagens:[ { r:2, c:0, img:"copo.png" }, { r:1, c:1, img:"cola.png" } ], palavras:[ { t:"COPO", r:2, c:1, d:"H" }, { t:"COLA", r:2, c:1, d:"V" } ] }
+    ];
+
+    // CATEGORIA 4: MISTO
+    const DADOS_MISTO =[
+        // REI/RAINHA -> Cruzam no 'R'. REI[0], RAINHA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 4, rows: 8, imagens:[ { r:2, c:0, img:"rei.png" }, { r:1, c:1, img:"rainha.png" } ], palavras:[ { t:"REI", r:2, c:1, d:"H" }, { t:"RAINHA", r:2, c:1, d:"V" } ] },
+        // BEBÉ/BALÃO -> Cruzam no 'B'. BEBÉ[0], BALÃO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 7, imagens:[ { r:2, c:0, img:"bebe.png" }, { r:1, c:1, img:"balao.png" } ], palavras:[ { t:"BEBÉ", r:2, c:1, d:"H" }, { t:"BALÃO", r:2, c:1, d:"V" } ] },
+        // FOGUETÃO/FOGO -> Cruzam no 'F'. FOGUETÃO[0], FOGO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 9, rows: 6, imagens:[ { r:2, c:0, img:"foguetao.png" }, { r:1, c:1, img:"fogo.png" } ], palavras:[ { t:"FOGUETÃO", r:2, c:1, d:"H" }, { t:"FOGO", r:2, c:1, d:"V" } ] },
+        // MOCHILA/MACACO -> Cruzam no 'M'. MOCHILA[0], MACACO[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 8, rows: 8, imagens:[ { r:2, c:0, img:"mochila.png" }, { r:1, c:1, img:"macaco.png" } ], palavras:[ { t:"MOCHILA", r:2, c:1, d:"H" }, { t:"MACACO", r:2, c:1, d:"V" } ] },
+        // RAPAZ/RAPOSA -> Cruzam no 'R'. RAPAZ[0], RAPOSA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 6, rows: 8, imagens:[ { r:2, c:0, img:"rapaz.png" }, { r:1, c:1, img:"raposa.png" } ], palavras:[ { t:"RAPAZ", r:2, c:1, d:"H" }, { t:"RAPOSA", r:2, c:1, d:"V" } ] },
+        // ÍNDIO/RIO -> Cruzam no 'I'. ÍNDIO[3], RIO[1]. H(2,1), V(1,4). ImgH(2,0), ImgV(0,4)
+        { cols: 6, rows: 4, imagens:[ { r:2, c:0, img:"indio.png" }, { r:0, c:4, img:"rio.png" } ], palavras:[ { t:"ÍNDIO", r:2, c:1, d:"H" }, { t:"RIO", r:1, c:4, d:"V" } ] },
+        // MÃE/MENINA -> Cruzam no 'M'. MÃE[0], MENINA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 4, rows: 8, imagens:[ { r:2, c:0, img:"mae.png" }, { r:1, c:1, img:"menina.png" } ], palavras:[ { t:"MÃE", r:2, c:1, d:"H" }, { t:"MENINA", r:2, c:1, d:"V" } ] },
+        // AVÓ/VACA -> Cruzam no 'V'. AVÓ[1], VACA[0]. H(2,1), V(2,2). ImgH(2,0), ImgV(1,2)
+        { cols: 4, rows: 6, imagens:[ { r:2, c:0, img:"avo_f.png" }, { r:1, c:2, img:"vaca.png" } ], palavras:[ { t:"AVÓ", r:2, c:1, d:"H" }, { t:"VACA", r:2, c:2, d:"V" } ] },
+        // IRMÃO/MÃO -> Cruzam no 'M'. IRMÃO[2], MÃO[0]. H(2,1), V(2,3). ImgH(2,0), ImgV(1,3)
+        { cols: 6, rows: 5, imagens:[ { r:2, c:0, img:"irmao.png" }, { r:1, c:3, img:"mao.png" } ], palavras:[ { t:"IRMÃO", r:2, c:1, d:"H" }, { t:"MÃO", r:2, c:3, d:"V" } ] },
+        // FADA/FACA -> Cruzam no 'F'. FADA[0], FACA[0]. H(2,1), V(2,1). ImgH(2,0), ImgV(1,1)
+        { cols: 5, rows: 6, imagens:[ { r:2, c:0, img:"fada.png" }, { r:1, c:1, img:"faca.png" } ], palavras:[ { t:"FADA", r:2, c:1, d:"H" }, { t:"FACA", r:2, c:1, d:"V" } ] }
+    ];
+
+    // =========================================
+    // MOTOR PRINCIPAL DAS CRUZADAS
+    // =========================================
+    const Motor = {
+        dadosBase:[],
+        rondaAtual: 0,
+        pecaSelecionada: null,
+        errosTotais: 0,
+        categoriaAtual: null,
+
+        iniciar: function(dadosCategoria) {
+            // Guarda a categoria para o botão "Jogar de Novo" saber o que fazer
+            this.categoriaAtual = dadosCategoria;
+            
+            // Mistura todos os puzzles e escolhe 5 por partida
+            let poolEmbaralhado =[...dadosCategoria].sort(() => Math.random() - 0.5);
+            this.dadosBase = poolEmbaralhado.slice(0, 5); 
+            this.rondaAtual = 0;
+            this.errosTotais = 0;
+            
+            document.getElementById('val-total').textContent = this.dadosBase.length;
+            document.getElementById('val-erros').textContent = this.errosTotais;
+            mostrarEcra('ecra-jogo');
+            this.renderRonda();
+        },
+
+        renderRonda: function() {
+            const dados = this.dadosBase[this.rondaAtual];
+            const areaJogo = document.getElementById('area-jogo');
+            this.pecaSelecionada = null;
+
+            // Layout Assimétrico: Grelha à Esquerda, Banco 2 Colunas à Direita
+            areaJogo.innerHTML = `
+                <div class="area-jogo-layout">
+                    <div id="cruzada-grid" class="cruzada-grid"></div>
+                    <div id="banco-direita" class="coluna-letras-direita"></div>
+                </div>
+            `;
+
+            const gridContainer = document.getElementById('cruzada-grid');
+            gridContainer.style.gridTemplateColumns = `repeat(${dados.cols}, 1fr)`;
+            
+            let matriz = Array(dados.rows).fill(null).map(() => Array(dados.cols).fill(null));
+
+            // Coloca as imagens
+            dados.imagens.forEach(img => { matriz[img.r][img.c] = { type: 'img', src: img.img }; });
+
+            // Coloca as letras e guarda no Banco
+            let letrasParaBanco =[];
+            dados.palavras.forEach(p => {
+                for(let i=0; i<p.t.length; i++) {
+                    let r = p.d === 'V' ? p.r + i : p.r;
+                    let c = p.d === 'H' ? p.c + i : p.c;
+                    let char = p.t[i];
+
+                    if (!matriz[r][c] || matriz[r][c].type !== 'letra') {
+                        matriz[r][c] = { type: 'letra', char: char };
+                        letrasParaBanco.push(char);
+                    }
+                }
+            });
+
+            // Desenha a Grelha
+            for (let r = 0; r < dados.rows; r++) {
+                for (let c = 0; c < dados.cols; c++) {
+                    let cellData = matriz[r][c];
+                    
+                    if (!cellData) {
+                        gridContainer.innerHTML += `<div class="celula-vazia"></div>`;
+                    } else if (cellData.type === 'img') {
+                        gridContainer.innerHTML += `
+                            <div class="celula-img">
+                                <img src="../../img/${cellData.src}" onerror="this.src='../../logo.png'">
+                            </div>`;
+                    } else if (cellData.type === 'letra') {
+                        let cellId = `cell-${r}-${c}`;
+                        gridContainer.innerHTML += `
+                            <div class="celula-letra" 
+                                 id="${cellId}" 
+                                 data-correct="${cellData.char}"
+                                 ondragover="event.preventDefault(); this.classList.add('hovered')"
+                                 ondragleave="this.classList.remove('hovered')"
+                                 ondrop="Motor.handleDrop(event, this)"
+                                 onclick="Motor.handleCellClick(this)">
+                            </div>`;
+                    }
+                }
+            }
+
+            // Baralha as letras do banco e preenche as duas colunas
+            letrasParaBanco.sort(() => Math.random() - 0.5);
+            const htmlBanco = letrasParaBanco.map((letra, i) => `
+                <div class="peca-letra" 
+                     id="peca-${i}"
+                     draggable="true" 
+                     data-letra="${letra}"
+                     ondragstart="Motor.handleDragStart(event, this)"
+                     onclick="Motor.handlePecaClick(this)">
+                    ${letra}
+                </div>
+            `).join('');
+
+            document.getElementById('banco-direita').innerHTML = htmlBanco;
+
+            this.atualizarPlacar();
+        },
+
+        // --- DRAG & DROP ---
+        handleDragStart: function(e, peca) {
+            e.dataTransfer.setData('text/plain', peca.dataset.letra);
+            e.dataTransfer.setData('id', peca.id);
+            this.pecaSelecionada = null; 
+            document.querySelectorAll('.peca-letra').forEach(el => el.classList.remove('selecionada'));
+        },
+
+        handleDrop: function(e, cell) {
+            e.preventDefault();
+            cell.classList.remove('hovered');
+            if(cell.classList.contains('preenchida')) return;
+
+            let letraDrag = e.dataTransfer.getData('text/plain');
+            let idDrag = e.dataTransfer.getData('id');
+            let pecaNode = document.getElementById(idDrag);
+            
+            this.verificarJogada(cell, letraDrag, pecaNode);
+        },
+
+        // --- CLIQUE HÍBRIDO ---
+        handlePecaClick: function(peca) {
+            document.querySelectorAll('.peca-letra').forEach(el => el.classList.remove('selecionada'));
+            peca.classList.add('selecionada');
+            this.pecaSelecionada = peca;
+        },
+
+        handleCellClick: function(cell) {
+            if(cell.classList.contains('preenchida')) return;
+
+            if (this.pecaSelecionada) {
+                this.verificarJogada(cell, this.pecaSelecionada.dataset.letra, this.pecaSelecionada);
+                this.pecaSelecionada.classList.remove('selecionada');
+                this.pecaSelecionada = null;
+            } else {
+                showToast("Clica primeiro numa letra à direita!", true);
+            }
+        },
+
+        // --- VERIFICAÇÃO COMUM ---
+        verificarJogada: function(cell, letraTentada, pecaNode) {
+            if (letraTentada === cell.dataset.correct) {
+                tocarSom('acerto');
+                cell.textContent = letraTentada;
+                cell.classList.add('preenchida', 'pop-magico');
+                
+                if(pecaNode) pecaNode.classList.add('usada');
+
+                this.verificarFimRonda();
+            } else {
+                // SOMA O ERRO
+                this.errosTotais++;
+                document.getElementById('val-erros').textContent = this.errosTotais;
+                
+                tocarSom('erro');
+                cell.classList.add('elemento-erro');
+                setTimeout(() => cell.classList.remove('elemento-erro'), 400);
+            }
+        },
+
+        verificarFimRonda: function() {
+            const vazias = document.querySelectorAll('.celula-letra:not(.preenchida)').length;
+            if (vazias === 0) {
+                this.rondaAtual++;
+                setTimeout(() => {
+                    if (this.rondaAtual >= this.dadosBase.length) {
+                        this.finalizar();
+                    } else {
+                        this.renderRonda();
+                    }
+                }, 1500); 
+            }
+        },
+
+        atualizarPlacar: function() {
+            document.getElementById('val-progresso').textContent = this.rondaAtual + 1;
+            let perc = (this.rondaAtual / this.dadosBase.length) * 100;
+            document.getElementById('progress-fill').style.width = `${perc}%`;
+        },
+
+        finalizar: function() {
+            document.getElementById('progress-fill').style.width = `100%`;
+            document.getElementById('final-erros').textContent = this.errosTotais;
+            tocarSom('vitoria'); dispararConfetis(); mostrarEcra('ecra-fim');
+        }
+    };
+
+    // =========================================
+    // SONS E CONFETIS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    const canvasConfetti = document.createElement('canvas');
+    canvasConfetti.id = 'confetti-canvas';
+    document.querySelector('.cartao-jogo-container').appendChild(canvasConfetti);
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis =[];
+    window.addEventListener('resize', () => { canvasConfetti.width = canvasConfetti.parentElement.clientWidth; canvasConfetti.height = canvasConfetti.parentElement.clientHeight; });
+
+    function dispararConfetis() {
+        canvasConfetti.width = canvasConfetti.parentElement.clientWidth; canvasConfetti.height = canvasConfetti.parentElement.clientHeight;
+        confetis =[]; const cores =['#ff6b6b', '#4dabf7', '#51cf66', '#fbc531', '#9b59b6'];
+        for (let i = 0; i < 150; i++) confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis); else ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+
+    // Botão Reiniciar agora usa a categoria guardada no Motor
+    function reiniciarJogo() {
+        if (Motor.categoriaAtual) {
+            Motor.iniciar(Motor.categoriaAtual);
+        }
+    }
+
+    window.onload = () => mostrarEcra('ecra-selecao'); 
+</script>
+</body>
+</html>
