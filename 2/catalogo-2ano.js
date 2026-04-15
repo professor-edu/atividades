@@ -9,17 +9,18 @@ const todosOsJogos =[
     // PORTUGUÊS (cat: "pt")
     // ------------------------------------
     { nome: "Masculino e Feminino", icone: "icones/genero.png", link: "pt/genero/", cat: "pt" },
-    { nome: "Singular e Plural", icone: "🕵️‍♂️", link: "pt/numero", cat: "pt" },
-	{ nome: "Sinónimos", icone: "🕵️‍♂️", link: "pt/sinonimos", cat: "pt" },
-	{ nome: "Antónimos", icone: "🕵️‍♂️", link: "pt/antonimos", cat: "pt" },
-	{ nome: "Sinónimos e Antónimos", icone: "🕵️‍♂️", link: "pt/sinonimos-antonimos", cat: "pt" },
-	{ nome: "Pontos e Acentos", icone: "✏️", link: "pt/pontos-acentos", cat: "pt" },
+    { nome: "Singular e Plural", icone: "icones/numero.png", link: "pt/numero", cat: "pt" },
+	{ nome: "Sinónimos", icone: "icones/sinonimos.png", link: "pt/sinonimos", cat: "pt" },
+	{ nome: "Antónimos", icone: "icones/antonimos.png", link: "pt/antonimos", cat: "pt" },
+	{ nome: "Sinónimos e Antónimos", icone: "icones/sinonimos_antonimos".png, link: "pt/sinonimos-antonimos", cat: "pt" },
+	{ nome: "Pontos e Acentos", icone: "icones/pontos_acentos.png", link: "pt/pontos-acentos", cat: "pt" },
     { nome: "Chuva de Palavras", icone: "icones/chuva_palavras.png", link: "pt/classes", cat: "pt" },
-	{ nome: "Ler e Copiar", icone: "⌨️", link: "pt/escrita-textos", cat: "pt" },
-	{ nome: "Letras Mágicas", icone: "🪄", link: "pt/letras-magicas", cat: "pt" },
-	{ nome: "Aventura dos Sons", icone: "🚀", link: "pt/aventura-sons", cat: "pt" },
-	{ nome: "Missão dos Sons", icone: "🚀", link: "pt/missao-sons", cat: "pt" },
-	{ nome: "Palavras Cruzadas", icone: "✏️", link: "pt/cruzadas", cat: "pt" },
+	{ nome: "Ler e Copiar", icone: "icones/copiar_textos.png", link: "pt/escrita-textos", cat: "pt" },
+	{ nome: "Letras Mágicas", icone: "icones/letras_magicas.png", link: "pt/letras-magicas", cat: "pt" },
+	{ nome: "Aventura dos Sons", icone: "icones/aventura_sons.png", link: "pt/aventura-sons", cat: "pt" },
+	{ nome: "Missão dos Sons", icone: "icones/missao_sons.png", link: "pt/missao-sons", cat: "pt" },
+	{ nome: "Palavras Cruzadas", icone: "icones/cruzadas.png", link: "pt/cruzadas", cat: "pt" },
+	{ nome: "Cruzadas de Animais", icone: "icones/cruzadas_animais.png", link: "pt/cruzadas-animais/", cat: "pt" },
 	
 	
     // ------------------------------------
@@ -33,6 +34,6 @@ const todosOsJogos =[
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
-    { nome: "Animais", icone: "🕵️‍♂️", link: "em/animais/", cat: "em" },
-   	{ nome: "Jogo 1 EM", icone: "🐾", link: "em/cruzadas-animais/", cat: "em" }
+    { nome: "JOGO 1 EM", icone: "🕵️‍♂️", link: "em/#/", cat: "em" },
+   	{ nome: "Jogo 2 EM", icone: "🐾", link: "em/#/", cat: "em" }
 ];
