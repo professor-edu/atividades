@@ -26,8 +26,7 @@ const todosOsJogos =[
     // MATEMÁTICA (cat: "mat")
     // ------------------------------------
     { nome: "Jogo 1 Mat", icone: "🎲", link: "mat/vamos-contar/", cat: "mat" },
-   
-	{ nome: "Jogo 2 Mat", icone: "🚂", link: "mat/sequencias", cat: "mat" },
+   	{ nome: "Jogo 2 Mat", icone: "🚂", link: "mat/sequencias", cat: "mat" },
 	
 	
     
@@ -35,6 +34,5 @@ const todosOsJogos =[
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
     { nome: "Animais", icone: "🕵️‍♂️", link: "em/animais/", cat: "em" },
-   
-	{ nome: "Jogo 1 EM", icone: "🐾", link: "em/cruzadas-animais/", cat: "em" }
+   	{ nome: "Jogo 1 EM", icone: "🐾", link: "em/cruzadas-animais/", cat: "em" }
 ];
