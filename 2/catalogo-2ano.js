@@ -8,13 +8,13 @@ const todosOsJogos =[
     // ------------------------------------
     // PORTUGUÊS (cat: "pt")
     // ------------------------------------
-    { nome: "Masculino e Feminino", icone: "🕵️‍♂️", link: "pt/genero/", cat: "pt" },
+    { nome: "Masculino e Feminino", icone: "icones/genero.png", link: "pt/genero/", cat: "pt" },
     { nome: "Singular e Plural", icone: "🕵️‍♂️", link: "pt/numero", cat: "pt" },
 	{ nome: "Sinónimos", icone: "🕵️‍♂️", link: "pt/sinonimos", cat: "pt" },
 	{ nome: "Antónimos", icone: "🕵️‍♂️", link: "pt/antonimos", cat: "pt" },
 	{ nome: "Sinónimos e Antónimos", icone: "🕵️‍♂️", link: "pt/sinonimos-antonimos", cat: "pt" },
 	{ nome: "Pontos e Acentos", icone: "✏️", link: "pt/pontos-acentos", cat: "pt" },
-    { nome: "Chuva de Palavras", icone: "🎒", link: "pt/classes", cat: "pt" },
+    { nome: "Chuva de Palavras", icone: "icones/chuva_palavras.png", link: "pt/classes", cat: "pt" },
 	{ nome: "Ler e Copiar", icone: "⌨️", link: "pt/escrita-textos", cat: "pt" },
 	{ nome: "Letras Mágicas", icone: "🪄", link: "pt/letras-magicas", cat: "pt" },
 	{ nome: "Aventura dos Sons", icone: "🚀", link: "pt/aventura-sons", cat: "pt" },
