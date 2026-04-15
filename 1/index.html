@@ -286,15 +286,15 @@
     }
 
     // =========================================================
-    // FUNÇÃO QUE CONTA OS JOGOS AUTOMATICAMENTE
+    // FUNÇÃO QUE CONTA OS JOGOS (ESTAVA EM FALTA!)
     // =========================================================
     function atualizarContadores() {
-        // Como importámos o catalogo-1ano.js acima, o computador já conhece o array 'todosOsJogos'
+        if (typeof todosOsJogos === 'undefined') return;
+
         const totalPT = todosOsJogos.filter(jogo => jogo.cat === 'pt').length;
         const totalMAT = todosOsJogos.filter(jogo => jogo.cat === 'mat').length;
         const totalEM = todosOsJogos.filter(jogo => jogo.cat === 'em').length;
 
-        // Atualiza o texto nas etiquetas dos cartões grandes (certifica-te que os IDs batem certo no teu HTML superior)
         const badgePT = document.getElementById('contador-pt');
         const badgeMAT = document.getElementById('contador-mat');
         const badgeEM = document.getElementById('contador-em');
@@ -305,29 +305,48 @@
     }
 
     // =========================================================
-    // FUNÇÃO QUE GERA OS 6 JOGOS ALEATÓRIOS DO DIA
+    // FUNÇÃO QUE GERA 6 JOGOS (2 DE CADA CATEGORIA)
     // =========================================================
     function gerarJogosDoDia() {
         const container = document.getElementById('jogos-dia-container');
-        if (!container) return; 
+        if (!container || typeof todosOsJogos === 'undefined') return; 
 
         container.innerHTML = ''; 
         
-        // Baralha os jogos e escolhe 6
-        const jogosBaralhados = [...todosOsJogos].sort(() => Math.random() - 0.5);
-        const jogosSelecionados = jogosBaralhados.slice(0, 6);
+        // 1. Filtrar e baralhar cada categoria individualmente
+        const jogosPT = todosOsJogos.filter(j => j.cat === 'pt').sort(() => Math.random() - 0.5);
+        const jogosMAT = todosOsJogos.filter(j => j.cat === 'mat').sort(() => Math.random() - 0.5);
+        const jogosEM = todosOsJogos.filter(j => j.cat === 'em').sort(() => Math.random() - 0.5);
+
+        // 2. Selecionar os primeiros 2 de cada lista
+        const selecionados = [
+            ...jogosPT.slice(0, 2),
+            ...jogosMAT.slice(0, 2),
+            ...jogosEM.slice(0, 2)
+        ];
+
+        // 3. (Opcional) Baralhar os 6 selecionados para a ordem das cores ser mista
+        selecionados.sort(() => Math.random() - 0.5);
         
-        jogosSelecionados.forEach(jogo => {
+        selecionados.forEach(jogo => {
             let classeBorda = "";
             if(jogo.cat === "pt") classeBorda = "borda-pt";
             else if(jogo.cat === "mat") classeBorda = "borda-mat";
             else if(jogo.cat === "em") classeBorda = "borda-em";
 
+            // Lógica de ícone (Imagem ou Emoji)
+            let htmlDoIcone = "";
+            if (jogo.icone.includes('.')) {
+                htmlDoIcone = `<img src="${jogo.icone}" alt="${jogo.nome}" style="width: 90%; height: 90%; object-fit: contain;">`;
+            } else {
+                htmlDoIcone = jogo.icone;
+            }
+
             const a = document.createElement('a');
             a.href = jogo.link;
             a.className = `cartao-jogo-dia ${classeBorda}`;
             a.innerHTML = `
-                <div class="icone-wrapper-dia">${jogo.icone}</div>
+                <div class="icone-wrapper-dia" style="display:flex; align-items:center; justify-content:center; width:90px; height:90px;">${htmlDoIcone}</div>
                 <span class="nome-jogo-dia">${jogo.nome}</span>
             `;
             container.appendChild(a);
