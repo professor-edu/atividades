@@ -27,8 +27,8 @@ const todosOsJogos =[
     // ------------------------------------
     // MATEMÁTICA (cat: "mat")
     // ------------------------------------
-    { nome: "Jogo 1 Mat", icone: "🎲", link: "mat/vamos-contar/", cat: "mat" },
-   	{ nome: "Jogo 2 Mat", icone: "🚂", link: "mat/sequencias", cat: "mat" },
+    { nome: "Máquina das Tabuadas", icone: "icones/tabuadas.png", link: "mat/tabuadas/", cat: "mat" },
+   	
 	
 	
     
