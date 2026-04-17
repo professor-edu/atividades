@@ -28,6 +28,7 @@ const todosOsJogos =[
     // MATEMÁTICA (cat: "mat")
     // ------------------------------------
     { nome: "Máquina das Tabuadas", icone: "icones/tabuadas.png", link: "mat/tabuadas/", cat: "mat" },
+	{ nome: "Missão Matemática", icone: "icones/missao_matematica.png", link: "mat/missao-matematica/", cat: "mat" },
    	
 	
 	
