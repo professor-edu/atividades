@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Problemas Mágicos 🧠</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+			--cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 20px 10px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        
+        .grelha-opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 800px; }
+        .btn-nivel-menu { background-color: white; border: 4px solid #ced6e0; border-radius: 20px; padding: 20px; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; touch-action: manipulation; }
+		@media (hover: hover) { .btn-nivel-menu:hover { transform: translateY(-4px); border-color: var(--cor-mat); box-shadow: 0 6px 0 var(--cor-mat); } }
+		.btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .nivel-icon { font-size: 3.5rem; background: #f0f4f8; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 auto;}
+        .nivel-text { text-align: center; }
+        .nivel-titulo { font-size: 1.3rem; font-weight: 900; display: block; color: var(--azul-escuro); margin-bottom: 5px;}
+        .nivel-desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
+
+        /* STATUS BAR JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+		.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .grelha-opcoes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+            .btn-nivel-menu { width: 100%; min-width: 0; padding: 15px 10px; }
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+        @media (max-width: 360px) { .grelha-opcoes { grid-template-columns: 1fr; } }
+
+        .toast-msg { background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; margin-bottom: 10px; opacity: 0; transform: translateY(-10px); transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DOS PROBLEMAS E BOTÕES DE RESPOSTA
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px;
+            padding: 20px; gap: 20px;
+        }
+
+        .caixa-problema {
+            background: white; border: 4px solid var(--cor-mat); border-radius: 20px; padding: 20px 25px;
+            width: 100%; max-width: 700px; box-shadow: 0 8px 0 var(--cor-mat); position: relative;
+            display: flex; gap: 15px; align-items: center; text-align: left;
+        }
+
+        .texto-problema { font-size: 1.3rem; font-weight: 700; color: var(--azul-escuro); line-height: 1.5; flex: 1; }
+        .imagem-problema { font-size: 3.5rem; flex-shrink: 0;}
+
+        .btn-ler {
+            background: #fff9c4; border: 3px solid #fbc531; width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer;
+            box-shadow: 0 4px 0 #fbc531; flex-shrink: 0; transition: 0.2s;
+        }
+        .btn-ler:active { transform: translateY(4px); box-shadow: none; }
+        .btn-ler.falando { animation: pulseSpk 1s infinite; background: #ffeaa7; }
+        @keyframes pulseSpk { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        @media (max-width: 500px) {
+            .caixa-problema { flex-direction: column; text-align: center; padding: 15px;}
+            .texto-problema { font-size: 1.15rem; }
+        }
+
+        /* Grelha de Respostas (Comum a todos) */
+        .opcoes-resposta {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; max-width: 700px; margin-top: 10px;
+        }
+        .btn-resposta {
+            background: white; border: 4px solid #ced6e0; color: var(--text-main);
+            padding: 15px 25px; border-radius: 15px; font-size: 1.4rem; font-weight: 900;
+            cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: 0.1s; flex: 1; min-width: 150px; text-align: center;
+        }
+        .btn-resposta:active { transform: translateY(6px); box-shadow: none; }
+        @media (hover: hover) { .btn-resposta:hover { border-color: var(--azul-vibrante); box-shadow: 0 6px 0 var(--azul-vibrante); color: var(--azul-vibrante); } }
+
+        /* Estilos Específicos do "Detetive" */
+        .equacao-detetive {
+            display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 2.2rem; font-weight: 900; color: var(--azul-escuro); margin: 20px 0; flex-wrap: wrap;
+        }
+        .caixa-misterio {
+            width: 50px; height: 50px; border: 4px dashed #ff6b6b; border-radius: 10px; background: #fff5f5; color: #ff6b6b;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+        }
+
+        /* Menus Finais */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px;}
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+		
+        .confetti { position: absolute; width: 10px; height: 10px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+		
+		.letra-verde { color: var(--cor-em); font-weight: 900; }
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Problemas Mágicos 🧠</h1>
+        <div class="subtitulo">Aprende a pensar e a descobrir a solução!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <div id="ecra-selecao" class="ecra">
+			<h2 class="titulo-menu">Escolhe a tua Missão:</h2>
+            
+            <div class="grelha-opcoes">
+                <button class="btn-nivel-menu" onclick="iniciarJogo('detetive')">
+                    <span class="nivel-icon">🕵️‍♂️</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">O Detetive</span>
+                        <span class="nivel-desc">Descobre o sinal secreto! (+, -, x)</span>
+                    </span>
+                </button>
+                
+                <button class="btn-nivel-menu" onclick="iniciarJogo('loja')">
+                    <span class="nivel-icon">🧀</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">A Loja</span>
+                        <span class="nivel-desc">Problemas de euros e compras.</span>
+                    </span>
+                </button>
+                
+                <button class="btn-nivel-menu" onclick="iniciarJogo('maquina')">
+                    <span class="nivel-icon">⚙️</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">A Máquina</span>
+                        <span class="nivel-desc">Descobre a conta certa!</span>
+                    </span>
+                </button>
+
+                <button class="btn-nivel-menu" onclick="iniciarJogo('quinta')">
+                    <span class="nivel-icon">🐷</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">A Quinta</span>
+                        <span class="nivel-desc">Dobro, metade e partilhas.</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <div class="badge-ronda">⭐ Ronda <span id="val-ronda">1</span> | <span id="val-progresso">1</span>/5</div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Mensagem de aviso entra aqui!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <!-- O conteúdo dinâmico do exercício entra aqui gerado pelo JS -->
+            </div>
+        </div>
+
+        <div id="ecra-transicao" class="ecra">
+            <h2 class="titulo-menu">Ronda Concluída! 🌟</h2>
+            <div class="end-stats" style="border: 2px solid #51cf66;">
+                Nesta ronda tiveste apenas <strong id="transicao-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="avancarRonda()">PRÓXIMA RONDA ➡️</button>
+        </div>
+
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Completaste todos os problemas!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros no total.
+            </div>
+            <button class="btn-acao" onclick="voltarAoMenu()">OUTRAS MISSÕES 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA 
+    // =========================================
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+    function mostrarEcra(id) { document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); document.getElementById(id).style.display = 'flex'; pararVoz(); }
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg'); toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531"; toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active'); if(isError) toast.classList.add('error-shake');
+        setTimeout(() => { toast.classList.remove('active', 'error-shake'); }, 3000);
+    }
+
+    // =========================================
+    // 📖 A GRANDE BASE DE DADOS DE PROBLEMAS
+    // Podes adicionar mais copiando o formato!
+    // =========================================
+    const BANCO_DE_PROBLEMAS = {
+        'detetive':[
+            { txt: "O João tinha 12 berlindes. Deu 4 ao amigo. Com quantos ficou?", n1: 12, n2: 4, res: 8, respCerta: "-", img: "👦" },
+            { txt: "A Ana leu 5 páginas de manhã e 6 à tarde. Quantas leu no total?", n1: 5, n2: 6, res: 11, respCerta: "+", img: "📖" },
+            { txt: "Há 3 caixas na mesa. Cada caixa tem 5 lápis. Quantos lápis há?", n1: 3, n2: 5, res: 15, respCerta: "x", img: "✏️" },
+            { txt: "A Maria tinha 20 cêntimos. Perdeu 5 cêntimos. Quanto lhe sobrou?", n1: 20, n2: 5, res: 15, respCerta: "-", img: "🪙" },
+            { txt: "O pai comprou 4 pacotes de bolachas. Cada um traz 4 bolachas.", n1: 4, n2: 4, res: 16, respCerta: "x", img: "🍪" },
+            { txt: "Na árvore havia 15 pássaros. Chegaram mais 5. Quantos estão agora?", n1: 15, n2: 5, res: 20, respCerta: "+", img: "🐦" },
+            { txt: "A turma tem 20 alunos. Faltaram 3 por estarem doentes.", n1: 20, n2: 3, res: 17, respCerta: "-", img: "🏫" },
+            { txt: "O avô tem 5 cães e 4 gatos. Quantos animais tem o avô?", n1: 5, n2: 4, res: 9, respCerta: "+", img: "🐕" },
+            { txt: "Há 2 carros na garagem. Cada carro tem 4 rodas. Quantas rodas são?", n1: 2, n2: 4, res: 8, respCerta: "x", img: "🚗" },
+			{ txt: "O Pedro colheu 7 maçãs e a sua irmã colheu 8. Quantas maçãs têm no total?", n1: 7, n2: 8, res: 15, respCerta: "+", img: "🍎" },
+            { txt: "Havia 14 fatias de bolo. Os convidados comeram 6. Quantas fatias sobraram?", n1: 14, n2: 6, res: 8, respCerta: "-", img: "🍰" },
+            { txt: "O Tomás tem 3 estojos. Em cada estojo há 6 canetas. Quantas canetas tem no total?", n1: 3, n2: 6, res: 18, respCerta: "x", img: "🖊️" },
+            { txt: "A Sofia encontrou 9 conchas na praia de manhã e 4 à tarde. Quantas conchas encontrou?", n1: 9, n2: 4, res: 13, respCerta: "+", img: "🐚" },
+            { txt: "O Rui tinha 25 balões, mas 10 rebentaram. Com quantos balões ficou?", n1: 25, n2: 10, res: 15, respCerta: "-", img: "🎈" },
+            { txt: "A mãe comprou 5 caixas de ovos. Cada caixa tem 6 ovos. Quantos ovos comprou?", n1: 5, n2: 6, res: 30, respCerta: "x", img: "🥚" },
+            { txt: "Numa prateleira há 12 livros de aventuras e 7 de contos. Quantos livros há?", n1: 12, n2: 7, res: 19, respCerta: "+", img: "📚" },
+            { txt: "A horta do avô tinha 18 cenouras. O coelho comeu 5. Quantas cenouras ficaram?", n1: 18, n2: 5, res: 13, respCerta: "-", img: "🥕" },
+            { txt: "A Inês tem 4 jarras. Cada jarra tem 5 flores. Quantas flores são ao todo?", n1: 4, n2: 5, res: 20, respCerta: "x", img: "🌸" },
+            { txt: "A Leonor apanhou 10 morangos e 5 amoras. Quantos frutos apanhou no total?", n1: 10, n2: 5, res: 15, respCerta: "+", img: "🍓" },
+            { txt: "O Diogo tinha 30 euros e gastou 10 num brinquedo. Com quanto dinheiro ficou?", n1: 30, n2: 10, res: 20, respCerta: "-", img: "💶" },
+            { txt: "O pirata tem 5 sacos. Cada saco tem 3 moedas de ouro. Quantas moedas tem ao todo?", n1: 5, n2: 3, res: 15, respCerta: "x", img: "💰" },
+            { txt: "No parque estão 12 meninos e 9 meninas a brincar. Quantas crianças estão no parque?", n1: 12, n2: 9, res: 21, respCerta: "+", img: "🤸" },
+            { txt: "No bosque havia 16 árvores, mas 4 caíram com o vento. Quantas árvores ficaram de pé?", n1: 16, n2: 4, res: 12, respCerta: "-", img: "🌳" },
+            { txt: "No quintal estão 3 cães. Cada cão tem 4 patas. Quantas patas são ao todo?", n1: 3, n2: 4, res: 12, respCerta: "x", img: "🐾" },
+            { txt: "O Miguel tem 8 carrinhos azuis e 7 vermelhos. Quantos carrinhos tem na sua coleção?", n1: 8, n2: 7, res: 15, respCerta: "+", img: "🏎️" },
+            { txt: "O Vasco tinha 22 cromos e deu 6 repetidos ao seu amigo. Com quantos cromos ficou?", n1: 22, n2: 6, res: 16, respCerta: "-", img: "🃏" },
+            { txt: "A avó pôs 6 pratos na mesa. Cada prato tem 2 fatias de queijo. Quantas fatias são?", n1: 6, n2: 2, res: 12, respCerta: "x", img: "🧀" },
+            { txt: "Num formigueiro entraram 11 formigas e depois mais 8. Quantas formigas entraram no total?", n1: 11, n2: 8, res: 19, respCerta: "+", img: "🐜" },
+            { txt: "A caixa tinha 15 bombons. A família comeu 7 depois do jantar. Quantos sobraram?", n1: 15, n2: 7, res: 8, respCerta: "-", img: "🍫" },
+            { txt: "No torneio há 4 equipas. Cada equipa tem 5 jogadores. Quantos jogadores participam?", n1: 4, n2: 5, res: 20, respCerta: "x", img: "⚽" },
+            { txt: "A Carolina colou 13 estrelas no teto e a sua mãe colou mais 6. Quantas estrelas estão lá?", n1: 13, n2: 6, res: 19, respCerta: "+", img: "⭐" },
+            { txt: "Na festa havia 19 copos na mesa, mas 5 partiram-se. Quantos copos inteiros restam?", n1: 19, n2: 5, res: 14, respCerta: "-", img: "🥛" },
+            { txt: "A Luísa levantou as suas 2 mãos. Cada mão tem 5 dedos. Quantos dedos estão levantados?", n1: 2, n2: 5, res: 10, respCerta: "x", img: "🖐️" },
+            { txt: "O Dinis tem 9 dinossauros verdes e 5 castanhos. Quantos dinossauros tem na coleção?", n1: 9, n2: 5, res: 14, respCerta: "+", img: "🦖" },
+            { txt: "O caderno do Tiago tinha 25 folhas brancas. Ele desenhou em 10. Quantas folhas sobram?", n1: 25, n2: 10, res: 15, respCerta: "-", img: "📓" },
+            { txt: "Há 5 macacos na árvore. Cada macaco comeu 3 bananas. Quantas bananas comeram ao todo?", n1: 5, n2: 3, res: 15, respCerta: "x", img: "🍌" },
+            { txt: "O Hugo ganhou 14 berlindes verdes e 11 azuis no jogo. Quantos berlindes ganhou no total?", n1: 14, n2: 11, res: 25, respCerta: "+", img: "🟢" },
+            { txt: "Foram encomendadas 18 fatias de pizza. Os amigos comeram 9. Quantas fatias sobraram?", n1: 18, n2: 9, res: 9, respCerta: "-", img: "🍕" },
+            { txt: "No aquário estão 8 peixes vermelhos e 6 azuis. Quantos peixes há no total?", n1: 8, n2: 6, res: 14, respCerta: "+", img: "🐟" },
+            { txt: "A Rita fez 18 colares. Vendeu 8 na feira. Quantos lhe sobraram?", n1: 18, n2: 8, res: 10, respCerta: "-", img: "📿" }
+        ],
+        'loja':[
+            { txt: "A bola custa 12€. O pião custa 5€. Quanto pago se levar os dois?", respCerta: "17€", opcoes: ["17€", "15€", "7€"], img: "⚽" },
+            { txt: "Tenho uma nota de 20€. Comprei um livro por 10€. Quanto recebo de troco?", respCerta: "10€", opcoes:["10€", "5€", "12€"], img: "📚" },
+            { txt: "O urso de peluche custa 15€. Só tenho 10€. Quanto dinheiro me falta?", respCerta: "5€", opcoes:["5€", "10€", "15€"], img: "🧸" },
+            { txt: "O gelado custa 2€ e o sumo 3€. Se pagar com 10€, quanto recebo de troco?", respCerta: "5€", opcoes: ["5€", "6€", "2€"], img: "🍦" },
+            { txt: "Comprei 3 lápis iguais. Cada um custou 2€. Quanto paguei ao todo?", respCerta: "6€", opcoes:["6€", "5€", "3€"], img: "✏️" },
+            { txt: "A mochila custa 25€. O estojo custa 5€. Qual é o valor da compra?", respCerta: "30€", opcoes:["30€", "20€", "25€"], img: "🎒" },
+            { txt: "O bolo custa 15€. Paguei com uma nota de 20€. Qual é o troco?", respCerta: "5€", opcoes: ["5€", "10€", "15€"], img: "🎂" },
+            { txt: "O bilhete de comboio custa 11€. Paguei com 15€. Recebo quanto de troco?", respCerta: "4€", opcoes:["4€", "5€", "10€"], img: "🚆" },
+            { txt: "Tenho 8€. O chapéu custa 14€. Faltam-me quantos euros?", respCerta: "6€", opcoes:["6€", "4€", "8€"], img: "🧢" },
+			{ txt: "O puzzle custa 14€. A caneta custa 3€. Quanto pago se levar os dois?", respCerta: "17€", opcoes: ["17€", "14€", "20€"], img: "🧩" },
+            { txt: "O carro telecomandado custa 25€. Paguei com 30€. Quanto recebo de troco?", respCerta: "5€", opcoes: ["5€", "10€", "15€"], img: "🏎️" },
+            { txt: "O jogo de tabuleiro custa 22€. Só tenho 15€. Quanto dinheiro me falta?", respCerta: "7€", opcoes: ["7€", "5€", "10€"], img: "🎲" },
+            { txt: "Comprei 4 maçãs a 1€ cada. Se pagar com uma nota de 5€, qual é o troco?", respCerta: "1€", opcoes: ["1€", "2€", "4€"], img: "🍎" },
+            { txt: "O caderno custa 4€ e o estojo 6€. Paguei com 20€. Qual é o troco?", respCerta: "10€", opcoes: ["10€", "12€", "8€"], img: "📓" },
+            { txt: "Dois pacotes de pipocas custam 4€ cada um. Quanto custam os dois?", respCerta: "8€", opcoes: ["8€", "4€", "6€"], img: "🍿" },
+            { txt: "A camisola custa 18€. Paguei com 20€. Quanto recebo de troco?", respCerta: "2€", opcoes: ["2€", "5€", "8€"], img: "👕" },
+            { txt: "Um sumo custa 2€ e uma sandes 4€. Quanto gasto no lanche?", respCerta: "6€", opcoes: ["6€", "4€", "8€"], img: "🥪" },
+            { txt: "O robô de brincar custa 35€. Eu só tenho 20€. Quanto dinheiro me falta?", respCerta: "15€", opcoes: ["15€", "10€", "20€"], img: "🤖" },
+            { txt: "O bilhete de cinema custa 6€. Somos 3 pessoas. Quanto pagamos no total?", respCerta: "18€", opcoes: ["18€", "15€", "12€"], img: "🎟️" },
+            { txt: "A trotinete custa 40€. O capacete custa 10€. Qual é o valor da compra?", respCerta: "50€", opcoes: ["50€", "40€", "60€"], img: "🛴" },
+            { txt: "O bolo de chocolate custa 12€. Paguei com duas notas de 10€. Qual é o troco?", respCerta: "8€", opcoes: ["8€", "10€", "12€"], img: "🍰" },
+            { txt: "Um pacote de bolachas custa 3€. Comprei 3 pacotes. Quanto paguei ao todo?", respCerta: "9€", opcoes: ["9€", "6€", "12€"], img: "🍪" },
+            { txt: "Os calções custam 15€. A t-shirt custa 10€. Quanto pago se levar os dois?", respCerta: "25€", opcoes: ["25€", "20€", "30€"], img: "🩳" },
+            { txt: "A caixa de aguarelas custa 8€. Paguei com uma nota de 10€. Qual é o meu troco?", respCerta: "2€", opcoes: ["2€", "5€", "3€"], img: "🎨" },
+            { txt: "Uma fatia de pizza custa 3€. Quero comprar 4 fatias. Quanto vou gastar?", respCerta: "12€", opcoes: ["12€", "9€", "15€"], img: "🍕" },
+            { txt: "O livro de aventuras custa 14€. A minha avó deu-me 20€. Quanto me sobra se o comprar?", respCerta: "6€", opcoes: ["6€", "4€", "10€"], img: "📘" },
+            { txt: "O cão de peluche custa 16€. Eu só tenho 9€. Quanto dinheiro me falta?", respCerta: "7€", opcoes: ["7€", "5€", "9€"], img: "🐶" },
+            { txt: "Um croissant custa 2€ e o leite custa 1€. Se der 5€, quanto recebo de troco?", respCerta: "2€", opcoes: ["2€", "3€", "1€"], img: "🥐" },
+            { txt: "A raquete de ténis custa 25€ e as bolas 5€. Qual é o valor total da compra?", respCerta: "30€", opcoes: ["30€", "25€", "35€"], img: "🎾" },
+            { txt: "O aquário pequeno custa 15€. Paguei com uma nota de 50€. Qual é o troco?", respCerta: "35€", opcoes: ["35€", "25€", "40€"], img: "🐠" },
+            { txt: "Comprei 5 selos que custam 1€ cada. Quanto paguei ao todo?", respCerta: "5€", opcoes: ["5€", "10€", "4€"], img: "✉️" },
+            { txt: "O relógio de pulso custa 30€. Eu tenho 18€. Quanto dinheiro me falta?", respCerta: "12€", opcoes: ["12€", "10€", "15€"], img: "⌚" },
+            { txt: "A entrada no zoo custa 10€ para adultos e 5€ para crianças. Um adulto e uma criança pagam quanto?", respCerta: "15€", opcoes: ["15€", "10€", "20€"], img: "🦒" },
+            { txt: "Uma caixa de morangos custa 4€. Comprei 2 caixas e paguei com 10€. Qual é o troco?", respCerta: "2€", opcoes: ["2€", "4€", "8€"], img: "🍓" },
+            { txt: "Dois autocarros de brincar custam 10€ cada um. Quanto custam os dois?", respCerta: "20€", opcoes: ["20€", "10€", "15€"], img: "🚌" }
+        ],
+        'maquina':[
+            { txt: "Tenho 3 saquinhos. Cada saco tem 4 gomas. Que conta resolve isto?", respCerta: "4 + 4 + 4", opcoes:["4 + 4 + 4", "3 + 4", "4 - 3"], img: "🍬" },
+            { txt: "A galinha pôs 2 ovos na segunda, 2 na terça e 2 na quarta. Que conta resolve isto?", respCerta: "2 + 2 + 2", opcoes:["2 + 2 + 2", "2 + 3", "2 - 2"], img: "🥚" },
+            { txt: "Em 4 mesas sentaram-se 5 alunos em cada uma. Quantos alunos são?", respCerta: "5 + 5 + 5 + 5", opcoes:["5 + 5 + 5 + 5", "4 + 5", "5 - 4"], img: "🪑" },
+            { txt: "O Rui tinha 10 cartas e deu 5 à irmã. Que conta devemos fazer?", respCerta: "10 - 5", opcoes:["10 - 5", "10 + 5", "5 + 5"], img: "🃏" },
+            { txt: "Comprei 2 pacotes com 6 cromos cada um. Como calculo o total?", respCerta: "6 + 6", opcoes: ["6 + 6", "6 - 2", "2 + 2"], img: "🖼️" },
+            { txt: "Na jarra havia 8 flores e coloquei mais 4. Que conta resolve isto?", respCerta: "8 + 4", opcoes: ["8 + 4", "8 - 4", "4 + 4"], img: "💐" },
+            { txt: "A aranha tem 8 patas. Quantas patas têm 2 aranhas juntas?", respCerta: "8 + 8", opcoes: ["8 + 8", "8 - 2", "8 + 2"], img: "🕷️" },
+            { txt: "No autocarro iam 20 pessoas. Saíram 5 na paragem. Que conta resolve isto?", respCerta: "20 - 5", opcoes:["20 - 5", "20 + 5", "5 + 5 + 5"], img: "🚏" },
+            { txt: "A Rita fez 3 bolos. Pôs 3 cerejas em cada um. Que conta resolve isto?", respCerta: "3 + 3 + 3", opcoes: ["3 + 3 + 3", "3 + 3", "3 - 3"], img: "🍒" },
+			{ txt: "Havia 7 pássaros num ramo e chegaram mais 3. Que conta resolve isto?", respCerta: "7 + 3", opcoes: ["7 + 3", "7 - 3", "3 + 3"], img: "🐦" },
+            { txt: "A Ana tinha 12 fatias de maçã e comeu 4. Que conta resolve isto?", respCerta: "12 - 4", opcoes: ["12 - 4", "12 + 4", "4 + 4"], img: "🍎" },
+            { txt: "Tenho 3 estojos. Em cada estojo guardei 5 lápis. Que conta resolve isto?", respCerta: "5 + 5 + 5", opcoes: ["5 + 5 + 5", "3 + 5", "5 - 3"], img: "✏️" },
+            { txt: "Um carro tem 4 rodas. Quantas rodas têm 2 carros?", respCerta: "4 + 4", opcoes: ["4 + 4", "4 + 2", "4 - 2"], img: "🚗" },
+            { txt: "O Pedro tinha 20 cêntimos, mas perdeu 10 cêntimos no recreio. Que conta resolve isto?", respCerta: "20 - 10", opcoes: ["20 - 10", "20 + 10", "10 + 10"], img: "🪙" },
+            { txt: "A Maria leu 6 páginas de manhã e 8 páginas à tarde. Que conta resolve isto?", respCerta: "6 + 8", opcoes: ["6 + 8", "8 - 6", "6 + 6"], img: "📖" },
+            { txt: "Há 4 ninhos na árvore. Cada ninho tem 3 ovos. Que conta resolve isto?", respCerta: "3 + 3 + 3 + 3", opcoes: ["3 + 3 + 3 + 3", "4 + 3", "4 - 3"], img: "🪹" },
+            { txt: "O cão do Tiago tinha 5 ossos e encontrou mais 2 no jardim. Que conta resolve isto?", respCerta: "5 + 2", opcoes: ["5 + 2", "5 - 2", "2 + 2"], img: "🦴" },
+            { txt: "Comprei 15 balões para a festa. 4 rebentaram. Que conta resolve isto?", respCerta: "15 - 4", opcoes: ["15 - 4", "15 + 4", "4 + 4"], img: "🎈" },
+            { txt: "O avô deu-me 3 saquetas de cromos. Cada saqueta traz 6 cromos. Que conta resolve isto?", respCerta: "6 + 6 + 6", opcoes: ["6 + 6 + 6", "6 + 3", "6 - 3"], img: "🃏" },
+            { txt: "Na piscina estavam 10 crianças e entraram mais 5. Que conta resolve isto?", respCerta: "10 + 5", opcoes: ["10 + 5", "10 - 5", "5 + 5"], img: "🏊" },
+            { txt: "A caixa de chocolates tinha 24 bombons. Comemos 8. Que conta resolve isto?", respCerta: "24 - 8", opcoes: ["24 - 8", "24 + 8", "8 + 8"], img: "🍫" },
+            { txt: "A Inês comprou 2 pacotes de bolachas. Cada pacote tem 7 bolachas. Que conta resolve isto?", respCerta: "7 + 7", opcoes: ["7 + 7", "7 + 2", "7 - 2"], img: "🍪" },
+            { txt: "O Miguel pescou 9 peixes e o seu pai pescou 6. Que conta resolve isto?", respCerta: "9 + 6", opcoes: ["9 + 6", "9 - 6", "6 + 6"], img: "🎣" },
+            { txt: "Na garagem estavam 14 motas. 3 motas foram foram levadas num passeio. Que conta resolve isto?", respCerta: "14 - 3", opcoes: ["14 - 3", "14 + 3", "3 + 3"], img: "🏍️" },
+            { txt: "A Luísa tem 3 pulseiras. Cada pulseira tem 4 missangas. Que conta resolve isto?", respCerta: "4 + 4 + 4", opcoes: ["4 + 4 + 4", "3 + 4", "4 - 3"], img: "📿" },
+            { txt: "O padeiro fez 20 pães de manhã e vendeu 15. Que conta resolve isto?", respCerta: "20 - 15", opcoes: ["20 - 15", "20 + 15", "15 + 5"], img: "🥖" },
+            { txt: "A Beatriz colheu 11 flores amarelas e 7 flores vermelhas. Que conta resolve isto?", respCerta: "11 + 7", opcoes: ["11 + 7", "11 - 7", "7 + 7"], img: "🌼" },
+            { txt: "Uma aranha faz 1 teia. Quantas teias fazem 5 aranhas? Que conta resolve isto?", respCerta: "1 + 1 + 1 + 1 + 1", opcoes: ["1 + 1 + 1 + 1 + 1", "5 + 5", "5 - 1"], img: "🕸️" },
+            { txt: "A equipa marcou 8 golos na primeira parte e 4 na segunda. Que conta resolve isto?", respCerta: "8 + 4", opcoes: ["8 + 4", "8 - 4", "4 + 4"], img: "⚽" },
+            { txt: "O jogo de tabuleiro tem 30 casas. Já avancei 12. Que conta resolve isto?", respCerta: "30 - 12", opcoes: ["30 - 12", "30 + 12", "12 + 12"], img: "🎲" },
+            { txt: "O macaco comeu 2 bananas na segunda, 2 na terça, 2 na quarta e 2 na quinta. Que conta resolve isto?", respCerta: "2 + 2 + 2 + 2", opcoes: ["2 + 2 + 2 + 2", "2 + 4", "4 - 2"], img: "🍌" },
+            { txt: "O pai comprou um jornal por 2€ e uma revista por 5€. Que conta resolve isto?", respCerta: "2 + 5", opcoes: ["2 + 5", "5 - 2", "5 + 5"], img: "📰" },
+            { txt: "A estante tinha 25 livros. O professor emprestou 6 aos alunos. Que conta resolve isto?", respCerta: "25 - 6", opcoes: ["25 - 6", "25 + 6", "6 + 6"], img: "📚" },
+            { txt: "No jardim há 4 canteiros. Em cada canteiro estão 5 tulipas. Que conta resolve isto?", respCerta: "5 + 5 + 5 + 5", opcoes: ["5 + 5 + 5 + 5", "4 + 5", "5 - 4"], img: "🌷" },
+            { txt: "O Tomás tem 16 moedas na sua coleção. Ganhou mais 3 num concurso. Que conta resolve isto?", respCerta: "16 + 3", opcoes: ["16 + 3", "16 - 3", "3 + 3"], img: "🏅" },
+            { txt: "A mãe fez 18 queques. O meu irmão comeu 2 ao lanche. Que conta resolve isto?", respCerta: "18 - 2", opcoes: ["18 - 2", "18 + 2", "2 + 2"], img: "🧁" },
+            { txt: "Comprei 2 sacos de maçãs. Cada saco traz 8 maçãs. Que conta resolve isto?", respCerta: "8 + 8", opcoes: ["8 + 8", "8 + 2", "8 - 2"], img: "🍏" },
+            { txt: "O agricultor plantou 10 couves ontem e 10 couves hoje. Que conta resolve isto?", respCerta: "10 + 10", opcoes: ["10 + 10", "10 - 10", "10 + 2"], img: "🥬" },
+            { txt: "O camião levava 30 caixas. Descarregou 10 no supermercado. Que conta resolve isto?", respCerta: "30 - 10", opcoes: ["30 - 10", "30 + 10", "10 + 10"], img: "🚚" },
+            { txt: "O João tinha 15€. Ganhou mais 5€ da avó.", respCerta: "15 + 5", opcoes:["15 + 5", "15 - 5", "5 + 5 + 5"], img: "💶" }
+        ],
+        'quinta':[
+            { txt: "A vaca deu 4 litros de leite. A ovelha deu <strong><span class='letra-verde'>METADE</strong></span>. Quanto deu a ovelha?", respCerta: "2", opcoes: ["2", "8", "4"], img: "🐄" },
+			{ txt: "O agricultor tem 10 cenouras para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 coelhos. Quantas come cada um?", respCerta: "5", opcoes: ["5", "10", "2"], img: "🐰" },
+            { txt: "A pata pôs 3 ovos. A galinha pôs o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos ovos pôs a galinha?", respCerta: "6", opcoes:["6", "3", "9"], img: "🦆" },
+            { txt: "Temos 12 maçãs para colocar em 2 cestos <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantas ficam em cada cesto?", respCerta: "6", opcoes:["6", "12", "4"], img: "🍎" },
+            { txt: "O cão escondeu 8 ossos. O seu amigo escondeu a <strong><span class='letra-verde'>METADE</strong></span>. Quantos escondeu?", respCerta: "4", opcoes:["4", "8", "2"], img: "🐕" },
+            { txt: "O porquinho tem 5 espigas de milho. O cavalo tem o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas tem?", respCerta: "10", opcoes:["10", "5", "15"], img: "🌽" },
+            { txt: "O quintal tem 14 tomates. Foram <strong><span class='letra-verde'>DIVIDIDOS</strong></span> por 2 caixas. Quantos ficam em cada caixa?", respCerta: "7", opcoes:["7", "14", "8"], img: "🍅" },
+            { txt: "A ovelha comeu 6 morangos. A cabra comeu o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos comeu a cabra?", respCerta: "12", opcoes:["12", "6", "9"], img: "🍓" },
+            { txt: "O Zé colheu 20 laranjas e repartiu-as por 2 sacos <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantas ficaram em cada saco?", respCerta: "10", opcoes:["10", "20", "5"], img: "🍊" },
+			{ txt: "A Rita viu 4 pássaros. O Rui viu o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos viu o Rui?", respCerta: "8", opcoes: ["8", "4", "6"], img: "🐦" },
+            { txt: "A lata tinha 10 bolachas. O João comeu a <strong><span class='letra-verde'>METADE</strong></span>. Quantas comeu?", respCerta: "5", opcoes: ["5", "10", "4"], img: "🍪" },
+            { txt: "No jardim há 7 rosas. As margaridas são o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas margaridas há?", respCerta: "14", opcoes: ["14", "7", "10"], img: "🌼" },
+            { txt: "O Tiago tem 16 berlindes para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 amigos. Quantos recebe cada um?", respCerta: "8", opcoes: ["8", "16", "6"], img: "🟢" },
+            { txt: "O estojo tem 6 canetas. O meu irmão tem a <strong><span class='letra-verde'>METADE</strong></span>. Quantas tem?", respCerta: "3", opcoes: ["3", "6", "2"], img: "🖊️" },
+            { txt: "A vizinha tem 2 gatos. A minha avó tem o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos tem a avó?", respCerta: "4", opcoes: ["4", "2", "6"], img: "🐈" },
+            { txt: "O avô comprou 18 doces para 2 netos em partes <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantos doces recebe cada neto?", respCerta: "9", opcoes: ["9", "18", "8"], img: "🍬" },
+            { txt: "O aquário pequeno tem 8 peixes. O grande tem o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos peixes tem o grande?", respCerta: "16", opcoes: ["16", "8", "10"], img: "🐠" },
+            { txt: "Na festa havia 12 balões. A <strong><span class='letra-verde'>METADE</strong></span> rebentou. Quantos rebentaram?", respCerta: "6", opcoes: ["6", "12", "4"], img: "🎈" },
+            { txt: "A pizza tem 8 fatias para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 pratos. Quantas fatias leva cada prato?", respCerta: "4", opcoes: ["4", "8", "6"], img: "🍕" },
+            { txt: "O Dinis tem 5 carros azuis. Os vermelhos são o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos são os vermelhos?", respCerta: "10", opcoes: ["10", "5", "8"], img: "🏎️" },
+            { txt: "A Inês tinha 20 moedas, mas gastou a <strong><span class='letra-verde'>METADE</strong></span>. Quantas moedas gastou?", respCerta: "10", opcoes: ["10", "20", "5"], img: "🪙" },
+            { txt: "Há 10 cerejas para colocar em 2 taças <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantas ficam em cada taça?", respCerta: "5", opcoes: ["5", "10", "4"], img: "🍒" },
+            { txt: "Num formigueiro há 9 formigas. No outro há o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas há no outro?", respCerta: "18", opcoes: ["18", "9", "12"], img: "🐜" },
+            { txt: "A árvore tinha 14 folhas amarelas. O vento levou a <strong><span class='letra-verde'>METADE</strong></span>. Quantas levou?", respCerta: "7", opcoes: ["7", "14", "6"], img: "🍂" },
+            { txt: "A professora tem 6 livros para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 alunos. Quantos livros leva cada aluno?", respCerta: "3", opcoes: ["3", "6", "2"], img: "📚" },
+            { txt: "A Maria colou 10 estrelas. A sua amiga colou o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas colou a amiga?", respCerta: "20", opcoes: ["20", "10", "15"], img: "⭐" },
+            { txt: "O construtor usou 16 blocos. O seu ajudante usou a <strong><span class='letra-verde'>METADE</strong></span>. Quantos usou o ajudante?", respCerta: "8", opcoes: ["8", "16", "4"], img: "🧱" },
+            { txt: "O pai comprou 4 bolas de gelado para 2 cones <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantas bolas leva cada cone?", respCerta: "2", opcoes: ["2", "4", "1"], img: "🍦" },
+            { txt: "A Sofia apanhou 11 conchas. A irmã apanhou o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas apanhou a irmã?", respCerta: "22", opcoes: ["22", "11", "15"], img: "🐚" },
+            { txt: "O bolo leva 18 morangos. A tarte leva a <strong><span class='letra-verde'>METADE</strong></span>. Quantos morangos leva a tarte?", respCerta: "9", opcoes: ["9", "18", "8"], img: "🍓" },
+            { txt: "Há 20 pacotes de sumo para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 mesas. Quantos ficam em cada mesa?", respCerta: "10", opcoes: ["10", "20", "5"], img: "🧃" },
+            { txt: "O canteiro tem 12 tulipas. O vizinho plantou o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantas plantou o vizinho?", respCerta: "24", opcoes: ["24", "12", "20"], img: "🌷" },
+            { txt: "A mãe comprou 2 croissants. O filho comeu a <strong><span class='letra-verde'>METADE</strong></span> do total. Quantos croissants comeu?", respCerta: "1", opcoes: ["1", "2", "3"], img: "🥐" },
+            { txt: "O cozinheiro tem 12 ovos para fazer 2 bolos <strong><span class='letra-verde'>IGUAIS</strong></span>. Quantos ovos leva cada bolo?", respCerta: "6", opcoes: ["6", "12", "4"], img: "🥚" },
+            { txt: "A galinha castanha tem 6 pintainhos. A branca tem o <strong><span class='letra-verde'>DOBRO</strong></span>. Quantos tem a branca?", respCerta: "12", opcoes: ["12", "6", "9"], img: "🐥" },
+            { txt: "O Miguel comprou 8 gomas. Deu a <strong><span class='letra-verde'>METADE</strong></span> ao amigo. Quantas deu?", respCerta: "4", opcoes: ["4", "8", "2"], img: "🍬" },
+            { txt: "O pomar tem 14 pêras para <strong><span class='letra-verde'>DIVIDIR</strong></span> por 2 cestos. Quantas pêras vão para cada cesto?", respCerta: "7", opcoes: ["7", "14", "8"], img: "🍐" },
+            { txt: "Eu vi 1 avião no céu. O piloto viu o <strong><span class='letra-verde'>DOBRO</strong></span> no aeroporto. Quantos viu o piloto?", respCerta: "2", opcoes: ["2", "1", "4"], img: "✈️" },
+            { txt: "A Carolina tem 4 bonecas. A Filipa tem a <strong><span class='letra-verde'>METADE</strong></span>. Quantas tem a Filipa?", respCerta: "2", opcoes: ["2", "4", "1"], img: "🧸" },
+		    { txt: "A formiga carregou 10 folhas. O caracol carregou <strong><span class='letra-verde'>METADE</strong></span>. Quantas carregou o caracol?", respCerta: "5", opcoes:["5", "10", "20"], img: "🐌" }
+        ]
+    };
+
+    // =========================================
+    // VARIÁVEIS DE JOGO
+    // =========================================
+    let jogoAtual = '';
+    let rondaAtual = 1;
+    let exercicioAtual = 1;
+    let errosTotais = 0;
+    let errosRonda = 0;
+    let exerciciosDaRonda =[];
+
+    // =========================================
+    // LÓGICA PRINCIPAL
+    // =========================================
+    function iniciarJogo(tipo) {
+        jogoAtual = tipo;
+        rondaAtual = 1;
+        errosTotais = 0;
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        exercicioAtual = 1;
+        errosRonda = 0;
+        
+        // Baralhar o banco do jogo atual e apanhar 5 (evita repetições)
+        let pool =[...BANCO_DE_PROBLEMAS[jogoAtual]];
+        pool = pool.sort(() => Math.random() - 0.5);
+        exerciciosDaRonda = pool.slice(0, 5); 
+
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararExercicio();
+    }
+
+    function avancarRonda() {
+        rondaAtual++;
+        prepararRonda();
+    }
+
+    function prepararExercicio() {
+        pararVoz();
+        const areaJogo = document.getElementById('area-jogo');
+        areaJogo.innerHTML = ''; // Limpa a área
+        atualizarPlacarUI();
+
+        const problema = exerciciosDaRonda[exercicioAtual - 1];
+
+        // 1. Cria a Caixa do Problema (Comum a todos)
+        const caixaHTML = `
+            <div class="caixa-problema">
+                <div class="imagem-problema">${problema.img}</div>
+                <div class="texto-problema">${problema.txt}</div>
+                <button class="btn-ler" onclick="lerTextoGeral('${problema.txt.replace(/'/g, "\\'")}', this)">🔊</button>
+            </div>
+        `;
+        areaJogo.innerHTML += caixaHTML;
+
+        // 2. Injeta a Mecânica consoante o Jogo
+        if (jogoAtual === 'detetive') {
+            areaJogo.innerHTML += `
+                <div class="equacao-detetive">
+                    <span>${problema.n1}</span>
+                    <div class="caixa-misterio">?</div>
+                    <span>${problema.n2}</span>
+                    <span>=</span>
+                    <span>${problema.res}</span>
+                </div>
+                <div class="opcoes-resposta">
+                    <button class="btn-resposta" onclick="validarResposta('+')">➕ Mais (+)</button>
+                    <button class="btn-resposta" onclick="validarResposta('-')">➖ Menos (-)</button>
+                    <button class="btn-resposta" onclick="validarResposta('x')">✖️ Vezes (x)</button>
+                </div>
+            `;
+        } else {
+            // Loja, Máquina e Quinta usam botões de Múltipla Escolha Baralhados
+            let opcoes = [...problema.opcoes].sort(() => Math.random() - 0.5);
+            let botoesHTML = '<div class="opcoes-resposta">';
+            opcoes.forEach(op => {
+                botoesHTML += `<button class="btn-resposta" onclick="validarResposta('${op}')">${op}</button>`;
+            });
+            botoesHTML += '</div>';
+            areaJogo.innerHTML += botoesHTML;
+        }
+    }
+
+    function validarResposta(respostaDada) {
+        pararVoz(); // Cala ao responder
+        const problema = exerciciosDaRonda[exercicioAtual - 1];
+        
+        if (respostaDada === problema.respCerta) {
+            tocarSom('acerto');
+            showToast("Excelente! Acertaste!", false);
+            
+            setTimeout(() => {
+                exercicioAtual++;
+                if (exercicioAtual > 5) {
+                    finalizarRonda();
+                } else {
+                    prepararExercicio();
+                }
+            }, 1000);
+        } else {
+            tocarSom('erro');
+            errosRonda++;
+            errosTotais++;
+            document.getElementById('val-erros').textContent = errosTotais;
+            showToast("Ops! Tenta de novo.", true);
+        }
+    }
+
+    function finalizarRonda() {
+        if (rondaAtual === 2) {
+            document.getElementById('progress-fill').style.width = `100%`;
+            document.getElementById('final-erros').textContent = errosTotais;
+            mostrarEcra('ecra-fim');
+            tocarSom('vitoria');
+            lancarConfetis();
+        } else {
+            document.getElementById('transicao-erros').textContent = errosRonda;
+            tocarSom('vitoria');
+            mostrarEcra('ecra-transicao');
+        }
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = rondaAtual;
+        document.getElementById('val-progresso').textContent = exercicioAtual;
+        
+        let perc = (((rondaAtual - 1) * 5) + (exercicioAtual - 1)) / 10 * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function voltarAoMenu() {
+        pararVoz();
+        mostrarEcra('ecra-selecao');
+    }
+
+    // =========================================
+    // 🔊 TEXT TO SPEECH (SISTEMA DE VOZ)
+    // =========================================
+    const synth = window.speechSynthesis;
+    let atualUtterance = null;
+
+    function lerTextoGeral(texto, btnElement) {
+        if (synth.speaking) synth.cancel(); // Pára a voz anterior se clicar de novo
+        
+        atualUtterance = new SpeechSynthesisUtterance(texto);
+        atualUtterance.lang = 'pt-PT'; // Sotaque de Portugal
+        atualUtterance.rate = 0.9;     // Leitura calma e pausada
+        
+        atualUtterance.onstart = () => btnElement.classList.add('falando');
+        atualUtterance.onend = () => btnElement.classList.remove('falando');
+        
+        synth.speak(atualUtterance);
+    }
+
+    function pararVoz() {
+        if (synth.speaking) synth.cancel();
+    }
+
+    // =========================================
+    // EFEITOS SONOROS (WEB AUDIO API) E VISUAIS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; 
+            osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('cartao-jogo');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = '-20px';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    function limparConfetis() { document.querySelectorAll('.confetti').forEach(c => c.remove()); }
+
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>

@@ -34,6 +34,7 @@ const todosOsJogos =[
 	{ nome: "O Monstro Guloso", icone: "icones/comparar.png", link: "mat/comparar/", cat: "mat" },
 	{ nome: "Construtor de Números", icone: "icones/construtor_numeros.png", link: "mat/construtor-numeros/", cat: "mat" },
 	{ nome: "O Trator MAB", icone: "icones/trator_mab.png", link: "mat/trator-mab/", cat: "mat" },
+	{ nome: "Problemas Mágicos", icone: "icones/problemas_magicos.png", link: "mat/problemas-magicos/", cat: "mat" },
    	
 	
 	
