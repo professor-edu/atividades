@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O Monstro Guloso 🍪</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+			--cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-2ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 30px 20px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+		.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; margin-bottom: 10px; opacity: 0; transform: translateY(-10px); transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateY(0); }
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; text-transform: uppercase;}
+        .btn-acao:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent;}
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE: O MONSTRO GULOSO
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; position: relative; background: transparent; border: none; padding: 10px;
+        }
+
+        /* Ecrã de Introdução */
+        .intro-box {
+            background: white; border: 4px solid var(--azul-vibrante); border-radius: 25px;
+            padding: 30px; max-width: 600px; text-align: center; margin-bottom: 20px;
+            box-shadow: 0 8px 0 var(--azul-vibrante);
+        }
+        .intro-text { font-size: 1.2rem; color: var(--text-main); font-weight: 500; line-height: 1.5; margin-bottom: 25px; }
+        .mini-cena { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; font-size: 2rem; font-weight: 900; color: var(--azul-escuro); }
+
+        /* Blocos do Jogo */
+        .arena-monstro {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            gap: 20px; margin-bottom: 40px; width: 100%; max-width: 700px;
+        }
+        
+        .bloco-num {
+		  background: radial-gradient(circle at top left, #f7c873, #c68642);
+		  border: 4px solid #8b5a2b;
+		  border-radius: 50%;
+		  width: 130px;
+		  height: 130px;
+	      position: relative;
+		  z-index: 1;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+	      
+		
+		  color: #ffffff;
+		  text-shadow:
+		  2px 2px 0 #8b5a2b,
+		  -2px 2px 0 #8b5a2b,
+		  2px -2px 0 #8b5a2b,
+		  -2px -2px 0 #8b5a2b;
+
+
+		  font-size: 2.2rem;
+		  font-weight: 900;
+		  color: #fff;
+
+		  box-shadow:
+			inset -6px -6px 0 rgba(0, 0, 0, 0.15),
+			inset 6px 6px 0 rgba(255, 255, 255, 0.3),
+			0 6px 0 #8b5a2b;
+
+		  position: relative;
+		}
+		
+		.bloco-num span {
+		  position: relative;
+		  z-index: 2; /* número SEMPRE por cima */
+		  white-space: nowrap;
+		}
+		
+		.bloco-num.conta span {
+			font-size: 0.7em;
+		}
+		
+		.bloco-num .num {
+    font-size: 0.7em;
+}
+		
+		.bloco-num .op {
+			margin: 0 8px;
+			font-size: 0.7em;
+		}
+		
+		.bloco-num::before,
+		.bloco-num::after {
+		  content: '';
+		  position: absolute;
+		  background: #4b2e16;
+		  border-radius: 50%;
+		  opacity: 0.8;
+		  z-index: 1;
+		  pointer-events: none;
+		}
+
+		.bloco-num::before {
+		  width: 10px;
+		  height: 10px;
+		  top: 25%;
+		  left: 30%;
+		  box-shadow:
+			30px 20px 0 #4b2e16,
+			-20px 45px 0 #4b2e16,
+			40px 60px 0 #4b2e16;
+		}
+
+		.bloco-num::after {
+		  width: 8px;
+		  height: 8px;
+		  top: 55%;
+		  left: 55%;
+		  box-shadow:
+			-35px -20px 0 #4b2e16,
+			20px -30px 0 #4b2e16;
+		}
+
+
+        .bloco-centro {
+            width: 90px; height: 90px; border: 4px dashed #a4b0be; border-radius: 20px;
+            background: #f1f2f6; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.3s;
+        }
+        .bloco-centro.sucesso { border-style: solid; border-color: #2ed573; background: #eafff5; transform: scale(1.1); box-shadow: 0 6px 0 #2ed573;}
+
+		.info-monstro {
+			  display: flex;
+			  align-items: center;
+			  gap: 10px;
+			  background: #fff9c4;
+			  border: 3px solid #fbc531;
+			  color: #b18500;
+			  padding: 12px 18px;
+			  border-radius: 18px;
+			  font-weight: 700;
+			  font-size: 1.05rem;
+			  margin-bottom: 15px;
+			  box-shadow: 0 5px 0 #fbc531;
+			  max-width: 700px;
+			}
+
+			.info-icone {
+			  font-size: 1.4rem;
+			  flex-shrink: 0;
+			}
+
+			.info-texto {
+			  line-height: 1.3;
+			}
+
+
+
+        /* Botoes e Monstro (CSS Puro) */
+        .opcoes-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 500px; }
+        
+        .btn-opcao {
+            background: white; border: 4px solid var(--azul-vibrante); border-radius: 20px;
+            width: 90px; height: 90px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 6px 0 var(--azul-vibrante); transition: 0.2s; touch-action: manipulation;
+        }
+        @media (hover: hover) { .btn-opcao:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--azul-vibrante); filter: brightness(1.05);} }
+        .btn-opcao:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .btn-opcao:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: 0 6px 0 var(--azul-vibrante); filter: grayscale(100%);}
+
+        /* O Monstro CSS - Base (Pac-Man shape) */
+        .monstro {
+            width: 0; height: 0; border-radius: 50%; border: 24px solid #ff9f43; position: relative; transition: all 0.2s;
+        }
+        /* Olho do monstro */
+        .monstro::after { content: ''; position: absolute; width: 8px; height: 8px; background: #2d3436; border-radius: 50%; top: -16px; }
+
+        /* Sinal > (Monstro virado para a esquerda para comer o número maior à esquerda) */
+        .monstro.esq { border-left-color: transparent; }
+        .monstro.esq::after { left: -6px; }
+
+        /* Sinal < (Monstro virado para a direita para comer o número maior à direita) */
+        .monstro.dir { border-right-color: transparent; }
+        .monstro.dir::after { right: -6px; }
+
+        /* Símbolo Igual */
+        .sinal-igual { font-size: 3.5rem; font-weight: 900; color: #ff9f43; line-height: 1;}
+
+        /* Animações de "Mastigar" */
+        @keyframes chompEsq { 0%, 100% { border-left-color: transparent; } 50% { border-left-color: #ff9f43; } }
+        @keyframes chompDir { 0%, 100% { border-right-color: transparent; } 50% { border-right-color: #ff9f43; } }
+        .monstro.esq.animar { animation: chompEsq 0.3s infinite; }
+        .monstro.dir.animar { animation: chompDir 0.3s infinite; }
+
+        /* Feedback entre Rondas */
+        .overlay-nivel {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); z-index: 50; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 20px; animation: fadeIn 0.3s;
+        }
+        .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; }
+        .overlay-nivel p { font-size: 1.2rem; color: var(--text-main); font-weight: bold; text-align: center; padding: 0 20px;}
+
+        /* Classe de DICA (Faz o número maior saltar e brilhar) */
+        .dica-destaque {
+            animation: dicaJump 1s infinite;
+            border-color: #fbc531 !important;
+            box-shadow: 0 0 20px rgba(251, 197, 49, 0.6), 0 6px 0 #fbc531 !important;
+            color: #b18500 !important;
+        }
+        @keyframes dicaJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .confetti { position: absolute; width: 10px; height: 10px; z-index: 10; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(400px) rotate(360deg); opacity: 0; } }
+
+        @media (max-width: 500px) {
+            .bloco-num {
+			  width: 90px;
+			  height: 90px;
+			  font-size: 1.6rem;
+			}
+            .bloco-centro { width: 60px; height: 60px; border-width: 3px;}
+            .btn-opcao { width: 70px; height: 70px; }
+            .monstro { border-width: 18px; }
+            .monstro::after { width: 6px; height: 6px; top: -12px; }
+            .sinal-igual { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>O Monstro Guloso 🍪</h1>
+        <div class="subtitulo">Aprende a comparar números (<, >, =)</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- ECRÃ DE SELEÇÃO / INTRO -->
+        <div id="ecra-selecao" class="ecra">
+            
+            <div class="intro-box">
+                <div class="mini-cena">
+                    <div>10</div>
+                    <!-- O Monstro na intro vira à direita (sinal > ) para comer o 10 -->
+                    <div class="monstro esq animar"></div> 
+                    <div>5</div>
+                </div>
+                <p class="intro-text">
+                    O Monstro Guloso está sempre com muita fome! Por isso, ele abre sempre a boca para tentar comer o <strong>número maior</strong> de 🍪<br><br>
+                    Ajuda o Monstro a escolher o lanche certo colocando o sinal correto. Se forem iguais, usa o sinal (=).
+                </p>
+                <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">COMEÇAR DESAFIO 🚀</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">3</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Mensagem de aviso entra aqui!</div>
+			
+			
+			<div class="info-monstro">
+				  <span class="info-icone">ℹ️</span>
+				  <span class="info-texto">O monstro comilão abre a boca para a bolacha que tem mais!</span>
+				</div>
+			
+			
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="overlay-nivel" id="overlay-nivel">
+                    <h2>🎉 Subiste de Nível!</h2>
+                    <p id="texto-nivel">O Monstro está preparado para números maiores!</p>
+                </div>
+				
+				
+				
+				
+                <div class="arena-monstro">
+                    <div class="bloco-num" id="bloco-esq"></div>
+                    <div class="bloco-centro" id="bloco-centro"></div>
+                    <div class="bloco-num" id="bloco-dir"></div>
+                </div>
+
+                <!-- Botões: Maior(>), Igual(=), Menor(<) -->
+                <div class="opcoes-container" id="opcoes-box">
+                    <button class="btn-opcao" id="btn-maior" onclick="verificarResposta('>')">
+                        <div class="monstro esq"></div> <!-- Abre para a esquerda -->
+                    </button>
+                    
+                    <button class="btn-opcao" id="btn-igual" onclick="verificarResposta('=')">
+                        <div class="sinal-igual">=</div>
+                    </button>
+                    
+                    <button class="btn-opcao" id="btn-menor" onclick="verificarResposta('<')">
+                        <div class="monstro dir"></div> <!-- Abre para a direita -->
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                O Monstro ficou de barriga cheia!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // =========================================
+    // LÓGICA DO JOGO "O MONSTRO GULOSO"
+    // =========================================
+    let rondaAtual = 1;
+    let totalRondas = 3;
+    let exPorRonda = 7;
+    let exercicioGlobal = 0; 
+    let errosTotais = 0;
+    
+    let eqAtual = null; // { esqHTML, dirHTML, valEsq, valDir, respCerta }
+    let aAguardarAnimacao = false;
+
+    function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function gerarExercicio(ronda) {
+        let esqHTML, dirHTML, valEsq, valDir;
+
+        if (ronda === 1) {
+            // Ronda 1: Comparação direta até 100
+            valEsq = rnd(10, 99);
+            valDir = rnd(10, 99);
+            if (Math.random() > 0.85) valDir = valEsq; // Hipótese de serem iguais
+            
+            esqHTML = valEsq.toString();
+            dirHTML = valDir.toString();
+        } 
+        else if (ronda === 2) {
+            // Ronda 2: Até 1000 (Com alguns números "traiçoeiros" que parecem iguais)
+            let base = rnd(1, 9);
+            let dec = rnd(0, 9);
+            let uni = rnd(1, 9);
+            
+            // Números invertidos para treinar a atenção (ex: 305 vs 350)
+            let numTraicoeiro1 = base * 100 + dec * 10 + uni; 
+            let numTraicoeiro2 = base * 100 + uni * 10 + dec; 
+
+            if(Math.random() > 0.6) {
+                // Modo Traiçoeiro
+                valEsq = numTraicoeiro1;
+                valDir = numTraicoeiro2;
+            } else {
+                // Modo Normal grandes
+                valEsq = rnd(100, 999);
+                valDir = rnd(100, 999);
+            }
+            if (Math.random() > 0.85) valDir = valEsq;
+
+            esqHTML = valEsq.toString();
+            dirHTML = valDir.toString();
+        }
+        else {
+            // Ronda 3: Contas dos dois lados com números "redondos" (dezenas exatas)
+            // Sorteia os valores totais de cada lado primeiro
+            let totalEsq = rnd(5, 50) * 10; // 50 a 500
+            let totalDir = rnd(5, 50) * 10; 
+            if(Math.random() > 0.75) totalDir = totalEsq; // Hipótese de serem iguais
+
+            valEsq = totalEsq;
+            valDir = totalDir;
+
+            // Função interna que gera a conta a partir do total pretendido
+            const criarConta = (alvo) => {
+                if(Math.random() > 0.5) {
+                    // Adição (a + b = alvo)
+                    let a = rnd(1, (alvo/10)-1) * 10;
+                    if(a === 0 || a >= alvo) a = alvo > 10 ? 10 : alvo;
+                    let b = alvo - a;
+                    return `${a} + ${b}`;
+                } else {
+                    // Subtração (a - b = alvo)
+                    let b = rnd(1, 10) * 10; // Valor a subtrair
+                    let a = alvo + b;
+                    return `${a} - ${b}`;
+                }
+            };
+
+            esqHTML = criarConta(valEsq);
+            dirHTML = criarConta(valDir);
+        }
+
+        // Descobrir qual o sinal correto
+        let respCerta;
+        if (valEsq > valDir) respCerta = '>';
+        else if (valEsq < valDir) respCerta = '<';
+        else respCerta = '=';
+
+        return { esqHTML, dirHTML, valEsq, valDir, respCerta };
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = rondaAtual;
+        document.getElementById('val-total-rondas').textContent = totalRondas;
+        
+        let perc = (exercicioGlobal / (totalRondas * exPorRonda)) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function iniciarJogo() {
+        rondaAtual = 1;
+        exercicioGlobal = 0;
+        errosTotais = 0;
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararExercicio();
+    }
+
+    function prepararExercicio() {
+		aAguardarAnimacao = false;
+		document.getElementById('btn-dica').classList.remove('esgotada');
+			
+		// Reset Visuais
+		document.getElementById('bloco-centro').innerHTML = '';
+		document.getElementById('bloco-centro').classList.remove('sucesso', 'error-shake');
+		document.getElementById('bloco-esq').classList.remove('dica-destaque');
+		document.getElementById('bloco-dir').classList.remove('dica-destaque');
+
+		// 🔹 NOVO — limpar estado visual de contas
+		document.getElementById('bloco-esq').classList.remove('conta');
+		document.getElementById('bloco-dir').classList.remove('conta');
+
+		// Reativar botões
+		document.querySelectorAll('.btn-opcao').forEach(b => b.disabled = false);
+
+		// Gerar
+		eqAtual = gerarExercicio(rondaAtual);
+			
+		// 🔹 NOVO — se for ronda 3, marcar como conta
+		if (rondaAtual === 3) {
+			document.getElementById('bloco-esq').classList.add('conta');
+			document.getElementById('bloco-dir').classList.add('conta');
+		}
+
+		// Preencher
+		document.getElementById('bloco-esq').innerHTML = `<span>${eqAtual.esqHTML}</span>`;
+		document.getElementById('bloco-dir').innerHTML = `<span>${eqAtual.dirHTML}</span>`;
+	}
+
+    function usarDica() {
+        const btn = document.getElementById('btn-dica');
+        if(btn.classList.contains('esgotada') || aAguardarAnimacao) return;
+        
+        btn.classList.add('esgotada');
+        
+        // A Dica faz o bloco com o número MAIOR dar saltinhos amarelos
+        // Se forem iguais, saltam os dois.
+        if (eqAtual.valEsq > eqAtual.valDir) {
+            document.getElementById('bloco-esq').classList.add('dica-destaque');
+        } else if (eqAtual.valEsq < eqAtual.valDir) {
+            document.getElementById('bloco-dir').classList.add('dica-destaque');
+        } else {
+            document.getElementById('bloco-esq').classList.add('dica-destaque');
+            document.getElementById('bloco-dir').classList.add('dica-destaque');
+        }
+    }
+
+    function verificarResposta(resposta) {
+        if(aAguardarAnimacao) return;
+        aAguardarAnimacao = true;
+
+        const centro = document.getElementById('bloco-centro');
+
+        if(resposta === eqAtual.respCerta) {
+            // ACERTOU
+            centro.classList.add('sucesso');
+			tocarSom('acerto');
+            document.getElementById('bloco-esq').classList.remove('dica-destaque');
+            document.getElementById('bloco-dir').classList.remove('dica-destaque');
+
+            // Colocar a imagem escolhida no centro
+            if(resposta === '>') {
+                centro.innerHTML = '<div class="monstro esq animar"></div>';
+            } else if (resposta === '<') {
+                centro.innerHTML = '<div class="monstro dir animar"></div>';
+            } else {
+                centro.innerHTML = '<div class="sinal-igual">=</div>';
+            }
+            
+            setTimeout(() => avancar(), 1500);
+
+        } else {
+            // ERROU
+            errosTotais++;
+            atualizarPlacarUI();
+            
+            centro.classList.add('error-shake');
+			tocarSom('erro');
+            showToast("Atenção! O Monstro quer comer o número maior!", true);
+
+            // Desativa temporariamente o botão errado
+            if(resposta === '>') document.getElementById('btn-maior').disabled = true;
+            if(resposta === '<') document.getElementById('btn-menor').disabled = true;
+            if(resposta === '=') document.getElementById('btn-igual').disabled = true;
+
+            setTimeout(() => {
+                centro.classList.remove('error-shake');
+                aAguardarAnimacao = false;
+            }, 600);
+        }
+    }
+
+    function avancar() {
+        exercicioGlobal++;
+
+        if (exercicioGlobal >= totalRondas * exPorRonda) {
+            atualizarPlacarUI(); 
+            finalizarJogo();
+        } 
+        else if (exercicioGlobal % exPorRonda === 0) {
+            rondaAtual++;
+			somVitoriaRonda();			
+            atualizarPlacarUI(); 
+            
+            let textoNivel = document.getElementById('texto-nivel');
+            if(rondaAtual === 2) textoNivel.textContent = "O Monstro vai comer centenas até 1000!";
+            if(rondaAtual === 3) textoNivel.textContent = "Uau! Agora tens de fazer as contas primeiro!";
+
+            document.getElementById('overlay-nivel').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('overlay-nivel').style.display = 'none';
+                prepararExercicio();
+            }, 2500);
+        } 
+        else {
+            atualizarPlacarUI(); 
+            prepararExercicio();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+		tocarSom('vitoria');
+        mostrarEcra('ecra-fim');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() {
+        document.querySelectorAll('.confetti').forEach(c => c.remove());
+        iniciarJogo();
+    }
+
+    function voltarAoMenu() {
+        mostrarEcra('ecra-selecao');
+    }
+
+    // --- Sistema de Confetis confinado ao container ---
+	
+	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+	
+	function somVitoriaRonda() {
+		const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+		const notas = [
+			{ freq: 660, dur: 0.18 }, // mi
+			{ freq: 880, dur: 0.18 }, // lá
+			{ freq: 1046, dur: 0.25 } // dó agudo
+		];
+
+		let tempo = ctx.currentTime;
+
+		notas.forEach(nota => {
+			const osc = ctx.createOscillator();
+			const gain = ctx.createGain();
+
+			osc.type = 'triangle'; // mais corpo que sine
+			osc.frequency.value = nota.freq;
+
+			osc.connect(gain);
+			gain.connect(ctx.destination);
+
+			gain.gain.setValueAtTime(0.0001, tempo);
+			gain.gain.exponentialRampToValueAtTime(0.25, tempo + 0.05);
+			gain.gain.exponentialRampToValueAtTime(0.0001, tempo + nota.dur);
+
+			osc.start(tempo);
+			osc.stop(tempo + nota.dur);
+
+			tempo += nota.dur * 0.9;
+		});
+	}
+	
+    function lancarConfetis() {
+        const container = document.getElementById('cartao-jogo');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = rnd(5, 95) + '%';
+            conf.style.top = rnd(-20, -5) + '%';
+            conf.style.backgroundColor = colors[rnd(0, colors.length - 1)];
+            conf.style.animationDuration = rnd(2, 4) + 's';
+            conf.style.animationDelay = (rnd(0, 20) / 10) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
