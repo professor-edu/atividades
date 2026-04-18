@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O Trator MAB 🚜</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+			--cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-em: #51cf66;
+            --cor-mat: #4dabf7;
+            
+            /* Cores MAB */
+            --mab-unidade: #fde047; /* Amarelo */
+            --mab-dezena: #f97316;  /* Laranja */
+            --mab-centena: #3b82f6; /* Azul */
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 20px 10px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        #ecra-inicial { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900;}
+
+        /* STATUS BAR JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+		.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; margin-bottom: 10px; opacity: 0; transform: translateY(-10px); transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE (O TRATOR MAB)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            width: 100%; flex: 1; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px;
+            padding: 15px; position: relative; gap: 10px; overflow: hidden;
+        }
+
+        .painel-alvo { background: white; border: 4px solid var(--azul-escuro); padding: 10px 30px; border-radius: 15px; font-size: 1.5rem; font-weight: 900; color: var(--text-main); box-shadow: 0 4px 0 var(--azul-escuro); z-index: 5;}
+        .painel-alvo span { color: var(--cor-mat); font-size: 2.2rem; display: inline-block; min-width: 60px;}
+
+        /* A ESTRADA E O TRATOR */
+        .estrada-container {
+            width: 100%; height: 260px; position: relative;
+            background: linear-gradient(to bottom, transparent 75%, #d1d5db 75%, #9ca3af 100%);
+            border-radius: 10px; flex: 1; display: flex; justify-content: center; overflow: hidden;
+        }
+
+        .trator-grupo {
+            display: flex; align-items: flex-end; position: absolute; left: 50%; bottom: 10px; z-index: 5;
+        }
+        .trator-grupo.sair { transform: translateX(100vw); transition: transform 1.5s ease-in; }
+        .trator-grupo.escondido { transform: translateX(-150vw); transition: none; }
+        .trator-grupo.entrar { transform: translateX(-50%); transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        .trator-svg { width: 140px; height: 120px; margin-right: -15px; z-index: 2; position: relative;}
+        
+        .atrelado-svg { 
+            width: 320px; height: 120px; position: relative; display: flex; justify-content: center; align-items: flex-end; 
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="80" width="320" height="15" fill="%23475569" rx="5"/><circle cx="50" cy="105" r="15" fill="%231e293b"/><circle cx="50" cy="105" r="8" fill="%2394a3b8"/><circle cx="270" cy="105" r="15" fill="%231e293b"/><circle cx="270" cy="105" r="8" fill="%2394a3b8"/></svg>') no-repeat bottom center; 
+            background-size: contain; padding-bottom: 40px;
+        }
+        
+        /* A NOVA GESTÃO DE ESPAÇO PARA ACABAR COM A SOBREPOSIÇÃO */
+        .carga-conteudo { 
+            display: flex; justify-content: flex-end; align-items: flex-end; 
+            width: 300px; height: 150px; position: absolute; bottom: 40px; right: 15px; gap: 20px;
+            transition: transform 0.3s; transform-origin: bottom right;
+        }
+
+        /* 3 Colunas perfeitamente isoladas para que nunca se choquem */
+        #col-centenas { position: relative; width: 85px; height: 100%; }
+        #col-dezenas { display: flex; align-items: flex-end; gap: 2px; height: 100%; flex-shrink: 0;} 
+        #col-unidades { display: flex; flex-direction: column-reverse; align-items: center; gap: 2px; height: 100%; flex-shrink: 0;}
+
+        @media (max-width: 480px){
+            .trator-svg { width: 100px; height: 90px; margin-right: -10px;}
+            .atrelado-svg { width: 250px; height: 90px; padding-bottom: 30px;}
+            /* Escala o conteúdo do atrelado em ecrãs pequenos para não rebentar os limites */
+            .carga-conteudo { transform: scale(0.7); right: 5px; bottom: 30px;} 
+            .painel-alvo { font-size: 1.2rem; padding: 8px 20px;}
+            .painel-alvo span { font-size: 1.8rem; }
+            .estrada-container { height: 210px; }
+        }
+
+        /* PEÇAS MAB REDESENHADAS */
+        .mab-peca { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        
+        /* Unidades - Agora são empilhadas na coluna pelo Flexbox */
+        .mab-1 { width: 14px; height: 14px; background: var(--mab-unidade); border: 1px solid #ca8a04; border-radius: 2px; box-shadow: 1px 1px 2px rgba(0,0,0,0.2);}
+        
+        /* Dezenas - Lado a Lado */
+        .mab-10 { width: 14px; height: 80px; background: repeating-linear-gradient(to bottom, transparent, transparent 7px, rgba(0,0,0,0.2) 7px, rgba(0,0,0,0.2) 8px), var(--mab-dezena); border: 1px solid #c2410c; border-radius: 2px; box-shadow: 1px 1px 2px rgba(0,0,0,0.2);}
+        
+        /* Centenas - Placas finas vistas de frente com profundidade! (Posicionamento Absoluto SÓ dentro da sua coluna) */
+        .mab-100-flat { 
+            position: absolute; 
+            width: 65px; height: 10px; 
+            background: repeating-linear-gradient(to right, transparent, transparent 5.5px, rgba(0,0,0,0.3) 5.5px, rgba(0,0,0,0.3) 6.5px), var(--mab-centena); 
+            border: 1px solid #1e3a8a; border-radius: 1px;
+            box-shadow: 2px -1px 3px rgba(0,0,0,0.4); /* Sombra mágica que dá a sensação de degrau */
+        }
+
+        /* Centena no botão - Vista de Cima (Para o aluno perceber o que é) */
+        .mab-100-topo {
+            width: 38px; height: 38px; 
+            background: repeating-linear-gradient(to bottom, transparent, transparent 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px), repeating-linear-gradient(to right, transparent, transparent 3px, rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px), var(--mab-centena); 
+            border: 1px solid #1d4ed8; border-radius: 2px;
+        }
+
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+        .convert-flash { animation: convertFlash 0.5s ease; }
+        @keyframes convertFlash { 0%, 100% { filter: brightness(1); transform: scale(1); } 50% { filter: brightness(2); transform: scale(1.1); } }
+
+        /* Controles Base 10 */
+        .painel-controlos { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; z-index: 10;}
+        .btn-mab { 
+            background: white; border: 3px solid #cbd5e1; border-radius: 15px; padding: 10px 20px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; box-shadow: 0 4px 0 #cbd5e1; transition: 0.1s; min-width: 90px; touch-action: manipulation;
+        }
+        .btn-mab:active { transform: translateY(4px); box-shadow: 0 0px 0 #cbd5e1; }
+        .btn-mab .icone-mab { height: 50px; display: flex; align-items: center; justify-content: center; position: relative;}
+        .btn-mab span { font-weight: 900; font-size: 1.2rem; color: var(--text-main);}
+        
+        .btn-mab.unidade:hover { border-color: var(--mab-unidade); }
+        .btn-mab.dezena:hover { border-color: var(--mab-dezena); }
+        .btn-mab.centena:hover { border-color: var(--mab-centena); }
+
+        .botoes-acao { display: flex; gap: 15px; margin-top: 5px; width: 100%; justify-content: center; flex-wrap: wrap;}
+        .btn-limpar { background: #f1f5f9; border: 3px solid #94a3b8; color: #475569; padding: 12px 20px; font-size: 1.1rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #94a3b8; transition: 0.1s;}
+        .btn-limpar:active { transform: translateY(4px); box-shadow: none; }
+        .btn-partir { background: var(--cor-em); border: 3px solid #2b8a3e; color: white; padding: 12px 30px; font-size: 1.3rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #2b8a3e; transition: 0.1s; text-transform: uppercase;}
+        .btn-partir:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Menus / Transições */
+        .intro-box { background: white; padding: 30px; border-radius: 20px; border: 4px solid var(--cor-2ano); max-width: 600px; box-shadow: 0 8px 0 var(--cor-2ano-dark); }
+        .intro-box p { font-size: 1.2rem; color: var(--text-main); font-weight: 500; line-height: 1.5;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; width: 100%; max-width: 300px; transition: 0.2s;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: none; }
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        
+        .confetti { position: absolute; width: 10px; height: 10px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>O Trator MAB 🚜</h1>
+        <div class="subtitulo">Carrega o trator com o Material Base 10 correto!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <div id="ecra-inicial" class="ecra">
+            <div class="intro-box">
+                <h2 class="titulo-menu">Bem-vindo à Carga!</h2>
+                <p>O Trator precisa de transportar blocos do Material Multibásico (MAB).</p>
+                <p>Clica nos botões para adicionares <b>Unidades</b>, <b>Dezenas</b> e <b>Centenas</b> ao atrelado.</p>
+                <p>💡 <i>Dica Mágica: Sabias que se juntares 10 peças iguais, elas transformam-se na peça maior seguinte?</i></p>
+                <button class="btn-acao" onclick="iniciarJogo()">COMEÇAR A CARGA! 🚀</button>
+            </div>
+        </div>
+
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ Ronda <span id="lbl-ronda">1</span> | <span id="val-progresso">1</span>/5</div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Mensagem de aviso entra aqui!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="painel-alvo">Preciso de levar: <span id="num-alvo">---</span></div>
+
+                <div class="estrada-container">
+                    <div class="trator-grupo" id="trator-grupo">
+                        <!-- Atrelado com Carga -->
+                        <div class="atrelado-svg">
+                            <div class="carga-conteudo" id="carga-conteudo">
+                                <div id="col-centenas"></div>
+                                <div id="col-dezenas"></div>
+                                <div id="col-unidades"></div>
+                            </div>
+                        </div>
+                        <!-- SVG Trator Lúdico -->
+                        <svg class="trator-svg" viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="120" y="30" width="10" height="30" fill="#64748b"/>
+                            <path d="M 60 50 L 140 50 C 145 50 148 55 148 60 L 150 80 L 150 90 C 150 95 145 100 140 100 L 20 100 C 15 100 10 95 10 90 L 10 60 Z" fill="#ef4444"/>
+                            <rect x="140" y="60" width="8" height="30" fill="#f8fafc" rx="2"/>
+                            <path d="M 20 50 L 20 10 C 20 5 25 0 30 0 L 70 0 C 75 0 80 5 80 15 L 80 50 Z" fill="#ef4444"/>
+                            <rect x="30" y="10" width="40" height="30" fill="#e0f2fe" rx="5"/>
+                            <circle cx="40" cy="90" r="25" fill="#1e293b"/>
+                            <circle cx="40" cy="90" r="15" fill="#eab308"/>
+                            <circle cx="120" cy="95" r="18" fill="#1e293b"/>
+                            <circle cx="120" cy="95" r="10" fill="#eab308"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="painel-controlos">
+                    <button class="btn-mab unidade" onclick="adicionarPeca('un')">
+                        <div class="icone-mab"><div class="mab-1" style="position:static; animation:none;"></div></div>
+                        <span>+ 1</span>
+                    </button>
+                    <button class="btn-mab dezena" onclick="adicionarPeca('dz')">
+                        <div class="icone-mab"><div class="mab-10" style="position:static; height:45px; animation:none;"></div></div>
+                        <span>+ 10</span>
+                    </button>
+                    <button class="btn-mab centena" onclick="adicionarPeca('ct')">
+                        <div class="icone-mab"><div class="mab-100-topo" style="animation:none;"></div></div>
+                        <span>+ 100</span>
+                    </button>
+                </div>
+
+                <div class="botoes-acao">
+                    <button class="btn-limpar" onclick="limparAtrelado()">🗑️ Limpar</button>
+                    <button class="btn-partir" onclick="validarCarga()">PODE PARTIR! 🚜</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="ecra-transicao" class="ecra">
+            <div class="intro-box">
+                <h2 class="titulo-menu" id="transicao-titulo">Ronda Concluída!</h2>
+                <p id="transicao-texto">Estás a fazer um excelente trabalho de carga.</p>
+                <p>Nesta ronda tiveste <strong id="transicao-erros" style="color:#ff4757">0</strong> erros.</p>
+                <button class="btn-acao" id="btn-prox-ronda" onclick="iniciarRonda(rondaAtual + 1)">PRÓXIMA RONDA ➡️</button>
+            </div>
+        </div>
+
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Cargas Entregues! 🎉</h2>
+            <div class="end-stats">
+                Completaste os 3 níveis do Trator!<br>
+                Erros totais: <strong id="final-erros" style="color:#ff4757">0</strong>.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogoCompleto()">JOGAR DE NOVO 🔄</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA
+    // =========================================
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+    function mostrarEcra(id) { document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        if(isError) toast.classList.add('error-shake');
+        setTimeout(() => { toast.classList.remove('active'); toast.classList.remove('error-shake'); }, 3000);
+    }
+
+    // =========================================
+    // VARIÁVEIS DE JOGO
+    // =========================================
+    let rondaAtual = 1;
+    let totalRondas = 3;
+    let exercicioAtual = 1;
+    let totalExerciciosRonda = 5; 
+    let errosTotais = 0;
+    let errosRonda = 0;
+    let numerosDaRonda =[];
+    let numeroAlvo = 0;
+
+    let carga = { un: 0, dz: 0, ct: 0 };
+    let aAnimar = false;
+
+    // =========================================
+    // LÓGICA DO JOGO "O TRATOR"
+    // =========================================
+
+    function iniciarJogo() {
+        rondaAtual = 1;
+        errosTotais = 0;
+        iniciarRonda(1);
+    }
+
+    function iniciarRonda(ronda) {
+        rondaAtual = ronda;
+        exercicioAtual = 1;
+        errosRonda = 0;
+        gerarBaseDadosRonda(ronda);
+        prepararExercicio();
+        mostrarEcra('ecra-jogo');
+    }
+
+    function prepararExercicio() {
+        numeroAlvo = numerosDaRonda[exercicioAtual - 1];
+        document.getElementById('num-alvo').textContent = numeroAlvo;
+        document.getElementById('btn-dica').classList.remove('esgotada');
+
+        limparAtreladoSilencioso();
+        atualizarPlacarUI();
+
+        const trator = document.getElementById('trator-grupo');
+        trator.className = 'trator-grupo escondido';
+        setTimeout(() => {
+            trator.className = 'trator-grupo entrar';
+            aAnimar = false;
+        }, 50);
+    }
+
+    // Gerador Rigoroso: Garante que NUNCA há números repetidos na mesma ronda
+    function gerarBaseDadosRonda(ronda) {
+        numerosDaRonda =[];
+        let min = 10, max = 99;
+        
+        if (ronda === 1) { min = 10; max = 99; }
+        else if (ronda === 2) { min = 101; max = 499; }
+        else if (ronda === 3) { min = 501; max = 999; }
+
+        while(numerosDaRonda.length < 5) {
+            let num = Math.floor(Math.random() * (max - min + 1)) + min;
+            if(!numerosDaRonda.includes(num)) {
+                numerosDaRonda.push(num);
+            }
+        }
+    }
+
+    // =========================================
+    // MECÂNICA E DESENHO
+    // =========================================
+    function adicionarPeca(tipo) {
+        if (aAnimar) return;
+        
+        if (carga[tipo] >= 9 && tipo === 'ct') {
+            showToast("Atenção: O atrelado não aguenta mais centenas!", true);
+            return;
+        }
+
+        tocarSom('pop');
+        carga[tipo]++;
+        verificarConversoes();
+        desenharCarga();
+    }
+
+    function verificarConversoes() {
+        let converteu = false;
+        if (carga.un >= 10) { carga.un -= 10; carga.dz++; converteu = true; }
+        if (carga.dz >= 10) { carga.dz -= 10; carga.ct++; converteu = true; }
+        
+        if (converteu) {
+            tocarSom('magic');
+            document.getElementById('carga-conteudo').classList.add('convert-flash');
+            setTimeout(() => document.getElementById('carga-conteudo').classList.remove('convert-flash'), 500);
+            verificarConversoes();
+        }
+    }
+
+    function desenharCarga() {
+        const colUn = document.getElementById('col-unidades');
+        const colDz = document.getElementById('col-dezenas');
+        const colCt = document.getElementById('col-centenas');
+
+        colUn.innerHTML = ''; colDz.innerHTML = ''; colCt.innerHTML = '';
+
+        // 1. Centenas: Tábuas finas, empilhadas com ligeiro desvio para a direita (Profundidade!)
+        for(let i=0; i<carga.ct; i++) { 
+            const p = document.createElement('div'); 
+            p.className = 'mab-peca mab-100-flat'; 
+            p.style.bottom = (i * 12) + 'px'; // Degrau para cima
+            p.style.left = (i * 3) + 'px';    // Degrau para a direita
+            p.style.zIndex = 10 - i;          // A placa de baixo fica à frente para não esconder a espessura
+            colCt.appendChild(p); 
+        }
+
+        // 2. Dezenas: Colocadas perfeitamente lado a lado graças ao Flexbox
+        for(let i=0; i<carga.dz; i++) { 
+            const p = document.createElement('div'); 
+            p.className = 'mab-peca mab-10'; 
+            colDz.appendChild(p); 
+        }
+
+        // 3. Unidades: Empilhadas numa linda torre, uma em cima da outra graças ao column-reverse
+        for(let i=0; i<carga.un; i++) { 
+            const p = document.createElement('div'); 
+            p.className = 'mab-peca mab-1'; 
+            colUn.appendChild(p); 
+        }
+    }
+
+    function limparAtreladoSilencioso() {
+        carga = { un: 0, dz: 0, ct: 0 };
+        desenharCarga();
+    }
+
+    function limparAtrelado() {
+        if (aAnimar) return;
+        limparAtreladoSilencioso();
+        tocarSom('pop');
+    }
+
+    function calcularTotalCarga() {
+        return (carga.ct * 100) + (carga.dz * 10) + carga.un;
+    }
+
+    function validarCarga() {
+        if (aAnimar) return;
+        
+        let total = calcularTotalCarga();
+        
+        if (total === numeroAlvo) {
+            aAnimar = true;
+            tocarSom('motor');
+            const trator = document.getElementById('trator-grupo');
+            trator.className = 'trator-grupo sair'; 
+            
+            setTimeout(() => {
+                exercicioAtual++;
+                if (exercicioAtual > totalExerciciosRonda) {
+                    finalizarRonda();
+                } else {
+                    prepararExercicio();
+                }
+            }, 1500); 
+
+        } else {
+            tocarSom('erro');
+            errosRonda++;
+            errosTotais++;
+            document.getElementById('val-erros').textContent = errosTotais;
+            showToast(`Erro! Tens ${total}, mas preciso de ${numeroAlvo}.`, true);
+            limparAtreladoSilencioso();
+        }
+    }
+
+    function finalizarRonda() {
+        if (rondaAtual === totalRondas) {
+            finalizarJogoCompleto();
+        } else {
+            document.getElementById('transicao-titulo').textContent = `Ronda ${rondaAtual} Concluída!`;
+            document.getElementById('transicao-erros').textContent = errosRonda;
+            tocarSom('vitoria');
+            mostrarEcra('ecra-transicao');
+        }
+    }
+
+    function finalizarJogoCompleto() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogoCompleto() {
+        limparConfetis();
+        iniciarJogo();
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('lbl-ronda').textContent = rondaAtual;
+        document.getElementById('val-progresso').textContent = exercicioAtual;
+        
+        let exerciciosGlobais = ((rondaAtual - 1) * 5) + (exercicioAtual - 1);
+        let perc = (exerciciosGlobais / 15) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function usarDica() {
+        if(document.getElementById('btn-dica').classList.contains('esgotada') || aAnimar) return;
+        
+        let c = Math.floor(numeroAlvo / 100);
+        let d = Math.floor((numeroAlvo % 100) / 10);
+        let u = numeroAlvo % 10;
+        
+        let texto = "Dica: ";
+        if(c>0) texto += `${c} Centena(s) `;
+        if(d>0) texto += `${d} Dezena(s) `;
+        if(u>0) texto += `${u} Unidade(s)`;
+
+        showToast(texto);
+        document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function voltarAoMenu() { mostrarEcra('ecra-inicial'); }
+
+    // =========================================
+    // EFEITOS SONOROS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1); 
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'magic') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.linearRampToValueAtTime(1200, agora + 0.3);
+            gain.gain.setValueAtTime(0.2, agora); gain.gain.linearRampToValueAtTime(0.01, agora + 0.4); 
+            osc.start(agora); osc.stop(agora + 0.4);
+        } else if (tipo === 'motor') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); const filter = audioCtx.createBiquadFilter();
+            osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(40, agora); osc.frequency.linearRampToValueAtTime(80, agora + 1.5);
+            filter.type = 'lowpass'; filter.frequency.setValueAtTime(200, agora);
+            gain.gain.setValueAtTime(0.2, agora); gain.gain.linearRampToValueAtTime(0.01, agora + 1.5);
+            osc.start(agora); osc.stop(agora + 1.5);
+        } else if (tipo === 'erro') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('cartao-jogo');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = '-20px';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    function limparConfetis() { document.querySelectorAll('.confetti').forEach(c => c.remove()); }
+
+    window.onload = () => mostrarEcra('ecra-inicial');
+
+</script>
+</body>
+</html>

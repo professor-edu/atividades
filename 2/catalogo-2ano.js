@@ -33,6 +33,7 @@ const todosOsJogos =[
 	{ nome: "Balança da Subtração", icone: "icones/balanca_subtracao.png", link: "mat/balanca-subtracao/", cat: "mat" },
 	{ nome: "O Monstro Guloso", icone: "icones/comparar.png", link: "mat/comparar/", cat: "mat" },
 	{ nome: "Construtor de Números", icone: "icones/construtor_numeros.png", link: "mat/construtor-numeros/", cat: "mat" },
+	{ nome: "O Trator MAB", icone: "icones/trator_mab.png", link: "mat/trator-mab/", cat: "mat" },
    	
 	
 	
