@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Frações Divertidas 🍕</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        /* HEADER E NAVEGAÇÃO */
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 30px 20px; min-height: 350px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; overflow: hidden; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* CAMADA FANTASMA DE CONFETIS - CONFINADOS AO CARTÃO! */
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; box-sizing: border-box; z-index: 5;}
+        #ecra-selecao { display: flex; justify-content: center; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        
+       
+		
+		/* =========================================
+           NOVO ECRÃ INICIAL (LIMPO E RESPONSIVO)
+           ========================================= */		
+		
+        .layout-inicial {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Agora são metades iguais! */
+            gap: 25px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+       /* As duas colunas partilham agora exatamente as mesmas regras */
+        .coluna-esquerda, .coluna-direita {
+            display: grid;
+            gap: 15px;
+            align-items: stretch;
+            align-content: start; /* Garante que os botões começam do topo para baixo */
+        }
+
+        /* O Furacão ou Imagem principal da direita */
+        .cartao-furacao {
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            object-fit: contain;
+        }
+        
+        /* =========================================
+           CARTÕES DAS COLUNAS (Esquerda e Direita)
+           ========================================= */
+        .cartao-horizontal {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background: #ffffff; /* Fundo branco para a borda sobressair bem */
+            border: 4px solid var(--borda-cartao); /* Borda base */
+            border-radius: 20px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            box-sizing: border-box;
+            box-shadow: 0 6px 0 var(--borda-cartao); /* Sombra base */
+            transition: all 0.2s ease;
+        }
+
+        @media (hover: hover) {
+            .cartao-horizontal:hover {
+                transform: translateY(-4px); /* Dá aquele pequeno salto para cima */
+                border-color: var(--cor-mat); /* Muda a borda no hover */
+                box-shadow: 0 10px 0 var(--cor-mat); /* Muda a sombra no hover */
+            }
+        }
+
+        .cartao-horizontal:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 transparent;
+        }
+        
+        .icone {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ffe0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0; 
+        }
+        
+        .texto {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .titulo {
+            font-weight: 900;
+            color: var(--azul-escuro);
+            font-size: 1.2rem;
+        }
+
+        .desc {
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        /* 📱 RESPONSIVIDADE PARA TABLETS E TELEMÓVEIS */
+        @media (max-width: 850px) {
+            .layout-inicial {
+                grid-template-columns: 1fr; /* Empilha as duas colunas: ficam uma por baixo da outra */
+                gap: 20px;
+            }
+            
+            .coluna-direita {
+                order: 1; /* Opcional: Faz com que a imagem/furacão apareça em CIMA dos botões no telemóvel */
+                margin-bottom: 15px;
+            }
+        }
+		
+		
+
+        /* =========================================
+           CARTÃO TRADICIONAL (Centrado em Baixo)
+           ========================================= */
+        .cartao-tradicional {
+            background-color: white; 
+            border: 4px solid var(--cor-2ano); /* Borda amarela do 2º ano */
+            border-radius: 20px; 
+            padding: 20px; 
+            width: 100%; 
+            max-width: 800px; 
+            margin-top: 30px; 
+            cursor: pointer; 
+            box-shadow: 0 6px 0 var(--cor-2ano); /* Sombra amarela */
+            transition: all 0.2s ease; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; 
+            text-align: center;
+        }
+
+        @media (hover: hover) { 
+            .cartao-tradicional:hover { 
+                transform: translateY(-4px); 
+                border-color: var(--cor-mat); /* Muda a borda para azul matemática */
+                box-shadow: 0 10px 0 var(--cor-mat); /* Muda a sombra para azul matemática */
+            } 
+        }
+
+        .cartao-tradicional:active { 
+            transform: translateY(6px); 
+            box-shadow: 0 0px 0 transparent; 
+        }
+
+        .cartao-tradicional .icone-redondo { 
+            font-size: 3rem; 
+            background: #fff0f0; 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+		
+		
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: white; border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover {
+			background-color: #fff9c4; /* Mantém o fundo amarelo clarinho */
+			border-color: #b18500;     /* Muda a borda para amarelo escuro */
+			color: #b18500;            /* Mantém a cor do texto */
+			transform: scale(1.05);    /* Mantém o ligeiro aumento para dar interação */
+		}
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        /* TOAST E ANIMAÇÕES */
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        .elemento-erro-jogo { animation: shakeGame 0.4s ease !important; border-color: var(--cor-erro) !important; color: var(--cor-erro) !important; }
+        @keyframes shakeGame { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DE JOGO DINÂMICA
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1;
+            background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 15px; position: relative;
+        }
+        .enunciado { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 900; color: var(--azul-escuro); margin-bottom: 15px; line-height: 1.5; }
+        .enunciado span { color: var(--cor-erro); }
+        .destaque-monstro { background: #fff200; padding: 5px 20px !important; border-radius: 15px; border: 3px solid var(--azul-escuro); display: inline-flex; align-items: center; margin-top: 5px; box-shadow: 0 4px 0 #eccc68; font-size: 1.2em !important; }
+        .fra-inline { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1; font-size: 1.2em; padding: 0 5px;}
+        .fra-inline span:first-child { border-bottom: 3px solid var(--azul-escuro); padding-bottom: 2px; margin-bottom: 2px;}
+		
+		.btn-furacao {
+			border: 4px solid var(--cor-2ano);
+			box-shadow: 0 6px 0 var(--cor-2ano);
+		}
+
+		@media (hover: hover) {
+			.btn-furacao:hover {
+				border-color: var(--cor-mat);
+				box-shadow: 0 10px 0 var(--cor-mat);
+				transform: translateY(-4px);
+			}
+		}
+		
+
+        /* JOGO 1: ARRASTAR (MONSTRO) */
+        .arrastar-layout { display: flex; width: 100%; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .opcoes-fracao { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; flex: 1; }
+        .svg-container {
+			width: clamp(80px, 12vw, 150px);
+			height: clamp(80px, 12vw, 150px);
+			cursor: grab;
+			transition: transform 0.2s, box-shadow 0.2s;
+			filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+			background: white;
+			border: 4px solid #ced6e0;
+			border-radius: 20px;
+			box-shadow: 0 4px 0 #ced6e0;
+			padding: 8px;
+		}
+		@media (hover: hover) {
+			.svg-container:hover {
+				transform: scale(1.15);
+				z-index: 10;
+				box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+			}
+		}
+        .svg-container:active { cursor: grabbing; transform: scale(1.05); }
+        .svg-container.selecionada { filter: drop-shadow(0 0 15px var(--azul-vibrante)); transform: scale(1.1); }
+        .monstro-zone { width: clamp(150px, 25vw, 250px); height: clamp(150px, 25vw, 250px); background: white; border: 4px dashed #ced6e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: 0.3s; position: relative;}
+        .monstro-zone.hovered { background: #eafff0; border-color: var(--cor-sucesso); transform: scale(1.1); }
+        .monstro-zone.acerto { background: var(--cor-sucesso); border-color: #27ae60; color: white; animation: popMagico 0.5s; }
+        .drop-mouth { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; border-radius: 50%;}
+
+        @keyframes popMagico { 0%{transform:scale(1);} 50%{transform:scale(1.2); box-shadow: 0 0 20px var(--cor-sucesso);} 100%{transform:scale(1);} }
+
+        .enunciado { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 900; color: var(--azul-escuro); margin-top: -10px; margin-bottom: 10px; line-height: 1.3; }
+        .enunciado span { color: var(--cor-erro); }
+        .destaque-monstro { background: #fff200; padding: 5px 20px !important; border-radius: 15px; border: 3px solid var(--azul-escuro); display: inline-flex; align-items: center; margin-top: 5px; box-shadow: 0 4px 0 #eccc68; font-size: 1.2em !important; }
+        .fra-inline { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1; font-size: 1.2em; padding: 0 5px;}
+        .fra-inline span:first-child { border-bottom: 3px solid var(--azul-escuro); padding-bottom: 2px; margin-bottom: 2px;}
+
+        /* JOGO 2: LIGAR */
+        .ligar-layout { display: flex; flex-direction: column; gap: clamp(30px, 6vh, 60px); margin-top: 25px; width: 100%; align-items: center; }
+        .ligar-row { display: flex; flex-direction: row; gap: clamp(10px, 2vw, 25px); justify-content: center; flex-wrap: wrap; width: 100%; }
+        
+        .ligar-item { background: white; border: 4px solid #ced6e0; border-radius: 15px; padding: 5px; cursor: pointer; box-shadow: 0 4px 0 #ced6e0; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; display: flex; align-items: center; justify-content: center; position: relative; }
+        
+        /* Imagens (em cima) maiores | Frações (em baixo) menores */
+        .top-item { width: clamp(80px, 16vh, 140px); height: clamp(80px, 16vh, 140px); }
+        .bot-item { width: clamp(60px, 12vh, 100px); height: clamp(60px, 12vh, 100px); }
+        
+        .ligar-item.frac-text { font-size: clamp(1.6rem, 4vh, 2.5rem); font-weight: 900; color: var(--azul-escuro); flex-direction: column; line-height: 1; }
+        .ligar-item.frac-text span:first-child { border-bottom: 4px solid var(--azul-escuro); padding-bottom: 2px; margin-bottom: 2px; width: 60%; text-align: center;}
+        
+        /* Efeito Lupa (Zoom) sem mexer no layout */
+        @media (hover: hover) { .ligar-item:hover { transform: scale(1.15); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.15); } }
+        .ligar-item:active { transform: scale(1.15); z-index: 10; }
+        
+        .ligar-item.ativo { border-color: var(--azul-vibrante); background: #e3f2fd; transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 0 var(--azul-vibrante); }
+        .ligar-item.resolvido { border-color: var(--cor-sucesso); background: #eafff0; opacity: 0.6; pointer-events: none; box-shadow: none; transform: scale(0.95); }
+
+        /* JOGO 3: ESCREVER */
+        .escrever-layout { display: flex; gap: clamp(20px, 5vw, 50px); align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .escrever-img-box {
+			width: clamp(150px, 25vw, 220px);
+			height: clamp(150px, 25vw, 220px);
+			background: white;
+			border: 4px solid #ced6e0;
+			border-radius: 20px;
+			box-shadow: 0 4px 0 #ced6e0;
+			padding: 10px;
+			transition: transform 0.2s, box-shadow 0.2s;
+		}
+		@media (hover: hover) {
+			.escrever-img-box:hover {
+				transform: scale(1.15);
+				z-index: 10;
+				box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+			}
+		}
+        .fracao-input-box { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .caixa-num { width: 70px; height: 70px; font-size: 2.8rem; font-weight: 900; text-align: center; border: 4px solid #ced6e0; border-radius: 12px; background: white; color: var(--azul-escuro); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);}
+        .caixa-num.focada { border-color: var(--azul-vibrante); background: #e3f2fd; box-shadow: 0 0 15px rgba(0,145,255,0.4); transform: scale(1.1); z-index: 5;}
+        .traco-fracao { width: 90px; height: 6px; background: var(--azul-escuro); border-radius: 3px; margin: 5px 0;}
+        
+				
+		/* O contentor principal agora usa flexbox em coluna */
+		.numpad { 
+			display: grid;
+			grid-template-columns: repeat(4, 1fr); /* 4 colunas iguais */
+			gap: 12px; 
+			background: white; 
+			padding: 20px; 
+			border-radius: 20px; 
+			border: 2px solid #e2e8f0;
+			max-width: 350px; /* Ajusta a largura total do teclado */
+			
+		}
+
+		/* Nova classe para alinhar os botões lado a lado em cada linha */
+		.linha-teclas { 
+			display: flex; 
+			gap: 12px; 
+			justify-content: center; 
+			width: 100%; 
+		}
+
+		/* Botões mais redondos (border-radius: 30px) e com flex: 1 para ocuparem o mesmo espaço */
+		.btn-num { 
+			aspect-ratio: 1 / 1; /* Largura igual à Altura */
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #f8fafc; 
+			border: 2px solid #ced6e0; 
+			border-radius: 12px; /* Cantos suavemente arredondados */
+			font-size: 1.8rem; 
+			font-weight: 900; 
+			color: var(--text-main); 
+			cursor: pointer; 
+			transition: 0.1s; 
+			box-shadow: 0 5px 0 #ced6e0; 
+			padding: 0; /* O aspect-ratio já define o tamanho */
+		}
+
+		.btn-num:active { 
+			transform: translateY(4px); 
+			box-shadow: none; 
+		}
+
+		/* O botão de verificar agora ocupa a largura toda (width: 100%) */
+		.btn-acao-num { 
+			grid-column: span 4; /* Ocupa as 4 colunas */
+			aspect-ratio: auto;  /* Não é quadrado */
+			height: 60px;        /* Altura fixa para ser mais baixo que largo */
+			background: var(--cor-mat); 
+			color: white; 
+			border-color: #2980b9; 
+			box-shadow: 0 5px 0 #2980b9; 
+			font-size: 1.4rem;
+		}
+
+		/* Botão de apagar mantém as cores de erro */
+		.btn-apagar { 
+			background: var(--cor-erro); 
+			border-color: #d63031; 
+			color: white; 
+			box-shadow: 0 5px 0 #d63031; 
+		}
+        @keyframes popAcerto { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 20px var(--cor-sucesso); } 100% { transform: scale(1); } }
+
+        /* JOGO 4: MEMÓRIA */
+        .memoria-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 600px; width: 100%; margin: 40px auto 20px auto; perspective: 1000px; }
+        .carta { width: 100%; aspect-ratio: 1/1; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
+        .carta.virada { transform: rotateY(180deg); pointer-events: none; }
+        .carta.resolvida { transform: rotateY(180deg) scale(0.95); opacity: 1; pointer-events: none; transition: opacity 0.4s ease, transform 0.4s ease; }
+        .carta.resolvida .carta-verso { border: 4px solid var(--cor-sucesso); background: #eafff0; filter: grayscale(30%); box-shadow: inset 0 0 0 3px rgba(46, 204, 113, 0.4); }
+        .carta-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 3px solid #ced6e0; background: white; }
+        .carta-frente { background: var(--cor-mat); border-color: #2980b9; color: white; font-size: 3rem; transform: rotateY(0deg); }
+        .carta-frente::after { content: "?"; font-weight: 900; }
+        .carta-verso { transform: rotateY(180deg); transition: all 0.3s; padding: 12px;}
+        .carta-verso .fracao-text { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; color: var(--azul-escuro); display: flex; flex-direction: column; align-items: center; line-height: 1; }
+		
+		/* 2. Risco da fração sempre igual (independente dos números) */
+		.carta-verso .fracao-text span:first-child { 
+			border-bottom: 5px solid var(--azul-escuro); /* Risco ligeiramente mais grosso para clareza */
+			padding-bottom: 2px; 
+			margin-bottom: 4px; 
+			width: 45px; /* LARGURA FIXA: O risco terá sempre o mesmo tamanho */
+			text-align: center;
+			display: block;
+		}
+        
+        @media (max-width: 500px) { .memoria-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        /* Ecrã Fim */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px;}
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Frações Divertidas 🍕</h1>
+        <div class="subtitulo">Aprende as frações passo a passo!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <!-- CAMADA DOS CONFETIS (Fica contida nas bordas redondas do cartão!) -->
+        <div id="confetti-layer"></div>
+
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Escolhe um Jogo:</h2>
+            
+            <div class="layout-inicial">
+				<div class="coluna-esquerda">
+					<!-- 4 cartões -->
+					<button class="cartao-horizontal" onclick="Motor.iniciar('arrastar')">
+						<div class="icone">👾</div>
+						<div class="texto">
+							<span class="titulo">O Monstro Guloso</span>
+							<span class="desc">Arrasta a imagem certa</span>
+						</div>
+					</button>
+					<button class="cartao-horizontal" onclick="Motor.iniciar('ligar')">
+						<div class="icone">🔗</div>
+						<div class="texto">
+							<span class="titulo">Ligações Deliciosas</span>
+							<span class="desc">Toca e faz o par</span>
+						</div>
+					</button> 
+				</div>
+
+				<div class="coluna-direita">
+					<!-- botão furacão -->
+					<button class="cartao-horizontal" onclick="Motor.iniciar('escrever')">
+						<div class="icone">⌨️</div>
+						<div class="texto">
+							<span class="titulo">O Construtor</span>
+							<span class="desc">Escreve a fração</span>
+						</div>
+					</button>
+					
+					<button class="cartao-horizontal" onclick="Motor.iniciar('memoria')">
+						<div class="icone">🧠</div>
+						<div class="texto">
+							<span class="titulo">Memória de Frações</span>
+							<span class="desc">Encontra os pares</span>
+						</div>
+					</button> 
+				</div>
+				
+			</div>
+			<button class="cartao-tradicional" onclick="Motor.iniciar('furacao')">
+                <div class="icone-redondo">🌪</div>
+                <div class="texto">
+                    <span class="titulo">O Furacão</span>
+                    <span class="desc">Tudo misturado! O teste final.</span>
+                </div>
+            </button>
+			
+			
+        </div>
+
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="Motor.usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">5</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Mensagem de aviso entra aqui!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <!-- O Jogo com as Colunas Laterais é injetado aqui -->
+            </div>
+            
+        </div>
+
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro)">0</strong> erros.<br>
+                És um génio das frações!
+            </div>
+            <button class="btn-acao" onclick="Motor.reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">OUTRO JOGO 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA E TOAST
+    // =========================================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        mostrarEcra('ecra-selecao');
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.innerHTML = msg; 
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        
+        toast.classList.remove('active');
+        // Pequeno delay para forçar a animação caso seja clicado rapidamente
+        setTimeout(() => toast.classList.add('active'), 50);
+        setTimeout(() => toast.classList.remove('active'), 2500);
+    }
+
+    // =========================================
+    // GERADOR MATEMÁTICO DE SVGS
+    // =========================================
+    const DADOS_FRACOES =[];
+    const fracoesPossiveis = [
+        [1,2], [1,3], [2,3], [1,4],[2,4], [3,4], 
+        [1,5], [2,5],[3,5], [4,5], [1,6], [2,6], 
+        [3,6], [4,6], [5,6], [1,8], [2,8],[3,8], 
+        [4,8], [5,8], [6,8], [7,8], [1,10], [2,10],
+        [3,10], [4,10],[5,10], [6,10], [7,10], [8,10],[9,10]
+    ];
+
+    fracoesPossiveis.forEach(f => {
+        DADOS_FRACOES.push({ n: f[0], d: f[1], f: `${f[0]}/${f[1]}`, tipo: 'pizza' });
+        DADOS_FRACOES.push({ n: f[0], d: f[1], f: `${f[0]}/${f[1]}`, tipo: 'barra' });
+    });
+
+    function gerarFracaoSVG(n, d, tipo) {
+        let svg = `<svg viewBox="0 0 100 100" width="100%" height="100%">`;
+        let corPintada = '#ff6b6b'; 
+        let corFundo = '#ffffff';
+        let corLinha = '#0d47a1'; 
+        let espessura = d > 6 ? "1" : "2"; // Lápis fino para frações grandes!
+
+        if (tipo === 'barra') {
+            let w = 100 / d;
+            for (let i = 0; i < d; i++) {
+                let fill = i < n ? corPintada : corFundo;
+                svg += `<rect x="${i*w}" y="20" width="${w}" height="60" fill="${fill}" stroke="${corLinha}" stroke-width="${espessura}"/>`;
+            }
+        } else { // Pizza 
+            let cx = 50, cy = 50, r = 45;
+            if (d === 1 || d === n) {
+                let fill = n === d ? corPintada : corFundo;
+                svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${corLinha}" stroke-width="${espessura}"/>`;
+            } else {
+                let angle = 360 / d;
+                for (let i = 0; i < d; i++) {
+                    let startAngle = i * angle;
+                    let endAngle = (i + 1) * angle;
+                    let fill = i < n ? corPintada : corFundo;
+                    
+                    let x1 = cx + r * Math.cos(Math.PI * (startAngle - 90) / 180);
+                    let y1 = cy + r * Math.sin(Math.PI * (startAngle - 90) / 180);
+                    let x2 = cx + r * Math.cos(Math.PI * (endAngle - 90) / 180);
+                    let y2 = cy + r * Math.sin(Math.PI * (endAngle - 90) / 180);
+                    let largeArc = angle > 180 ? 1 : 0;
+                    
+                    svg += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z" fill="${fill}" stroke="${corLinha}" stroke-width="${espessura}"/>`;
+                }
+            }
+        }
+        svg += `</svg>`;
+        return svg;
+    }
+
+    // =========================================
+    // O GRANDE MOTOR DE JOGO (5 EM 1)
+    // =========================================
+    const Motor = {
+        memoriaPoolSorteada: [],
+		furacaoSequencia: [],
+		modoInicial: null,
+        modoAtual: null,
+        rondaAtual: 0,
+        totalRondas: 5,
+        errosTotais: 0,
+        dicaUsadaNestaRonda: false,
+        rondaDados: null,
+        
+        pecaArrasto: null,
+        ligarTop: null,
+        ligarBot: null,
+        ligarFeitos: 0,
+        focusEscrever: 'num',
+        memoriaBloqueio: false,
+        memoriaCartas:[],
+        memoriaFeitos: 0,
+
+        iniciar: function(modo) {
+            this.modoInicial = modo;
+            this.errosTotais = 0;
+            this.rondaAtual = 0;
+            
+            // Se for memória, sorteamos logo 12 frações únicas para as 3 rondas (4 por ronda)
+            if (modo === 'memoria') {
+                this.memoriaPoolSorteada = [...DADOS_FRACOES]
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 12);
+                this.totalRondas = 3;
+            } else {
+				this.totalRondas = (modo === 'furacao' ? 15 : 10);
+
+				if (modo === 'furacao') {
+					this.furacaoSequencia = [
+						...Array(5).fill('arrastar'),
+						...Array(5).fill('ligar'),
+						...Array(5).fill('escrever')
+					].sort(() => Math.random() - 0.5);
+				}
+			}
+            
+            document.getElementById('val-total').textContent = this.totalRondas;
+            document.getElementById('val-erros').textContent = this.errosTotais;
+            mostrarEcra('ecra-jogo');
+			this.atualizarPlacarUI();
+            this.prepararRonda();
+        },
+
+        prepararRonda: function() {
+            // A dica só é reposta no exercício 1, 6 e 11 (ou seja, de 5 em 5)
+			if (this.rondaAtual % 5 === 0) {
+				this.dicaUsadaNestaRonda = false;
+				document.getElementById('btn-dica').classList.remove('esgotada');
+			}
+
+            let pool =[...DADOS_FRACOES].sort(() => Math.random() - 0.5);
+            
+            if (this.modoInicial === 'furacao') {
+				this.modoAtual = this.furacaoSequencia[this.rondaAtual];
+			} else {
+				this.modoAtual = this.modoInicial;
+			}
+
+            if (this.modoAtual === 'arrastar') {
+                let target = pool[0];
+                let errados = pool.filter(p => p.n !== target.n || p.d !== target.d).slice(0, 2);
+                this.rondaDados = { alvo: target, opcoes:[target, ...errados].sort(() => Math.random() - 0.5) };
+                this.renderArrastar();
+            } 
+            
+			if (this.modoAtual === 'memoria') {
+                this.memoriaFeitos = 0;
+                this.memoriaCartas = [];
+                this.memoriaBloqueio = false;
+                
+                // Retira 4 frações da pool que sorteámos no início (nunca se repetem)
+                let start = this.rondaAtual * 4;
+                let pares = this.memoriaPoolSorteada.slice(start, start + 4);
+                
+                let cartas = [];
+                pares.forEach(p => {
+                    cartas.push({ tipo: 'svg', val: `${p.n}/${p.d}`, n: p.n, d: p.d, t: p.tipo });
+                    cartas.push({ tipo: 'txt', val: `${p.n}/${p.d}`, n: p.n, d: p.d });
+                });
+                this.rondaDados = cartas.sort(() => Math.random() - 0.5);
+                this.renderMemoria();
+            }
+			
+			else if (this.modoAtual === 'ligar') {
+                this.ligarFeitos = 0;
+                this.ligarTop = null;
+                this.ligarBot = null;
+                this.rondaDados = pool.slice(0, 4); 
+                this.renderLigar();
+            }
+            else if (this.modoAtual === 'escrever') {
+                this.rondaDados = pool[0];
+                this.focusEscrever = 'num';
+                this.renderEscrever();
+            }
+            
+        },
+
+        // --- 1. RENDER ARRASTAR ---
+        renderArrastar: function() {
+            const area = document.getElementById('area-jogo');
+            const d = this.rondaDados;
+            
+            const htmlOps = d.opcoes.map((op, i) => `
+                <div class="svg-container" id="drag-${i}" draggable="true" data-val="${op.n}/${op.d}"
+                     ondragstart="Motor.arrastarStart(event, this)" onclick="Motor.arrastarClickPeca(this)">
+                    ${gerarFracaoSVG(op.n, op.d, op.tipo)}
+                </div>
+            `).join('');
+
+            area.innerHTML = `
+                <div class="enunciado" style="line-height: 1.6;">
+                    Alimenta o monstro com a fração:<br>
+                    <div class="fra-inline destaque-monstro">
+                        <span>${d.alvo.n}</span><span>${d.alvo.d}</span>
+                    </div>
+                </div>
+                <div class="arrastar-layout">
+                    <div class="opcoes-fracao">${htmlOps}</div>
+                    <div class="monstro-zone" style="border: none; background: transparent;">
+						<div class="drop-mouth" 
+							 ondragover="event.preventDefault(); this.parentElement.classList.add('hovered')"
+							 ondragleave="this.parentElement.classList.remove('hovered')"
+							 ondrop="Motor.arrastarDrop(event, this.parentElement)"
+							 onclick="Motor.arrastarClickAlvo()"></div>
+						<img id="img-monstro" src="monstro_normal.png" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;" alt="Monstro">
+					</div>
+                </div>
+            `;
+            this.pecaArrasto = null;
+        },
+        arrastarStart: function(e, peca) { e.dataTransfer.setData('text', peca.dataset.val); this.pecaArrasto = null; },
+        arrastarDrop: function(e, zone) { e.preventDefault(); zone.classList.remove('hovered'); this.arrastarVerificar(e.dataTransfer.getData('text')); },
+        arrastarClickPeca: function(peca) { document.querySelectorAll('.svg-container').forEach(el=>el.classList.remove('selecionada')); peca.classList.add('selecionada'); this.pecaArrasto = peca; },
+        arrastarClickAlvo: function() {
+            if(this.pecaArrasto) { this.arrastarVerificar(this.pecaArrasto.dataset.val); this.pecaArrasto.classList.remove('selecionada'); this.pecaArrasto = null; }
+            else { showToast("Toca numa fração primeiro!", true); }
+        },
+        arrastarVerificar: function(val) {
+            if(val === `${this.rondaDados.alvo.n}/${this.rondaDados.alvo.d}`) {
+                tocarSom('acerto'); document.querySelector('.monstro-zone').classList.add('acerto'); document.getElementById('img-monstro').src = "monstro_feliz.png";
+                setTimeout(() => this.avancar(), 1000);
+            } else { this.registarErro(document.querySelector('.monstro-zone')); }
+        },
+
+        // --- 2. RENDER LIGAR ---
+        renderLigar: function() {
+            const area = document.getElementById('area-jogo');
+            let topArr = [...this.rondaDados].sort(() => Math.random() - 0.5);
+            let botArr =[...this.rondaDados].sort(() => Math.random() - 0.5);
+
+            let htmlTop = topArr.map(p => `
+                <div class="ligar-item top-item" data-val="${p.n}/${p.d}" onclick="Motor.ligarClick(this, 'top')">
+                    ${gerarFracaoSVG(p.n, p.d, p.tipo)}
+                </div>`).join('');
+            
+            let htmlBot = botArr.map(p => `
+                <div class="ligar-item frac-text bot-item" data-val="${p.n}/${p.d}" onclick="Motor.ligarClick(this, 'bot')">
+                    <span>${p.n}</span><span>${p.d}</span>
+                </div>`).join('');
+
+            area.innerHTML = `
+                <div class="enunciado">Toca na imagem e depois na fração correta!</div>
+                <div class="ligar-layout"><div class="ligar-row">${htmlTop}</div><div class="ligar-row">${htmlBot}</div></div>
+            `;
+        },
+        ligarClick: function(item, zona) {
+            if(item.classList.contains('resolvido')) return;
+            if(zona === 'top') { if(this.ligarTop) this.ligarTop.classList.remove('ativo'); this.ligarTop = item; }
+            else { if(this.ligarBot) this.ligarBot.classList.remove('ativo'); this.ligarBot = item; }
+            item.classList.add('ativo');
+
+            if(this.ligarTop && this.ligarBot) {
+                if(this.ligarTop.dataset.val === this.ligarBot.dataset.val) {
+                    tocarSom('acerto'); this.ligarTop.className = "ligar-item top-item resolvido"; this.ligarBot.className = "ligar-item frac-text bot-item resolvido";
+                    this.ligarFeitos++; this.ligarTop = null; this.ligarBot = null;
+                    if(this.ligarFeitos === 4) setTimeout(() => this.avancar(), 1000);
+                } else {
+                    this.registarErro(null);
+                    this.ligarTop.classList.remove('ativo'); this.ligarTop.classList.add('elemento-erro-jogo');
+                    this.ligarBot.classList.remove('ativo'); this.ligarBot.classList.add('elemento-erro-jogo');
+                    setTimeout(() => { document.querySelectorAll('.elemento-erro-jogo').forEach(el=>el.classList.remove('elemento-erro-jogo')); }, 500);
+                    this.ligarTop = null; this.ligarBot = null;
+                }
+            }
+        },
+
+        // --- 3. RENDER ESCREVER ---
+        renderEscrever: function() {
+            const area = document.getElementById('area-jogo');
+            const p = this.rondaDados;
+            area.innerHTML = `
+                <div class="enunciado">Observa bem a imagem. Constrói a fração <span style="color:var(--azul-vibrante)">destacada</span>:</div>
+                <div class="escrever-layout">
+                    <div class="escrever-img-box">${gerarFracaoSVG(p.n, p.d, p.tipo)}</div>
+                    <div class="fracao-input-box">
+                        <div class="caixa-num focada" id="box-num" onclick="Motor.escreverFocus('num')"></div>
+                        <div class="traco-fracao"></div>
+                        <div class="caixa-num" id="box-den" onclick="Motor.escreverFocus('den')"></div>
+                    </div>
+					<div class="numpad">
+						${[1,2,3,4,5,6,7,8].map(n => `<button class="btn-num" onclick="Motor.escreverDigito(${n})">${n}</button>`).join('')}
+						
+						<button class="btn-num" onclick="Motor.escreverDigito(9)">9</button>
+						<button class="btn-num" onclick="Motor.escreverDigito(0)">0</button>
+						<button class="btn-num btn-apagar" onclick="Motor.escreverDigito('C')">C</button>
+						
+						<button class="btn-num btn-acao-num" onclick="Motor.escreverVerificar()">VERIFICAR</button>
+					</div>
+                </div>
+            `;
+        },
+        escreverFocus: function(box) {
+            this.focusEscrever = box;
+            document.getElementById('box-num').classList.remove('focada'); document.getElementById('box-den').classList.remove('focada');
+            document.getElementById(`box-${box}`).classList.add('focada');
+        },
+        escreverDigito: function(val) {
+            const box = document.getElementById(`box-${this.focusEscrever}`);
+            if(val === 'C') { box.textContent = ''; }
+            else if(box.textContent.length < 2) { 
+                box.textContent += val; 
+                // Auto-Jump mágico
+                if (this.focusEscrever === 'num') { setTimeout(() => this.escreverFocus('den'), 150); }
+            }
+            tocarSom('flip');
+        },
+        escreverVerificar: function() {
+            const n = document.getElementById('box-num').textContent;
+            const d = document.getElementById('box-den').textContent;
+            if(n == this.rondaDados.n && d == this.rondaDados.d) {
+                tocarSom('acerto'); document.querySelector('.fracao-input-box').style.animation = "popAcerto 0.5s ease";
+                setTimeout(() => this.avancar(), 1000);
+            } else { this.registarErro(document.querySelector('.fracao-input-box')); }
+        },
+
+        // --- 4. RENDER MEMORIA ---
+        renderMemoria: function() {
+            const area = document.getElementById('area-jogo');
+            const cartasHTML = this.rondaDados.map((c, i) => {
+                let inner = c.tipo === 'svg' ? gerarFracaoSVG(c.n, c.d, c.t) : `<div class="fracao-text"><span>${c.n}</span><span>${c.d}</span></div>`;
+                return `
+                <div class="carta" id="mem-${i}"
+					 data-val="${c.val}" 
+					 data-tipo="${c.tipo}" 
+					 onclick="Motor.memoriaClick(this)">
+                    <div class="carta-face carta-frente"></div>
+                    <div class="carta-face carta-verso">${inner}</div>
+                </div>`;
+            }).join('');
+            area.innerHTML = `<div class="enunciado">Encontra os pares (Imagem + Fração)</div><div class="memoria-grid">${cartasHTML}</div>`;
+        },
+        memoriaClick: function(carta) {
+            if(this.memoriaBloqueio || carta.classList.contains('virada') || carta.classList.contains('resolvida')) return;
+            carta.classList.add('virada'); tocarSom('flip'); this.memoriaCartas.push(carta);
+
+            if(this.memoriaCartas.length === 2) {
+				this.memoriaBloqueio = true;
+				let c1 = this.memoriaCartas[0];
+				let c2 = this.memoriaCartas[1];
+
+				if (
+					c1.dataset.val === c2.dataset.val &&
+					c1.dataset.tipo !== c2.dataset.tipo
+				) {
+					tocarSom('acerto');
+					setTimeout(() => {
+						c1.classList.add('resolvida');
+						c2.classList.add('resolvida');
+						this.memoriaCartas = [];
+						this.memoriaBloqueio = false;
+						this.memoriaFeitos++;
+						if(this.memoriaFeitos === 4) setTimeout(() => this.avancar(), 1000);
+					}, 500);
+				} else {
+					this.registarErro(null);
+					setTimeout(() => {
+						c1.classList.remove('virada');
+						c2.classList.remove('virada');
+						this.memoriaCartas = [];
+						this.memoriaBloqueio = false;
+					}, 1200);
+				}
+			}
+        },
+
+        // --- GESTÃO GERAL ---
+        usarDica: function() {
+            if(this.dicaUsadaNestaRonda) return;
+            this.dicaUsadaNestaRonda = true;
+            document.getElementById('btn-dica').classList.add('esgotada');
+
+            if(this.modoAtual === 'arrastar') {
+                const target = Array.from(document.querySelectorAll('.svg-container')).find(el => el.dataset.val === `${this.rondaDados.alvo.n}/${this.rondaDados.alvo.d}`);
+                if(target) target.style.filter = "drop-shadow(0 0 15px var(--cor-sucesso))";
+            } else if(this.modoAtual === 'ligar') {
+                const top = document.querySelector('.top-item:not(.resolvido)');
+                if(top) {
+                    const bot = Array.from(document.querySelectorAll('.bot-item:not(.resolvido)')).find(el => el.dataset.val === top.dataset.val);
+                    top.style.borderColor = "var(--cor-2ano)"; if(bot) bot.style.borderColor = "var(--cor-2ano)";
+                }
+            } else if(this.modoAtual === 'escrever') {
+                document.getElementById('box-den').textContent = this.rondaDados.d;
+                this.escreverFocus('num');
+            } else if(this.modoAtual === 'memoria') {
+                const cartas = document.querySelectorAll('.carta:not(.resolvida)');
+                cartas.forEach(c => c.classList.add('virada'));
+                this.memoriaBloqueio = true;
+                setTimeout(() => {
+                    cartas.forEach(c => { if(!this.memoriaCartas.includes(c)) c.classList.remove('virada'); });
+                    this.memoriaBloqueio = false;
+                }, 2000);
+            }
+        },
+
+        registarErro: function(elemento) {
+            this.errosTotais++;
+            document.getElementById('val-erros').textContent = this.errosTotais;
+            tocarSom('erro');
+            if(elemento) { elemento.classList.add('elemento-erro-jogo'); setTimeout(()=> elemento.classList.remove('elemento-erro-jogo'), 400); }
+        },
+
+        avancar: function() {
+			this.rondaAtual++;
+			this.atualizarPlacarUI();
+
+			if(this.rondaAtual >= this.totalRondas) {
+				this.finalizar();
+			} else {
+				this.prepararRonda();
+			}
+		},
+
+        atualizarPlacarUI: function() {
+            document.getElementById('val-progresso').textContent = this.rondaAtual + 1;
+            document.getElementById('val-total').textContent = this.totalRondas;
+            
+            // COMEÇAR COM A BARRA DE PROGRESSO VAZIA
+            let p = (this.rondaAtual / this.totalRondas) * 100;
+            document.getElementById('progress-fill').style.width = `${p}%`;
+        },
+
+        finalizar: function() {
+            document.getElementById('progress-fill').style.width = `100%`;
+            document.getElementById('final-erros').textContent = this.errosTotais;
+            tocarSom('vitoria'); dispararConfetis(); mostrarEcra('ecra-fim');
+        },
+
+        reiniciarJogo: function() {
+            limparConfetis();
+            this.iniciar(this.modoInicial);
+        }
+    };
+
+    // =========================================
+    // SONS E CONFETIS NATIVOS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+        if (tipo === 'acerto') { osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2); gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3); } 
+        else if (tipo === 'erro') { osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2); gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3); } 
+        else if (tipo === 'vitoria') { const notas =[523.25, 659.25, 783.99, 1046.50]; notas.forEach((freq, i) => { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3); o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3); }); }
+        else if (tipo === 'flip') { osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1); gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1); osc.start(agora); osc.stop(agora + 0.1); }
+    }
+
+    function dispararConfetis() {
+        const container = document.getElementById('confetti-layer');
+        container.innerHTML = ''; 
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -15 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+    window.onload = () => mostrarEcra('ecra-selecao'); 
+</script>
+</body>
+</html>
