@@ -37,6 +37,7 @@ const todosOsJogos =[
 	{ nome: "Problemas Mágicos", icone: "icones/problemas_magicos.png", link: "mat/problemas-magicos/", cat: "mat" },
 	{ nome: "Frações Divertidas", icone: "icones/fracoes.png", link: "mat/fracoes/", cat: "mat" },
 	{ nome: "Cruzadas Numéricas", icone: "icones/cruzadas_numericas.png", link: "mat/cruzadas-numericas/", cat: "mat" },
+	{ nome: "Estratégias de Cálculo", icone: "icones/estrategias_calculo.png", link: "mat/estrategias-calculo/", cat: "mat" },
    	
 	
 	
