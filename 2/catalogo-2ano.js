@@ -36,6 +36,7 @@ const todosOsJogos =[
 	{ nome: "O Trator MAB", icone: "icones/trator_mab.png", link: "mat/trator-mab/", cat: "mat" },
 	{ nome: "Problemas Mágicos", icone: "icones/problemas_magicos.png", link: "mat/problemas-magicos/", cat: "mat" },
 	{ nome: "Frações Divertidas", icone: "icones/fracoes.png", link: "mat/fracoes/", cat: "mat" },
+	{ nome: "Cruzadas Numéricas", icone: "icones/cruzadas_numericas.png", link: "mat/cruzadas-numericas/", cat: "mat" },
    	
 	
 	
