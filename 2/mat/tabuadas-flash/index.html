@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tabuadas Flash ⚡</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        @media (min-width: 769px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px; overflow-y: auto;} 
+            .cartao-jogo-container { padding: 20px 15px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* ECRÃS */
+        .ecra { width: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 0.4s ease; box-sizing: border-box; z-index: 5; flex: 1;}
+        #ecra-selecao { display: flex; justify-content: center; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: white; border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative; overflow: hidden;}
+        .btn-dica:hover { background-color: #fff9c4; border-color: #b18500; color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+        /* Animação de Recarregar Dica */
+        .btn-dica.recharge::after { content: ''; position: absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); animation: shine 0.6s ease-out; }
+        @keyframes shine { 100% { left: 100%; } }
+
+		/* Adiciona/atualiza estas propriedades nos teus botões */
+		.btn-voltar-menu, .btn-dica {
+			white-space: nowrap; /* Garante que o texto fica todo numa única linha */
+			flex-shrink: 0;      /* Impede o flexbox de esmagar o botão lateralmente */
+			height: 36px;        /* Tranca a altura exata para os dois ficarem gémeos */
+			box-sizing: border-box;
+		}
+
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem; height: 30px;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           TABUADAS FLASH - ÁREA DE JOGO (ARCADE)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; width: 100%; flex: 1;
+            background: transparent; border: none; padding: 0; position: relative; gap: 10px;
+            align-items: center; justify-content: center;
+        }
+
+        /* ECRÃ INICIAL ANIMADO (O Mini Jogo Fake) */
+        .intro-box {
+            background: white; border: 4px solid var(--azul-vibrante); border-radius: 25px;
+            padding: 30px; width: 100%; max-width: 700px; text-align: center; margin-bottom: 20px;
+            box-shadow: 0 8px 0 var(--azul-vibrante); display: flex; flex-direction: column; align-items: center;
+        }
+        .intro-text { font-size: 1.1rem; color: var(--text-main); font-weight: 500; line-height: 1.5; margin-bottom: 25px; }
+        
+        .demo-board { width: 220px; background: #1e272e; padding: 15px; border-radius: 15px; position: relative; margin-bottom: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 6px 0 #808e9b; border: 3px solid #d2dae2;}
+        .demo-eq { color: #0fb9b1; font-size: 1.8rem; font-weight: 900; margin-bottom: 15px; text-shadow: 0 0 5px #0fb9b1; }
+        .demo-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .demo-opt { background: #4bcffa; color: #1e272e; border-radius: 8px; padding: 10px; font-weight: 900; font-size: 1.2rem; box-shadow: 0 4px 0 #0abde3;}
+        .demo-opt.correct { animation: demoFlash 4s infinite; }
+        .demo-hand { position: absolute; font-size: 2.5rem; z-index: 10; animation: demoHandMove 4s infinite ease-in-out; filter: drop-shadow(2px 4px 2px rgba(0,0,0,0.3));}
+
+        @keyframes demoFlash { 0%, 50%, 100% { background: #4bcffa; box-shadow: 0 4px 0 #0abde3; } 55%, 95% { background: var(--cor-sucesso); box-shadow: 0 4px 0 #27ae60; color: white;} }
+        @keyframes demoHandMove {
+            0% { top: 120%; left: 80%; opacity: 0; transform: scale(1); }
+            20% { opacity: 1; }
+            45% { top: 60%; left: 55%; transform: scale(1); }
+            50% { top: 60%; left: 55%; transform: scale(0.85); } /* Clica */
+            55% { top: 60%; left: 55%; transform: scale(1); }
+            100% { top: 120%; left: 80%; opacity: 0; }
+        }
+
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto; width: 100%; max-width: 300px; text-transform: uppercase; transition: 0.2s;}
+        .btn-acao:hover { transform: translateY(-4px); box-shadow: 0 9px 0 var(--cor-2ano-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+        /* A MÁQUINA ARCADE (JOGO REAL) */
+        .arcade-box { 
+            background: #2f3640; border-radius: 20px; padding: 25px; width: 100%; max-width: 750px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 0 #192a56; border: 4px solid #718093; 
+            display: flex; flex-direction: column; align-items: center; transition: 0.1s;
+        }
+        .arcade-box.shake { animation: shakeDanger 0.3s infinite; }
+
+        @keyframes shakeDanger { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+        /* Temporizador */
+        .timer-container { width: 100%; height: 18px; background: #1e272e; border-radius: 10px; overflow: hidden; margin-bottom: 25px; border: 2px solid #000; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
+        .timer-bar { height: 100%; width: 100%; background: #4cd137; transition: width 0.1s linear, background-color 0.3s; }
+        .timer-bar.danger { background: #e84118; }
+
+        /* Ecrã da Conta */
+        .arcade-screen { 
+            background: #1e272e; width: 100%; padding: 20px; border-radius: 15px; 
+            border: 3px solid #7f8fa6; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            margin-bottom: 30px; display: flex; justify-content: center; align-items: center; min-height: 120px;
+        }
+        .conta-texto { font-size: clamp(3rem, 8vw, 4.5rem); font-weight: 900; color: #00d2d3; text-shadow: 0 0 15px rgba(0, 210, 211, 0.6); letter-spacing: 2px;}
+
+        /* Opções (2x2) */
+        .opcoes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        
+        .btn-opt {
+            background: #f1f2f6; border: 4px solid #a4b0be; border-bottom-width: 8px; border-radius: 15px;
+            font-size: clamp(2rem, 5vw, 2.5rem); font-weight: 900; color: var(--azul-escuro); padding: 15px 0;
+            cursor: pointer; transition: 0.1s; touch-action: manipulation;
+        }
+		
+		.btn-opt:hover {
+			           
+			border-color: var(--azul-vibrante);      /* Muda a cor da moldura */
+			
+			background-color: #f4faff;               /* Um fundo azul muuuito clarinho */
+		}
+		
+        .btn-opt:active { transform: translateY(4px); border-bottom-width: 4px; background: #dfe4ea; }
+        
+        /* Estados dos Botões */
+        .btn-opt.correct { background: var(--cor-sucesso) !important; color: white !important; border-color: #27ae60 !important; box-shadow: 0 0 20px rgba(46, 204, 113, 0.6); }
+        .btn-opt.wrong { background: var(--cor-erro) !important; color: white !important; border-color: #c0392b !important; }
+        .btn-opt.hidden-50 { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+        @media (max-width: 500px) {
+            .arcade-box { padding: 15px; }
+            .btn-opt { padding: 10px 0; border-bottom-width: 6px; }
+            .btn-opt:active { border-bottom-width: 2px; }
+        }
+
+        /* Ecrã Fim */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Tabuadas Flash ⚡</h1>
+        <div class="subtitulo">Sê o mais rápido a acertar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-layer"></div>
+        
+        <!-- ECRÃ DE SELEÇÃO / INTRO -->
+        <div id="ecra-selecao" class="ecra">
+            <div class="intro-box">
+                <!-- Animação Fake do Jogo -->
+                <div class="demo-board">
+                    <div class="demo-eq">3 x 5 = ?</div>
+                    <div class="demo-opts">
+                        <div class="demo-opt">12</div>
+                        <div class="demo-opt correct">15</div>
+                        <div class="demo-opt">18</div>
+                        <div class="demo-opt">20</div>
+                    </div>
+                    <div class="demo-hand">👆</div>
+                </div>
+                <p class="intro-text">
+                    Tens <strong>10 segundos</strong> para responder a cada tabuada!<br>Se o tempo chegar ao fim, perdes a jogada. <br><br>As tabuadas do <strong>2, 3, 4, 5 e 10</strong> estão todas misturadas. Prepara-te!
+                </p>
+                <button class="btn-acao" onclick="iniciarJogo()">COMEÇAR DESAFIO 🚀</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 50/50 (<span id="dica-cont">1</span>)</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">25</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Aviso!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="arcade-box" id="arcade-box">
+                    <div class="timer-container">
+                        <div class="timer-bar" id="timer-bar"></div>
+                    </div>
+
+                    <div class="arcade-screen">
+                        <div class="conta-texto" id="conta-texto">? x ? = ?</div>
+                    </div>
+
+                    <div class="opcoes-grid" id="opcoes-grid">
+                        <button class="btn-opt" onclick="verificarResposta(0)" id="opt-0">-</button>
+                        <button class="btn-opt" onclick="verificarResposta(1)" id="opt-1">-</button>
+                        <button class="btn-opt" onclick="verificarResposta(2)" id="opt-2">-</button>
+                        <button class="btn-opt" onclick="verificarResposta(3)" id="opt-3">-</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Jogo Concluído! 🎉</h2>
+            <div class="end-stats">
+                Sobreviveste às Tabuadas Flash!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // Sons e Confetis (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1400, agora + 0.15);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2); osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        } else if (tipo === 'tick') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, agora);
+            gain.gain.setValueAtTime(0.02, agora); gain.gain.exponentialRampToValueAtTime(0.001, agora + 0.05); osc.start(agora); osc.stop(agora + 0.05);
+        } else if (tipo === 'recharge') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(1000, agora + 0.3);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-layer');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -10 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+    // =========================================
+    // MOTOR DO JOGO
+    // =========================================
+    function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function sortear(array) { return array.sort(() => Math.random() - 0.5); }
+
+    let totalExercicios = 25;
+    let contasSorteadas =[];
+    let exIndex = 0;
+    let errosTotais = 0;
+    
+    let timerInterval;
+    let timeLeft = 10.0;
+    let trancado = false;
+    
+    let dicasAtuais = 1;
+    let correctAnswerIdx = -1;
+
+    function gerarContas() {
+        const tabuadas = [2, 3, 4, 5, 10];
+        let pool =[];
+        // Gera todas as combinações possíveis: Multiplicador x Tabuada (ex: 7 x 2)
+        for (let m = 1; m <= 10; m++) {
+            for (let t of tabuadas) {
+                pool.push({ str: `${m} x ${t}`, ans: m * t, tab: t, mul: m });
+            }
+        }
+        // Baralha as 50 contas e escolhe as primeiras 25
+        pool = sortear(pool);
+        contasSorteadas = pool.slice(0, totalExercicios);
+    }
+
+    function gerarOpcoesErradas(certa, tab, mul) {
+        let falsas = new Set();
+        // Lógica inteligente de erros
+        falsas.add(certa + tab); // Um passo acima
+        falsas.add(certa - tab); // Um passo abaixo
+        if (certa > 10) falsas.add(certa + 10);
+        if (certa > 10) falsas.add(certa - 10);
+        falsas.add((mul + 1) * tab);
+        falsas.add(mul * (tab + 1)); // Troca tabuada
+        
+        let poolFalsas = Array.from(falsas).filter(x => x > 0 && x !== certa);
+        poolFalsas = sortear(poolFalsas);
+        
+        // Se faltarem opções, gera próximos aleatórios credíveis
+        while(poolFalsas.length < 3) {
+            let rndNum = certa + rnd(-5, 5);
+            if (rndNum > 0 && rndNum !== certa && !poolFalsas.includes(rndNum)) poolFalsas.push(rndNum);
+        }
+        
+        return poolFalsas.slice(0, 3);
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = exIndex + 1 > totalExercicios ? totalExercicios : exIndex + 1;
+        document.getElementById('val-total-rondas').textContent = totalExercicios;
+        let perc = (exIndex / totalExercicios) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+        
+        // Atualiza UI da Dica
+        document.getElementById('dica-cont').textContent = dicasAtuais;
+        if (dicasAtuais > 0) document.getElementById('btn-dica').classList.remove('esgotada');
+        else document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function iniciarJogo() {
+        gerarContas();
+        exIndex = 0;
+        errosTotais = 0;
+        dicasAtuais = 1;
+        limparConfetis();
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        carregarExercicio();
+    }
+
+    function carregarExercicio() {
+        trancado = false;
+        
+        // Recarregar Dica a cada 5 exercícios, MAS com limite máximo de 1!
+        if (exIndex > 0 && exIndex % 5 === 0) {
+            if (dicasAtuais < 1) { // Só recarrega se o aluno já a tiver gasto
+                dicasAtuais = 1;
+                const btnDica = document.getElementById('btn-dica');
+                btnDica.classList.add('recharge');
+                tocarSom('recharge');
+                setTimeout(() => btnDica.classList.remove('recharge'), 600);
+            }
+        }
+        
+        atualizarPlacarUI();
+
+        let conta = contasSorteadas[exIndex];
+        document.getElementById('conta-texto').textContent = `${conta.str} = ?`;
+
+        let options = gerarOpcoesErradas(conta.ans, conta.tab, conta.mul);
+        options.push(conta.ans);
+        options = sortear(options);
+        
+        for (let i = 0; i < 4; i++) {
+            let btn = document.getElementById(`opt-${i}`);
+            btn.textContent = options[i];
+            btn.className = 'btn-opt'; // Reset classes
+            if (options[i] === conta.ans) correctAnswerIdx = i;
+        }
+
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 10.0;
+        const bar = document.getElementById('timer-bar');
+        const box = document.getElementById('arcade-box');
+        bar.style.width = '100%';
+        bar.classList.remove('danger');
+        box.classList.remove('shake');
+
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            let perc = (timeLeft / 10) * 100;
+            bar.style.width = Math.max(0, perc) + '%';
+            
+            if (timeLeft <= 5.0 && !bar.classList.contains('danger')) {
+                bar.classList.add('danger');
+                box.classList.add('shake');
+            }
+            if (timeLeft <= 5.0 && timeLeft > 0) {
+                // Toca um pequeno tick a cada segundo exato (opcional, dá tensão)
+                if (Math.abs(timeLeft % 1) < 0.1) tocarSom('tick'); 
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleTimeout();
+            }
+        }, 100);
+    }
+
+    function handleTimeout() {
+        if (trancado) return;
+        trancado = true;
+        
+        document.getElementById('arcade-box').classList.remove('shake');
+        tocarSom('erro');
+        errosTotais++;
+        atualizarPlacarUI();
+        
+        // Destaca o certo para ele aprender
+        document.getElementById(`opt-${correctAnswerIdx}`).classList.add('correct');
+        
+        setTimeout(avancarExercicio, 1500);
+    }
+
+    function verificarResposta(idx) {
+        if (trancado) return;
+        trancado = true;
+        clearInterval(timerInterval);
+        document.getElementById('arcade-box').classList.remove('shake');
+
+        if (idx === correctAnswerIdx) {
+            tocarSom('acerto');
+            document.getElementById(`opt-${idx}`).classList.add('correct');
+        } else {
+            tocarSom('erro');
+            errosTotais++;
+            atualizarPlacarUI();
+            document.getElementById(`opt-${idx}`).classList.add('wrong');
+            document.getElementById(`opt-${correctAnswerIdx}`).classList.add('correct');
+        }
+
+        setTimeout(avancarExercicio, 1200);
+    }
+
+    function usarDica() {
+        if (trancado || dicasAtuais <= 0) return;
+        
+        dicasAtuais--;
+        atualizarPlacarUI();
+        
+        // Remove 2 botões errados
+        let removidos = 0;
+        for (let i = 0; i < 4; i++) {
+            if (i !== correctAnswerIdx && removidos < 2) {
+                document.getElementById(`opt-${i}`).classList.add('hidden-50');
+                removidos++;
+            }
+        }
+        tocarSom('tick'); // Somzinho de usar item
+    }
+
+    function avancarExercicio() {
+        exIndex++;
+        if (exIndex >= totalExercicios) {
+            finalizarJogo();
+        } else {
+            carregarExercicio();
+        }
+    }
+
+    function finalizarJogo() {
+        clearInterval(timerInterval);
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() {
+        iniciarJogo();
+    }
+
+    function voltarAoMenu() {
+        clearInterval(timerInterval);
+        mostrarEcra('ecra-selecao');
+    }
+
+    // Arranca
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
