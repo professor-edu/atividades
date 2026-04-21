@@ -19,7 +19,7 @@ const todosOsJogos =[
 	{ nome: "Letras Mágicas", icone: "icones/letras_magicas.png", link: "pt/letras-magicas", cat: "pt" },
 	{ nome: "Aventura dos Sons", icone: "icones/aventura_sons.png", link: "pt/aventura-sons", cat: "pt" },
 	{ nome: "Missão dos Sons", icone: "icones/missao_sons.png", link: "pt/missao-sons", cat: "pt" },
-	{ nome: "Palavras Cruzadas", icone: "icones/cruzadas.png", link: "pt/cruzadas", cat: "pt" },
+	{ nome: "Palavras Cruzadas", icone: "icones/palavras_cruzadas.png", link: "pt/cruzadas", cat: "pt" },
 	{ nome: "Cruzadas de Animais", icone: "icones/cruzadas_animais.png", link: "pt/cruzadas-animais/", cat: "pt" },
 	{ nome: "Sopa de Letras", icone: "icones/sopa_letras.png", link: "pt/sopa-letras/", cat: "pt" },
 	
