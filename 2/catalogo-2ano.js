@@ -46,6 +46,6 @@ const todosOsJogos =[
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
-    { nome: "JOGO 1 EM", icone: "🕵️‍♂️", link: "em/#/", cat: "em" },
+    { nome: "Animais", icone: "icones/animais.png", link: "em/animais/", cat: "em" },
    	{ nome: "Jogo 2 EM", icone: "🐾", link: "em/#/", cat: "em" }
 ];
