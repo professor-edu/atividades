@@ -15,6 +15,7 @@ const todosOsJogos =[
 	{ nome: "Sinónimos e Antónimos", icone: "icones/sinonimos_antonimos".png, link: "pt/sinonimos-antonimos", cat: "pt" },
 	{ nome: "Pontos e Acentos", icone: "icones/pontos_acentos.png", link: "pt/pontos-acentos", cat: "pt" },
     { nome: "Chuva de Palavras", icone: "icones/chuva_palavras.png", link: "pt/classes", cat: "pt" },
+	{ nome: "Construtor de Frases", icone: "icones/construtor_frases.png", link: "pt/ordenar-frases", cat: "pt" },
 	{ nome: "Ler e Copiar", icone: "icones/copiar_textos.png", link: "pt/escrita-textos", cat: "pt" },
 	{ nome: "Letras Mágicas", icone: "icones/letras_magicas.png", link: "pt/letras-magicas", cat: "pt" },
 	{ nome: "Aventura dos Sons", icone: "icones/aventura_sons.png", link: "pt/aventura-sons", cat: "pt" },
