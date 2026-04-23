@@ -697,12 +697,23 @@ document.getElementById('ano-atual').innerText = new Date().getFullYear();
         });
     }
 
-    function calcularDesfoque() {
-        let preenchidos = slotsEstado.filter(b => b !== null).length;
-        let reducao = (maxBlur / fraseCerta.length) * preenchidos;
-        let novoBlur = maxBlur - reducao;
-        document.getElementById('img-desafio').style.filter = `blur(${novoBlur}px)`;
-    }
+	function calcularDesfoque() {
+			let preenchidosCorretamente = 0;
+
+			// O jogo agora verifica se o bloco não só está num slot, 
+			// mas se o texto dele corresponde à palavra certa daquele lugar!
+			slotsEstado.forEach((bloco, index) => {
+				if (bloco !== null && bloco.textContent === fraseCerta[index]) {
+					preenchidosCorretamente++;
+				}
+			});
+
+			// A redução do desfoque baseia-se APENAS nas palavras corretas
+			let reducao = (maxBlur / fraseCerta.length) * preenchidosCorretamente;
+			let novoBlur = maxBlur - reducao;
+			
+			document.getElementById('img-desafio').style.filter = `blur(${novoBlur}px)`;
+		}
 
     function clicarNoBloco(bloco) {
         if(bloco.classList.contains('certo') || bloco.classList.contains('dica')) return; 
