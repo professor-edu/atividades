@@ -49,7 +49,7 @@ const animaisMundo =[
 	{ id: "rinoceronte_java", nome: "Rinoceronte-de-Java (um chifre)", continente: "asia", emoji: "🐼" },
 	{ id: "leopardo_neves", nome: "Leopardo das Neves", continente: "asia", emoji: "🐼" },
     { id: "tigre", nome: "Tigre", continente: "asia", emoji: "🐅" },
-    { id: "elefante_asiatico", nome: "Elefante Africano", continente: "asia", emoji: "🐅" },
+    { id: "elefante_asiatico", nome: "Elefante Asiático", continente: "asia", emoji: "🐅" },
 	{ id: "dragao_komodo", nome: "Dragão de Komodo", continente: "asia", emoji: "🐫" },
 	{ id: "camelo_bactriano", nome: "Camelo-Bactriano (duas bossas)", continente: "asia", emoji: "🐫" },
     { id: "orangotango", nome: "Orangotango", continente: "asia", emoji: "🦧" },
