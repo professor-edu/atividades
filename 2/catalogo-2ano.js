@@ -48,5 +48,5 @@ const todosOsJogos =[
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
     { nome: "Animais", icone: "icones/animais.png", link: "em/animais/", cat: "em" },
-   	{ nome: "Jogo 2 EM", icone: "🐾", link: "em/#/", cat: "em" }
+   	{ nome: "Continentes e Oceanos", icone: "icones/continentes_oceanos.png", link: "em/continentes-oceanos/", cat: "em" }
 ];
