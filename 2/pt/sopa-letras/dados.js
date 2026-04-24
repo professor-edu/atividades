@@ -54,7 +54,7 @@ const DADOS_COMIDA =[
     { imagem: "morango.png", palavra: "MORANGO" },
     { imagem: "pao.png", palavra: "PÃO" },
     { imagem: "pera.png", palavra: "PERA" },
-    { imagem: "pizza.png", palavra: "PIZZA" },
+    { imagem: "pizza.png", palavra: "PIzZA" },
     { imagem: "queijo.png", palavra: "QUEIJO" },
     { imagem: "sopa.png", palavra: "SOPA" },
     { imagem: "uvas.png", palavra: "UVAS" }
