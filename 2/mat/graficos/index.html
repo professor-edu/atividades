@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detetive de Gráficos - 2º Ano</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px; overflow-y: auto;} 
+            .cartao-jogo-container { padding: 20px 15px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-mat); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; overflow: hidden; }
+
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; box-sizing: border-box; z-index: 5; flex: 1;}
+        #ecra-selecao { display: flex; justify-content: center; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+
+        /* ECRÃ INICIAL (3 CARTÕES) */
+        .grelha-3-cartoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 800px; margin: 0 auto; }
+        .cartao-quadrado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: #ffffff; border: 4px solid var(--borda-cartao); border-radius: 20px; padding: 30px 15px; width: 100%; text-align: center; cursor: pointer; box-sizing: border-box; box-shadow: 0 6px 0 var(--borda-cartao); transition: all 0.2s ease; aspect-ratio: 1 / 1; }
+        @media (hover: hover) { .cartao-quadrado:hover { transform: translateY(-4px); border-color: var(--cor-mat); box-shadow: 0 10px 0 var(--cor-mat); } }
+        .cartao-quadrado:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .cartao-quadrado .icone { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; flex-shrink: 0; margin: 0 auto;}
+        .cartao-quadrado .titulo { font-weight: 900; color: var(--azul-escuro); font-size: 1.3rem; display: block; margin-bottom: 5px;}
+        .cartao-quadrado .desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500;}
+        @media (max-width: 768px) { .grelha-3-cartoes { grid-template-columns: 1fr; gap: 15px; } .cartao-quadrado { aspect-ratio: auto; padding: 20px 15px; } }
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: white; border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { background-color: #fff9c4; border-color: #b18500; color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; margin-left: 0; margin-right: 0;}
+        }
+
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeGame 0.4s ease !important; border-color: var(--cor-erro) !important; color: var(--cor-erro) !important;}
+        @keyframes shakeGame { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           O NOVO DETETIVE DE GRÁFICOS (ESTILOS)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; width: 100%; flex: 1;
+            background: transparent; border: none; padding: 0; position: relative; gap: 10px;
+        }
+
+        .layout-jogo {
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; width: 100%; height: 100%; align-items: center;
+        }
+        /* Quando não há numpad (Modo 3 e Modo 2-V/F), centra-se */
+        .layout-centrado { grid-template-columns: 1fr; max-width: 700px; margin: 0 auto;}
+
+        .coluna-jogo-esq { display: flex; flex-direction: column; gap: 35px; width: 100%; align-items: center;}
+        .coluna-jogo-dir { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; }
+
+        @media (max-width: 850px) {
+            .layout-jogo { grid-template-columns: 1fr; gap: 15px; }
+        }
+
+        /* --- A PERGUNTA (Topo) --- */
+        .zona-pergunta { 
+            background: #fff9c4; border: 4px solid #fbc531; border-radius: 20px; padding: 15px 20px; 
+            width: 100%; max-width: 500px; text-align: center; box-shadow: 0 6px 0 #fbc531; 
+            display: flex; flex-direction: column; align-items: center; gap: 10px; 
+        }
+        .texto-pergunta { font-size: 1.3rem; font-weight: 900; color: #b18500; margin: 0; }
+        .visor-input { 
+            width: 80px; height: 50px; background: white; border: 4px solid #b18500; border-radius: 10px; 
+            font-size: 2rem; font-weight: 900; color: var(--azul-escuro); display: flex; align-items: center; justify-content: center; 
+        }
+
+        /* --- TELA DE DADOS (Tabelas e Gráficos) --- */
+        .tela-dados {
+            background: #fff; border: 4px solid var(--borda-cartao); border-radius: 20px;
+            padding: 20px; box-shadow: 0 6px 0 var(--borda-cartao); width: 100%; max-width: 750px;
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+        }
+        .tela-titulo { font-size: 1.3rem; font-weight: 900; color: var(--azul-escuro); margin: 0; text-transform: uppercase;}
+
+        /* NÍVEL 1: Pictograma */
+        .picto-tabela { width: 100%; border-collapse: collapse; color: var(--azul-escuro); }
+        .picto-tabela td { padding: 10px; border-bottom: 2px dashed #ced6e0; font-size: 1.8rem; text-align: left; }
+        .picto-tabela td:first-child { font-weight: 900; border-right: 2px solid #a4b0be; width: 30%; text-align: center; font-size: 1.4rem;}
+        .legenda { background: #f1f2f6; padding: 5px 15px; border-radius: 10px; font-weight: 700; color: var(--text-main); font-size: 1.1rem; border: 2px dashed #a4b0be;}
+        .highlight-row { background: rgba(241, 196, 15, 0.3) !important; animation: pulseHint 1s infinite alternate; border-radius: 10px;}
+
+        /* NÍVEL 2: Diagrama de Carroll */
+        .carroll-grid { display: grid; grid-template-columns: auto 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 5px; width: 100%; }
+        .c-header { background: #e3f2fd; color: var(--azul-vibrante); border: 2px solid var(--azul-vibrante); font-weight: 900; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 8px; font-size: 1rem; text-align: center;}
+        /* Células de Dados V/F */
+        .c-cell-static { background: #f1f2f6; border: 2px solid #ced6e0; border-radius: 8px; padding: 10px; font-size: 1.8rem; display: flex; justify-content: center; align-items: center; font-weight: 900; color: var(--azul-escuro);}
+        /* Células Input (Modo Preencher) */
+        .c-cell-input { background: white; border: 4px solid #ced6e0; border-radius: 8px; font-size: 1.6rem; font-weight: 900; color: var(--azul-escuro); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;}
+        .c-cell-input.ativo { border-color: var(--azul-vibrante); background: #e3f2fd; box-shadow: 0 0 10px rgba(0,145,255,0.4); transform: scale(1.05); z-index: 5;}
+        
+        .botoes-vf { display: flex; gap: 20px; width: 100%; justify-content: center; margin-top: 15px;}
+        .btn-vf { flex: 1; max-width: 200px; font-size: 1.5rem; padding: 15px; border-radius: 15px; font-weight: 900; cursor: pointer; border: none; color: white; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: 0.2s;}
+        .btn-vf.verdade { background: #2ecc71; }
+        .btn-vf.falso { background: #e74c3c; }
+        .btn-vf:active { transform: translateY(6px); box-shadow: none; }
+
+        .lista-dados { font-size: 1.1rem; color: var(--azul-escuro); text-align: left; background: #f8fafc; padding: 15px; border-radius: 10px; border: 2px dashed #a4b0be; width: 100%; line-height: 1.6;}
+
+		/* =========================================
+           NÍVEL 3: GRÁFICO DE BARRAS (BASE)
+           ========================================= */
+        .caixa-desarrumada { background: #f1f2f6; border: 3px dashed #a4b0be; padding: 10px; border-radius: 15px; font-size: 2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%;}
+        
+        .grafico-wrapper { display: flex; height: 220px; width: 100%; padding-left: 30px; position: relative; margin-top: 15px; border-left: 3px solid var(--azul-escuro); border-bottom: 3px solid var(--azul-escuro); }
+        .y-axis { position: absolute; left: -30px; top: 0; height: 100%; display: flex; flex-direction: column-reverse; justify-content: space-between; width: 25px; text-align: right; font-weight: 900; color: var(--text-main); font-size: 1rem;}
+        .grid-lines { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; flex-direction: column-reverse; justify-content: space-between; pointer-events: none; }
+        .grid-line { width: 100%; height: 1px; background: rgba(189, 195, 199, 0.5); }
+        
+        .bars-area { display: flex; justify-content: space-around; align-items: flex-end; width: 100%; height: 100%; padding: 0 10px; z-index: 2;}
+        .bar-group { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; width: 50px; position: relative;}
+        .bar-fill { width: 100%; background: var(--cor-mat); transition: height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 5px 5px 0 0; border: 2px solid #2980b9; border-bottom: none; box-shadow: inset 0 5px 10px rgba(255,255,255,0.4);}
+        .bar-label { font-size: 2.2rem; position: absolute; bottom: -45px; }
+
+        /* Controlos Nivel 3 (Botões redondos perfeitos) */
+        .grafico-controlos { display: flex; justify-content: space-around; width: 100%; max-width: 500px; padding: 0 10px 10px 40px; margin-top: 40px; }
+        .ctrl-group { display: flex; gap: 10px; width: auto; justify-content: center;}
+        
+        .btn-b-ctrl { 
+            width: 40px; height: 40px; flex-shrink: 0;
+            border-radius: 50%; border: 3px solid #b2bec3; background: white; 
+            font-weight: 900; font-size: 1.8rem; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; color: var(--azul-escuro); transition: 0.1s;
+            line-height: 0; padding-bottom: 3px; 
+        }
+        .btn-b-ctrl:active { background: #dfe6e9; transform: scale(0.9); }
+
+        /* =========================================
+           NOVO LAYOUT DE COLUNAS (APENAS JOGO 3)
+           ========================================= */
+        .layout-modo-grafico #col-esq {
+            display: flex !important;
+            flex-direction: row !important; /* Lado a Lado */
+            gap: 30px;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .col-esq-grafico {
+            flex: 1.6;
+            display: flex;
+            flex-direction: column;
+			background: #fff; border: 4px solid var(--borda-cartao); border-radius: 20px;
+			padding: 20px; box-shadow: 0 6px 0 var(--borda-cartao); width: 100%;
+        }
+
+        .col-dir-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* Centraliza o botão horizontalmente */
+        }
+
+        /* Botão Verificar do Gráfico */
+        .btn-verificar-grafico {
+            background-color: #27ae60;
+            color: white;
+            border: 2px solid #1e8449;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0 5px #1e8449;
+            padding: 15px 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px auto;
+        }
+        .btn-verificar-grafico:hover { background-color: #2ecc71; }
+        .btn-verificar-grafico:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px #1e8449;
+        }
+
+        @media (max-width: 850px) {
+            .layout-modo-grafico #col-esq { flex-direction: column !important; }
+        }
+
+        /* =========================================
+           O NUMPAD UNIVERSAL (JOGOS 1 e 2)
+           ========================================= */
+        .numpad { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; 
+            background: white; padding: 15px; border-radius: 20px; 
+            border: 4px solid #ced6e0; box-shadow: 0 6px 0 #ced6e0; max-width: 280px; width: 100%; 
+        }
+        .btn-num { 
+            aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; 
+            background: #f8fafc; border: 3px solid #a4b0be; border-radius: 12px; 
+            font-size: 1.8rem; font-weight: 900; color: var(--azul-escuro); 
+            cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 #a4b0be; touch-action: manipulation; 
+        }
+        .btn-num:active { transform: translateY(4px); box-shadow: none; background: #e3f2fd; }
+        
+        .btn-apagar { background: #ff4757; border-color: #d63031; color: white; box-shadow: 0 4px 0 #d63031; }
+        .btn-apagar svg { width: 30px; height: 30px; fill: white;}
+        
+        .btn-check-num { 
+            background: #2ecc71; border-color: #27ae60; color: white; box-shadow: 0 4px 0 #27ae60; 
+            animation: pulseCheck 2s infinite; 
+        }
+        .btn-check-num svg { width: 35px; height: 35px; fill: white;}
+        
+        @keyframes pulseCheck { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes pulseHint { 0% { box-shadow: inset 0 0 0 4px transparent; } 100% { box-shadow: inset 0 0 0 4px #f39c12; } }
+
+        @media (max-width: 650px) {
+            .numpad { max-width: 260px; padding: 10px; gap: 8px;}
+            .btn-num { font-size: 1.5rem; }
+            .grafico-wrapper { height: 180px; }
+            .tela-dados { padding: 15px 10px; }
+        }
+
+        /* =========================================
+           ECRÃS TRANSIÇÃO E FIM
+           ========================================= */
+        .overlay-nivel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 50; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; animation: fadeIn 0.3s; }
+        .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; text-align: center;}
+        .overlay-nivel p { font-size: 1.2rem; color: var(--text-main); font-weight: bold; text-align: center; padding: 0 20px;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: 0.2s;}
+        .btn-acao:hover { transform: translateY(-4px); box-shadow: 0 9px 0 var(--cor-2ano-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+        /* =========================================
+           CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+           ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Detetive de Gráficos 🕵️‍♂️</h1>
+        <div class="subtitulo">Analisa os dados e descobre a resposta!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-layer"></div>
+        
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Escolhe a tua Investigação:</h2>
+            <div class="grelha-3-cartoes">
+                <button class="cartao-quadrado" onclick="iniciarJogo(1)">
+                    <div class="icone" style="background:#eaf2f8;">🍎</div>
+                    <div class="texto">
+                        <span class="titulo">Pictogramas</span>
+                        <span class="desc">O Caso das Imagens</span>
+                    </div>
+                </button>
+                <button class="cartao-quadrado" onclick="iniciarJogo(2)">
+                    <div class="icone" style="background:#fdedec;">👦👧</div>
+                    <div class="texto">
+                        <span class="titulo">D. de Carroll</span>
+                        <span class="desc">Cruzamento de Pistas</span>
+                    </div>
+                </button>
+                <button class="cartao-quadrado" onclick="iniciarJogo(3)">
+                    <div class="icone" style="background:#fef9e7;">📊</div>
+                    <div class="texto">
+                        <span class="titulo">G. de Barras</span>
+                        <span class="desc">Constrói o Gráfico!</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">10</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Aviso!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="overlay-nivel" id="overlay-nivel">
+                    <h2>🎉 Subiste de Nível!</h2>
+                    <p id="texto-transicao">A investigação vai ficar mais complexa!</p>
+                </div>
+
+                <div class="layout-jogo" id="layout-jogo">
+                    <!-- Coluna Esquerda: Gráfico / Tabela -->
+                    <div class="coluna-jogo-esq" id="col-esq">
+                        
+                        <!-- A Pergunta agora está em CIMA em todos os modos! -->
+                        <div class="zona-pergunta" id="zona-pergunta">
+                            <p class="texto-pergunta" id="texto-pergunta">Carregando pergunta...</p>
+                            <div class="visor-input" id="visor-input"></div>
+                        </div>
+
+                        <div class="tela-dados" id="tela-dados">
+                            <!-- Gerado pelo Javascript -->
+                        </div>
+                    </div>
+
+                    <!-- Coluna Direita: O Numpad Universal -->
+                    <div class="coluna-jogo-dir" id="col-dir">
+                        
+                        <div class="numpad" id="numpad-container">
+                            <button class="btn-num" onclick="teclaPress('1')">1</button>
+                            <button class="btn-num" onclick="teclaPress('2')">2</button>
+                            <button class="btn-num" onclick="teclaPress('3')">3</button>
+                            
+                            <button class="btn-num" onclick="teclaPress('4')">4</button>
+                            <button class="btn-num" onclick="teclaPress('5')">5</button>
+                            <button class="btn-num" onclick="teclaPress('6')">6</button>
+                            
+                            <button class="btn-num" onclick="teclaPress('7')">7</button>
+                            <button class="btn-num" onclick="teclaPress('8')">8</button>
+                            <button class="btn-num" onclick="teclaPress('9')">9</button>
+                            
+                            <!-- Nova Linha com ⌫ , 0 , ✅ -->
+                            <button class="btn-num btn-apagar" onclick="apagarTecla()">
+                                <svg viewBox="0 0 24 24"><path d="M21,4H8.2L0,12l8.2,8H21c1.1,0,2-0.9,2-2V6C23,4.9,22.1,4,21,4z M17.9,15.5l-1.4,1.4L13,13.4l-3.5,3.5l-1.4-1.4l3.5-3.5 L8.1,8.5l1.4-1.4l3.5,3.5l3.5-3.5l1.4,1.4L14.4,12L17.9,15.5z"/></svg>
+                            </button>
+                            
+                            <button class="btn-num" onclick="teclaPress('0')">0</button>
+                            
+                            <button class="btn-num btn-check-num" onclick="verificarNumpad()">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Caso Encerrado! 🎉</h2>
+            <div class="end-stats">
+                És um verdadeiro detetive de dados!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">INVESTIGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">MENU 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // =========================================
+    // EFEITOS SONOROS (Web Audio API)
+    // =========================================
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1400, agora + 0.15);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2); osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria' || tipo === 'ronda') {
+            const notas = tipo === 'vitoria' ?[523.25, 659.25, 783.99, 1046.50] :[440, 554.37, 659.25];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.2, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1); osc.start(agora); osc.stop(agora + 0.1);
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-layer');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -10 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+    // =========================================
+    // LÓGICA DO DETETIVE DE GRÁFICOS
+    // =========================================
+    let modoSelecionado = 1; // 1=Picto, 2=Carroll, 3=Barras
+    let rondaIndex = 0;
+    const TOTAL_RONDAS = 10; // 2 níveis de dificuldade (5 rondas cada)
+    let errosTotais = 0;
+    
+    // Gestão de Inputs do Numpad
+    let inputGlobalStr = "";
+    let activeBoxId = "visor-input"; // Para onde vai o numpad
+    
+    // Gestão de Respostas
+    let currentTask = null; // Objecto com dados para a verificação e dica
+    
+    function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function sortear(array) { return array.sort(() => Math.random() - 0.5); }
+
+    function atualizarPlacar() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = rondaIndex + 1 > TOTAL_RONDAS ? TOTAL_RONDAS : rondaIndex + 1;
+        let perc = (rondaIndex / TOTAL_RONDAS) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function iniciarJogo(modo) {
+        initAudio();
+        modoSelecionado = modo;
+        rondaIndex = 0;
+        errosTotais = 0;
+        limparConfetis();
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        carregarExercicio();
+    }
+
+	function carregarExercicio() {
+		// 1. Restaurar Estrutura Base do Template
+		document.getElementById('layout-jogo').className = 'layout-jogo';
+		document.getElementById('col-dir').style.display = 'flex';
+		
+		// Isto garante que o col-esq volta a ter as duas zonas limpas para Pictogramas e Carroll
+		document.getElementById('col-esq').innerHTML = `
+			<div class="zona-pergunta" id="zona-pergunta">
+				<p class="texto-pergunta" id="texto-pergunta"></p>
+				<div class="visor-input" id="visor-input"></div>
+			</div>
+			<div class="tela-dados" id="tela-dados"></div>
+		`;
+
+		// 2. Resets de Lógica
+		inputGlobalStr = "";
+		activeBoxId = "visor-input";
+		document.getElementById('btn-dica').classList.remove('esgotada');
+
+		// 3. Lançar o modo correto
+		const tela = document.getElementById('tela-dados');
+		if (modoSelecionado === 1) gerarPictograma(tela);
+		else if (modoSelecionado === 2) gerarCarroll(tela);
+		else gerarGraficoBarras(tela);
+	}
+
+    // =========================================
+    // MODO 1: PICTOGRAMAS (10 Rondas)
+    // =========================================
+    function gerarPictograma(tela) {
+        document.getElementById('numpad-container').style.display = 'grid';
+        document.getElementById('visor-input').style.display = 'flex';
+        document.getElementById('visor-input').textContent = "";
+        
+        let isLevel2 = rondaIndex >= 5; // Level 2 tem multiplicador
+        let mult = isLevel2 ? (Math.random() > 0.5 ? 2 : 5) : 1; 
+
+        const temas =[
+            { titulo: "Fruta Favorita", emoji: '🟡', cats:['Maçã', 'Banana', 'Pera'] },
+            { titulo: "Animais", emoji: '🟡', cats:['Cão', 'Gato', 'Peixe'] },
+            { titulo: "Bolas", emoji: '🟡', cats:['Futebol', 'Basquetebol', 'Ténis'] }
+        ];
+        let tema = temas[rnd(0, temas.length - 1)];
+        let vals =[rnd(2, 6), rnd(2, 6), rnd(2, 6)]; // Quantidade de icones gerados
+
+        let html = `<h3 class="tela-titulo">${tema.titulo}</h3><table class="picto-tabela">`;
+        for(let i=0; i<3; i++) {
+            let emjString = `<span style="color:#f1c40f;">${tema.emoji}</span>`.repeat(vals[i]);
+            html += `<tr id="row-picto-${i}"><td>${tema.cats[i]}</td><td>${emjString}</td></tr>`;
+        }
+        html += `</table>`;
+        if(isLevel2) html += `<div class="legenda">Atenção: Cada <span style="color:#f1c40f;">${tema.emoji}</span> vale ${mult} votos.</div>`;
+        
+        tela.innerHTML = html;
+
+        let tipoQ = rnd(1, 3);
+        let qText = "", ans = 0, dicaId = "";
+        let c1 = rnd(0, 2);
+        
+        if (tipoQ === 1) { 
+            qText = `Quantos votos teve a opção ${tema.cats[c1]}?`;
+            ans = vals[c1] * mult;
+            dicaId = `row-picto-${c1}`;
+        } else if (tipoQ === 2) { 
+            let c2 = (c1 + 1) % 3;
+            qText = `Qual a diferença de votos entre ${tema.cats[c1]} e ${tema.cats[c2]}?`;
+            ans = Math.abs(vals[c1] - vals[c2]) * mult;
+            dicaId = `row-picto-${vals[c1] > vals[c2] ? c1 : c2}`; 
+        } else { 
+            qText = "Quantos votos foram contados no total?";
+            ans = (vals[0] + vals[1] + vals[2]) * mult;
+            dicaId = "row-picto-0"; 
+        }
+
+        document.getElementById('texto-pergunta').textContent = qText;
+        currentTask = { tipo: "simples", resposta: ans.toString(), dicaNode: dicaId };
+    }
+
+    // =========================================
+    // MODO 2: DIAGRAMA DE CARROLL (10 Rondas)
+    // =========================================
+    function gerarCarroll(tela) {
+        let isLevel2 = rondaIndex >= 5;
+
+        let p1 =['👧 Raparigas', '👦 Rapazes'];
+        let p2 = ['👓 Com Óculos', '🧢 Com Boné']; 
+        let v =[rnd(1, 5), rnd(1, 5), rnd(1, 5), rnd(1, 5)]; // Q0(RapG,Oc), Q1(RapG,Bon), Q2(RapZ,Oc), Q3(RapZ,Bon)
+
+        if (!isLevel2) {
+            // --- NÍVEL 1: VERDADEIRO OU FALSO ---
+            document.getElementById('layout-jogo').className = 'layout-jogo layout-centrado';
+            document.getElementById('col-dir').style.display = 'none'; // Esconde Numpad
+            document.getElementById('zona-pergunta').style.display = 'none'; // A pergunta funde-se na tabela
+
+            let html = `<h3 class="tela-titulo">A Turma do 2º Ano</h3>`;
+            html += `<div class="carroll-grid">
+                        <div></div> <div class="c-header">${p2[0]}</div> <div class="c-header">${p2[1]}</div>
+                        <div class="c-header">${p1[0]}</div> <div class="c-cell-static" id="q0">${v[0]}</div> <div class="c-cell-static" id="q1">${v[1]}</div>
+                        <div class="c-header">${p1[1]}</div> <div class="c-cell-static" id="q2">${v[2]}</div> <div class="c-cell-static" id="q3">${v[3]}</div>
+                     </div>`;
+            
+            // Gerar Afirmação
+            let isTrue = Math.random() > 0.5;
+            let fr=""; let hl="";
+            if(isTrue) {
+                if (v[0] > v[2]) { fr = `Há mais raparigas ${p2[0].slice(2)} do que rapazes.`; hl="q0"; }
+                else if (v[0] + v[1] > v[2] + v[3]) { fr = "Há, no total, mais raparigas."; hl="q0"; }
+                else { fr = `Existem ${v[1]} raparigas ${p2[1].slice(2)}.`; hl="q1"; }
+            } else {
+                if (v[0] < v[2]) { fr = `Há mais raparigas ${p2[0].slice(2)} do que rapazes.`; hl="q2"; }
+                else if (v[0] + v[1] < v[2] + v[3]) { fr = "Há, no total, mais raparigas."; hl="q2"; }
+                else { fr = `Existem ${v[1] + 2} raparigas ${p2[1].slice(2)}.`; hl="q1"; }
+            }
+
+            html += `<div class="lista-dados" style="margin-top:15px; font-weight:900; font-size:1.3rem; text-align:center;">"${fr}"</div>`;
+            html += `<div class="botoes-vf">
+                        <button class="btn-vf verdade" onclick="verificarVF(true)">Verdadeiro</button>
+                        <button class="btn-vf falso" onclick="verificarVF(false)">Falso</button>
+                     </div>`;
+            
+            tela.innerHTML = html;
+            currentTask = { tipo: "vf", resposta: isTrue, dicaNode: hl };
+
+        } else {
+            // --- NÍVEL 2: COMPLETAR A TABELA ---
+            document.getElementById('numpad-container').style.display = 'grid';
+            document.getElementById('visor-input').style.display = 'none'; // Não há visor unico
+            document.getElementById('texto-pergunta').textContent = "Preenche a tabela com os dados!";
+
+            let nomesG =['Ana', 'Bia', 'Inês', 'Sofia', 'Rita'];
+            let nomesZ =['Rui', 'Tiago', 'João', 'Pedro', 'Luís'];
+            let atr = ['Gosta de Sopa', 'Não gosta de Sopa'];
+
+            let totalKids = rnd(4, 7);
+            let lista = [];
+            let valFill =[0, 0, 0, 0];
+
+            for(let i=0; i<totalKids; i++) {
+                let isGirl = Math.random() > 0.5;
+                let nome = isGirl ? sortear(nomesG).pop() : sortear(nomesZ).pop();
+                let isGosta = Math.random() > 0.5;
+                
+                lista.push(`<strong>${nome}</strong>: ${isGosta ? atr[0] : atr[1]}`);
+                
+                if(isGirl && isGosta) valFill[0]++;
+                else if(isGirl && !isGosta) valFill[1]++;
+                else if(!isGirl && isGosta) valFill[2]++;
+                else valFill[3]++;
+            }
+
+            let html = `<div class="lista-dados">${lista.join('<br>')}</div>`;
+            html += `<div class="carroll-grid" style="margin-top:15px;">
+                        <div></div> <div class="c-header">${atr[0]}</div> <div class="c-header">${atr[1]}</div>
+                        <div class="c-header">Raparigas</div> <div class="c-cell-input" id="q0" onclick="ativarCarrollCell(0)"></div> <div class="c-cell-input" id="q1" onclick="ativarCarrollCell(1)"></div>
+                        <div class="c-header">Rapazes</div> <div class="c-cell-input" id="q2" onclick="ativarCarrollCell(2)"></div> <div class="c-cell-input" id="q3" onclick="ativarCarrollCell(3)"></div>
+                     </div>`;
+            
+            tela.innerHTML = html;
+            currentTask = { tipo: "carroll-fill", resposta: valFill, values:["", "", "", ""] };
+            ativarCarrollCell(0); // Começa na primeira
+        }
+    }
+
+    function ativarCarrollCell(idx) {
+        for(let i=0; i<4; i++) {
+            let el = document.getElementById(`q${i}`);
+            if(el) el.classList.remove('ativo');
+        }
+        document.getElementById(`q${idx}`).classList.add('ativo');
+        activeBoxId = `q${idx}`;
+        inputGlobalStr = currentTask.values[idx];
+    }
+
+    // =========================================
+    // MODO 3: GRÁFICO DE BARRAS (10 Rondas)
+    // =========================================
+
+	function gerarGraficoBarras(tela) {
+		// 1. Setup
+		document.getElementById('layout-jogo').className = 'layout-modo-grafico';
+		document.getElementById('col-dir').style.display = 'none'; 
+
+		// 2. Dados (Mantém a tua lógica de correctBars e rawData)
+		let isLevel2 = rondaIndex >= 5;
+		let emojis = ['⚽', '🪁', '🧸'];
+		let multL3 = isLevel2 ? 2 : 1; 
+		let correctBars = [rnd(1, 4), rnd(1, 4), rnd(1, 4)];
+		let rawData = [];
+		for(let i=0; i<3; i++) {
+			let totalIcons = correctBars[i] * multL3;
+			for(let j=0; j<totalIcons; j++) rawData.push(emojis[i]);
+		}
+		rawData = sortear(rawData);
+
+		// 3. HTML do Gráfico (Esquerda)
+		let yAxis = `<div class="y-axis">`;
+		let gridLines = `<div class="grid-lines">`;
+		for(let i=0; i<=5; i++) {
+			yAxis += `<span>${i * multL3}</span>`;
+			gridLines += `<div class="grid-line"></div>`;
+		}
+		yAxis += `</div>`; gridLines += `</div>`;
+
+		let bars = `<div class="bars-area">` + emojis.map((e,i)=>`<div class="bar-group"><div class="bar-fill" id="bar-${i}" style="height:0%"></div><div class="bar-label">${e}</div></div>`).join('') + `</div>`;
+		let ctrls = `<div class="grafico-controlos">` + emojis.map((_,i)=>`<div class="ctrl-group"><button class="btn-b-ctrl" onclick="alterarBarra(${i},-1)">-</button><button class="btn-b-ctrl" onclick="alterarBarra(${i},1)">+</button></div>`).join('') + `</div>`;
+
+		// 4. Injeção Final no col-esq (Divide em duas colunas)
+		document.getElementById('col-esq').innerHTML = `
+			<div class="col-esq-grafico">
+				<div class="caixa-desarrumada" id="dados-raw">${rawData.join(' ')}</div>
+				<div class="grafico-wrapper">
+					${yAxis}
+					${gridLines}
+					${bars}
+				</div>
+				${ctrls}
+			</div>
+
+			<div class="col-dir-info">
+				<div class="zona-pergunta" style="width:100%">
+					<p class="texto-pergunta">Constrói o gráfico de barras que representa os dados!</p>
+					${multL3 > 1 ? `<p style="color:red; font-weight:bold; margin-top:10px;">Atenção: Cada bloco vale ${multL3}.</p>` : ''}
+				</div>
+				<button class="btn-verificar-grafico" onclick="verificarGrafico()">VERIFICAR</button>
+			</div>
+		`;
+
+		currentTask = { tipo: "grafico", resposta: correctBars, values: [0, 0, 0], dicaNode: "dados-raw" };
+	}
+	
+	
+    function alterarBarra(catIndex, valor) {
+        let novoValor = currentTask.values[catIndex] + valor;
+        if (novoValor >= 0 && novoValor <= 5) {
+            currentTask.values[catIndex] = novoValor;
+            let percent = (novoValor / 5) * 100;
+            document.getElementById(`bar-${catIndex}`).style.height = `${percent}%`;
+            tocarSom('pop');
+        }
+    }
+
+    function verificarGrafico() {
+        let acertou = true;
+        for(let i=0; i<3; i++) { if(currentTask.values[i] !== currentTask.resposta[i]) acertou = false; }
+
+        if (acertou) {
+            tocarSom('acerto');
+            setTimeout(avancarRonda, 1000);
+        } else {
+            lancarErro(document.getElementById('tela-dados'), "O gráfico não corresponde aos dados!");
+        }
+    }
+
+    // =========================================
+    // TECLADO E VALIDAÇÕES GERAIS
+    // =========================================
+    function teclaPress(num) {
+        if (inputGlobalStr.length < 3) {
+            inputGlobalStr += num;
+            atualizarVisorGeral();
+        }
+    }
+
+    function apagarTecla() {
+        if (inputGlobalStr.length > 0) {
+            inputGlobalStr = inputGlobalStr.slice(0, -1);
+            atualizarVisorGeral();
+        }
+    }
+
+    function atualizarVisorGeral() {
+        let el = document.getElementById(activeBoxId);
+        if(el) {
+            el.textContent = inputGlobalStr;
+            if (currentTask.tipo === "carroll-fill") {
+                let idx = parseInt(activeBoxId.replace('q',''));
+                currentTask.values[idx] = inputGlobalStr;
+            }
+        }
+    }
+
+    function verificarNumpad() {
+        if (currentTask.tipo === "simples") {
+            if(inputGlobalStr === "") return;
+            if (inputGlobalStr === currentTask.resposta) {
+                tocarSom('acerto');
+                document.getElementById('visor-input').style.borderColor = "var(--cor-sucesso)";
+                setTimeout(avancarRonda, 1000);
+            } else {
+                lancarErro(document.getElementById('visor-input'), "Resposta incorreta!");
+            }
+        } 
+        else if (currentTask.tipo === "carroll-fill") {
+            let vazio = false;
+            for(let i=0; i<4; i++) { if(currentTask.values[i] === "") vazio = true; }
+            if(vazio) { showToast("Preenche todos os espaços!", true); return; }
+
+            let acertou = true;
+            for(let i=0; i<4; i++) {
+                if (parseInt(currentTask.values[i]) !== currentTask.resposta[i]) acertou = false;
+            }
+
+            if (acertou) {
+                tocarSom('acerto');
+                setTimeout(avancarRonda, 1000);
+            } else {
+                lancarErro(document.querySelector('.carroll-grid'), "Analisa bem a lista de dados!");
+            }
+        }
+    }
+
+    function verificarVF(isTrueBtn) {
+        if (isTrueBtn === currentTask.resposta) {
+            tocarSom('acerto');
+            setTimeout(avancarRonda, 1000);
+        } else {
+            lancarErro(document.querySelector('.botoes-vf'), "Tenta ler com mais atenção.");
+        }
+    }
+
+    function lancarErro(elemento, msg) {
+        errosTotais++;
+        atualizarPlacar();
+        tocarSom('erro');
+        elemento.classList.add('error-shake');
+        showToast(msg, true);
+        
+        if (currentTask.tipo === "simples") {
+            inputGlobalStr = ""; atualizarVisorGeral();
+        }
+
+        setTimeout(() => elemento.classList.remove('error-shake'), 400);
+    }
+
+    // =========================================
+    // DICA MÁGICA
+    // =========================================
+    function usarDica() {
+        const btn = document.getElementById('btn-dica');
+        if(btn.classList.contains('esgotada')) return;
+        
+        if (currentTask.tipo === "grafico") {
+			// Procura a primeira barra que esteja incorreta e corrige-a
+			for(let i=0; i<3; i++) {
+				let diff = currentTask.resposta[i] - currentTask.values[i];
+				if (diff !== 0) {
+					alterarBarra(i, diff);
+					break; // Corrige apenas uma barra por clique na dica
+				}
+			}
+			document.getElementById('dados-raw').classList.add('highlight-row'); 
+		}
+        else if (currentTask.tipo === "carroll-fill") {
+            // Preenche o primeiro que estiver vazio ou errado
+            for(let i=0; i<4; i++) {
+                if(parseInt(currentTask.values[i]) !== currentTask.resposta[i]) {
+                    ativarCarrollCell(i);
+                    inputGlobalStr = currentTask.resposta[i].toString();
+                    atualizarVisorGeral();
+                    break;
+                }
+            }
+        }
+        else {
+            const alvo = document.getElementById(currentTask.dicaNode);
+            if(alvo) alvo.classList.add('highlight-row');
+        }
+        
+        showToast("Dica: Observa os elementos iluminados!", false);
+        btn.classList.add('esgotada');
+        tocarSom('acerto');
+    }
+
+    // =========================================
+    // TRANSIÇÕES DO JOGO
+    // =========================================
+    function avancarRonda() {
+        rondaIndex++;
+        atualizarPlacar();
+        
+        if (rondaIndex >= TOTAL_RONDAS) {
+            finalizarJogo();
+        } 
+        else if (rondaIndex === 5) {
+            // Ecrã de Transição de Nível (A meio!)
+            document.getElementById('btn-dica').classList.remove('esgotada');
+            document.getElementById('texto-transicao').textContent = 
+                modoSelecionado === 1 ? "Os símbolos agora valem mais do que 1!" :
+                (modoSelecionado === 2 ? "Agora és tu que constróis a tabela!" : "O eixo do gráfico vai aumentar!");
+            
+            tocarSom('ronda');
+            document.getElementById('overlay-nivel').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.getElementById('overlay-nivel').style.display = 'none';
+                carregarExercicio();
+            }, 3000);
+        } else {
+            carregarExercicio();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() { iniciarJogo(modoSelecionado); }
+    function voltarAoMenu() { mostrarEcra('ecra-selecao'); }
+
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
