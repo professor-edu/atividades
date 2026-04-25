@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Simetria 🦋</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        
+        @media (min-width: 769px) and (min-height: 600px) { 
+            body { height: 100vh; overflow-y: hidden; } 
+        }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px; overflow-y: auto;} 
+            .cartao-jogo-container { padding: 20px 15px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1;
+            padding: 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; 
+        }
+
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* ECRÃS E MENUS */
+        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; z-index: 5;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box;
+        }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { background-color: #fff9c4; border-color: #b18500; color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           O ESPELHO MÁGICO (CSS ESPECÍFICO)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; width: 100%; flex: 1;
+            background: transparent; border: none; padding: 0; position: relative; gap: 15px;
+            align-items: center; justify-content: flex-start;
+        }
+
+        /* Ecrã de Seleção com os 3 Cartões Quadrados */
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        .grelha-3-cartoes { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%; max-width: 800px; margin: 0 auto; 
+        }
+        .cartao-quadrado {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            background: #ffffff; border: 4px solid var(--borda-cartao); border-radius: 20px; 
+            padding: 30px 15px; width: 100%; text-align: center;
+            cursor: pointer; box-sizing: border-box; box-shadow: 0 6px 0 var(--borda-cartao); 
+            transition: all 0.2s ease; aspect-ratio: 1 / 1; 
+        }
+        @media (hover: hover) { 
+            .cartao-quadrado:hover { transform: translateY(-4px); border-color: var(--cor-mat); box-shadow: 0 10px 0 var(--cor-mat); } 
+        }
+        .cartao-quadrado:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .cartao-quadrado .icone { 
+            width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; font-size: 2.5rem; flex-shrink: 0; margin: 0 auto;
+        }
+        .cartao-quadrado .titulo { font-weight: 900; color: var(--azul-escuro); font-size: 1.3rem; display: block; margin-bottom: 5px;}
+        .cartao-quadrado .desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500;}
+
+        @media (max-width: 768px) {
+            .grelha-3-cartoes { grid-template-columns: 1fr; gap: 15px; }
+            .cartao-quadrado { aspect-ratio: auto; padding: 20px 15px; }
+        }
+
+
+		/* 1. O ESPELHO E A GRELHA */
+        .moldura-espelho {
+            background: #dfe6e9;
+            border: 8px solid #0984e3;
+            border-radius: 15px;
+            padding: 8px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 0 8px 0 #0984e3;
+            margin-bottom: 10px;
+            transition: all 0.5s ease;
+            
+            /* A MAGIA QUE FALTAVA: Tamanho fixo e quadrado perfeito! */
+            width: 100%;
+            max-width: 400px; 
+            aspect-ratio: 1 / 1; 
+        }
+
+        .grelha-container {
+            display: grid;
+            background: #b2bec3; 
+            gap: 2px;
+            border-radius: 5px;
+            
+            /* A grelha agora preenche a moldura a 100% */
+            width: 100%;
+            height: 100%; 
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .celula-pixel {
+            background: white;
+            width: 100%; height: 100%;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .celula-pixel.fixo { cursor: default; } /* Lado Esquerdo */
+
+        /* A Linha Vermelha de Simetria */
+        .eixo-simetria {
+            border-right: 3px solid #ff4757 !important;
+            box-shadow: 2px 0 5px rgba(255, 71, 87, 0.4);
+            z-index: 2;
+        }
+
+        /* 2. ANIMAÇÃO DE REVELAÇÃO MAGICA */
+        .moldura-espelho.revelado {
+            border-color: #f1c40f; box-shadow: inset 0 0 15px rgba(241, 196, 15, 0.3), 0 8px 0 #f1c40f, 0 0 30px rgba(241, 196, 15, 0.5);
+            animation: bounceReveal 0.8s ease-out;
+        }
+        .moldura-espelho.revelado .grelha-container {
+            gap: 0; /* Remove as linhas da grelha! */
+            background: transparent;
+        }
+        .moldura-espelho.revelado .eixo-simetria {
+            border-right: none !important; box-shadow: none;
+        }
+        .moldura-espelho.revelado .celula-pixel {
+            /* Se for cor 0 (vazio), fica transparente para realçar o desenho */
+            background: transparent; 
+        }
+
+        @keyframes bounceReveal {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.1); }
+            50% { transform: scale(0.95); }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 3. A PALETA DE CORES */
+        .area-controlos {
+            display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; flex-wrap: wrap;
+        }
+        
+        .paleta-cores {
+            display: flex; gap: 15px; padding: 10px 20px; background: white;
+            border: 4px solid var(--borda-cartao); border-radius: 30px; box-shadow: 0 4px 0 var(--borda-cartao);
+        }
+
+        .btn-cor {
+            width: 40px; height: 40px; border-radius: 50%; border: 4px solid white;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 0 0 2px #ced6e0;
+        }
+        .btn-cor.ativo { transform: scale(1.2); box-shadow: 0 0 0 3px var(--azul-vibrante), 0 0 15px rgba(0, 145, 255, 0.5); }
+        @media (hover: hover) { .btn-cor:hover { transform: scale(1.1); } }
+
+        .btn-apagar-cor {
+            background: white; border-color: #ced6e0 !important; color: #ff4757; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+
+        .btn-verificar {
+            background: var(--cor-mat); color: white; border: none; padding: 12px 30px;
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer;
+            box-shadow: 0 5px 0 #2980b9; transition: 0.2s; text-transform: uppercase;
+        }
+        .btn-verificar:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+
+        .anim-dica { animation: piscaDica 1s infinite alternate; z-index: 10; position: relative;}
+        @keyframes piscaDica { 0% { box-shadow: inset 0 0 0 4px #f1c40f; } 100% { box-shadow: inset 0 0 0 4px #e67e22; background: rgba(241, 196, 15, 0.4); } }
+        
+        .error-shake { animation: shakeGame 0.4s ease !important; border-color: var(--cor-erro) !important; }
+        @keyframes shakeGame { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+
+        /* Nomes das Obras */
+        .nome-obra { font-size: 2rem; font-weight: 900; color: var(--azul-escuro); opacity: 0; transition: 0.5s; height: 0; overflow: hidden;}
+        .nome-obra.mostrar { opacity: 1; height: auto; margin-top: 10px; animation: bounceNuvem 2s infinite;}
+        @keyframes bounceNuvem { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* Overlay Niveis */
+        .overlay-nivel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 50; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; animation: fadeIn 0.3s; }
+        .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; text-align: center;}
+        .overlay-nivel p { font-size: 1.2rem; color: var(--text-main); font-weight: bold; text-align: center; padding: 0 20px;}
+
+        /* Ecrã Fim */
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: 0.2s;}
+        .btn-acao:hover { transform: translateY(-4px); box-shadow: 0 9px 0 var(--cor-2ano-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+        /* =========================================
+           CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+           ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Simetria 🦋</h1>
+        <div class="subtitulo">Reflete a imagem para revelar o desenho!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-layer"></div>
+        
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Escolhe a dificuldade:</h2>
+            <div class="grelha-3-cartoes">
+                <button class="cartao-quadrado" onclick="iniciarJogo(1)">
+                    <div class="icone" style="background:#eaf2f8;">🟥</div>
+                    <div class="texto">
+                        <span class="titulo">O Aprendiz</span>
+                        <span class="desc">Grelha 6x6 (1 Cor)</span>
+                    </div>
+                </button>
+                <button class="cartao-quadrado" onclick="iniciarJogo(2)">
+                    <div class="icone" style="background:#fdedec;">🟩</div>
+                    <div class="texto">
+                        <span class="titulo">O Feiticeiro</span>
+                        <span class="desc">Grelha 8x8 (2 Cores)</span>
+                    </div>
+                </button>
+                <button class="cartao-quadrado" onclick="iniciarJogo(3)">
+                    <div class="icone" style="background:#fef9e7;">🟪</div>
+                    <div class="texto">
+                        <span class="titulo">O Mestre</span>
+                        <span class="desc">Grelha 10x10 (4 Cores)</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">5</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Aviso!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="overlay-nivel" id="overlay-nivel">
+                    <h2>🎉 Subiste de Nível!</h2>
+                    <p>O espelho ficou mais complexo...</p>
+                </div>
+
+                <div class="nome-obra" id="nome-obra">Desbloqueaste a Borboleta!</div>
+
+                <div class="moldura-espelho" id="moldura">
+                    <div class="grelha-container" id="grelha">
+                        <!-- Gerado por JS -->
+                    </div>
+                </div>
+
+                <div class="area-controlos" id="controlos">
+                    <div class="paleta-cores" id="paleta">
+                        <!-- Botões de cor gerados aqui -->
+                    </div>
+                    <button class="btn-verificar" onclick="verificarSimetria()">Verificar</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Reflexo Perfeito! 🎉</h2>
+            <div class="end-stats">
+                Desbloqueaste todas as obras de arte!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">MENU 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // Sons (Web Audio API)
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1400, agora + 0.15);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2); osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria' || tipo === 'ronda') {
+            const notas = tipo === 'vitoria' ?[523.25, 659.25, 783.99, 1046.50] :[440, 554.37, 659.25];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.2, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        } else if (tipo === 'magia') {
+            // Efeito cintilante para a Revelação do Desenho
+            const arp =[523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+            arp.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0, agora + i * 0.08); g.gain.linearRampToValueAtTime(0.15, agora + i * 0.08 + 0.05); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.08 + 0.3);
+                o.start(agora + i * 0.08); o.stop(agora + i * 0.08 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-layer');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -10 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+	// =========================================
+    // BASE DE DADOS DOS PIXEL ARTS (METADE ESQUERDA)
+    // Cores: 0=Vazio, 1,2,3,4 mapeiam para a palette do nivel
+    // =========================================
+    function parseMatrix(strArray) { return strArray.map(row => row.split('').map(Number)); }
+    function sortear(array) { return array.sort(() => Math.random() - 0.5); }
+
+    const dbPuzzles = {
+        1: { // Nível 1: Grelha 6x6, 1 Cor
+            cols: 6, colors:['#eb4d4b'], 
+            puzzles:[
+                { name: "Coração 💖", left: parseMatrix(['011', '111', '111', '011', '001', '000']) },
+                { name: "Espada 🗡️", left: parseMatrix(['001', '011', '001', '111', '011', '001']) },
+                { name: "Árvore 🌲", left: parseMatrix(['001', '011', '111', '001', '001', '000']) },
+                { name: "Barco ⛵", left: parseMatrix(['001', '011', '111', '111', '011', '001']) },
+                { name: "Taça 🏆", left: parseMatrix(['111', '011', '001', '001', '011', '111']) },
+                { name: "Maçã 🍎", left: parseMatrix(['001', '011', '111', '111', '011', '000']) },
+                { name: "Casa 🏠", left: parseMatrix(['001', '011', '111', '011', '011', '011']) },
+                { name: "Rosto 🙂", left: parseMatrix(['011', '101', '101', '111', '011', '000']) }
+            ]
+        },
+        2: { // Nível 2: Grelha 8x8, 3 Cores
+            cols: 8, colors:['#be2edd', '#ff7979', '#f0932b'], 
+            puzzles:[
+                { name: "Borboleta 🦋", left: parseMatrix(['0110', '1221', '0110', '1221', '1221', '0110', '0010', '0000']) },
+                { name: "Cogumelo 🍄", left: parseMatrix(['0111', '1121', '1211', '1111', '0033', '0033', '0033', '0000']) },
+                { name: "Coroa 👑", left: parseMatrix(['1001', '1011', '1111', '1221', '1221', '1111', '0000', '0000']) },
+                { name: "Foguete 🚀", left: parseMatrix(['0011', '0122', '1222', '1221', '1221', '0111', '0033', '0003']) },
+                { name: "Pinguim 🐧", left: parseMatrix(['0111', '1122', '1122', '1111', '1122', '0111', '0011', '0033']) },
+                { name: "Caranguejo 🦀", left: parseMatrix(['0011', '0111', '1011', '1111', '1111', '0101', '0101', '0000']) },
+                { name: "Urso 🐻", left: parseMatrix(['0110', '1111', '1011', '1111', '0110', '0110', '0110', '0000']) },
+                { name: "Espada Épica ⚔️", left: parseMatrix(['0001', '0012', '0121', '1210', '3100', '1300', '0000', '0000']) }
+            ]
+        },
+        3: { // Nível 3: Grelha 10x10, 4 Cores (Substituí o Branco por Amarelo!)
+            cols: 10, colors:['#2bcbba', '#9c88ff', '#f1c40f', '#2f3640'], // Verde, Roxo, Amarelo, Preto
+            puzzles:[
+                { name: "Monstrinho 👾", left: parseMatrix(['00111', '01121', '11341', '11111', '01111', '01221', '01111', '11011', '10001', '00000']) },
+                { name: "Robô 🤖", left: parseMatrix(['00111', '01221', '01111', '00440', '11111', '13111', '11111', '00110', '01110', '01110']) },
+                { name: "Castelo 🏰", left: parseMatrix(['10101', '11111', '22222', '22322', '22222', '22222', '24442', '24442', '24442', '22222']) },
+                { name: "Coruja 🦉", left: parseMatrix(['00111', '01122', '11342', '11222', '11122', '01111', '01111', '00110', '00440', '00000']) },
+                { name: "Sapo 🐸", left: parseMatrix(['00110', '01231', '01111', '11111', '11111', '10011', '11110', '00000', '00000', '00000']) },
+                { name: "Nave 🛸", left: parseMatrix(['00011', '00122', '01222', '12222', '13322', '13322', '01111', '00440', '04040', '00000']) },
+                { name: "Tigre 🐅", left: parseMatrix(['01100', '11110', '10411', '11111', '11111', '11411', '01110', '01010', '01010', '00000']) },
+                { name: "Troféu 🏆", left: parseMatrix(['01111', '13333', '11333', '01333', '00333', '00111', '00033', '00033', '00133', '01111']) }
+            ]
+        }
+    };
+
+// =========================================
+    // LÓGICA DO JOGO
+    // =========================================
+    let nivelSelecionado = 1;
+    let puzzleIndex = 0;
+    const TOTAL_RONDAS = 5;
+    let errosTotais = 0;
+    
+    let puzzlesSorteados =[]; // Variável nova para guardar os 5 escolhidos!
+    let puzzleData = null; 
+    let configLevel = null; 
+    
+    let userGrid =[]; 
+    let selectedColorIndex = 1; 
+
+    function atualizarPlacar() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = puzzleIndex + 1 > TOTAL_RONDAS ? TOTAL_RONDAS : puzzleIndex + 1;
+        let perc = (puzzleIndex / TOTAL_RONDAS) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function iniciarJogo(nivel) {
+        initAudio();
+        nivelSelecionado = nivel;
+        puzzleIndex = 0;
+        errosTotais = 0;
+        
+        // A MAGIA ACONTECE AQUI: Copia os desenhos do nível, baralha, e escolhe os 5 primeiros!
+        let todosDoNivel = [...dbPuzzles[nivelSelecionado].puzzles];
+        puzzlesSorteados = sortear(todosDoNivel).slice(0, TOTAL_RONDAS);
+
+        limparConfetis();
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        carregarPuzzle();
+    }
+
+    function carregarPuzzle() {
+        document.getElementById('btn-dica').classList.remove('esgotada');
+        document.getElementById('nome-obra').classList.remove('mostrar');
+        document.getElementById('moldura').classList.remove('revelado');
+        document.getElementById('controlos').style.display = 'flex';
+        
+        configLevel = dbPuzzles[nivelSelecionado];
+        puzzleData = puzzlesSorteados[puzzleIndex]; // Puxa da nossa lista baralhada!
+        
+        const coresUsadas = configLevel.colors;
+        selectedColorIndex = 1;
+        
+        const colsTotal = configLevel.cols;
+        const rowsTotal = puzzleData.left.length;
+        const colMeio = colsTotal / 2;
+
+        userGrid = Array.from({ length: rowsTotal }, () => Array(colMeio).fill(0));
+
+        const paleta = document.getElementById('paleta');
+        paleta.innerHTML = `<div class="btn-cor btn-apagar-cor" onclick="escolherCor(0)" id="cor-0">✖</div>`;
+        coresUsadas.forEach((cor, i) => {
+            const numCor = i + 1;
+            paleta.innerHTML += `<div class="btn-cor ${numCor === 1 ? 'ativo' : ''}" style="background-color: ${cor}" onclick="escolherCor(${numCor})" id="cor-${numCor}"></div>`;
+        });
+
+        const grelha = document.getElementById('grelha');
+        grelha.style.gridTemplateColumns = `repeat(${colsTotal}, 1fr)`;
+        grelha.innerHTML = '';
+
+        for(let r = 0; r < rowsTotal; r++) {
+            for(let c = 0; c < colsTotal; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'celula-pixel';
+                
+                if (c < colMeio) {
+                    cell.classList.add('fixo');
+                    const corVal = puzzleData.left[r][c];
+                    
+                    // CORREÇÃO: O fundo agora é 'white' em vez de 'transparent'
+                    if (corVal > 0) cell.style.backgroundColor = coresUsadas[corVal - 1];
+                    else cell.style.backgroundColor = "white"; 
+                    
+                    if (c === colMeio - 1) cell.classList.add('eixo-simetria');
+                } else {
+                    let colVirtualRight = c - colMeio;
+                    cell.id = `pixel-${r}-${colVirtualRight}`;
+                    cell.onclick = () => pintarPixel(r, colVirtualRight);
+                }
+                
+                grelha.appendChild(cell);
+            }
+        }
+    }
+
+    function escolherCor(idx) {
+        selectedColorIndex = idx;
+        document.querySelectorAll('.btn-cor').forEach(b => b.classList.remove('ativo'));
+        document.getElementById(`cor-${idx}`).classList.add('ativo');
+    }
+
+    function pintarPixel(r, cVirtual) {
+        userGrid[r][cVirtual] = selectedColorIndex;
+        const cell = document.getElementById(`pixel-${r}-${cVirtual}`);
+        
+        cell.classList.remove('anim-dica'); // Limpa dica se pintar por cima
+
+        if (selectedColorIndex === 0) {
+            cell.style.backgroundColor = "white"; // "Apaga" simulando o fundo branco da célula
+        } else {
+            cell.style.backgroundColor = configLevel.colors[selectedColorIndex - 1];
+        }
+    }
+
+    function usarDica() {
+        const btn = document.getElementById('btn-dica');
+        if(btn.classList.contains('esgotada')) return;
+        
+        // Procura o primeiro pixel que não bate certo com o espelho
+        const rows = puzzleData.left.length;
+        const colMeio = puzzleData.left[0].length;
+        
+        let encontrouErro = false;
+
+        for(let r = 0; r < rows; r++) {
+            for(let cVirtual = 0; cVirtual < colMeio; cVirtual++) {
+                // A posição na matriz esquerda que corresponde a este pixel (espelhado)
+                let cEsq = colMeio - 1 - cVirtual;
+                let valEsq = puzzleData.left[r][cEsq];
+                let valDir = userGrid[r][cVirtual];
+
+                if (valEsq !== valDir) {
+                    document.getElementById(`pixel-${r}-${cVirtual}`).classList.add('anim-dica');
+                    encontrouErro = true;
+                    break;
+                }
+            }
+            if (encontrouErro) break;
+        }
+
+        if (encontrouErro) {
+            btn.classList.add('esgotada');
+            showToast("Observa o local a piscar no espelho!", false);
+        } else {
+            showToast("Tudo certo até agora! Continua a pintar.", false);
+        }
+    }
+
+    function verificarSimetria() {
+        const rows = puzzleData.left.length;
+        const colMeio = puzzleData.left[0].length;
+        let vitoria = true;
+
+        for(let r = 0; r < rows; r++) {
+            for(let cVirtual = 0; cVirtual < colMeio; cVirtual++) {
+                let cEsq = colMeio - 1 - cVirtual;
+                let valEsq = puzzleData.left[r][cEsq];
+                let valDir = userGrid[r][cVirtual];
+                
+                if (valEsq !== valDir) {
+                    vitoria = false; break;
+                }
+            }
+            if(!vitoria) break;
+        }
+
+        if (vitoria) {
+            animacaoReveal();
+        } else {
+            errosTotais++;
+            atualizarPlacar();
+            tocarSom('erro');
+            const moldura = document.getElementById('moldura');
+            moldura.classList.add('error-shake');
+            showToast("Ainda não está igual ao espelho!", true);
+            setTimeout(() => moldura.classList.remove('error-shake'), 400);
+        }
+    }
+
+    function animacaoReveal() {
+        tocarSom('magia'); // Som cintilante de revelação
+        document.getElementById('controlos').style.display = 'none';
+        
+        const moldura = document.getElementById('moldura');
+        moldura.classList.add('revelado');
+
+        // Limpa os fundos brancos (vazios) para ficarem transparentes e realçar o desenho
+        document.querySelectorAll('.celula-pixel').forEach(c => {
+            if (c.style.backgroundColor === "white" || c.style.backgroundColor === "") {
+                c.style.backgroundColor = "transparent";
+            }
+        });
+
+        // Revela o Título da Obra
+        const titulo = document.getElementById('nome-obra');
+        titulo.textContent = `Desbloqueaste: ${puzzleData.name}`;
+        titulo.classList.add('mostrar');
+
+        setTimeout(avancarRonda, 3500); // Dá tempo para a criança admirar o desenho
+    }
+
+    function avancarRonda() {
+        puzzleIndex++;
+        atualizarPlacar();
+        
+        if (puzzleIndex >= TOTAL_RONDAS) {
+            finalizarJogo();
+        } else {
+            carregarPuzzle();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() { iniciarJogo(nivelSelecionado); }
+    function voltarAoMenu() { mostrarEcra('ecra-selecao'); }
+
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>

@@ -42,7 +42,7 @@ const todosOsJogos =[
 	{ nome: "Estratégias de Cálculo", icone: "icones/estrategias_calculo.png", link: "mat/estrategias-calculo/", cat: "mat" },
 	{ nome: "Tabuadas Flash", icone: "icones/tabuadas_flash.png", link: "mat/tabuadas-flash/", cat: "mat" },
 	{ nome: "Comboio das Sequências", icone: "icones/comboio_sequencias.png", link: "mat/comboio-sequencias/", cat: "mat" },
-   	
+   	{ nome: "Simetria", icone: "icones/simetria.png", link: "mat/simetria/", cat: "mat" },
 	
 	
     
