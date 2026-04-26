@@ -382,7 +382,7 @@
         /* --- LADO DA FRENTE --- */
         .cartao-frente {
             background: white;
-            border-top: 6px solid #4dabf7;
+            border-top: 6px solid var(--cor-mat);
             display: flex;
             flex-direction: column;
         }
@@ -398,54 +398,61 @@
             justify-content: center;
             width: 100%;
             height: 100%;
-            gap: 12px;
+            gap: 2%;
             color: inherit;
             position: relative;
         }
 
-        /* Bolinhas (Canto Superior Esquerdo) */
-        .dots-container {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            display: flex;
-            gap: 4px;
-            z-index: 5;
-        }
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid #b0bec5; /* Cinza vazio */
-            background-color: transparent;
-            box-sizing: border-box;
-        }
-        .dot.concluido {
-            background-color: var(--cor-em); /* Verde preenchido */
-            border-color: var(--cor-em);
-        }
-
-        /* Botão "+" (Canto Superior Direito) */
+		/* =========================================
+           BOTÃO DE INFO (O "+" PERFEITO E CENTRADO)
+           ========================================= */
         .btn-info {
             position: absolute;
             top: 8px;
             right: 8px;
-            width: 28px;
-            height: 28px;
+            width: 32px; /* Ligeiramente maior para toque no telemóvel */
+            height: 32px;
             border-radius: 50%;
             background: #e3f2fd;
-            color: var(--azul-escuro);
-            border: none;
-            font-size: 1.3rem;
-            font-weight: bold;
+            border: 2px solid white; /* Borda branca dá um aspeto 3D / autocolante */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Uma sombra suave para sobressair da imagem */
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            padding: 0;
         }
-        .btn-info:hover { background: var(--cor-mat); color: white; }
+
+        /* O efeito de levitar quando se toca ou passa o rato */
+        .btn-info:hover { 
+            background: var(--cor-mat); 
+            transform: scale(1.1); 
+            box-shadow: 0 6px 12px rgba(0, 145, 255, 0.2);
+        }
+
+        /* O SINAL DE "+" DESENHADO A CSS PURO */
+        .btn-info::before,
+        .btn-info::after {
+            content: '';
+            position: absolute;
+            background-color: var(--azul-escuro); /* Cor da cruz */
+            border-radius: 3px; /* O Segredo: pontas redondinhas para as crianças! */
+            transition: 0.3s;
+        }
+
+        /* A Barra Horizontal */
+        .btn-info::before { width: 14px; height: 3px; }
+        
+        /* A Barra Vertical */
+        .btn-info::after { width: 3px; height: 14px; }
+
+        /* Quando o fundo fica azul (hover), a cruz fica branca! */
+        .btn-info:hover::before,
+        .btn-info:hover::after {
+            background-color: white;
+        }
 
         /* --- LADO DO VERSO --- */
         .cartao-verso {
@@ -473,12 +480,12 @@
             margin: 0;
             width: 100%;
             text-align: left;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-main);
             font-weight: 500;
         }
         .lista-minijogos li {
-            padding: 4px 0;
+            padding: 3px 0;
             border-bottom: 1px dashed #ddd;
             white-space: nowrap;
             overflow: hidden;
@@ -492,7 +499,7 @@
             margin-top: auto;
             width: 100%;
         }
-/* A ANIMAÇÃO SUBTIL (Reflexo de Luz) */
+		/* A ANIMAÇÃO SUBTIL (Reflexo de Luz) */
         @keyframes brilho-luz {
             0%, 60% { left: -100%; } /* Fica escondido 60% do tempo */
             100% { left: 200%; }     /* Passa rapidamente e sai pela direita */
@@ -526,7 +533,7 @@
             height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg); /* Dá a inclinação à luz */
-            animation: brilho-luz 3s infinite; /* A luz passa a cada 3 segundos */
+            animation: brilho-luz 2s infinite; /* A luz passa a cada 3 segundos */
         }
 
         /* Apenas no PC: um levitar ultra suave ao passar o rato */
@@ -545,6 +552,29 @@
             cursor: pointer;
             box-shadow: 0 3px 0 #bdbdbd;
         }
+		
+		/* CARTÕES COM IMAGENS*/
+		
+		/* =========================================
+           O NOVO CONTAINER DE IMAGEM FLUIDO
+           ========================================= */
+        .image-wrapper {
+            height: 50%; /* O Segredo: Ocupa sempre apenas 50% da altura do cartão (nunca esmaga o texto) */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px; /* Um pequeno respiro antes do texto */
+        }
+
+        .icone-imagem {
+            max-width: 85%; /* Garante que a imagem não cola aos limites laterais */
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); /* Bónus: dá um ligeiro efeito 3D à imagem! */
+        }
+		
+		
 
         /* =========================================
            RESPONSIVIDADE (Afasta cartões em Mobile)
@@ -555,6 +585,17 @@
                 gap: 35px; /* Aumentado brutalmente para Mobile Vertical */
             }
         }
+		
+		/* =========================================
+           RESPIRO VISUAL: SEPARADOR EM MOBILE VERTICAL
+           ========================================= */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .separador {
+                /* Aumenta o espaço: 60px para cima, 0 pros lados, 50px para baixo */
+                margin: 50px 0 40px 0 !important; 
+            }
+        }
+		
 
         /* FOOTER */
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
@@ -580,24 +621,7 @@
             .badge { font-size: 0.7rem; padding: 4px 10px; top: 10px; left: 10px;}
         }
 		
-		/* CARTÕES COM IMAGENS*/
-		
-		/* O container da imagem */
-			.image-wrapper {
-			  width: 120px;            /* Tamanho do espaço da imagem */
-			  height: 120px;
-			  margin-bottom: 1px;    /* Espaço entre imagem e texto */
-			  display: flex;
-			  align-items: center;
-			  justify-content: center;
-			}
 
-			/* A imagem propriamente dita */
-			.icone-imagem {
-			  max-width: 100%;        /* Garante que a imagem não transborde */
-			  max-height: 100%;
-			  object-fit: contain;    /* Mantém a proporção sem cortar */
-			}
 		
 		
 		
@@ -687,15 +711,8 @@
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
 							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span> 
-								<span class="dot"></span>
-								<span class="dot"></span>								
-							</div>
-							
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="memoria-numeros" class="link-frente">
@@ -736,19 +753,13 @@
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
 							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span> 
-								<span class="dot"></span>
-							</div>
-							
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="contagens" class="link-frente">
 								<div class="image-wrapper">
-									<img src="../icones/vamos_contar.png" alt="Memória de Números" class="icone-imagem">
+									<img src="../icones/vamos_contar.png" alt="Vamos Contar" class="icone-imagem">
 								</div>
 								<span class="nome-jogo">Vamos Contar</span>
 							</a>
@@ -784,15 +795,9 @@
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
 							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span>
-								<span class="dot"></span> 
-								<span class="dot"></span>
-							</div>
-							
+				
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="ligar-quantidades" class="link-frente">
@@ -832,17 +837,9 @@
 						
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
-							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span>
-								<span class="dot"></span>
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							
+
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="maquina-somar" class="link-frente">
@@ -882,17 +879,9 @@
 						
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
-							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span>
-								<span class="dot"></span>
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							
+
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="maquina-subtrair" class="link-frente">
@@ -934,15 +923,8 @@
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
 							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span> 
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="detetive" class="link-frente">
@@ -984,15 +966,8 @@
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
 							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span> <!-- Verde (Já jogou) -->
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="graficos" class="link-frente">
@@ -1033,16 +1008,9 @@
 						
 						<!-- LADO DA FRENTE -->
 						<div class="cartao-frente">
-							
-							<!-- Bolinhas de Progresso (Canto Superior Esquerdo) -->
-							<div class="dots-container">
-								<span class="dot"></span> 
-								<span class="dot"></span>
-								<span class="dot"></span>
-							</div>
-							
+
 							<!-- Botão "+" (Canto Superior Direito) -->
-							<button class="btn-info" onclick="virarCartaoMobile(this)">＋</button>
+							<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
 
 							<!-- Clicar na imagem/título vai direto para o jogo -->
 							<a href="sequencias" class="link-frente">
@@ -1079,15 +1047,6 @@
 
 
 				
-			</div>
-			
-
-
-
-
-
-					
-			
 			
         </div>
     </div>
@@ -1098,7 +1057,6 @@
 </footer>
 
 <script>
-
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
     
     function toggleMenu() {
@@ -1110,15 +1068,17 @@
         hamburger.classList.toggle('open');
     }
 
+    // AS NOVAS FUNÇÕES QUE ADICIONAS AGORA AQUI POR BAIXO:
+
     // Vira o cartão e desvira automaticamente após 3 segundos no mobile
     function virarCartaoMobile(btn) {
         const cartao = btn.closest('.cartao-flip');
         cartao.classList.add('flipped');
         
-        // 3000 ms = 3 segundos (muda este número se quiseres mais ou menos tempo)
+        // 5000 ms = 5 segundos (muda este número se quiseres mais ou menos tempo)
         setTimeout(() => {
             cartao.classList.remove('flipped');
-        }, 3000); 
+        }, 5000); 
     }
 
     // Botão ↩ no verso para fechar o cartão imediatamente
@@ -1126,6 +1086,8 @@
         const cartao = btn.closest('.cartao-flip');
         cartao.classList.remove('flipped');
     }
+
+
 </script>
 </body>
 </html>
