@@ -320,34 +320,288 @@
 			.separador::before, .separador::after { margin: 0 10px; }
 		}
 
-        /* GRELHA GERAL DOS JOGOS */
+		/* =========================================
+           GRELHA GERAL DOS JOGOS & CARTÕES MÁGICOS
+           ========================================= */
         .grid-jogos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
             gap: 20px;
             width: 100%;
         }
-        
-        .cartao-jogo { 
-            background: white; 
-            aspect-ratio: 1/1; 
-            border-radius: 25px; 
-            text-decoration: none; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
-            border: 1px solid #eee; 
-            border-top: 6px solid var(--cor-cartao-jogo-mat); 
-            transition: 0.3s;
+
+        /* Títulos limitados a 2 linhas e cor original */
+        .nome-jogo { 
+            color: var(--azul-escuro); 
+            font-weight: 700; 
+            font-size: 1rem; 
+            text-align: center;
+            padding: 0 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Container 3D do Cartão */
+        .cartao-flip {
+            background: transparent;
+            aspect-ratio: 1/1;
+            perspective: 1000px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* O miolo que dá a cambalhota */
+        .cartao-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        /* Comportamento Hover (PC) e Classe Flipped (Mobile) */
+        @media (hover: hover) {
+            .cartao-flip:hover .cartao-inner { transform: rotateY(180deg); }
+            /* No PC não precisamos do botão voltar no verso */
+            .btn-voltar-verso { display: none !important; }
+            /* No PC o botão jogar fica centrado e maior */
+            .btn-jogar { flex: none !important; width: 80%; margin: 0 auto; }
+        }
+        .cartao-flip.flipped .cartao-inner { transform: rotateY(180deg); }
+
+        /* Frente e Verso (Estrutura partilhada) */
+        .cartao-frente, .cartao-verso {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border: 1px solid #eee;
+            box-sizing: border-box;
+        }
+
+        /* --- LADO DA FRENTE --- */
+        .cartao-frente {
+            background: white;
+            border-top: 6px solid var(--cor-mat);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Efeito de elevação da frente do cartão */
+        .cartao-frente:hover { box-shadow: 0 12px 20px rgba(0,0,0,0.1); }
+
+        .link-frente {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            gap: 2%;
+            color: inherit;
             position: relative;
         }
-        .cartao-jogo:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 12px 20px rgba(0,0,0,0.1); }
+
+		/* =========================================
+           BOTÃO DE INFO (O "+" PERFEITO E CENTRADO)
+           ========================================= */
+        .btn-info {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px; /* Ligeiramente maior para toque no telemóvel */
+            height: 32px;
+            border-radius: 50%;
+            background: #e3f2fd;
+            border: 2px solid white; /* Borda branca dá um aspeto 3D / autocolante */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Uma sombra suave para sobressair da imagem */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* O efeito de levitar quando se toca ou passa o rato */
+        .btn-info:hover { 
+            background: var(--cor-mat); 
+            transform: scale(1.1); 
+            box-shadow: 0 6px 12px rgba(0, 145, 255, 0.2);
+        }
+
+        /* O SINAL DE "+" DESENHADO A CSS PURO */
+        .btn-info::before,
+        .btn-info::after {
+            content: '';
+            position: absolute;
+            background-color: var(--azul-escuro); /* Cor da cruz */
+            border-radius: 3px; /* O Segredo: pontas redondinhas para as crianças! */
+            transition: 0.3s;
+        }
+
+        /* A Barra Horizontal */
+        .btn-info::before { width: 14px; height: 3px; }
         
-        .cartao-jogo .icone-wrapper { font-size: 3.5rem; }
-        .cartao-jogo .nome-jogo { color: var(--azul-escuro); font-weight: 700; font-size: 1rem; }
+        /* A Barra Vertical */
+        .btn-info::after { width: 3px; height: 14px; }
+
+        /* Quando o fundo fica azul (hover), a cruz fica branca! */
+        .btn-info:hover::before,
+        .btn-info:hover::after {
+            background-color: white;
+        }
+
+
+        /* --- LADO DO VERSO --- */
+        .cartao-verso {
+            background: #f8fafc;
+            border-top: 6px solid #ff922b;
+            transform: rotateY(180deg);
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .titulo-verso {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--azul-escuro);
+            margin-bottom: 8px;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .lista-minijogos {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            text-align: left;
+            font-size: 0.7rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+        .lista-minijogos li {
+            padding: 3px 0;
+            border-bottom: 1px dashed #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lista-minijogos li::before { content: "🔹"; margin-right: 5px; font-size: 0.6rem; }
+
+        .botoes-verso {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            width: 100%;
+        }
+		/* A ANIMAÇÃO SUBTIL (Reflexo de Luz) */
+        @keyframes brilho-luz {
+            0%, 60% { left: -100%; } /* Fica escondido 60% do tempo */
+            100% { left: 200%; }     /* Passa rapidamente e sai pela direita */
+        }
+
+        .btn-jogar {
+            background: var(--cor-mat);
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex: 1; 
+            text-align: center;
+            box-shadow: 0 3px 0 #0070c5;
+            
+            /* Preparar o botão para receber a luz */
+            position: relative;
+            overflow: hidden; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* O feixe de luz diagonal */
+        .btn-jogar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, 			rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); /* Dá a inclinação à luz */
+            animation: brilho-luz 2s infinite; /* A luz passa a cada 2 segundos */
+        }
+
+        /* Apenas no PC: um levitar ultra suave ao passar o rato */
+        .btn-jogar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #0070c5;
+        }
+        .btn-voltar-verso {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 15px;
+            padding: 6px 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #bdbdbd;
+        }
+
+
+		/* =========================================
+           O NOVO CONTAINER DE IMAGEM FLUIDO
+           ========================================= */
+        .image-wrapper {
+            height: 50%; /* O Segredo: Ocupa sempre apenas 50% da altura do cartão (nunca esmaga o texto) */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px; /* Um pequeno respiro antes do texto */
+        }
+
+        .icone-imagem {
+            max-width: 85%; /* Garante que a imagem não cola aos limites laterais */
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); /* Bónus: dá um ligeiro efeito 3D à imagem! */
+        }	
+
+
+        /* =========================================
+           RESPONSIVIDADE (Afasta cartões em Mobile)
+           ========================================= */
+        @media (max-width: 768px) {
+            .grid-jogos { 
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+                gap: 35px; /* Aumentado brutalmente para Mobile Vertical */
+            }
+        }
+
+
+		/* =========================================
+           RESPIRO VISUAL: SEPARADOR EM MOBILE VERTICAL
+           ========================================= */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .separador {
+                /* Aumenta o espaço: 60px para cima, 0 pros lados, 50px para baixo */
+                margin: 50px 0 40px 0 !important; 
+            }
+        }
+		
+		
+		
 
         /* FOOTER */
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); }
@@ -372,27 +626,7 @@
             
             .badge { font-size: 0.7rem; padding: 4px 10px; top: 10px; left: 10px;}
         }
-		
-		/* CARTÕES COM IMAGENS*/
-		
-		/* O container da imagem */
-			.image-wrapper {
-			  width: 120px;            /* Tamanho do espaço da imagem */
-			  height: 120px;
-			  margin-bottom: 1px;    /* Espaço entre imagem e texto */
-			  display: flex;
-			  align-items: center;
-			  justify-content: center;
-			}
 
-			/* A imagem propriamente dita */
-			.icone-imagem {
-			  max-width: 100%;        /* Garante que a imagem não transborde */
-			  max-height: 100%;
-			  object-fit: contain;    /* Mantém a proporção sem cortar */
-			}
-
-	
     body { scrollbar-gutter: stable; }
 </style>
 </head>
@@ -473,78 +707,358 @@
 
         <!-- GRELHA GERAL (Os restantes jogos) -->
         <div class="grid-jogos">
-            <a href="missao-matematica" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/missao_matematica.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Missão Matemática</span>
-			</a>
-			<a href="balanca-adicao" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/balanca_adicao.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Balança da Adição</span>
-			</a>
-			<a href="balanca-subtracao" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/balanca_subtracao.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Balança da Subtração</span>
-			</a>
-            <a href="comparar" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/comparar.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">O Monstro Guloso</span>
-			</a>
-			<a href="simetria" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/simetria.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Simetria</span>
-			</a>
-			<a href="problemas-magicos" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/problemas_magicos.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Problemas Mágicos</span>
-			</a>
-			<a href="fracoes" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/fracoes.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Frações Divertidas</span>
-			</a>
-			<a href="cruzadas-numericas" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/cruzadas_numericas.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Cruzadas Numéricas</span>
-			</a>
-			<a href="estrategias-calculo" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/estrategias_calculo.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Estratégias de Cálculo</span>
-			</a>
-			<a href="tabuadas-flash" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/tabuadas_flash.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Tabuadas Flash</span>
-			</a>
-			<a href="comboio-sequencias" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/comboio_sequencias.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Comboio das Sequências</span>
-			</a>
-			<a href="graficos" class="cartao-jogo">
-			  <div class="image-wrapper">
-				<img src="../icones/graficos.png" alt="" class="icone-imagem">
-			  </div>
-			  <span class="nome-jogo">Gráficos</span>
-			</a>
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="missao-matematica" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/missao_matematica.png" alt="Missão Matemática" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Missão Matemática</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens:</h4>
+						<ul class="lista-minijogos">
+							<li>Dinheiro</li>
+							<li>Sequências</li>
+							<li>Geometria</li>
+							<li>Tempo</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="missao-matematica" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="balanca-adicao" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/balanca_adicao.png" alt="Balança da Adição" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Balança da Adição</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<p>Treinar Igualdades com:</p>
+							<li>Adição</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="balanca-adicao" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="balanca-subtracao" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/balanca_subtracao.png" alt="Balança da Subtração" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Balança da Subtração</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<p>Treinar Igualdades com:</p>
+							<li>Subtração</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="balanca-adicao" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="comparar" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/comparar.png" alt="O Monstro Guloso" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">O Monstro Guloso</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens:</h4>
+						<ul class="lista-minijogos">
+							<li>Maior (>) Menor (<) Igual(=)</li>
+							<p>Este jogo tem 3 níveis de dificuldade.</p>
+						</ul>
+						<div class="botoes-verso">
+							<a href="comparar" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="simetria" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/simetria.png" alt="Simetria" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Simetria</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens 3 níveis:</h4>
+						<ul class="lista-minijogos">
+							<li>Grelha 6x6 (1 cor)</li>
+							<li>Grelha 8x8 (2 cores)</li>
+							<li>Grelha 10x10 (4 cores)</li>						
+						</ul>
+						<div class="botoes-verso">
+							<a href="simetria" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="problemas-magicos" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/problemas_magicos.png" alt="Problemas Mágicos" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Problemas Mágicos</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens 4 missões:</h4>
+						<ul class="lista-minijogos">
+							<li>O Detetive</li>
+							<li>A Loja</li>
+							<li>A Máquina</li>
+							<li>A Quinta</li>								
+						</ul>
+						<div class="botoes-verso">
+							<a href="problemas-magicos" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="fracoes" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/fracoes.png" alt="Frações Divertidas" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Frações Divertidas</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<li>Ligar</li>
+							<li>Escrever</li>
+							<li>Arrastar</li>
+							<li>Memorizar</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="fracoes" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="cruzadas-numericas" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/cruzadas_numericas.png" alt="Cruzadas Numéricas" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Cruzadas Numéricas</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens 3 níveis:</h4>
+						<ul class="lista-minijogos">
+							<li>Até 100</li>
+							<li>Até 500</li>
+							<li>Até 100</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="cruzadas-numericas" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="estrategias-calculo" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/estrategias_calculo.png" alt="Estratégias de Cálculo" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Estratégias de Cálculo</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<p>Treinar estratégias de:</p>
+							<li>Adição</li>
+							<li>Subtração</li>
+						</ul>
+						<div class="botoes-verso">
+							<a href="estrategias-calculo" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="tabuadas-flash" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/tabuadas_flash.png" alt="Tabuadas Flash" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Tabuadas Flash</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<p>Treinar as tabuadas:</p>
+							<li>2, 3, 4, 5 e 10</li>
+							<p>Atenção ao tempo a passar!</p>
+						</ul>
+						<div class="botoes-verso">
+							<a href="tabuadas-flash" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="comboio-sequencias" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/comboio_sequencias.png" alt="Comboio das Sequências" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Comboio das Sequências</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo vais:</h4>
+						<ul class="lista-minijogos">
+							<li>Treinar Sequências</li>
+							<p>Da esquerda para a direita e da direita para a esquerda! Adição e subtração!</p>
+						</ul>
+						<div class="botoes-verso">
+							<a href="comboio-sequencias" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="cartao-flip" onmouseleave="this.classList.remove('flipped')">
+				<div class="cartao-inner">
+					<!-- LADO DA FRENTE -->
+					<div class="cartao-frente">
+						<button class="btn-info" aria-label="Ver níveis" onclick="virarCartaoMobile(this)"></button>
+						<a href="graficos" class="link-frente">
+							<div class="image-wrapper">
+								<img src="../icones/graficos.png" alt="Gráficos" class="icone-imagem">
+							</div>
+								<span class="nome-jogo">Gráficos</span>
+						</a>
+					</div>
+
+					<!-- LADO DO VERSO -->
+					<div class="cartao-verso">
+						<h4 class="titulo-verso">Neste jogo tens:</h4>
+						<ul class="lista-minijogos">
+							<li>Pictogramas</li>
+							<li>Diagrama de Carroll</li>
+							<li>Gráficos de Barras</li>							
+						</ul>
+						<div class="botoes-verso">
+							<a href="graficos" class="btn-jogar">▶ Jogar</a>
+							<button class="btn-voltar-verso" onclick="fecharCartaoMobile(this)">↩</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			
+			
         </div>
     </div>
 </main>
@@ -555,6 +1069,7 @@
 
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
     function toggleMenu() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
@@ -563,6 +1078,28 @@
         overlay.classList.toggle('active');
         hamburger.classList.toggle('open');
     }
+
+    // AS NOVAS FUNÇÕES QUE ADICIONAS AGORA AQUI POR BAIXO:
+
+    // Vira o cartão e desvira automaticamente após 3 segundos no mobile
+    function virarCartaoMobile(btn) {
+        const cartao = btn.closest('.cartao-flip');
+        cartao.classList.add('flipped');
+        
+        // 5000 ms = 5 segundos (muda este número se quiseres mais ou menos tempo)
+        setTimeout(() => {
+            cartao.classList.remove('flipped');
+        }, 5000); 
+    }
+
+    // Botão ↩ no verso para fechar o cartão imediatamente
+    function fecharCartaoMobile(btn) {
+        const cartao = btn.closest('.cartao-flip');
+        cartao.classList.remove('flipped');
+    }
+
+
 </script>
 </body>
 </html>
+
