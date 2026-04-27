@@ -191,8 +191,16 @@
         }
         
         .card-img { width: 90%; height: 90%; object-fit: contain; pointer-events: none;}
-        .card-sound { font-size: clamp(2.2rem, 6vw, 3rem); pointer-events: auto; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); transition: transform 0.1s;}
+        .card-sound { 
+            width: clamp(40px, 12vw, 65px); /* Tamanho perfeito no PC e encolhe no mobile */
+            height: auto; 
+            object-fit: contain;
+            pointer-events: auto; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); 
+            transition: transform 0.1s;
+        }
         .card-sound:active { transform: scale(0.85); }
+
 
         @media (max-width: 600px) {
             .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -392,9 +400,10 @@
     let categoriaAtual = "";
     let hasFlippedCard = false;
     let lockBoard = false;
-    let firstCard, secondCard;
+    let firstCard = null;
+    let secondCard = null;
     let paresEncontrados = 0;
-    const TOTAL_PARES = 10; // 10 pares por categoria
+    const TOTAL_PARES = 10;
 
     const caminhoMagico = document.getElementById('caminho-magico');
     const avatar = document.getElementById('avatar-progresso');
@@ -420,14 +429,12 @@
         categoriaAtual = categoria;
         paresEncontrados = 0;
         
-        // Formatar nome para o subtítulo
         let nomeVisual = categoria.charAt(0).toUpperCase() + categoria.slice(1);
         if(categoria === "profissoes") nomeVisual = "Profissões";
         if(categoria === "saude") nomeVisual = "Saúde";
         
         subtitulo.textContent = `Tema: ${nomeVisual}`;
         
-        // Reset da barra de progresso do caminho
         caminhoMagico.style.display = 'block';
         atualizarProgresso();
 
@@ -436,27 +443,8 @@
         
         mostrarEcra('ecra-jogo');
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-
-      resetBoard();
-        gerarCartas(categoria);
         
-        mostrarEcra('ecra-jogo');
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        
-        // --- NOVA LINHA AQUI ---
-        inicializarAudio(); // Desbloqueia os sons do jogo
-
-        // Pedir permissão de voz silenciosamente (Resolve Safari/iOS e Chromium restrito)
-        if ('speechSynthesis' in window) {
-            let u = new SpeechSynthesisUtterance("");
-            window.speechSynthesis.speak(u);
-        }
-        
-        // Pedir permissão de voz silenciosamente (Resolve Safari/iOS)
-        if ('speechSynthesis' in window) {
-            let u = new SpeechSynthesisUtterance("");
-            window.speechSynthesis.speak(u);
-        }
+        inicializarAudio();
     }
 
     function atualizarProgresso() {
@@ -470,28 +458,25 @@
         let lista = listaCompleta.slice(0, 10);
         let baralho =[];
 
-        // Para cada par, cria 1 Imagem e 1 Áudio
         lista.forEach(item => {
             baralho.push({ type: 'img', word: item.palavra, src: item.img });
-            baralho.push({ type: 'audio', word: item.palavra });
+            baralho.push({ type: 'audio', word: item.palavra, src: item.img }); 
         });
 
-        // Baralhar cartas
         baralho.sort(() => Math.random() - 0.5);
 
-        // Renderizar DOM
         baralho.forEach((carta, index) => {
             const cardEl = document.createElement('div');
             cardEl.classList.add('memory-card');
             cardEl.dataset.word = carta.word; 
             cardEl.dataset.type = carta.type;
+            cardEl.dataset.src = carta.src; 
 
             let faceHTML = '';
             if (carta.type === 'img') {
                 faceHTML = `<img src="img/${carta.src}.png" class="card-img" alt="${carta.word}" onerror="this.src='../../logo.png'">`;
             } else {
-                // Apenas a Face Frontal tem onclick para poder repetir o áudio se necessário!
-                faceHTML = `<div class="card-sound" onclick="replayAudio(event, '${carta.word}')">🔊</div>`;
+                faceHTML = `<img src="img/audio.svg" class="card-sound" alt="Ouvir som" onclick="replayAudio(event, '${carta.src}')">`;
             }
 
             cardEl.innerHTML = `
@@ -510,16 +495,11 @@
        LÓGICA DA MEMÓRIA
        ========================================= */
     function flipCard() {
-        // Se o tabuleiro estiver trancado (a aguardar que duas cartas se desvirem), não faz nada
         if (lockBoard) return; 
 
-        // 1. Se a criança clicar na primeira carta que acabou de virar (ou que ainda está a girar!)
         if (this === firstCard) {
-            // Se for a carta de som, repete a palavra imediatamente!
             if (this.dataset.type === 'audio') {
-                dizerPalavra(this.dataset.word);
-                
-                // Faz o ícone do som dar um pequeno pulinho visual
+                tocarVoz(this.dataset.src);
                 const icon = this.querySelector('.card-sound');
                 if (icon) {
                     icon.style.transform = "scale(0.85)";
@@ -529,20 +509,18 @@
             return; 
         } 
         
-        // 2. (BÓNUS) Se a criança clicar num par que já está certo e verde!
         if (this.classList.contains('matched')) {
             if (this.dataset.type === 'audio') {
-                dizerPalavra(this.dataset.word); // Permite ouvir a palavra novamente
+                tocarVoz(this.dataset.src);
             }
             return; 
         } 
 
-        // 3. Comportamento normal de virar a carta pela primeira vez
         this.classList.add('flipped');
         tocarSom('flip');
 
         if (this.dataset.type === 'audio') {
-            dizerPalavra(this.dataset.word);
+           tocarVoz(this.dataset.src);
         }
 
         if (!hasFlippedCard) {
@@ -592,32 +570,35 @@
         }, 1200); 
     }
 
-    function resetBoard() {[hasFlippedCard, lockBoard] =[false, false];
-        [firstCard, secondCard] = [null, null];
+    // Reset limpo e sem sintaxe confusa
+    function resetBoard() {
+        hasFlippedCard = false;
+        lockBoard = false;
+        firstCard = null;
+        secondCard = null;
     }
 
     /* =========================================
-       SINTETIZADOR DE VOZ
+       VOZES HUMANAS (LEITOR MP3)
        ========================================= */
-    function dizerPalavra(palavra) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(palavra);
-            utterance.lang = 'pt-PT';
-            utterance.rate = 0.9; 
-            utterance.pitch = 1.2; 
-            window.speechSynthesis.speak(utterance);
+    let audioAtual = null;
+
+    function tocarVoz(nomeFicheiro) {
+        if (audioAtual) {
+            audioAtual.pause();
+            audioAtual.currentTime = 0;
         }
+        audioAtual = new Audio(`sons/${nomeFicheiro}.mp3`);
+        audioAtual.play().catch(erro => console.log("Áudio não encontrado: sons/" + nomeFicheiro + ".mp3"));
     }
 
-    // Permite que a criança clique no botão de som da carta virada para ouvir outra vez
-    window.replayAudio = function(event, palavra) {
-        event.stopPropagation(); // Impede que o clique afete o virar da carta
-        dizerPalavra(palavra);
+    window.replayAudio = function(event, nomeFicheiro) {
+        event.stopPropagation();
+        tocarVoz(nomeFicheiro);
         const icon = event.target;
         icon.style.transform = "scale(0.85)";
         setTimeout(() => icon.style.transform = "scale(1)", 100);
-    };
+    };    
 
     function finalizarJogo() {
         mostrarEcra('ecra-fim');
@@ -625,13 +606,14 @@
         dispararConfetis();
     }
 
-   /* =========================================
-       AUDIO E CONFETIS
+    /* =========================================
+       AUDIO DE SISTEMA E CONFETIS
        ========================================= */
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx; // Declarar a variável sem criar o contexto imediatamente
+    let audioCtx;
     
     function inicializarAudio() {
+        if (!AudioContext) return; // Proteção extra!
         if (!audioCtx) {
             audioCtx = new AudioContext();
         }
@@ -641,7 +623,8 @@
     }
 
     function tocarSom(tipo) {
-        inicializarAudio(); // Garante que o áudio está criado/desbloqueado antes de tocar
+        if (!AudioContext) return; // Proteção extra!
+        inicializarAudio();
 
         const osc = audioCtx.createOscillator(); 
         const gain = audioCtx.createGain();
@@ -654,14 +637,13 @@
             gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
             osc.start(agora); osc.stop(agora + 0.1);
         }
-        // ... (mantém o resto do teu código do 'acerto' e 'vitoria' igual a partir daqui)
         else if (tipo === 'acerto') {
             osc.type = 'triangle'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
         } 
         else if (tipo === 'vitoria') {
-            const notas = [523.25, 659.25, 783.99, 1046.50];
+            const notas =[523.25, 659.25, 783.99, 1046.50];
             notas.forEach((freq, i) => {
                 const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
                 o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
@@ -675,28 +657,48 @@
     const ctxConfetti = canvasConfetti.getContext('2d');
     let confetis =[];
 
-    function redimensionarCanvas() { canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; }
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    }
     window.addEventListener('resize', redimensionarCanvas);
 
     function dispararConfetis() {
-        redimensionarCanvas(); confetis = []; const cores =['#51cf66', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        redimensionarCanvas(); 
+        confetis =[]; 
+        const cores =['#51cf66', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
         for (let i = 0; i < 100; i++) {
-            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+            confetis.push({ 
+                x: Math.random() * canvasConfetti.width, 
+                y: Math.random() * canvasConfetti.height - canvasConfetti.height, 
+                w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, 
+                cor: cores[Math.floor(Math.random() * cores.length)], 
+                velY: Math.random() * 3 + 2, 
+                velX: Math.random() * 2 - 1, 
+                rotacao: Math.random() * 360, 
+                velRotacao: Math.random() * 5 - 2.5 
+            });
         }
         animarConfetis();
     }
 
     function animarConfetis() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); 
+        let ativos = false;
         confetis.forEach(c => {
-            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
-            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
-            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; 
+            if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); 
+            ctxConfetti.translate(c.x, c.y); 
+            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; 
+            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); 
+            ctxConfetti.restore();
         });
         if (ativos) requestAnimationFrame(animarConfetis);
     }
     
-    // Mostra Menu Inicial ao arrancar
+    // Arranca o jogo!
     window.onload = () => mostrarEcra('ecra-selecao');
 </script>
 </body>
