@@ -436,21 +436,6 @@
         
         mostrarEcra('ecra-jogo');
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-
-      resetBoard();
-        gerarCartas(categoria);
-        
-        mostrarEcra('ecra-jogo');
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        
-        // --- NOVA LINHA AQUI ---
-        inicializarAudio(); // Desbloqueia os sons do jogo
-
-        // Pedir permissão de voz silenciosamente (Resolve Safari/iOS e Chromium restrito)
-        if ('speechSynthesis' in window) {
-            let u = new SpeechSynthesisUtterance("");
-            window.speechSynthesis.speak(u);
-        }
         
         // Pedir permissão de voz silenciosamente (Resolve Safari/iOS)
         if ('speechSynthesis' in window) {
@@ -625,43 +610,29 @@
         dispararConfetis();
     }
 
-   /* =========================================
+    /* =========================================
        AUDIO E CONFETIS
        ========================================= */
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx; // Declarar a variável sem criar o contexto imediatamente
+    const audioCtx = new AudioContext();
     
-    function inicializarAudio() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-
     function tocarSom(tipo) {
-        inicializarAudio(); // Garante que o áudio está criado/desbloqueado antes de tocar
-
-        const osc = audioCtx.createOscillator(); 
-        const gain = audioCtx.createGain();
-        osc.connect(gain); 
-        gain.connect(audioCtx.destination); 
-        const agora = audioCtx.currentTime;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
 
         if (tipo === 'flip') {
             osc.type = 'sine'; osc.frequency.setValueAtTime(300, agora); osc.frequency.exponentialRampToValueAtTime(500, agora + 0.1);
             gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
             osc.start(agora); osc.stop(agora + 0.1);
         }
-        // ... (mantém o resto do teu código do 'acerto' e 'vitoria' igual a partir daqui)
         else if (tipo === 'acerto') {
             osc.type = 'triangle'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
         } 
         else if (tipo === 'vitoria') {
-            const notas = [523.25, 659.25, 783.99, 1046.50];
+            const notas =[523.25, 659.25, 783.99, 1046.50];
             notas.forEach((freq, i) => {
                 const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
                 o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
