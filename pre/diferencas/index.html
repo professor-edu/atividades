@@ -192,7 +192,36 @@
            JOGO 3: MÁQUINA DO TEMPO ⏳
            ========================================= */
         .tempo-container { display: flex; flex-direction: column; width: 100%; flex: 1; align-items: center; justify-content: center; position: relative;}
-        .tempo-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; max-width: 700px; z-index: 1;}
+        
+		.tempo-grid {
+		  display: grid;
+		  gap: 20px;
+		  justify-content: center;
+		  max-width: 700px;
+		  z-index: 1;
+		}
+
+		/* Layout base: até 3 imagens por linha */
+		.tempo-grid {
+		  grid-template-columns: repeat(3, clamp(80px, 15vw, 120px));
+		}
+
+		/* Nível 2 (4 imagens): 2 + 2 */
+		.tempo-grid.nivel-2 {
+		  grid-template-columns: repeat(2, clamp(80px, 15vw, 120px));
+		}
+
+		/* Nível 3 (5 imagens): 3 + 2 */
+		.tempo-grid.nivel-3 {
+		  grid-template-columns: repeat(3, clamp(80px, 15vw, 120px));
+		}
+
+		/* Nível 4 (6 imagens): 3 + 3 */
+		.tempo-grid.nivel-4 {
+		  grid-template-columns: repeat(3, clamp(80px, 15vw, 120px));
+		}
+		
+		
         .tempo-grid .clickable-box { width: clamp(80px, 15vw, 120px); height: clamp(80px, 15vw, 120px); background: #f8fafc; border: 3px solid #e2e8f0; padding: 10px; }
         .tempo-grid.interativo .clickable-box:hover { border-color: var(--cor-pre); transform: scale(1.05); }
         
@@ -355,7 +384,7 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank">EB1/PE da Marinheira</a></p>
 </footer>
 
-<script src="../dados.js"></script>
+<script src="../dados_diferencas.js"></script>
 
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
@@ -610,6 +639,7 @@ window.onload = function() {
         
         area.style.display = 'flex';
         grid.innerHTML = '';
+		grid.className = 'tempo-grid nivel-' + nivelAtual;
         grid.classList.remove('interativo');
         inst.textContent = "Memoriza as imagens!";
         
@@ -628,7 +658,15 @@ window.onload = function() {
             grid.appendChild(caixa);
         }
 
-        let tempoMemoria = nivelAtual === 4 ? 3000 : 5000;
+        let tempoBase = 4000;
+		let incrementoPorNivel = 1000;
+
+		let tempoMemoria = tempoBase + (nivelAtual - 1) * incrementoPorNivel;
+
+		if (nivelAtual === 4) {
+			tempoMemoria = 9000; // tempo especial para o nível 4
+		}
+
 
         clearTimeout(tempoTimeout);
         tempoTimeout = setTimeout(() => {
