@@ -41,8 +41,10 @@ const todosOsJogos =[
 	{ nome: "Cruzadas Numéricas", icone: "icones/cruzadas_numericas.png", link: "mat/cruzadas-numericas/", cat: "mat" },
 	{ nome: "Estratégias de Cálculo", icone: "icones/estrategias_calculo.png", link: "mat/estrategias-calculo/", cat: "mat" },
 	{ nome: "Tabuadas Flash", icone: "icones/tabuadas_flash.png", link: "mat/tabuadas-flash/", cat: "mat" },
-	{ nome: "Sequências", icone: "icones/sequencias.png", link: "mat/sequencias/", cat: "mat" },
+	{ nome: "Sequências de Repetição", icone: "icones/sequencias_repeticao.png", link: "mat/sequencias-repeticao/", cat: "mat" },
+	{ nome: "Sequências de Crescimento", icone: "icones/sequencias_crescimento.png", link: "mat/sequencias-crescimento/", cat: "mat" },
 	{ nome: "Comboio das Sequências", icone: "icones/comboio_sequencias.png", link: "mat/comboio-sequencias/", cat: "mat" },
+	{ nome: "Revisão de Sequências", icone: "icones/sequencias_revisoes.png", link: "mat/sequencias-revisoes/", cat: "mat" },
    	{ nome: "Simetria", icone: "icones/simetria.png", link: "mat/simetria/", cat: "mat" },
 	{ nome: "Gráficos", icone: "icones/graficos.png", link: "mat/graficos/", cat: "mat" },
 	

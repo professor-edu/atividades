@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Mestre das Sequências 🔄</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        
+        /* Scroll Livre - Adapta-se consoante a necessidade! */
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px;} 
+            .cartao-jogo-container { padding: 20px 15px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-mat); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; overflow: hidden; }
+
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+		/* =========================================
+           OS ECRÃS (CENTRAMENTO ABSOLUTO)
+           ========================================= */
+        .ecra { 
+            width: 100%; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            animation: fadeIn 0.4s ease; 
+            box-sizing: border-box; 
+            z-index: 5; 
+            flex: 1; /* Ocupa a altura total do cartão branco */
+        }
+        
+        /* A Magia: Centra verticalmente o Menu Inicial E o Ecrã de Fim */
+        #ecra-selecao, #ecra-fim { 
+            justify-content: center; 
+            text-align: center;
+        }
+        
+        /* O Ecrã de Jogo tem de ficar alinhado ao topo */
+        #ecra-jogo { 
+            justify-content: flex-start; 
+        }
+
+        .titulo-menu { 
+            font-size: clamp(1.5rem, 4vw, 1.8rem); 
+            color: var(--azul-escuro); 
+            margin-bottom: 25px; 
+            font-weight: 900;
+            text-align: center;
+        }
+
+        /* MENU INICIAL */
+        .grelha-opcoes {
+		  display: grid;
+		  grid-template-columns: repeat(2, 1fr);
+		  gap: 20px;
+		  width: 100%;
+		  max-width: 800px;
+		  margin: 0 auto;
+		}
+		@media (hover: none) and (pointer: coarse) {
+	   .grelha-opcoes {
+		max-width: 700px;
+			}
+		}
+		
+		@media (max-width: 600px) {
+		.grelha-opcoes {
+			grid-template-columns: 1fr;
+		  }
+		}
+
+		/* =========================================
+           NOVOS CARTÕES RETANGULARES (MENU INICIAL)
+           ========================================= */
+        .cartao-missao { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: #ffffff; border: 4px solid var(--borda-cartao); border-radius: 20px; 
+            padding: 20px 15px; width: 100%; min-height: 150px; text-align: center; cursor: pointer; 
+            box-sizing: border-box; box-shadow: 0 6px 0 var(--borda-cartao); 
+            transition: all 0.2s ease; 
+        }
+        @media (hover: hover) { .cartao-missao:hover { transform: translateY(-4px); border-color: var(--cor-mat); box-shadow: 0 10px 0 var(--cor-mat); } }
+        .cartao-missao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .cartao-missao .icone { 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; font-size: 2.2rem; flex-shrink: 0; margin: 0 auto 10px auto;
+        }
+        .cartao-missao .titulo { font-weight: 900; color: var(--azul-escuro); font-size: 1.2rem; display: block; margin-bottom: 5px; line-height: 1.2;}
+        .cartao-missao .desc { font-size: 0.9rem; color: var(--text-main); font-weight: 500; margin: 0;}
+
+
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: white; border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { background-color: #fff9c4; border-color: #b18500; color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; min-width: 50px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; margin-left: 0; margin-right: 0;}
+        }
+
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeGame 0.4s ease !important; border-color: var(--cor-erro) !important; color: var(--cor-erro) !important;}
+        @keyframes shakeGame { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           O DESIGN DOS MINIJOGOS (FOCO E COMPACIDADE)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; width: 100%; flex: 1;
+            background: #f8fafc; border: 3px dashed #ced6e0; border-radius: 20px; 
+            padding: 20px; position: relative; gap: 15px; align-items: center; justify-content: flex-start;
+        }
+
+        /* O MINI-NUMPAD HORIZONTAL */
+        .mini-numpad {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; 
+            width: 100%; max-width: 750px; margin-top: auto; padding-top: 15px; 
+            border-top: 2px solid #e2e8f0;
+        }
+        .mini-btn {
+            width: clamp(40px, 9vw, 45px); height: clamp(40px, 9vw, 45px); border-radius: 12px; font-size: 1.5rem; font-weight: 900;
+            background: #fff; border: 3px solid #ced6e0; color: var(--azul-escuro);
+            cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 #ced6e0; display: flex; align-items: center; justify-content: center;
+            touch-action: manipulation;
+        }
+        .mini-btn:active { transform: translateY(4px); box-shadow: none; background: #e3f2fd; }
+        .mini-btn-del { width: 60px; background: #ff4757; color: white; border-color: #d63031; box-shadow: 0 4px 0 #d63031; }
+        .mini-btn-del svg { width: 24px; height: 24px; fill: white; }
+
+        /* Foco Comum */
+        .input-box {
+            display: flex; align-items: center; justify-content: center;
+            background: white; border: 3px solid #a4b0be; color: var(--azul-escuro); font-weight: 900;
+            transition: 0.2s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); position: relative;
+        }
+        .input-focado {
+            border-color: var(--azul-vibrante) !important; background: #e3f2fd !important;
+            box-shadow: 0 0 0 4px rgba(0, 145, 255, 0.3) !important;
+        }
+		
+		/* O Sapo que salta no foco (Jogo 1) */
+        .foco-sapo::after {
+            content: '🐸'; 
+            position: absolute; 
+            top: -40px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            font-size: 2.2rem; 
+            animation: sapoJump 0.5s infinite alternate; 
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            pointer-events: none; /* Garante que o sapo não bloqueia o clique */
+        }
+        @keyframes sapoJump { 
+            0% { transform: translate(-50%, 0); } 
+            100% { transform: translate(-50%, -10px); } 
+        }
+		
+        .input-resolvido { border-color: var(--cor-sucesso) !important; color: var(--cor-sucesso) !important; background: #eafff0 !important; box-shadow: none !important;}
+
+        /* Placeholder do Jogo 4 */
+        .input-box[data-hint]::before {
+            content: attr(data-hint); position: absolute; color: #bdc3c7; font-size: 1rem; pointer-events: none;
+        }
+
+        /* --- MG1: O CAMINHO DO SAPO --- */
+        .mg1-lago {
+            background: #e0f7fa; border: 4px solid #81d4fa; border-radius: 30px;
+            padding: 30px 15px; width: 100%; max-width: 800px; display: flex; flex-wrap: wrap; 
+            justify-content: center; align-items: center; gap: 15px; box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            margin: auto 0;
+        }
+        /* Nenúfares */
+        .mg1-box {
+            width: clamp(65px, 12vw, 85px); height: clamp(50px, 10vw, 65px);
+            background: #2ecc71; border: 4px solid #27ae60; border-radius: 50%;
+            box-shadow: 0 6px 0 #219d53, inset 0 -4px 0 rgba(0,0,0,0.1); 
+            color: white; font-size: clamp(1.6rem, 4vw, 2.2rem); text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+        .mg1-box.input-focado { background: #27ae60 !important; border-color: #1e8449 !important; box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.5), inset 0 -4px 0 rgba(0,0,0,0.2) !important;}
+        
+        /* O Sapo que salta magicamente para a caixa focada */
+        .sapo-magico {
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            font-size: 2.2rem; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));
+            animation: sapoDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes sapoDrop { 0% { transform: translate(-50%, -40px) scale(1.5); opacity: 0; } 100% { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+
+        .mg1-seta-container { position: relative; width: clamp(20px, 5vw, 50px); height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .mg1-svg { width: 100%; height: 100%; overflow: visible; }
+        .mg1-path { fill: none; stroke: white; stroke-width: 4; stroke-dasharray: 6 4; stroke-linecap: round; }
+        .mg1-arrowhead { fill: white; }
+        .mg1-dica-txt {
+            position: absolute; top: -25px; font-size: 1.2rem; color: white; font-weight: 900; 
+            background: rgba(41, 128, 185, 0.8); padding: 2px 10px; border-radius: 10px;
+            opacity: 0; transition: 0.3s; white-space: nowrap;
+        }
+        .mg1-dica-txt.mostrar { opacity: 1; transform: translateY(-5px); }
+
+		/* =========================================
+           MG2: REPETIÇÃO VISUAL (Imagens Corrigidas)
+           ========================================= */
+        .mg2-container { display: flex; flex-direction: row; width: 100%; max-width: 900px; gap: 20px; align-items: center; justify-content: center; margin: auto 0; background: white; padding: 20px; border-radius: 20px; border: 3px solid #ced6e0; box-shadow: 0 5px 0 #ced6e0;}
+        .mg2-seq-col { flex: 2; display: flex; flex-direction: column; gap: 15px; padding-right: 20px; border-right: 2px solid #ced6e0; }
+        .mg2-seq-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; background: #f1f2f6; padding: 10px; border-radius: 15px; border: 2px solid #ced6e0;}
+        .mg2-opts { flex: 1; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center;}
+        
+        /* Tamanho estrito para as imagens não explodirem */
+        .img-forma { width: clamp(40px, 7vw, 60px); height: clamp(40px, 7vw, 60px); object-fit: contain; }
+        .mg2-box-q { width: clamp(50px, 8vw, 70px); height: clamp(50px, 8vw, 70px); border: 3px dashed #a4b0be; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #ced6e0; background: white; cursor: pointer; transition: 0.2s;}
+        
+        /* Sistema de Seleção */
+        .mg2-opt-btn { background: white; border: 4px solid #ced6e0; border-radius: 15px; padding: 10px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #ced6e0; }
+        .mg2-opt-btn:active { transform: translateY(4px); box-shadow: none; }
+        .mg2-opt-btn.selecionado { border-color: var(--cor-sucesso); background: #eafff0; transform: scale(1.1); box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+        .mg2-box-q.pronto-colar { border: 3px dashed var(--cor-sucesso); background: #f0fff4; animation: pulseHint 1s infinite alternate;}
+
+		/* O efeito mágico da Dica do Jogo 2 (Ilumina o padrão base) */
+        .anim-dica {
+            animation: piscarDicaMG2 0.8s infinite alternate !important;
+            background: #fff9c4; /* Fundo amarelo suave */
+            border-radius: 12px;
+            border: 2px dashed #fbc531;
+        }
+
+        @keyframes piscarDicaMG2 {
+            0% { transform: scale(1); box-shadow: 0 0 0 transparent; }
+            100% { transform: scale(1.15); box-shadow: 0 0 15px rgba(251, 197, 49, 0.6); }
+        }
+
+        @media (max-width: 700px) {
+            .mg2-container { flex-direction: column; }
+            .mg2-seq-col { border-right: none; border-bottom: 3px dashed #ced6e0; padding-bottom: 20px; padding-right: 0;}
+            .mg2-opts { flex-direction: row; }
+        }
+
+        /* =========================================
+           MG3: CRESCIMENTO (Imagens Maiores e Layout Descido)
+           ========================================= */
+        .mg3-container { 
+            display: flex; flex-direction: column; width: 100%; max-width: 700px; 
+            margin: auto auto 10px auto; /* A magia que empurra tudo para baixo junto ao teclado */
+            flex: 1; justify-content: flex-end; gap: 20px; 
+        }
+        
+        .mg3-figs { 
+            display: flex; justify-content: space-around; align-items: flex-end; gap: 10px; 
+            border-bottom: 3px solid #ced6e0; padding-bottom: 15px; flex: 1; 
+        }
+        .mg3-fig-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        
+        /* Largura aumentada para permitir 4 colunas de imagens! */
+        .mg3-blocos { display: flex; flex-wrap: wrap-reverse; justify-content: center; align-content: flex-start; gap: 4px; width: 100%; max-width: 220px; }
+        
+        /* Imagens consideravelmente maiores! */
+        .mg3-img { width: clamp(35px, 6vw, 55px) !important; height: clamp(35px, 6vw, 55px) !important; object-fit: contain; }
+        
+        .mg3-label { font-weight: 900; color: var(--text-main); font-size: 1.2rem; }
+        
+        .mg3-tabela { width: 100%; table-layout: fixed; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 0 #ced6e0; border: 2px solid #ced6e0; margin-bottom: 5px; }
+        .mg3-tabela td { border: 2px solid #ced6e0; padding: 10px 5px; text-align: center; font-size: 1.4rem; font-weight: 900; color: var(--azul-escuro); }
+        .mg3-tabela tr:first-child { background: var(--azul-vibrante); color: white; }
+        .mg3-tabela .input-box { width: 100%; max-width: 60px; height: 45px; font-size: 1.4rem; margin: 0 auto; border-radius: 8px;}
+        
+        .mg3-frase { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 700; color: var(--text-main); line-height: 2; background: white; padding: 20px; border-radius: 15px; border: 3px solid #ced6e0; text-align: center; margin-bottom: 5px;}
+        .mg3-frase .input-box { display: inline-flex; width: 60px; height: 40px; margin: 0 5px; vertical-align: middle; border-radius: 8px; font-size: 1.4rem;}
+
+        /* --- MG4: TABELA DOS 100 (Cruz Lado a Lado e Grelha Menor) --- */
+        .mg4-container { margin: auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 100%;}
+        
+        /* Modo Grelha 100 (Reduzida) */
+        .grid-100 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; background: #e67e22; padding: 4px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); width: 100%; max-width: 400px;}
+        .cell-100 { aspect-ratio: 1/1; background: #fef9e7; display: flex; align-items: center; justify-content: center; font-size: clamp(0.8rem, 2vw, 1rem); font-weight: 900; color: var(--text-main); border-radius: 3px; }
+        .cell-100.input-box { color: var(--azul-vibrante); border-radius: 5px; background: white; border: 2px solid #ced6e0;}
+        .cell-100.input-focado { border-width: 3px; }
+        
+        /* Modo Recorte em Cruz */
+        .mg4-cruz-wrap { background: #2c3e50; padding: 20px; border-radius: 20px; box-shadow: 0 8px 0 #1a252f; display: inline-block;}
+        .cruz-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 6px; }
+        .cell-hidden { background: transparent; }
+        .cruz-center { background: #f1c40f; color: #d35400; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 900; box-shadow: 0 4px 0 #e67e22;}
+        .cruz-grid .input-box { border-radius: 10px; font-size: 1.6rem; border-width: 3px;}
+        /* Os Hints das Cruzes desaparecem quando se digita */
+        .cruz-grid .input-box:not(:empty)::before { display: none; }
+
+        @media (max-width: 600px) { .cruz-grid{ grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(3, 50px); }}
+
+        /* Overlay e Transições */
+        .overlay-nivel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 50; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; animation: fadeIn 0.3s; }
+        .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; text-align: center;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: 0.2s;}
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+
+        /* =========================================
+           CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+           ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; min-height: 400px; }
+            .mini-numpad { padding-top: 5px; margin-top: 10px; }
+            .mg3-container { gap: 10px; }
+            .mg3-figs { padding-bottom: 5px; }
+            .mg4-container { gap: 15px; }
+        }
+		
+		@media (max-height: 700px) and (orientation: landscape) {
+
+		  .mg3-container {
+			justify-content: flex-end;
+			gap: 10px;
+		  }
+
+		  .mg3-figs {
+			align-items: flex-end;
+			padding-bottom: 8px;
+		  }
+
+		  .mg3-img {
+			width: clamp(30px, 5vw, 45px);
+			height: clamp(30px, 5vw, 45px);
+		  }
+
+		  .mg3-label {
+			font-size: 1rem;
+		  }
+
+		  .mg3-tabela td {
+			padding: 6px 4px;
+			font-size: 1.2rem;
+		  }
+		}
+		/* =========================================
+		   AJUSTES PARA ECRÃS BAIXOS (TABLETS HORIZONTAIS)
+		   Inclui correções específicas do MG3
+		   ========================================= */
+		@media (max-height: 600px) {
+
+		  body {
+			height: auto !important;
+			overflow-y: auto !important;
+		  }
+
+		  main {
+			justify-content: flex-start !important;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			overflow-y: visible !important;
+		  }
+
+		  .cartao-jogo-container {
+			margin: auto 0;
+			min-height: 400px;
+		  }
+
+		  .mini-numpad {
+			padding-top: 5px;
+			margin-top: 10px;
+		  }
+
+		  /* ===== MG3: CRESCIMENTO (ultra compacto) ===== */
+
+		  .mg3-container {
+			justify-content: flex-end;
+			gap: 8px;
+		  }
+
+		  .mg3-figs {
+			align-items: flex-end;    /* garante alinhamento em baixo */
+			padding-bottom: 5px;
+		  }
+
+		  .mg3-img {
+			width: clamp(30px, 4.5vw, 45px) !important;
+			height: clamp(30px, 4.5vw, 45px) !important;
+		  }
+
+		  .mg3-label {
+			font-size: 1rem;
+		  }
+
+		  .mg3-tabela td {
+			padding: 6px 4px;
+			font-size: 1.2rem;
+		  }
+
+		  /* ===== MG4 (ajuste leve já existente) ===== */
+
+		  .mg4-container {
+			gap: 15px;
+		  }
+		}
+
+		@media (hover: none) and (pointer: coarse) {
+
+		  body {
+			height: auto !important;
+			overflow-y: auto !important;
+		  }
+
+		  main {
+			justify-content: flex-start !important;
+			overflow-y: visible !important;
+		  }
+
+		  footer {
+			margin-top: auto;
+		  }
+		}
+		
+		
+		
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Mestre das Sequências 🔄</h1>
+        <div class="subtitulo">A Grande Revisão das Sequências! 🎓</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-layer"></div>
+        
+
+		<!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <h2 class="titulo-menu">Revisões de Sequências:</h2>
+            
+            <!-- Usamos a grelha-opcoes que tu já criaste no CSS (faz o 2x2 automático) -->
+            <div class="grelha-opcoes">
+                
+                <button class="cartao-missao" onclick="iniciarJogo(1)">
+                    <div class="icone" style="background: #eaf2f8;">1️⃣</div>
+                    <span class="titulo">Numéricas</span>
+                    <span class="desc">O Caminho do Sapo</span>
+                </button>
+
+                <button class="cartao-missao" onclick="iniciarJogo(2)">
+                    <div class="icone" style="background: #fdedec;">🦋</div>
+                    <span class="titulo">Visuais</span>
+                    <span class="desc">Padrões Mágicos</span>
+                </button>
+
+                <button class="cartao-missao" onclick="iniciarJogo(3)">
+                    <div class="icone" style="background: #fef9e7;">🧱</div>
+                    <span class="titulo">Crescimento</span>
+                    <span class="desc">O Arquiteto</span>
+                </button>
+
+                <button class="cartao-missao" onclick="iniciarJogo(4)">
+                    <div class="icone" style="background: #e8f8f5;">💯</div>
+                    <span class="titulo">Mapa dos 100</span>
+                    <span class="desc">Navegação</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">5</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Aviso!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="overlay-nivel" id="overlay-nivel">
+                    <h2>🎉 Concluído!</h2>
+                </div>
+
+                <!-- O QUADRO DO EXERCÍCIO -->
+                <div id="quadro-jogo" style="width: 100%; display: flex; justify-content: center; align-items: center; flex: 1;">
+                    <!-- Injetado por JS -->
+                </div>
+
+                <!-- O MINI NUMPAD (Horizontal na base) -->
+                <div class="mini-numpad" id="numpad-container">
+                    <button class="mini-btn" onclick="teclaPress('1')">1</button>
+                    <button class="mini-btn" onclick="teclaPress('2')">2</button>
+                    <button class="mini-btn" onclick="teclaPress('3')">3</button>
+                    <button class="mini-btn" onclick="teclaPress('4')">4</button>
+                    <button class="mini-btn" onclick="teclaPress('5')">5</button>
+                    <button class="mini-btn" onclick="teclaPress('6')">6</button>
+                    <button class="mini-btn" onclick="teclaPress('7')">7</button>
+                    <button class="mini-btn" onclick="teclaPress('8')">8</button>
+                    <button class="mini-btn" onclick="teclaPress('9')">9</button>
+                    <button class="mini-btn" onclick="teclaPress('0')">0</button>
+                    <button class="mini-btn mini-btn-del" onclick="apagarTecla()">
+                        <svg viewBox="0 0 24 24"><path d="M21,4H8.2L0,12l8.2,8H21c1.1,0,2-0.9,2-2V6C23,4.9,22.1,4,21,4z M17.9,15.5l-1.4,1.4L13,13.4l-3.5,3.5l-1.4-1.4l3.5-3.5 L8.1,8.5l1.4-1.4l3.5,3.5l3.5-3.5l1.4,1.4L14.4,12L17.9,15.5z"/></svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Revisão Perfeita! 🎉</h2>
+            <div class="end-stats">
+                Dominaste as sequências!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="voltarAoMenu()">VOLTAR AO MENU 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // =========================================
+    // SUPORTE A TECLADO FÍSICO DO PC
+    // =========================================
+    document.addEventListener('keydown', function(event) {
+        if (document.getElementById('ecra-jogo').style.display !== 'none' && requiresNumpad) {
+            if (event.key >= '0' && event.key <= '9') {
+                teclaPress(event.key);
+            } else if (event.key === 'Backspace') {
+                apagarTecla();
+            }
+        }
+    });
+
+    // =========================================
+    // EFEITOS SONOROS (Web Audio API)
+    // =========================================
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1400, agora + 0.15);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2); osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria' || tipo === 'ronda') {
+            const notas = tipo === 'vitoria' ?[523.25, 659.25, 783.99, 1046.50] :[440, 554.37, 659.25];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.2, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1); osc.start(agora); osc.stop(agora + 0.1);
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-layer');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -10 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+	// =========================================
+    // UTILITÁRIOS GERAIS
+    // =========================================
+    function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function sortear(array) { return array.sort(() => Math.random() - 0.5); }
+    
+    function getShapeImage(imageName) { 
+        return `<img src="imagens/${imageName}" class="img-forma" alt="figura">`; 
+    }
+
+	// =========================================
+    // ESTADO GLOBAL DO EXAME
+    // =========================================
+    let modoAtual = 1; 
+    let rondaIndex = 0;
+    const TOTAL_RONDAS = 5;
+    let errosTotais = 0;
+    let dicasNesteModo = 1;
+    
+    // AS NOSSAS MEMÓRIAS INTELIGENTES (Baralhos)
+    let baralhoImagens = [];
+    let baralhoMG1 = [];
+    let baralhoMG3 =[];
+    
+    let requiresNumpad = true; 
+    let inputsAtivos =[]; 
+    let focoAtualIndex = 0;
+    let objResolucao = null; 
+    let aguardaAnimacao = false;
+
+    // Gestor de Seleção (Jogo 2)
+    let mg2SelectedOption = null;
+    let mg2ActiveRow = 0;
+    let mg2TotalRows = 3;
+
+    function atualizarPlacar() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = rondaIndex + 1 > TOTAL_RONDAS ? TOTAL_RONDAS : rondaIndex + 1;
+        let perc = (rondaIndex / TOTAL_RONDAS) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+        
+        if (dicasNesteModo > 0) document.getElementById('btn-dica').classList.remove('esgotada');
+        else document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function iniciarJogo(modo) {
+        initAudio();
+        modoAtual = modo;
+        rondaIndex = 0;
+        errosTotais = 0;
+        dicasNesteModo = 1;
+
+        // O EMBARALHADOR MÁGICO (Cria a ronda perfeita sem repetições)
+        baralhoImagens = sortear(['img1.png', 'img2.png', 'img3.png', 'img4.png', 'img5.png']);
+        baralhoMG1 = sortear([10, 15, 20, 25, 30]); // 5 saltos diferentes para o Jogo 1
+        baralhoMG3 = sortear([[1,2], [2,2], [1,3], [2,3], [1,4]]); // 5 dificuldades para o Jogo 3 [início, salto]
+
+        limparConfetis();
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        carregarRonda();
+    }
+
+    function carregarRonda() {
+        aguardaAnimacao = false;
+        inputsAtivos =[];
+        focoAtualIndex = 0;
+        mg2SelectedOption = null;
+        mg2ActiveRow = 0;
+        
+        const quadro = document.getElementById('quadro-jogo');
+        const numpad = document.getElementById('numpad-container');
+        quadro.innerHTML = "";
+        
+        if (modoAtual === 1) { requiresNumpad = true; numpad.style.display = 'flex'; renderMG1(quadro); }
+        else if (modoAtual === 2) { requiresNumpad = false; numpad.style.display = 'none'; renderMG2(quadro); }
+        else if (modoAtual === 3) { requiresNumpad = true; numpad.style.display = 'flex'; renderMG3(quadro); }
+        else if (modoAtual === 4) { requiresNumpad = true; numpad.style.display = 'flex'; renderMG4(quadro); }
+
+        if (requiresNumpad) atualizarFoco();
+    }
+
+    // =========================================
+    // RENDERIZADORES DOS MINIJOGOS
+    // =========================================
+
+    // --- MG1: Numéricas (Sapo nas Setas) ---
+    function renderMG1(quadro) {
+        let salto = baralhoMG1[rondaIndex]; // Usa o salto único e não-repetido desta ronda!
+        let start = rnd(1, 5) * 10; // O início pode ser sorteado, o salto já garante diversidade
+        let posMissing = rnd(1, 3);
+        
+        let seq =[];
+        for(let i=0; i<5; i++) seq.push(start + (i * salto));
+        
+        let html = `<div class="mg1-lago">`;
+        for(let i=0; i<4; i++) {
+            let isMissing = (i === posMissing);
+            let val = isMissing ? "" : seq[i];
+            let id = `input-mg1-${i}`;
+            
+            // Agora o Sapo é inserido fisicamente na div quando ela ganha foco!
+            let boxHtml = isMissing 
+                ? `<div class="input-box mg1-box" id="${id}"></div>` 
+                : `<div class="input-box mg1-box input-resolvido">${val}</div>`;
+            
+            if(isMissing) inputsAtivos.push({ id: id, ans: seq[i].toString() });
+
+            let arrowHtml = i < 3 ? `
+                <div class="mg1-seta-container">
+                    <span class="mg1-dica-txt" id="dica-seta-${i}">+${salto}</span>
+                    <svg class="mg1-svg" viewBox="0 0 50 30"><path class="mg1-path" d="M 5,25 Q 25,-10 45,25" /><polygon class="mg1-arrowhead" points="40,20 48,27 38,28" /></svg>
+                </div>` : "";
+                
+            html += boxHtml + arrowHtml;
+        }
+        html += `</div>`;
+        quadro.innerHTML = html;
+        objResolucao = { dicaAction: () => document.querySelectorAll('.mg1-dica-txt').forEach(el => el.classList.add('mostrar')) };
+    }
+
+    // --- MG2: Repetição Visual (Tocar e Colar - 3 Linhas) ---
+    function renderMG2(quadro) {
+        let imgs =['img1.png', 'img2.png', 'img3.png', 'img4.png', 'img5.png', 'img6.png', 'img7.png', 'img8.png'];
+        let allAnswers =[];
+        
+        let htmlSeqCol = `<div class="mg2-seq-col">`;
+        
+        // Magia: Garante que os 3 padrões diferentes aparecem em cada ronda!
+        let padroes = sortear([[0,1], [0,1,2], [0,0,1,1]]);
+        // Magia: Garante que as imagens principais das 3 linhas não se repetem!
+        let imagensBase = sortear([...imgs]);
+        
+        // Gerar 3 linhas independentes
+        for(let row=0; row < mg2TotalRows; row++) {
+            let pat = padroes[row]; // Tira o padrão específico desta linha
+            
+            // Constrói o tema usando imagens diferentes para não haver linhas idênticas
+            let theme = [imagensBase[row], imagensBase[(row+1)%5], imagensBase[(row+2)%5]]; 
+            
+            let seq =[];
+            for(let i=0; i<6; i++) seq.push(theme[pat[i % pat.length]]);
+            
+            let missingIdx = rnd(3, 5); // Faltar no fim
+            let ansImg = seq[missingIdx];
+            allAnswers.push(ansImg);
+            
+            let linhaHtml = `<div class="mg2-seq-row" id="mg2-row-${row}">`;
+            for(let i=0; i<6; i++) {
+                if (i === missingIdx) {
+                    linhaHtml += `<div class="mg2-box-q" id="box-alvo-${row}" onclick="colarNoBuraco(${row}, '${ansImg}')">?</div>`;
+                } else {
+                    linhaHtml += `<div>${getShapeImage(seq[i])}</div>`;
+                }
+            }
+            linhaHtml += `</div>`;
+            htmlSeqCol += linhaHtml;
+        }
+        htmlSeqCol += `</div>`;
+
+        // Construir a Paleta de Opções (Tocar e Colar)
+        let options = new Set(allAnswers);
+        while(options.size < 4) options.add(imgs[rnd(0, imgs.length-1)]);
+        let optArr = sortear(Array.from(options));
+
+        let htmlOpts = `<div class="mg2-opts">`;
+        htmlOpts += `<p style="width:100%; text-align:center; font-weight:900; color:var(--azul-escuro); margin-bottom:10px;">1º Seleciona o animal.<br>2º Toca no espaço.</p>`;
+        optArr.forEach((img, i) => {
+            htmlOpts += `<div class="mg2-opt-btn" id="opt-btn-${i}" onclick="selecionarOpcaoMG2('${img}', 'opt-btn-${i}')">${getShapeImage(img)}</div>`;
+        });
+        htmlOpts += `</div>`;
+
+        quadro.innerHTML = `<div class="mg2-container">${htmlSeqCol}${htmlOpts}</div>`;
+            
+        objResolucao = { 
+            dicaAction: () => {
+                // Ilumina a primeira linha que ainda nao foi resolvida
+                let rowEl = document.getElementById(`mg2-row-${mg2ActiveRow}`);
+                if(rowEl) {
+                    for(let i=0; i<3; i++) rowEl.children[i].classList.add('anim-dica');
+                }
+            }
+        };
+    }
+    
+    function selecionarOpcaoMG2(imgName, btnId) {
+        if(aguardaAnimacao) return;
+        mg2SelectedOption = imgName;
+        document.querySelectorAll('.mg2-opt-btn').forEach(b => b.classList.remove('selecionado'));
+        document.getElementById(btnId).classList.add('selecionado');
+        
+        // Destaca todos os buracos disponiveis para colar
+        document.querySelectorAll('.mg2-box-q').forEach(b => b.classList.add('pronto-colar'));
+    }
+    
+    function colarNoBuraco(row, ansCorreta) {
+        if(!mg2SelectedOption || aguardaAnimacao) {
+            showToast("Seleciona primeiro uma imagem da direita!", true);
+            return;
+        }
+        
+        if (mg2SelectedOption === ansCorreta) {
+            tocarSom('pop');
+            const box = document.getElementById(`box-alvo-${row}`);
+            box.innerHTML = getShapeImage(ansCorreta);
+            box.style.border = "4px solid var(--cor-sucesso)";
+            box.style.background = "#eafff0";
+            box.classList.remove('pronto-colar');
+            box.onclick = null; // Tranca
+            
+            // Remove a dica se estiver ligada
+            let rowEl = document.getElementById(`mg2-row-${row}`);
+            for(let i=0; i<3; i++) rowEl.children[i].classList.remove('anim-dica');
+
+            mg2ActiveRow++;
+            mg2SelectedOption = null;
+            document.querySelectorAll('.mg2-opt-btn').forEach(b => b.classList.remove('selecionado'));
+            document.querySelectorAll('.mg2-box-q').forEach(b => b.classList.remove('pronto-colar'));
+
+            if (mg2ActiveRow >= mg2TotalRows) {
+                aguardaAnimacao = true;
+                tocarSom('acerto');
+                setTimeout(avancarRonda, 1000);
+            }
+        } else {
+            registarErro(document.getElementById(`mg2-row-${row}`));
+        }
+    }
+
+    // --- MG3: Crescimento (Alterna entre Tabela e Frase) ---
+
+    function renderMG3(quadro) {
+        let isTabela = (rondaIndex % 2 === 0);
+        
+        // Extrai a Imagem e a Matemática exclusivas desta ronda (Garantido Zero Repetições!)
+        let img = baralhoImagens[rondaIndex]; 
+        let combo = baralhoMG3[rondaIndex];
+        let start = combo[0];
+        let step = combo[1];
+        
+        let figHtml = `<div class="mg3-figs">`;
+        for(let f=1; f<=3; f++) {
+            let total = start + ((f-1)*step);
+            let imgStr = `<img src="imagens/${img}" class="mg3-img" alt="b">`.repeat(total);
+            figHtml += `<div class="mg3-fig-col"><div class="mg3-blocos">${imgStr}</div><div class="mg3-label">Fig. ${f}</div></div>`;
+        }
+        figHtml += `</div>`;
+
+        let formHtml = "";
+        if (isTabela) {
+            formHtml = `
+            <table class="mg3-tabela">
+                <tr><td>Figura</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+                <tr><td>Total</td><td>${start}</td><td>${start+step}</td>
+                    <td><div class="input-box" id="input-mg3-0"></div></td>
+                    <td><div class="input-box" id="input-mg3-1"></div></td>
+                </tr>
+            </table>`;
+            inputsAtivos.push({ id: "input-mg3-0", ans: (start + 2*step).toString() });
+            inputsAtivos.push({ id: "input-mg3-1", ans: (start + 3*step).toString() });
+        } else {
+            let numTarget = rnd(4, 5);
+            formHtml = `
+            <div class="mg3-frase">
+                Cada figura tem mais <div class="input-box" id="input-mg3-0"></div> itens.<br>
+                A Fig. ${numTarget} terá <div class="input-box" id="input-mg3-1"></div> itens.
+            </div>`;
+            inputsAtivos.push({ id: "input-mg3-0", ans: step.toString() });
+            inputsAtivos.push({ id: "input-mg3-1", ans: (start + (numTarget-1)*step).toString() });
+        }
+
+        quadro.innerHTML = `<div class="mg3-container">${figHtml}${formHtml}</div>`;
+        objResolucao = { dicaAction: () => showToast(`Observa as imagens. Cresce de ${step} em ${step}!`, false) };
+    }
+
+    // --- MG4: Tabela dos 100 (Alterna Cruz e Grelha) ---
+    function renderMG4(quadro) {
+        let isGrelhaTotal = (rondaIndex % 2 !== 0);
+
+        if (isGrelhaTotal) {
+            let numsFalta =[];
+            while(numsFalta.length < 4) {
+                let n = rnd(12, 99);
+                if(!numsFalta.includes(n)) numsFalta.push(n);
+            }
+            numsFalta.sort((a,b) => a-b);
+
+            let html = `<div class="mg4-container"><div class="grid-100">`;
+            for(let i=1; i<=100; i++) {
+                if(numsFalta.includes(i)) {
+                    let id = `input-mg4-${i}`;
+                    html += `<div class="cell-100 input-box" id="${id}"></div>`;
+                    inputsAtivos.push({ id: id, ans: i.toString() });
+                } else {
+                    html += `<div class="cell-100">${i}</div>`;
+                }
+            }
+            html += `</div></div>`;
+            quadro.innerHTML = html;
+        } else {
+            // Recorte em CRUZ DUPLA (Duas cruzes independentes)
+            let cRows = [2,3,4,5,6,7,8,9];
+            let cCols =[2,3,4,5,6,7,8,9];
+            
+            let center1 = (cRows[rnd(0, 3)] - 1) * 10 + cCols[rnd(0, 3)]; 
+            let center2 = (cRows[rnd(4, 7)] - 1) * 10 + cCols[rnd(4, 7)]; 
+
+            let genCruz = (center, cIdx) => {
+                let h = `<div class="mg4-cruz-wrap"><div class="cruz-grid">`;
+                
+                h += `<div class="cell-hidden"></div><div class="cell-100 input-box" id="in-t-${cIdx}" data-hint="-10"></div><div class="cell-hidden"></div>`;
+                inputsAtivos.push({ id: `in-t-${cIdx}`, ans: (center - 10).toString() });
+
+                h += `<div class="cell-100 input-box" id="in-l-${cIdx}" data-hint="-1"></div><div class="cell-100 cruz-center">${center}</div><div class="cell-100 input-box" id="in-r-${cIdx}" data-hint="+1"></div>`;
+                inputsAtivos.push({ id: `in-l-${cIdx}`, ans: (center - 1).toString() });
+                inputsAtivos.push({ id: `in-r-${cIdx}`, ans: (center + 1).toString() });
+
+                h += `<div class="cell-hidden"></div><div class="cell-100 input-box" id="in-b-${cIdx}" data-hint="+10"></div><div class="cell-hidden"></div>`;
+                inputsAtivos.push({ id: `in-b-${cIdx}`, ans: (center + 10).toString() });
+
+                h += `</div></div>`;
+                return h;
+            };
+
+            quadro.innerHTML = `<div class="mg4-container" style="gap:20px; align-items:center;">${genCruz(center1, 1)}${genCruz(center2, 2)}</div>`;
+        }
+
+        objResolucao = { 
+            dicaAction: () => {
+                if(focoAtualIndex < inputsAtivos.length) {
+                    let obj = inputsAtivos[focoAtualIndex];
+                    let el = document.getElementById(obj.id);
+                    el.textContent = obj.ans;
+                    validaInputInterno(obj.ans); 
+                }
+            } 
+        };
+    }
+
+    // =========================================
+    // LÓGICA DO FOCO AUTOMÁTICO E TECLADO
+    // =========================================
+    function atualizarFoco() {
+        if(aguardaAnimacao || !requiresNumpad) return;
+        
+        inputsAtivos.forEach(obj => {
+            let el = document.getElementById(obj.id);
+            if(el) {
+                el.classList.remove('input-focado', 'foco-sapo');
+            }
+        });
+
+        if(focoAtualIndex < inputsAtivos.length) {
+            let el = document.getElementById(inputsAtivos[focoAtualIndex].id);
+            if(el) {
+                el.classList.add('input-focado');
+                if (modoAtual === 1) el.classList.add('foco-sapo'); // O Sapo salta para a nova caixa!
+            }
+        } else {
+            aguardaAnimacao = true;
+            tocarSom('acerto');
+            setTimeout(avancarRonda, 1000);
+        }
+    }
+
+    function teclaPress(num) {
+        if(aguardaAnimacao || !requiresNumpad || focoAtualIndex >= inputsAtivos.length) return;
+        
+        let objAtual = inputsAtivos[focoAtualIndex];
+        let el = document.getElementById(objAtual.id);
+        
+        if (el.textContent.length < objAtual.ans.length) {
+            el.textContent += num;
+            validaInputInterno(el.textContent);
+        }
+    }
+
+    function apagarTecla() {
+        if(aguardaAnimacao || !requiresNumpad || focoAtualIndex >= inputsAtivos.length) return;
+        let objAtual = inputsAtivos[focoAtualIndex];
+        let el = document.getElementById(objAtual.id);
+        
+        if (el.textContent.length > 0) {
+            el.textContent = el.textContent.slice(0, -1);
+        }
+    }
+
+    function validaInputInterno(texto) {
+        let objAtual = inputsAtivos[focoAtualIndex];
+        
+        if (texto.length === objAtual.ans.length) {
+            if (texto === objAtual.ans) {
+                let el = document.getElementById(objAtual.id);
+                el.classList.remove('input-focado', 'foco-sapo');
+                el.classList.add('input-resolvido');
+                tocarSom('pop');
+                
+                focoAtualIndex++;
+                atualizarFoco();
+            } else {
+                let el = document.getElementById(objAtual.id);
+                registarErro(el);
+                setTimeout(() => { el.textContent = ""; }, 400); 
+            }
+        }
+    }
+
+    function registarErro(elemento) {
+        errosTotais++;
+        atualizarPlacar();
+        tocarSom('erro');
+        elemento.classList.add('error-shake');
+        setTimeout(() => elemento.classList.remove('error-shake'), 400);
+    }
+
+    function usarDica() {
+        const btn = document.getElementById('btn-dica');
+        if(btn.classList.contains('esgotada') || dicasNesteModo <= 0 || aguardaAnimacao) return;
+        
+        dicasNesteModo--;
+        atualizarPlacar();
+        if(objResolucao && objResolucao.dicaAction) objResolucao.dicaAction();
+        btn.classList.add('esgotada');
+        tocarSom('acerto');
+    }
+
+    function avancarRonda() {
+        rondaIndex++;
+        atualizarPlacar();
+        
+        if (rondaIndex >= TOTAL_RONDAS) {
+            finalizarJogo();
+        } else {
+            carregarRonda();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function voltarAoMenu() { mostrarEcra('ecra-selecao'); }
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
