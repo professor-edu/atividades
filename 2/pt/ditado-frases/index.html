@@ -737,57 +737,67 @@
         document.getElementById('btn-dica').classList.add('esgotada');
     }
     
-    // =========================================
-    // AVALIAÇÃO DO TEXTO (Tempo Real e Final)
-    // =========================================
-    
-    // Evento que verifica em TEMPO REAL à medida que o aluno escreve
-    document.getElementById('input-ditado').addEventListener('input', function(e) {
-        let textoDigitado = this.value;
-        let textoAlvo = fraseAtual.texto;
 
-        // Se o texto digitado não for o início exato da frase alvo (Case sensitive e espaços estritos)
-        if (textoDigitado.length > 0 && textoAlvo.indexOf(textoDigitado) !== 0) {
-            this.classList.add('erro-tempo-real'); // Mostra vermelho
-        } else {
-            this.classList.remove('erro-tempo-real'); // Tudo bem por enquanto
-        }
-    });
+	// =========================================
+	// AVALIAÇÃO DO TEXTO (Tempo Real e Final)
+	// =========================================
 
-    function verificarDitado() {
-        let inputEl = document.getElementById('input-ditado');
-        let respostaUtilizador = inputEl.value;
+	// Verificação em tempo real (ignora espaços no fim)
+	document.getElementById('input-ditado').addEventListener('input', function () {
+		let textoDigitado = this.value;
+		let textoAlvo = fraseAtual.texto;
 
-        if (respostaUtilizador.trim() === '') {
-            showToast("Escreve a frase antes de verificar!", true);
-            return;
-        }
+		// Remove apenas os espaços no fim
+		let digitadoSemEspacosFinais = textoDigitado.replace(/\s+$/, '');
 
-        // Validação ESTRITA: Tem de ser perfeitamente igual
-        if (respostaUtilizador === fraseAtual.texto) {
-            // Acertou
-            showToast("Excelente!", false);
-            tocarSom('acerto');
-            inputEl.disabled = true; // Impede que editem enquanto avança
-            inputEl.style.borderColor = "var(--cor-em)";
-            inputEl.classList.remove('erro-tempo-real');
-            setTimeout(avancarRonda, 1500);
-        } else {
-            // Errou
-            errosTotais++;
-            document.getElementById('val-erros').textContent = errosTotais;
-            tocarSom('erro');
-            showToast("Quase! Segue as regras e corrige o que está a vermelho.", true);
-            
-            inputEl.classList.add('error-shake');
-            inputEl.classList.add('erro-tempo-real');
-            
-            setTimeout(() => {
-                inputEl.classList.remove('error-shake');
-                inputEl.focus();
-            }, 400);
-        }
-    }
+		if (
+			digitadoSemEspacosFinais.length > 0 &&
+			textoAlvo.indexOf(digitadoSemEspacosFinais) !== 0
+		) {
+			this.classList.add('erro-tempo-real');
+		} else {
+			this.classList.remove('erro-tempo-real');
+		}
+	});
+
+	// Verificação final ao clicar no botão
+	function verificarDitado() {
+		let inputEl = document.getElementById('input-ditado');
+		let respostaUtilizador = inputEl.value;
+
+		// Está vazio ou só com espaços?
+		if (respostaUtilizador.trim() === '') {
+			showToast("Escreve a frase antes de verificar!", true);
+			return;
+		}
+
+		let respostaNormalizada = respostaUtilizador.trim();
+		let fraseNormalizada = fraseAtual.texto.trim();
+
+		if (respostaNormalizada === fraseNormalizada) {
+			// Acertou
+			showToast("Excelente!", false);
+			tocarSom('acerto');
+			inputEl.disabled = true;
+			inputEl.style.borderColor = "var(--cor-em)";
+			inputEl.classList.remove('erro-tempo-real');
+			setTimeout(avancarRonda, 1500);
+		} else {
+			// Errou
+			errosTotais++;
+			document.getElementById('val-erros').textContent = errosTotais;
+			tocarSom('erro');
+			showToast("Quase! Segue as regras e corrige o que está a vermelho.", true);
+
+			inputEl.classList.add('error-shake');
+			inputEl.classList.add('erro-tempo-real');
+
+			setTimeout(() => {
+				inputEl.classList.remove('error-shake');
+				inputEl.focus();
+			}, 400);
+		}
+	}
 
     // Permitir clicar Enter para submeter
     document.getElementById('input-ditado').addEventListener('keypress', function (e) {
