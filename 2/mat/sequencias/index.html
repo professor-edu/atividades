@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Mestre das Sequências</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;			
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); 
+            margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+        }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 10px; gap: 10px; overflow-y: auto;} 
+            .cartao-jogo-container { padding: 20px 15px; min-height: 350px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-mat); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; overflow: hidden; }
+
+        #confetti-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 30px; pointer-events: none; z-index: 500; }
+        .confetti { position: absolute; width: 12px; height: 12px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(800px) rotate(720deg); opacity: 0; } }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; box-sizing: border-box; z-index: 5; flex: 1;}
+        #ecra-selecao { display: flex; justify-content: center; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+
+        /* ECRÃ INICIAL (3 CARTÕES QUADRADOS) */
+        .grelha-3-cartoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; width: 100%; max-width: 900px; margin: 0 auto; }
+        .cartao-quadrado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; background: #ffffff; border: 4px solid var(--borda-cartao); border-radius: 20px; padding: 30px 15px; width: 100%; text-align: center; cursor: pointer; box-sizing: border-box; box-shadow: 0 6px 0 var(--borda-cartao); transition: all 0.2s ease; aspect-ratio: 1 / 1; }
+        @media (hover: hover) { .cartao-quadrado:hover { transform: translateY(-4px); border-color: var(--cor-mat); box-shadow: 0 10px 0 var(--cor-mat); } }
+        .cartao-quadrado:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .cartao-quadrado .icone { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; flex-shrink: 0; margin: 0 auto;}
+        .cartao-quadrado .titulo { font-weight: 900; color: var(--azul-escuro); font-size: 1.3rem; display: block; margin-bottom: 5px;}
+        .cartao-quadrado .desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500;}
+        @media (max-width: 768px) { .grelha-3-cartoes { grid-template-columns: 1fr; gap: 15px; } .cartao-quadrado { aspect-ratio: auto; padding: 20px 15px; } }
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { background-color: white; border-color: var(--azul-escuro); color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { background-color: #fff9c4; border-color: #b18500; color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; margin-left: 0; margin-right: 0;}
+        }
+
+        .toast-msg { position: absolute; top: 75px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 10px 25px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeGame 0.4s ease !important; border-color: var(--cor-erro) !important; color: var(--cor-erro) !important;}
+        @keyframes shakeGame { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           O MESTRE DAS FORMAS (CSS ESPECÍFICO)
+           ========================================= */
+       .area-jogo-custom { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; background: #f2f6fb; border: 4px dashed #ced6e0; border-radius: 20px; padding: 20px; gap: 25px; box-sizing: border-box; }
+
+        /* Ecrã de Seleção com Animação Lúdica */
+        .intro-box {
+            background: white; border: 4px solid var(--azul-vibrante); border-radius: 25px;
+            padding: 30px 20px; width: 100%; max-width: 600px; text-align: center; margin: auto;
+            box-shadow: 0 8px 0 var(--azul-vibrante); display: flex; flex-direction: column; align-items: center;
+        }
+        .intro-text { font-size: 1.2rem; color: var(--text-main); font-weight: 500; line-height: 1.5; margin-bottom: 25px; }
+        
+        .animacao-intro {
+            display: flex; gap: 15px; align-items: center; justify-content: center; margin-bottom: 20px;
+            background: #f1f2f6; padding: 15px; border-radius: 20px; border: 3px dashed #a4b0be;
+        }
+        .intro-forma {
+		  width: 60px;
+		  height: 60px;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  animation: introPop 2s infinite ease-in-out;
+		}
+        .intro-forma:nth-child(2) { animation-delay: 0.5s; }
+        .intro-forma:nth-child(3) { animation-delay: 1s; }
+        .intro-forma.misterio {
+		  width: 60px;
+		  height: 60px;
+		  background: white;
+		  border: 3px dashed var(--cor-mat);
+		  border-radius: 10px;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  animation: pulseHint 1s infinite alternate;
+		  font-size: 2rem;
+		  color: var(--azul-escuro);
+		}
+
+        
+        @keyframes introPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        /* LAYOUT CENTRADO DO JOGO (Sem Scroll) */
+        .layout-centrado {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; max-width: 800px; gap: clamp(15px, 4vh, 45px); margin: 0 auto;
+        }
+
+        /* ZONA DA SEQUÊNCIA */
+        .zona-pergunta { 
+            background: #fff9c4; border: 4px solid #fbc531; border-radius: 20px; padding: 15px 25px; 
+            width: 100%; text-align: center; box-shadow: 0 6px 0 #fbc531; 
+        }
+        .texto-pergunta { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 900; color: #b18500; margin: 0; }
+
+        .zona-sequencia {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+            gap: clamp(8px, 2vw, 15px); width: 100%; padding: 15px;
+            background: white; border: 4px solid var(--borda-cartao); border-radius: 20px;
+            box-shadow: 0 6px 0 var(--borda-cartao); min-height: 120px;
+        }
+
+        .seq-grupo { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+        .seq-item {
+            width: clamp(50px, 12vw, 70px); height: clamp(50px, 12vw, 70px);
+            background: #f8fafc; border: 3px solid #ced6e0; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(2rem, 5vw, 3rem); box-shadow: 0 4px 0 #ced6e0;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .seq-item.missing { background: white; border: 4px dashed var(--azul-vibrante); box-shadow: inset 0 0 10px rgba(0, 145, 255, 0.2); color: var(--azul-vibrante); font-weight: 900; font-size: 2.5rem; animation: pulseHint 1s infinite alternate;}
+        .seq-item.resolvido { background: #eafff0; border: 4px solid var(--cor-sucesso); box-shadow: 0 0 15px rgba(46, 204, 113, 0.5); transform: scale(1.1); animation: none;}
+        .seq-item.dica-brilho { border-color: #f1c40f; background: #fef9e7; box-shadow: 0 0 15px #f1c40f;}
+
+        .seq-label { font-size: clamp(0.8rem, 2vw, 1rem); font-weight: 900; color: var(--text-main); }
+        .seq-ellipsis { font-size: 2rem; font-weight: 900; color: #a4b0be; letter-spacing: 2px; margin: 0 5px;}
+
+        /* ZONA DE OPÇÕES */
+        .zona-opcoes {
+            display: flex; justify-content: center; gap: 20px; width: 100%; flex-wrap: wrap;
+        }
+        .btn-opcao {
+            width: clamp(70px, 15vw, 90px); height: clamp(70px, 15vw, 90px);
+            background: white; border: 4px solid var(--azul-vibrante); border-radius: 20px;
+            font-size: clamp(2.5rem, 6vw, 3.5rem); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 6px 0 var(--azul-vibrante); transition: 0.15s;
+        }
+        @media (hover: hover) { .btn-opcao:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--azul-vibrante); filter: brightness(0.95); } }
+        .btn-opcao:active { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+
+        @media (max-width: 650px) {
+            .zona-pergunta { padding: 10px 15px; }
+            .zona-opcoes { gap: 10px; }
+        }
+
+        @keyframes pulseHint { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+        /* Ecrãs Transição e Fim */
+        .overlay-nivel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 50; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px; animation: fadeIn 0.3s; }
+        .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; text-align: center;}
+        .overlay-nivel p { font-size: 1.2rem; color: var(--text-main); font-weight: bold; text-align: center; padding: 0 20px;}
+        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; text-align: center;}
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 900; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px; transition: 0.2s;}
+        .btn-acao:hover { transform: translateY(-4px); box-shadow: 0 9px 0 var(--cor-2ano-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+
+        /* =========================================
+           CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+           ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+		
+		.seq-item img,
+		.btn-opcao img,
+		.intro-forma img {
+		  width: 80%;
+		  height: 80%;
+		  object-fit: contain;
+		  pointer-events: none;
+		}
+		
+		#ecra-fim {
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  text-align: center;
+		}
+
+
+		
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Mestre das Sequências 🪄</h1>
+        <div class="subtitulo">Descobre o padrão e completa a sequência!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-layer"></div>
+        
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <div class="intro-box">
+                <div class="animacao-intro">
+                    
+					
+					<div class="intro-forma">
+					  <img src="svg/circulo_verde.svg" alt="">
+					</div>
+					<div class="intro-forma">
+					  <img src="svg/estrela.svg" alt="">
+					</div>
+					<div class="intro-forma">
+					  <img src="svg/circulo_vermelho.svg" alt="">
+					</div>
+                    <div class="intro-forma misterio">?</div>
+                </div>
+                <p class="intro-text">
+                    As imagens organizam-se sempre com uma regra escondida.<br><br>
+                    Descobre qual é o desenho que se repete e ajuda a completar as sequências!
+                </p>
+                <button class="btn-acao" onclick="iniciarJogo()">JOGAR ✨</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-ronda">1</span>/<span id="val-total-rondas">15</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="toast-msg" id="toast-msg">Aviso!</div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="overlay-nivel" id="overlay-nivel">
+                    <h2 id="trans-titulo">🎉 Subiste de Nível!</h2>
+                    <p id="trans-desc">Os padrões ficaram mais difíceis...</p>
+                </div>
+
+                <div class="layout-centrado">
+                    
+                    <div class="zona-pergunta">
+                        <p class="texto-pergunta" id="texto-pergunta">Qual é a figura que completa a sequência?</p>
+                    </div>
+
+                    <div class="zona-sequencia" id="zona-sequencia">
+                        <!-- Gerado pelo JS -->
+                    </div>
+
+                    <div class="zona-opcoes" id="zona-opcoes">
+                        <button class="btn-opcao" id="opt-0" onclick="verificarResposta(0)">-</button>
+                        <button class="btn-opcao" id="opt-1" onclick="verificarResposta(1)">-</button>
+                        <button class="btn-opcao" id="opt-2" onclick="verificarResposta(2)">-</button>
+                        <button class="btn-opcao" id="opt-3" onclick="verificarResposta(3)">-</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Mestre das Sequências! 🎉</h2>
+            <div class="end-stats">
+                Completaste todas as sequências!<br>
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erro(s).
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+        toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // =========================================
+    // EFEITOS SONOROS (Web Audio API)
+    // =========================================
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1400, agora + 0.15);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2); osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria' || tipo === 'ronda') {
+            const notas = tipo === 'vitoria' ?[523.25, 659.25, 783.99, 1046.50] :[440, 554.37, 659.25];
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.2, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-layer');
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = Math.floor(Math.random() * -10 - 5) + '%';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+    function limparConfetis() { document.getElementById('confetti-layer').innerHTML = ''; }
+
+	// =========================================
+    // O GERADOR DE PADRÕES 
+    // =========================================
+    function rnd(min, max) { 
+        return Math.floor(Math.random() * (max - min + 1)) + min; 
+    }
+
+    // Baralhador justo (Fisher-Yates) para garantir opções perfeitamente aleatórias
+    function sortear(array) { 
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function gerarExercicio(nivel) {
+        // Paletas de figuras temáticas
+        const themes = [
+            ['circulo_vermelho', 'circulo_azul', 'circulo_amarelo', 'circulo_verde', 'circulo_roxo'],
+            ['estrela', 'lua', 'sol', 'nuvem', 'relampago'],
+            ['maca', 'banana', 'uva', 'morango', 'melancia'],
+            ['cao', 'gato', 'rato', 'passaro', 'joaninha'],
+            ['carro', 'taxi', 'jipe', 'autocarro', 'policia']
+        ];
+        
+        // Escolhe um tema e baralha as 5 figuras de forma justa
+        let theme = sortear([...themes[rnd(0, themes.length - 1)]]);
+
+        let patterns;
+        // Padrões justos e adequados para o 2º ano (repetem de forma lógica)
+        if (nivel === 1) {
+            patterns = [[0,1], [0,0,1], [0,1,1]]; // AB, AAB, ABB
+        } else if (nivel === 2) {
+            patterns = [[0,1], [0,1,2], [0,0,1,1], [0,1,1]]; // AB, ABC, AABB, ABB
+        } else {
+            patterns = [[0,1], [0,1,2], [0,0,1]]; // Nível 3 (N-ésima posição)
+        }
+
+        let pat = patterns[rnd(0, patterns.length - 1)];
+        let seq = [];
+        let totalItems;
+
+        // Garante que a sequência é longa o suficiente para repetir o padrão a 100%
+        if (nivel === 3) {
+            totalItems = rnd(12, 15); // Até 15 posições para o 2º ano é ideal
+        } else {
+            totalItems = pat.length * 2; // Força a repetição do padrão 2 vezes completas
+        }
+
+        // Constrói a sequência total matemática
+        for(let i = 0; i < totalItems; i++) {
+            seq.push(theme[pat[i % pat.length]]);
+        }
+
+        let missingIdx, displaySeq = [], qText = "";
+
+        if (nivel === 1) {
+            missingIdx = seq.length - 1; // Falta sempre o último
+            displaySeq = [...seq];
+            displaySeq[missingIdx] = '?';
+            qText = "Qual é a figura que completa a sequência?";
+        } 
+        else if (nivel === 2) {
+            // Falta no meio: garante que nunca cai na 1ª nem na última posição
+            missingIdx = rnd(1, seq.length - 2); 
+            displaySeq = [...seq];
+            displaySeq[missingIdx] = '?';
+            qText = "Qual é a figura que falta no meio da sequência?";
+        } 
+        else {
+            missingIdx = totalItems - 1; // Posição Longe
+            displaySeq = seq.slice(0, 6); // Mostra só as primeiras 6 como pista
+            qText = `Observa a sequência. Qual será a figura na ${missingIdx + 1}ª posição?`;
+        }
+
+        let ans = seq[missingIdx];
+        
+        // Gera 4 opções: a certa fica garantida, as outras 3 são erradas (mas do mesmo tema)
+        let options = new Set([ans]);
+        while(options.size < 4) { 
+            options.add(theme[rnd(0, 4)]); 
+        }
+        options = sortear(Array.from(options));
+
+        return { 
+            seq: seq, displaySeq: displaySeq, ans: ans, options: options, 
+            missingIdx: missingIdx, qText: qText, patLen: pat.length, nivel: nivel 
+        };
+    }
+	
+	
+	
+	
+	
+	function svgIcon(nome) {
+	  return `<img src="svg/${nome}.svg" alt="" draggable="false">`;
+	}
+	
+	
+	
+	
+	
+	// =========================================
+    // LÓGICA DO JOGO
+    // =========================================
+    const EX_POR_NIVEL = 5;
+    const TOTAL_RONDAS = 15; // 3 níveis x 5 rondas
+    let globalIndex = 0; 
+    let errosTotais = 0;
+    
+    let exAtual = null;
+    let correctAnswerIdx = -1;
+    let aguardarAnimacao = false;
+    let dicasNesteNivel = 1;
+
+    function atualizarPlacar() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-ronda').textContent = globalIndex + 1 > TOTAL_RONDAS ? TOTAL_RONDAS : globalIndex + 1;
+        let perc = (globalIndex / TOTAL_RONDAS) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+        
+        // Atualiza UI da Dica
+       // document.getElementById('dica-cont').textContent = dicasNesteNivel;// COMENTEI ESTA LINHA
+        if (dicasNesteNivel > 0) document.getElementById('btn-dica').classList.remove('esgotada');
+        else document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function iniciarJogo() {
+        initAudio();
+        globalIndex = 0;
+        errosTotais = 0;
+        dicasNesteNivel = 1;
+        limparConfetis();
+        atualizarPlacar();
+        mostrarEcra('ecra-jogo');
+        carregarRonda();
+    }
+
+    function carregarRonda() {
+        aguardarAnimacao = false;
+        
+        // Verifica se subiu de Nível para restaurar a Dica
+        if (globalIndex > 0 && globalIndex % EX_POR_NIVEL === 0) {
+            dicasNesteNivel = 1;
+        }
+        
+        let nivelCalculado = Math.floor(globalIndex / EX_POR_NIVEL) + 1;
+        exAtual = gerarExercicio(nivelCalculado);
+        atualizarPlacar();
+
+        // Renderiza Pergunta
+        document.getElementById('texto-pergunta').textContent = exAtual.qText;
+
+        // Renderiza Sequência
+        const zonaSeq = document.getElementById('zona-sequencia');
+        let htmlSeq = "";
+
+        if (exAtual.nivel < 3) {
+            // Nível 1 e 2: Mostra tudo, um tem '?'
+            for(let i=0; i<exAtual.displaySeq.length; i++) {
+                let char = exAtual.displaySeq[i];
+                if (char === '?') {
+                    htmlSeq += `<div class="seq-grupo"><div class="seq-item missing" id="box-alvo">?</div><div class="seq-label">${i+1}º</div></div>`;
+                } else {
+                    htmlSeq += `<div class="seq-grupo"><div class="seq-item" id="item-${i}">${svgIcon(char)}</div><div class="seq-label">${i+1}º</div></div>`;
+                }
+            }
+        } else {
+            // Nível 3: Mostra 6, depois '...', depois a caixa '?' com o Nº
+            for(let i=0; i<6; i++) {
+                htmlSeq += `
+					  <div class="seq-grupo">
+						<div class="seq-item" id="item-${i}">
+						  ${svgIcon(exAtual.displaySeq[i])}
+						</div>
+						<div class="seq-label">${i+1}º</div>
+					  </div>`;
+            }
+            htmlSeq += `<div class="seq-ellipsis">...</div>`;
+            htmlSeq += `<div class="seq-grupo"><div class="seq-item missing" id="box-alvo">?</div><div class="seq-label">${exAtual.missingIdx + 1}º</div></div>`;
+        }
+        zonaSeq.innerHTML = htmlSeq;
+
+        // Renderiza Botões de Opção
+        for(let i=0; i<4; i++) {
+            let btn = document.getElementById(`opt-${i}`);
+            btn.innerHTML = svgIcon(exAtual.options[i]);
+            if (exAtual.options[i] === exAtual.ans) correctAnswerIdx = i;
+        }
+    }
+
+    function usarDica() {
+        const btn = document.getElementById('btn-dica');
+        if(btn.classList.contains('esgotada') || aguardarAnimacao || dicasNesteNivel <= 0) return;
+        
+        dicasNesteNivel--;
+        atualizarPlacar();
+
+        // A Dica ilumina o bloco que se repete!
+        let patLen = exAtual.patLen;
+        for(let i=0; i<patLen; i++) {
+            let el = document.getElementById(`item-${i}`);
+            if (el) el.classList.add('dica-brilho');
+        }
+
+        let txtDica = exAtual.nivel === 3 
+            ? `Dica: O padrão repete-se a cada ${patLen} figuras!` 
+            : `Dica: Observa o padrão base iluminado!`;
+            
+        showToast(txtDica, false);
+        tocarSom('acerto');
+    }
+
+    function verificarResposta(idx) {
+        if(aguardarAnimacao) return;
+
+        if (idx === correctAnswerIdx) {
+            aguardarAnimacao = true;
+            tocarSom('acerto');
+            
+            const caixa = document.getElementById('box-alvo');
+            caixa.innerHTML = svgIcon(exAtual.ans);
+            caixa.classList.remove('missing');
+            caixa.classList.add('resolvido');
+
+            setTimeout(avancar, 1200);
+        } else {
+            errosTotais++;
+            atualizarPlacar();
+            tocarSom('erro');
+            const zonaSeq = document.getElementById('zona-sequencia');
+            zonaSeq.classList.add('error-shake');
+            showToast("Essa não é a figura correta!", true);
+            setTimeout(() => zonaSeq.classList.remove('error-shake'), 400);
+        }
+    }
+
+    function avancar() {
+        globalIndex++;
+        
+        if (globalIndex >= TOTAL_RONDAS) {
+            atualizarPlacar();
+            finalizarJogo();
+        } 
+        else if (globalIndex % EX_POR_NIVEL === 0) {
+            // Transição de Nível
+            let nivelNovo = (globalIndex / EX_POR_NIVEL) + 1;
+            document.getElementById('trans-titulo').textContent = nivelNovo === 2 ? "🎉 Padrões Escondidos!" : "🎉 A Grande Posição!";
+            document.getElementById('trans-desc').textContent = nivelNovo === 2 ? "Agora a figura em falta pode estar no meio..." : "Descobre a figura mesmo sem a veres!";
+            
+            tocarSom('ronda');
+            document.getElementById('overlay-nivel').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.getElementById('overlay-nivel').style.display = 'none';
+                carregarRonda();
+            }, 2500);
+        } else {
+            atualizarPlacar();
+            carregarRonda();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() { iniciarJogo(); }
+    function voltarAoMenu() { mostrarEcra('ecra-selecao'); }
+
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
