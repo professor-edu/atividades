@@ -582,6 +582,28 @@
 				margin: auto 0; /* Centra perfeitamente se houver espaço, ou deixa fazer scroll se não houver */
 			}
 		} 
+		
+		/* =========================================
+		CORREÇÃO PARA PAINEIS E ECRÃS GRANDES ????
+		========================================= */
+		
+		@media (hover: none) and (pointer: coarse) {
+
+		  body {
+			height: auto !important;
+			overflow-y: auto !important;
+		  }
+
+		  main {
+			justify-content: flex-start !important;
+			overflow-y: visible !important;
+		  }
+
+		  footer {
+			margin-top: auto;
+		  }
+		}
+
 
 	
     body { scrollbar-gutter: stable; }
@@ -929,10 +951,34 @@
     inputCaderno.addEventListener('input', (e) => {
         if (!textoAtualObj) return;
 
-        const digitado = e.target.value;
+        let digitado = e.target.value;
         const original = textoAtualObj.texto;
-        const alvoComparacao = original.substring(0, digitado.length);
+
+        // ==========================================
+        // ASSISTÊNCIA MÁGICA (Ignorar espaços extra)
+        // ==========================================
         
+        // 1. Ignorar múltiplos espaços após pontuação (ex: ".  " vira automaticamente ". ")
+        const regexEspacosExtra = /([.,!?;:]) {2,}/g;
+        if (regexEspacosExtra.test(digitado)) {
+            digitado = digitado.replace(regexEspacosExtra, '$1 ');
+            e.target.value = digitado; // Atualiza a caixa de texto sem o aluno notar
+        }
+
+        // 2. BÓNUS: Se o aluno der "Espaço" no fim da frase, mas o texto pedir um "Enter" (\n)
+        if (digitado.length > 0) {
+            let ultimoChar = digitado[digitado.length - 1];
+            let charEsperado = original[digitado.length - 1];
+            
+            if (ultimoChar === ' ' && charEsperado === '\n') {
+                // Transforma automaticamente o espaço num Enter!
+                digitado = digitado.substring(0, digitado.length - 1) + '\n';
+                e.target.value = digitado;
+            }
+        }
+        // ==========================================
+
+        const alvoComparacao = original.substring(0, digitado.length);
         const isCorrectNow = (digitado === alvoComparacao);
 
         if (isCorrectNow) {
