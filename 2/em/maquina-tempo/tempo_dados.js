@@ -1,0 +1,56 @@
+// ==========================================
+// DADOS A MÁQUINA DO TEMPO (Passado vs Presente)
+// ==========================================
+
+const tempoDados =[
+    // ==== O PASSADO (No tempo dos Avós) ====
+    { id: "telefone_disco", nome: "Telefone de Disco", epoca: "passado", imagem: "img/telefone_disco.png" },
+    { id: "maquina_escrever", nome: "Máquina de Escrever", epoca: "passado", imagem: "img/maquina_escrever.png" },
+    { id: "radio_antigo", nome: "Rádio Antigo", epoca: "passado", imagem: "img/radio_antigo.png" },
+    { id: "tv_tubo", nome: "Televisão de Tubo", epoca: "passado", imagem: "img/tv_tubo.png" },
+    { id: "carta_papel", nome: "Carta e Tinteiro", epoca: "passado", imagem: "img/carta_papel.png" },
+    { id: "maquina_rolo", nome: "Câmara de Rolo", epoca: "passado", imagem: "img/maquina_rolo.png" },
+    { id: "disco_vinil", nome: "Gira-Discos", epoca: "passado", imagem: "img/disco_vinil.png" },
+	{ id: "cassete", nome: "Cassete", epoca: "passado", imagem: "img/cassete.png" },
+    { id: "candeeiro_petroleo", nome: "Candeeiro a Petróleo", epoca: "passado", imagem: "img/candeeiro_petroleo.png" },
+    { id: "ferro_carvao", nome: "Ferro a Carvão", epoca: "passado", imagem: "img/ferro_carvao.png" },
+    { id: "moinho_cafe", nome: "Moinho de Café", epoca: "passado", imagem: "img/moinho_cafe.png" },
+    { id: "vassoura_palha", nome: "Vassoura de Palha", epoca: "passado", imagem: "img/vassoura_palha.png" },
+    { id: "fogao_lenha", nome: "Fogão a Lenha", epoca: "passado", imagem: "img/fogao_lenha.png" },
+    { id: "relogio_cuco", nome: "Relógio de Cuco", epoca: "passado", imagem: "img/relogio_cuco.png" },
+    { id: "comboio_vapor", nome: "Comboio a Vapor", epoca: "passado", imagem: "img/comboio_vapor.png" },
+	{ id: "primeiros_carros", nome: "Carro Antigo", epoca: "passado", imagem: "img/primeiros_carros.png" },
+    { id: "carroca_cavalos", nome: "Carroça", epoca: "passado", imagem: "img/carroca_cavalos.png" },
+    { id: "ardosia_giz", nome: "Quadro de Ardósia", epoca: "passado", imagem: "img/ardosia_giz.png" },
+    { id: "piao_madeira", nome: "Pião de Madeira", epoca: "passado", imagem: "img/piao_madeira.png" },
+	{ id: "castical", nome: "Castiçal e Vela", epoca: "passado", imagem: "img/castical.png" },
+	{ id: "botija_quente", nome: "Botija de Água Quente", epoca: "passado", imagem: "img/botija_quente.png" },
+	{ id: "mala_cartao", nome: "Mala de Viagem de Cartão", epoca: "passado", imagem: "img/mala_cartao.png" },
+
+    // ==== O PRESENTE (Hoje em Dia) ====
+    { id: "smartphone", nome: "Smartphone", epoca: "presente", imagem: "img/smartphone.png" },
+    { id: "tablet", nome: "Tablet", epoca: "presente", imagem: "img/tablet.png" },
+    { id: "portatil", nome: "Computador Portátil", epoca: "presente", imagem: "img/portatil.png" },
+    { id: "consola_jogos", nome: "Consola de Jogos", epoca: "presente", imagem: "img/consola_jogos.png" },
+    { id: "auscultadores", nome: "Auscultadores sem Fios", epoca: "presente", imagem: "img/auscultadores.png" },
+    { id: "smartwatch", nome: "Relógio Inteligente", epoca: "presente", imagem: "img/smartwatch.png" },
+    { id: "smart_tv", nome: "Televisão Plana", epoca: "presente", imagem: "img/smart_tv.png" },
+    { id: "lampada_led", nome: "Lâmpada LED", epoca: "presente", imagem: "img/lampada_led.png" },
+    { id: "microondas", nome: "Micro-ondas", epoca: "presente", imagem: "img/microondas.png" },
+    { id: "aspirador_robo", nome: "Aspirador Robô", epoca: "presente", imagem: "img/aspirador_robo.png" },
+    { id: "maquina_roupa", nome: "Máquina de Lavar Roupa", epoca: "presente", imagem: "img/maquina_roupa.png" },
+	{ id: "maquina_loica", nome: "Máquina de Lavar Loiça", epoca: "presente", imagem: "img/maquina_loica.png" },
+    { id: "frigorifico_moderno", nome: "Frigorífico", epoca: "presente", imagem: "img/frigorifico_moderno.png" },
+    { id: "maquina_cafe", nome: "Máquina de Cápsulas", epoca: "presente", imagem: "img/maquina_cafe.png" },
+    { id: "carro_eletrico", nome: "Carro Elétrico", epoca: "presente", imagem: "img/carro_eletrico.png" },
+    { id: "comboio_bala", nome: "Comboio de Alta Velocidade", epoca: "presente", imagem: "img/comboio_bala.png" },
+    { id: "trotinete_eletrica", nome: "Trotinete Elétrica", epoca: "presente", imagem: "img/trotinete_eletrica.png" },
+    { id: "drone", nome: "Drone", epoca: "presente", imagem: "img/drone.png" },
+    { id: "mochila_escolar", nome: "Mochila Moderna", epoca: "presente", imagem: "img/mochila_escolar.png" },
+    { id: "quadro_interativo", nome: "Quadro Interativo", epoca: "presente", imagem: "img/quadro_interativo.png" },
+    { id: "impressora_3d", nome: "Impressora 3D", epoca: "presente", imagem: "img/impressora_3d.png" },
+	{ id: "coluna_inteligente", nome: "Coluna Inteligente", epoca: "presente", imagem: "img/coluna_inteligente.png" },
+	{ id: "oculos_vr", nome: "Óculos de Realidade Virtual", epoca: "presente", imagem: "img/oculos_vr.png" },
+	{ id: "air_fryer", nome: "Fritadeira a Ar", epoca: "presente", imagem: "img/air_fryer.png" },
+	{ id: "escova_eletrica", nome: "Escova de Dentes Elétrica", epoca: "presente", imagem: "img/escova_eletrica.png" }
+];

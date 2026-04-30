@@ -59,5 +59,6 @@ const todosOsJogos =[
 	{ nome: "O Corpo Humano", icone: "icones/corpo_humano.png", link: "em/corpo-humano/", cat: "em" },
 	{ nome: "Estados da Água", icone: "icones/estados_agua.png", link: "em/estados-agua/", cat: "em" },
 	{ nome: "As Plantas", icone: "icones/plantas.png", link: "em/plantas/", cat: "em" },
-	{ nome: "Sopa de Letras", icone: "icones/sopa_letras_meios_comunicacao.png", link: "em/sopa-letras/", cat: "em" }
+	{ nome: "Sopa de Letras", icone: "icones/sopa_letras_meios_comunicacao.png", link: "em/sopa-letras/", cat: "em" },
+	{ nome: "Máquina do Tempo", icone: "icones/maquina_tempo.png", link: "em/maquina-tempo/", cat: "em" }
 ];
