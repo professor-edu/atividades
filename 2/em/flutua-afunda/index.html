@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - Flutua ou Afunda</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;            
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+            --agua-cor: rgba(129, 212, 250, 0.4);
+            --agua-cor-fundo: rgba(41, 182, 246, 0.6);
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        
+        /* HEADER E NAVEGAÇÃO */
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-2ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-em); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; /* Importante para as bolhas animadas não saírem */
+        }
+
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 50; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0; width: 100%;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* ECRÃS E MENUS */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        
+        /* =========================================
+           MENU INICIAL ANIMADO
+           ========================================= */
+        .menu-hero {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+        }
+        .icone-gigante {
+            font-size: 6rem;
+            animation: bounceIn 2s infinite alternate;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+            margin-bottom: 20px;
+        }
+        .titulo-destaque {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            color: var(--azul-escuro);
+            font-weight: 900;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .sub-destaque {
+            font-size: 1.2rem; color: var(--text-main); margin-bottom: 30px; font-weight: 500;
+        }
+        
+        .btn-iniciar-gigante {
+            background: linear-gradient(135deg, var(--azul-vibrante), #00c6ff);
+            color: white; border: none; padding: 20px 50px; font-size: 1.5rem; font-weight: 900; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 8px 0 #005cbf, 0 15px 20px rgba(0,0,0,0.2);
+            transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-iniciar-gigante:hover { transform: translateY(-5px); box-shadow: 0 13px 0 #005cbf, 0 20px 25px rgba(0,0,0,0.3); } }
+        .btn-iniciar-gigante:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent; }
+
+        /* Animação de bolhas de fundo no menu */
+        .bolha {
+            position: absolute; background: rgba(0, 145, 255, 0.1); border-radius: 50%;
+            bottom: -50px; animation: subirBolha linear infinite; z-index: 1; pointer-events: none;
+        }
+        @keyframes subirBolha { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-1000px) scale(1.5); opacity: 0; } }
+        @keyframes bounceIn { 0% { transform: translateY(0); } 100% { transform: translateY(-20px); } }
+
+        /* BARRA DE ESTADO DO JOGO */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #eaf1eb; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DE JOGO CUSTOMIZADA (AQUÁRIO)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 10px; overflow: hidden; position: relative; gap: 10px;
+        }
+
+        .info-superior {
+            text-align: center;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .pergunta-titulo {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--azul-escuro);
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .nome-objeto {
+            font-size: 1.2rem;
+            color: var(--azul-vibrante);
+            font-weight: 700;
+            background: white;
+            padding: 4px 15px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* AQUÁRIO */
+        .container-experiencia {
+            position: relative;
+            width: 100%;
+            max-width: 550px; /* Alargado */
+            height: 260px; /* Altura fixa para nunca empurrar elementos */
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            flex-shrink: 0; /* Impede que o tanque encolha estranhamente */
+        }
+
+        .aquario {
+            width: 100%;
+            height: 65%; /* Ocupa um bocado menos em altura do espaço fixo */
+            border: 5px solid #b3e5fc;
+            border-top: none;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            background: linear-gradient(to bottom, var(--agua-cor) 0%, var(--agua-cor-fundo) 100%);
+            position: relative;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1), 0 10px 15px rgba(0,0,0,0.05);
+            z-index: 2;
+            overflow: hidden; /* Corta as ondas e o objeto se passar dos limites */
+        }
+
+        /* ONDAS DA ÁGUA */
+        .superficie-agua {
+            position: absolute;
+            top: -12px;
+            left: 0;
+            width: 200%; /* Largura extra para animar */
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 40'%3E%3Cpath d='M0,20 Q100,40 200,20 T400,20 T600,20 T800,20 V40 H0 Z' fill='rgba(129, 212, 250, 0.8)'/%3E%3Cpath d='M0,20 Q100,0 200,20 T400,20 T600,20 T800,20 V40 H0 Z' fill='rgba(41, 182, 246, 0.5)'/%3E%3C/svg%3E");
+            background-size: 50% 100%;
+            animation: moverOndas 3s linear infinite;
+            z-index: 6; /* Fica acima do objeto que cai na água */
+        }
+
+        @keyframes moverOndas {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* OBJETO FÍSICO (EMOJI OU IMAGEM) */
+        .objeto-fisico {
+            font-size: 4.5rem;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -20px; /* Posição inicial - Suspenso antes do tanque */
+            z-index: 5;
+            transition: top 0.7s cubic-bezier(0.5, 0.05, 0.8, 0.3); /* Queda natural */
+            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .img-objeto {
+            width: 90px; height: 90px; object-fit: contain; pointer-events: none;
+        }
+
+        /* Classes de animação (estados da água) */
+        .estado-afunda {
+            top: calc(100% - 5.5rem) !important;
+        }
+        
+        .estado-flutua {
+            top: 25% !important; /* Fica na linha de água */
+            animation: boiar 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes boiar {
+            0% { transform: translateX(-50%) translateY(0); }
+            100% { transform: translateX(-50%) translateY(-10px) rotate(2deg); }
+        }
+
+        /* CONTROLOS (Botões de Aposta) */
+        .controlos-aposta {
+            display: flex;
+            gap: 15px;
+            margin-top: auto;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+        
+        /* Em vez de display:none, apenas ocultamos para evitar salto no layout! */
+        .controlos-aposta.escondido {
+            opacity: 0; pointer-events: none;
+        }
+
+        .btn-aposta {
+            flex: 1;
+            padding: 18px 10px;
+            border-radius: 20px;
+            border: 4px solid;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: white;
+        }
+
+        .btn-flutua { border-color: var(--azul-vibrante); color: var(--azul-escuro); box-shadow: 0 6px 0 var(--azul-vibrante); }
+        .btn-afunda { border-color: var(--cor-pt); color: #c0392b; box-shadow: 0 6px 0 var(--cor-pt); }
+
+        @media (hover: hover) {
+            .btn-flutua:hover:not(:disabled) { background: #e3f2fd; transform: translateY(-3px); box-shadow: 0 9px 0 var(--azul-vibrante); }
+            .btn-afunda:hover:not(:disabled) { background: #ffebee; transform: translateY(-3px); box-shadow: 0 9px 0 var(--cor-pt); }
+        }
+        
+        .btn-aposta:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 0 0 transparent; }
+        .btn-aposta:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 0 0 transparent;}
+
+        /* PAINEL DE APRENDIZAGEM (Pop-up interno) */
+        .painel-info {
+            position: absolute;
+            bottom: 5px; /* Quase em cima dos botões */
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: white;
+            border: 3px solid var(--cor-em);
+            border-radius: 20px;
+            padding: 15px 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .painel-info.visivel {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .info-resultado { font-size: 1.3rem; font-weight: 900; display: block; }
+        .texto-acerto { color: #219d53; }
+        .texto-erro { color: #ff4757; }
+        
+        .info-facto {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.4;
+            margin: 5px 0;
+        }
+
+        .btn-continuar {
+            background: var(--cor-em);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #219d53;
+            transition: transform 0.2s;
+        }
+        .btn-continuar:active { transform: translateY(4px); box-shadow: 0 0 0 transparent;}
+
+        /* ECRÃ FIM */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+
+        @media (max-height: 650px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+        }       
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Flutua ou Afunda ⬆️⬇️</h1>
+        <div class="subtitulo">Descobre o que flutua e o que afunda!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
+
+        <!-- ECRÃ DE MENU INICIAL (Super Animação) -->
+        <div id="ecra-selecao" class="ecra">
+            <div class="bolha" style="left:10%; width:30px; height:30px; animation-duration:6s;"></div>
+            <div class="bolha" style="left:30%; width:50px; height:50px; animation-duration:8s; animation-delay: 1s;"></div>
+            <div class="bolha" style="left:70%; width:25px; height:25px; animation-duration:5s; animation-delay: 2s;"></div>
+            <div class="bolha" style="left:85%; width:40px; height:40px; animation-duration:7s; animation-delay: 0.5s;"></div>
+
+            <div class="menu-hero">
+                <div class="icone-gigante">🌊</div>
+                <h2 class="titulo-destaque">Flutua ou Afunda?</h2>
+                <div class="sub-destaque">O grande teste aos materiais!</div>
+                
+                <button class="btn-iniciar-gigante" onclick="iniciarJogo()">
+                    ▶️ Jogar
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">12</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="info-superior">
+                    <h3 class="pergunta-titulo">O que vai acontecer?</h3>
+                    <div class="nome-objeto" id="ui-nome-objeto">Moeda</div>
+                </div>
+
+                <div class="container-experiencia">
+                    <div class="objeto-fisico" id="ui-emoji-objeto">🪙</div>
+                    
+                    <div class="aquario">
+                        <div class="superficie-agua"></div>
+                    </div>
+                </div>
+
+                <div class="controlos-aposta" id="ui-botoes">
+                    <button class="btn-aposta btn-flutua" onclick="fazerAposta(true)">⬆️ FLUTUA</button>
+                    <button class="btn-aposta btn-afunda" onclick="fazerAposta(false)">⬇️ AFUNDA</button>
+                </div>
+
+                <!-- Painel de Aprendizagem (Aparece após animação) -->
+                <div class="painel-info" id="ui-painel-info">
+                    <span class="info-resultado" id="ui-resultado-msg">Acertaste! 🎉</span>
+                    <p class="info-facto" id="ui-facto-texto">O metal é pesado e afunda na água.</p>
+                    <button class="btn-continuar" onclick="avancarRonda()">Continuar ➡️</button>
+                </div>
+
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                És um(a) grande cientista!<br><br>
+                Tiveste <strong id="final-erros" style="color:#ff4757; font-size:2rem;">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR NOVAMENTE 🔄</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA
+    // =========================================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2500);
+    }
+
+    // =========================================
+    // EFEITOS SONOROS (WEB AUDIO API) E CONFETIS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        } else if (tipo === 'splash') {
+            // Efeito de Splash realista usando Ruído Branco e Filtros (Afunda / Entra na água)
+            const bufferSize = audioCtx.sampleRate * 0.5; // 0.5 segundos
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1; // Ruído Branco
+            }
+            
+            const noiseSource = audioCtx.createBufferSource();
+            noiseSource.buffer = buffer;
+            
+            // Filtro Lowpass para cortar sons muitos agudos e parecer "água"
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, agora);
+            filter.frequency.exponentialRampToValueAtTime(100, agora + 0.4);
+
+            const gainNoise = audioCtx.createGain();
+            gainNoise.gain.setValueAtTime(0.4, agora);
+            gainNoise.gain.exponentialRampToValueAtTime(0.01, agora + 0.5);
+
+            noiseSource.connect(filter);
+            filter.connect(gainNoise);
+            gainNoise.connect(audioCtx.destination);
+            noiseSource.start(agora);
+
+            // Som de grave do impacto do objeto
+            const osc = audioCtx.createOscillator();
+            const gainOsc = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(150, agora);
+            osc.frequency.exponentialRampToValueAtTime(40, agora + 0.3);
+            gainOsc.gain.setValueAtTime(0.3, agora);
+            gainOsc.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.connect(gainOsc);
+            gainOsc.connect(audioCtx.destination);
+            osc.start(agora);
+            osc.stop(agora + 0.3);
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-container');
+        container.innerHTML = ""; 
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = '-10%'; 
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    // =========================================
+    // BASE DE DADOS DOS OBJETOS
+    // =========================================
+    // Podes inserir as tuas imagens preenchendo a chave `imagem` em vez de deixar "".
+    // Exemplo: imagem: "img/moeda_2ano.png"
+    const baseObjetos = [
+        { nome: "Moeda", emoji: "🪙", imagem: "img/moeda.png", flutua: false, material: "Metal", facto: "A moeda afunda rapidamente porque o metal é um material muito denso e pesado." },
+        { nome: "Rolha", emoji: "🍾", imagem: "img/rolha.png", flutua: true, material: "Cortiça", facto: "A cortiça flutua porque é leve e tem muitas bolsas de ar no seu interior." },
+        { nome: "Pato de Borracha", emoji: "🦆", imagem: "img/pato.png", flutua: true, material: "Borracha e Ar", facto: "O patinho tem ar dentro, o que funciona como uma boia!" },
+        { nome: "Parafuso", emoji: "📍", imagem: "img/parafuso.png", flutua: false, material: "Metal", facto: "Mesmo sendo pequeno, o prego é feito de metal compacto, logo afunda direto." },
+        { nome: "Folha Seca", emoji: "🍂", imagem: "img/folha.png", flutua: true, material: "Planta", facto: "A folha é tão leve e plana que a água suporta o seu pequeno peso." },
+        { nome: "Maçã", emoji: "🍎", imagem: "img/maca.png", flutua: true, material: "Fruta", facto: "Sabias que 25% do volume de uma maçã é ar? É por isso que ela flutua!" },
+        { nome: "Pedra", emoji: "🪨", imagem: "img/pedra.png", flutua: false, material: "Mineral", facto: "A pedra é muito compacta, não tem ar. O seu peso vence a água e afunda." },
+        { nome: "Esponja", emoji: "🧽", imagem: "img/esponja.png", flutua: true, material: "Espuma", facto: "A esponja está cheia de buraquinhos com ar, tornando-a muito mais leve que a água." },
+        { nome: "Chave", emoji: "🔑", imagem: "img/chave.png", flutua: false, material: "Metal", facto: "Tal como a moeda, o metal da chave é mais denso que a própria água." },
+        { nome: "Barco de Papel", emoji: "⛵", imagem: "img/barco_papel.png", flutua: true, material: "Papel e Ar", facto: "A forma do barco prende ar lá dentro e empurra muita água, conseguindo flutuar." },
+        { nome: "Berlinde", emoji: "🔮", imagem: "img/berlinde.png", flutua: false, material: "Vidro", facto: "O berlinde é de vidro maciço (sem espaços ocos). É pesado para o seu tamanho." },
+        { nome: "Bola de Praia", emoji: "🏖️", imagem: "img/bola_praia.png", flutua: true, material: "Plástico e Ar", facto: "É grande, mas quase todo o seu interior é apenas ar! Por isso flutua sempre." },
+        { nome: "Lápis", emoji: "✏️", imagem: "img/lapis.png", flutua: true, material: "Madeira", facto: "O lápis é feito de madeira, um material que geralmente flutua na água." },
+        { nome: "Tesoura", emoji: "✂️", imagem: "img/tesoura.png", flutua: false, material: "Metal", facto: "O metal da tesoura é tão denso e pesado que a puxa imediatamente para o fundo." },
+        { nome: "Garrafa Vazia", emoji: "🍼", imagem: "img/garrafa_vazia.png", flutua: true, material: "Plástico e Ar", facto: "Como a garrafa tem ar retido lá dentro, funciona como um colete salva-vidas!" },
+        { nome: "Clipe", emoji: "📎", imagem: "img/clipe.png", flutua: false, material: "Metal", facto: "É levezinho, mas continua a ser de metal denso. Sem ar preso, vai afundar." },
+        { nome: "Bóia", emoji: "🛟", imagem: "img/boia.png", flutua: true, material: "Plástico e Ar", facto: "A bóia foi feita para estar cheia de ar, garantindo que salva quem cai à água." },
+        { nome: "Íman", emoji: "🧲", imagem: "img/iman.png", flutua: false, material: "Metal Magnético", facto: "O ferro do íman é um material pesado (denso). Vai direto para o fundo!" },
+        { nome: "Ramo de Árvore", emoji: "🪵", imagem: "img/ramo_arvore.png", flutua: true, material: "Madeira", facto: "A madeira bruta retém sempre pequenas bolsas de ar que a ajudam a boiar." },
+        { nome: "Cadeado", emoji: "🔒", imagem: "img/cadeado.png", flutua: false, material: "Metal", facto: "Um cadeado é um grande bloco de metal maciço e pesado. Afunda garantidamente." },
+        { nome: "Copo de Vidro", emoji: "🥛", imagem: "img/copo_vidro.png", flutua: false, material: "Vidro", facto: "Ao encher-se de água, o vidro (que é denso) perde todo o ar que tinha dentro e afunda." },
+        { nome: "Laranja", emoji: "🍊", imagem: "img/laranja.png", flutua: true, material: "Fruta (com casca)", facto: "A casca grossa da laranja é porosa e prende ar, agindo como uma boia natural!" },
+        { nome: "Pilha", emoji: "🔋", imagem: "img/pilha.png", flutua: false, material: "Metal e Químicos", facto: "As pilhas são blocos metálicos cheios de compostos químicos pesados. Afundam." },
+        { nome: "Tábua", emoji: "🏄", imagem: "img/tabua.png", flutua: true, material: "Madeira", facto: "A tábua tem muito volume, mas pouco peso, ideal para flutuar." },
+        { nome: "Colher", emoji: "🥄", imagem: "img/colher.png", flutua: false, material: "Metal", facto: "A colher de metal corta a água facilmente e, sendo densa, afunda até ao fundo." },
+        { nome: "Mergulhador", emoji: "🤿", imagem: "img/mergulhador.png", flutua: false, material: "Humano com Chumbo", facto: "Com os cintos de pesos (chumbo), os mergulhadores são ajudados a afundar!" }
+    ];
+
+    // =========================================
+    // LÓGICA DE JOGO
+    // =========================================
+    let rondaAtual = 1;
+    let totalRondas = 12; // Modificado para 12 exercícios
+    let errosTotais = 0;
+    let listaJogo = [];
+    let objetoAtual = null;
+    let apostaEmCurso = false;
+
+    // Elementos UI
+    const uiNome = document.getElementById('ui-nome-objeto');
+    const uiEmoji = document.getElementById('ui-emoji-objeto');
+    const uiBotoes = document.getElementById('ui-botoes');
+    const uiPainelInfo = document.getElementById('ui-painel-info');
+    const uiResMsg = document.getElementById('ui-resultado-msg');
+    const uiFacto = document.getElementById('ui-facto-texto');
+
+    function baralharArray(array) {
+        let arrayMisturado = [...array];
+        for (let i = arrayMisturado.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arrayMisturado[i], arrayMisturado[j]] = [arrayMisturado[j], arrayMisturado[i]];
+        }
+        return arrayMisturado;
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-progresso').textContent = rondaAtual > totalRondas ? totalRondas : rondaAtual;
+        document.getElementById('val-total').textContent = totalRondas;
+        
+        let perc = ((rondaAtual - 1) / totalRondas) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function iniciarJogo() {
+        rondaAtual = 1;
+        errosTotais = 0;
+        
+        // Seleciona 12 objetos aleatórios da base (evita repetições na mesma jogada)
+        listaJogo = baralharArray(baseObjetos).slice(0, 12); 
+        totalRondas = listaJogo.length;
+
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+		apostaEmCurso = false;
+		document.getElementById('btn-dica').classList.remove('esgotada');
+		
+		objetoAtual = listaJogo[rondaAtual - 1];
+		
+		// --- 1. CORREÇÃO DA ANIMAÇÃO (O salto da imagem) ---
+		uiEmoji.style.transition = 'none'; 
+		uiEmoji.classList.remove('estado-afunda', 'estado-flutua');
+		void uiEmoji.offsetWidth; 
+		uiEmoji.style.transition = '';
+		
+		// --- 2. A LINHA QUE FALTAVA (Esconder o painel) ---
+		uiPainelInfo.classList.remove('visivel'); 
+		
+		// Mostra novamente os botões de aposta
+		uiBotoes.classList.remove('escondido');
+		
+		uiNome.textContent = objetoAtual.nome;
+		
+		// Suporte para Imagens vs Emojis
+		if (objetoAtual.imagem && objetoAtual.imagem !== "") {
+			uiEmoji.innerHTML = `<img src="${objetoAtual.imagem}" alt="${objetoAtual.nome}" class="img-objeto">`;
+		} else {
+			uiEmoji.textContent = objetoAtual.emoji;
+		}
+	}
+
+    function usarDica() {
+        if(document.getElementById('btn-dica').classList.contains('esgotada') || apostaEmCurso) return;
+        
+        let dica = `O material principal é ${objetoAtual.material}.`;
+        showToast(dica);
+        document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function fazerAposta(apostaFlutua) {
+        if (apostaEmCurso) return;
+        apostaEmCurso = true;
+        
+        const acertou = (apostaFlutua === objetoAtual.flutua);
+        
+        // Esconde botões APENAS mudando a opacidade/eventos, logo o espaço do layout fica igual!
+        uiBotoes.classList.add('escondido');
+
+        if (acertou) {
+            tocarSom('acerto');
+            uiResMsg.textContent = "Acertaste! 🎉";
+            uiResMsg.className = "info-resultado texto-acerto";
+        } else {
+            tocarSom('erro');
+            errosTotais++;
+            atualizarPlacarUI();
+            uiResMsg.textContent = "Ups! Enganaste-te... 😅";
+            uiResMsg.className = "info-resultado texto-erro";
+            document.getElementById('cartao-jogo').classList.add('error-shake');
+            setTimeout(() => document.getElementById('cartao-jogo').classList.remove('error-shake'), 400);
+        }
+
+        // Inicia Animação de Queda (espera o som de acerto/erro acabar)
+        setTimeout(() => {
+            tocarSom('splash'); // Dispara o novo efeito aquático realista
+            if (objetoAtual.flutua) {
+                uiEmoji.classList.add('estado-flutua');
+            } else {
+                uiEmoji.classList.add('estado-afunda');
+            }
+
+            // Mostra o painel de informação em baixo 
+            setTimeout(() => {
+                uiFacto.textContent = objetoAtual.facto;
+                uiPainelInfo.classList.add('visivel');
+            }, 800);
+
+        }, 500);
+    }
+
+    function avancarRonda() {
+        rondaAtual++;
+        if (rondaAtual > totalRondas) {
+            finalizarJogo();
+        } else {
+            atualizarPlacarUI();
+            prepararRonda();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() {
+        document.getElementById('confetti-container').innerHTML = ""; 
+        iniciarJogo();
+    }
+
+    function voltarAoMenu() {
+        document.getElementById('confetti-container').innerHTML = "";
+        mostrarEcra('ecra-selecao');
+    }
+    
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
