@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - As Plantas 🌱</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;            
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        
+		@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        /* HEADER E NAVEGAÇÃO */
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-2ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-em); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            overflow: hidden; /* Mantém as animações dentro do cartão */
+        }
+
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; position: relative; overflow: hidden; border-radius: 30px;}
+        #ecra-jogo { justify-content: flex-start; position: relative;}
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900; position: relative; z-index: 2;}
+        
+        .grelha-opcoes { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; max-width: 400px; position: relative; z-index: 2;}
+        
+        .btn-nivel-menu {
+            background-color: white; border: 4px solid #ced6e0; border-radius: 20px;
+            padding: 25px 15px; width: 100%; cursor: pointer;
+            box-shadow: 0 6px 0 #ced6e0; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; touch-action: manipulation;
+        }
+        @media (hover: hover) { 
+            .btn-nivel-menu:hover { transform: translateY(-6px) scale(1.02); background-color: var(--cor-em); border-color: var(--cor-em); box-shadow: 0 10px 0 #3eb952; }
+            .btn-nivel-menu:hover .nivel-titulo, .btn-nivel-menu:hover .nivel-desc { color: white; }
+            .btn-nivel-menu:hover .nivel-icon { transform: scale(1.25) rotate(15deg); background-color: white; }
+        }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .nivel-icon { font-size: 3rem; background: #e8f5e9; width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 auto; transition: all 0.3s ease;}
+        .nivel-text { text-align: center; }
+        .nivel-titulo { font-size: 1.4rem; font-weight: 900; display: block; color: var(--azul-escuro); transition: color 0.3s ease;}
+        .nivel-desc { font-size: 0.95rem; color: var(--text-main); font-weight: 500; margin-top: 5px; display: block; transition: color 0.3s ease;}
+
+        /* ANIMAÇÕES DO MENU E JOGO - FOLHAS E TREPADEIRAS */
+        .folhas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; border-radius: 30px; }
+        .folha-animada { position: absolute; font-size: clamp(1.2rem, 3vw, 1.8rem); animation: cairFolha linear infinite forwards; pointer-events: none; opacity: 0; }
+        @keyframes cairFolha {
+            0% { transform: translateY(-50px) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(600px) rotate(360deg) translateX(var(--sway, 50px)); opacity: 0; }
+        }
+        
+        .trepadeira { position: absolute; font-size: 5rem; z-index: 10; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+        
+        /* Trepadeiras de Cima (Menu) */
+        .trepadeira.esquerda { top: -10px; left: -15px; transform-origin: top center; animation: balancoEsq 4s ease-in-out infinite; }
+        .trepadeira.direita { top: -10px; right: -15px; transform-origin: top center; animation: balancoDir 4.5s ease-in-out infinite; }
+        
+        /* Trepadeiras de Baixo (Jogo) - Ajustadas para a sua posição natural e mais pequenas */
+        .trepadeira.baixo-esq { bottom: 10px; left: 15px; font-size: 3.5rem; transform-origin: bottom center; animation: balancoCantoEsq 4s ease-in-out infinite; opacity: 0.5; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 20; }
+        .trepadeira.baixo-dir { bottom: 10px; right: 15px; font-size: 3.5rem; transform-origin: bottom center; animation: balancoCantoDir 4.5s ease-in-out infinite; opacity: 0.5; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 20; }
+
+        @keyframes balancoEsq { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(-5deg); } }
+        @keyframes balancoDir { 0%, 100% { transform: scaleX(-1) rotate(-15deg); } 50% { transform: scaleX(-1) rotate(-5deg); } }
+        @keyframes balancoCantoEsq { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+        @keyframes balancoCantoDir { 0%, 100% { transform: scaleX(-1) rotate(-5deg); } 50% { transform: scaleX(-1) rotate(5deg); } }
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #eaf1eb; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            position: relative; z-index: 5;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .caixa-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 12px 20px; border-radius: 15px; font-weight: 500; font-size: clamp(0.95rem, 2.5vw, 1.1rem); margin-top: 5px; display: flex; align-items: center; gap: 12px; max-width: 800px; width: 100%; text-align: left; box-shadow: 0 4px 0 rgba(251, 197, 49, 0.2); }
+        .caixa-dica-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+            .grid-respostas { grid-template-columns: 1fr !important; }
+            .caixa-dica { flex-direction: column; text-align: center; gap: 5px; }
+        }
+
+        /* TOAST E ANIMAÇÕES */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; max-width: 90%; text-align: center; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DE JOGO CUSTOM
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; 
+            /* Mudanças no fundo e borda para um estilo "Plantas" */
+            background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%); 
+            border: 3px dashed #aed581; 
+            border-radius: 20px; padding: 20px; overflow-y: auto; gap: 25px;
+            position: relative; color: #94a3b8; font-weight: bold;
+            z-index: 5;
+        }
+
+        .texto-pergunta {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            color: var(--azul-escuro);
+            text-align: center;
+            font-weight: 900;
+            line-height: 1.4;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .grid-respostas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 800px; position: relative; z-index: 10; }
+        
+        .btn-resposta {
+            background: white; border: 3px solid #ced6e0; border-radius: 15px; padding: 15px; font-size: clamp(1rem, 2.5vw, 1.2rem); font-weight: bold; color: var(--azul-escuro); cursor: pointer; box-shadow: 0 4px 0 #ced6e0; transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; min-height: 80px;
+        }
+        @media (hover: hover) { .btn-resposta:hover:not(:disabled) { transform: translateY(-4px); background-color: #f1f8ff; border-color: var(--azul-vibrante); box-shadow: 0 6px 0 var(--azul-vibrante); } }
+        .btn-resposta:active:not(:disabled) { transform: translateY(4px) !important; box-shadow: 0 0px 0 transparent !important; }
+        .btn-resposta.erro { border-color: #ff4757 !important; color: #ff4757 !important; box-shadow: 0 4px 0 #ff4757 !important; }
+        .btn-resposta.certo { background-color: #e8f5e9 !important; border-color: var(--cor-em) !important; color: #1e7e34 !important; box-shadow: 0 4px 0 var(--cor-em) !important; transform: scale(1.05); }
+
+        /* =========================================
+           ECRÃ FIM E BOTÕES DE AÇÃO
+           ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5;}
+        
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 6px 0 #a4b0be; }
+        @media (hover: hover) { .btn-acao.secundario:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #a4b0be; filter: brightness(1.05); } }
+        .btn-acao.secundario:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+
+		@media (max-height: 600px) {
+			body { height: auto !important; overflow-y: auto !important; }
+			main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+			.cartao-jogo-container { margin: auto 0; }
+		}
+
+		@media (hover: none) and (pointer: coarse) {
+		  body { height: auto !important; overflow-y: auto !important; }
+		  main { justify-content: flex-start !important; overflow-y: visible !important; }
+		  footer { margin-top: auto; }
+		}		
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>As Plantas 🌱</h1>
+        <div class="subtitulo">Mostra o que sabes sobre o mundo das Plantas!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
+
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <!-- Efeitos de Planta -->
+            <div id="folhas-container" class="folhas-container"></div>
+            <div class="trepadeira esquerda">🌿</div>
+            <div class="trepadeira direita">🌿</div>
+
+            <h2 class="titulo-menu">Quiz das Plantas!</h2>
+            <p style="color: var(--azul-escuro); font-size: 1.1rem; margin-bottom: 1px; font-weight: 500; position: relative; z-index: 2;">Vamos testar o que sabes sobre as plantas?</p>
+            <p style="color: var(--azul-escuro); font-size: 1.1rem; margin-bottom: 25px; font-weight: 500; position: relative; z-index: 2;">Serão sorteadas 12 perguntas misteriosas para ti!</p>
+            <div class="grelha-opcoes">
+                <button class="btn-nivel-menu" onclick="iniciarJogo()">
+                    <span class="nivel-icon">🌻</span>
+                    <span class="nivel-text">
+                        <span class="nivel-titulo">COMEÇAR QUIZ</span>
+                        <span class="nivel-desc">12 perguntas aleatórias</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- Trepadeiras em baixo no jogo -->
+            <div class="trepadeira baixo-esq">🌿</div>
+            <div class="trepadeira baixo-dir">🌿</div>
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">12</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <!-- Conteúdo gerado dinamicamente via JS -->
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida! 🎉</h2>
+            <div class="end-stats">
+                Completaste o Quiz das Plantas!<br><br>
+                Tiveste <strong id="final-erros" style="color:#ff4757; font-size:2rem;">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">MENU PRINCIPAL 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // UI DA PÁGINA
+    // =========================================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        
+        // Remove toast slowly
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => toast.classList.remove('active'), 4000);
+    }
+
+    // =========================================
+    // EFEITOS SONOROS E CONFETIS
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-container');
+        container.innerHTML = ""; 
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = '-10%'; 
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    // =========================================
+    // DADOS DAS PERGUNTAS 
+    // =========================================
+    const bancoPerguntas = [
+        {
+            question: "A raiz das plantas fica normalmente por cima da terra e é sempre verde.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa na parte da planta que tens de tapar com terra quando a plantas."
+        },
+        {
+            question: "Qual é a parte da planta que segura as folhas, as flores e os frutos?",
+            options: [ { text: "A raiz", isCorrect: false }, { text: "O caule", isCorrect: true }, { text: "A semente", isCorrect: false }, { text: "A folha", isCorrect: false } ],
+            hint: "Esta parte funciona como a 'espinha dorsal' ou o corpo principal da planta."
+        },
+        {
+            question: "As plantas precisam de luz solar, água e ar para conseguirem viver e crescer.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Imagina o que acontece se deixares uma planta fechada num armário sem a regar."
+        },
+        {
+            question: "Quando comes um prato de ervilhas ou feijões, que parte da planta estás a comer?",
+            options: [ { text: "A folha", isCorrect: false }, { text: "A raiz", isCorrect: false }, { text: "A semente", isCorrect: true }, { text: "O caule", isCorrect: false } ],
+            hint: "Se as colocares na terra molhada, em vez de as comeres, elas germinam."
+        },
+        {
+            question: "Um pinheiro alto e forte, cheio de madeira, é considerado uma erva.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa no tamanho desta planta e no facto de dar muita lenha."
+        },
+        {
+            question: "Que parte da planta murcha, cai e se transforma, dando origem ao fruto?",
+            options: [ { text: "A flor", isCorrect: true }, { text: "A raiz", isCorrect: false }, { text: "O caule", isCorrect: false }, { text: "A folha velha", isCorrect: false } ],
+            hint: "É a parte mais colorida e cheirosa da planta, que atrai as abelhas."
+        },
+        {
+            question: "Se não regarmos uma planta num vaso durante muitas semanas, ela acaba por murchar e morrer.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "As plantas sentem sede, tal como nós."
+        },
+        {
+            question: "Qual destas partes da planta serve para fabricar o seu alimento com a ajuda da luz do sol?",
+            options: [ { text: "A raiz", isCorrect: false }, { text: "As folhas", isCorrect: true }, { text: "As flores", isCorrect: false }, { text: "O tronco", isCorrect: false } ],
+            hint: "Normalmente são planas e verdes, feitas de propósito para apanhar muito sol."
+        },
+        {
+            question: "A semente tem a missão muito importante de dar origem a uma nova planta.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Pensa no que acontece se plantares um caroço de limão na terra."
+        },
+        {
+            question: "Qual dos seguintes alimentos é o fruto da planta e não a raiz ou a folha?",
+            options: [ { text: "A cenoura", isCorrect: false }, { text: "A alface", isCorrect: false }, { text: "A maçã", isCorrect: true }, { text: "O nabo", isCorrect: false } ],
+            hint: "Tem sementes lá dentro (caroços) e costuma nascer pendurado nas árvores."
+        },
+        {
+            question: "As plantas ajudam a purificar o ar, produzindo oxigénio para nós respirarmos.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "É por esta razão que é tão bom passear e respirar fundo no meio do campo."
+        },
+        {
+            question: "Como se chama uma planta de tamanho médio, que tem ramos de madeira que começam a crescer logo junto ao chão?",
+            options: [ { text: "Uma árvore", isCorrect: false }, { text: "Uma erva", isCorrect: false }, { text: "Um arbusto", isCorrect: true }, { text: "Um musgo", isCorrect: false } ],
+            hint: "Pensa numa roseira grande: não é tão alta como uma árvore, nem rasteira como a relva."
+        },
+        {
+            question: "As árvores de fruto, como as laranjeiras e as macieiras, dão sempre os seus frutos logo debaixo da terra.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Lembra-te de onde o agricultor tem de colocar o escadote para apanhar maçãs."
+        },
+        {
+            question: "Em que estação do ano costuma haver o renascer das folhas novas e o desabrochar de imensas flores?",
+            options: [ { text: "Inverno", isCorrect: false }, { text: "Primavera", isCorrect: true }, { text: "Verão", isCorrect: false }, { text: "Outono", isCorrect: false } ],
+            hint: "É a estação das andorinhas e dos campos floridos, que começa em março."
+        },
+        {
+            question: "Todas as partes das plantas são boas para comermos, não existem plantas venenosas na natureza.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa se deverias apanhar uma folha estranha num bosque e comê-la imediatamente."
+        },
+        {
+            question: "O caule das plantas funciona como se fosse um conjunto de tubinhos fininhos. Qual é o seu trabalho?",
+            options: [ { text: "Transportar a água da raiz para o resto da planta.", isCorrect: true }, { text: "Apanhar a luz do sol para fabricar calor.", isCorrect: false }, { text: "Absorver a terra para crescer mais rápido.", isCorrect: false }, { text: "Dar abrigo às sementes até caírem.", isCorrect: false } ],
+            hint: "Como é que a água chega da terra lá ao topo da árvore? O que a leva para cima?"
+        },
+        {
+            question: "A folha do repolho (ou couve) é um excelente exemplo de uma folha que usamos para a nossa alimentação.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Pensa naquilo que pões na sopa de caldo verde."
+        },
+        {
+            question: "Qual dos seguintes materiais não vem diretamente do caule das árvores (madeira)?",
+            options: [ { text: "O papel dos cadernos", isCorrect: false }, { text: "Os móveis de carvalho", isCorrect: false }, { text: "Os lápis de cor", isCorrect: false }, { text: "Os pneus dos carros", isCorrect: true } ],
+            hint: "Pensa de que material é feito cada um destes objetos e se podes martelar um prego neles."
+        },
+        {
+            question: "No outono, muitas árvores deixam cair as suas folhas velhas para o chão.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Pensa nos montes de folhas castanhas e amarelas que vemos nos passeios em novembro."
+        },
+        {
+            question: "Para que nasça uma planta num vaso vazio com terra nova, a primeira coisa que temos de colocar lá dentro é:",
+            options: [ { text: "Um vaso mais pequeno", isCorrect: false }, { text: "Uma semente", isCorrect: true }, { text: "Uma folha seca", isCorrect: false }, { text: "Pedras decorativas", isCorrect: false } ],
+            hint: "Costumamos comprar saquinhos com estas coisinhas muito pequenas para iniciar as hortas."
+        },
+        {
+            question: "Uma erva (ou planta herbácea) tem geralmente um caule muito duro e castanho, que só se consegue cortar com um serrote.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa na diferença entre um prado de erva verdejante e o tronco de uma árvore grande."
+        },
+        {
+            question: "O que acontece ao fruto maduro na maioria das vezes, se cair na terra e ninguém o apanhar?",
+            options: [ { text: "Apodrece, libertando as sementes na terra para nascerem novas plantas.", isCorrect: true }, { text: "Transforma-se numa pedra.", isCorrect: false }, { text: "Voa de volta para o ramo.", isCorrect: false }, { text: "Fica brilhante para sempre no chão.", isCorrect: false } ],
+            hint: "A função do fruto é proteger as sementes, mas em algum momento ele tem de se desfazer para as libertar."
+        },
+        {
+            question: "Devemos regar as plantas dos vasos sempre com a maior quantidade de água possível, mesmo que fiquem a boiar.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa no que aconteceria se tentasses beber baldes de água inteiros quando só tens um bocadinho de sede."
+        },
+        {
+            question: "Qual destas plantas é um arbusto com ramos duros, muito usado para perfumar jardins, e que começa pela letra A?",
+            options: [ { text: "Alecrim", isCorrect: true }, { text: "Alface", isCorrect: false }, { text: "Alho", isCorrect: false }, { text: "Amendoeira", isCorrect: false } ],
+            hint: "Tem folhas muito fininhas e dá um cheirinho ótimo quando lhe passamos a mão."
+        },
+        {
+            question: "As plantas também são seres vivos, tal como os animais e as pessoas.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Elas nascem, crescem, alimentam-se, reproduzem-se e morrem."
+        },
+        {
+            question: "Os girassóis são plantas conhecidas por...",
+            options: [ { text: "Darem maçãs gigantes.", isCorrect: false }, { text: "Virarem a sua flor na direção da luz do sol.", isCorrect: true }, { text: "Crescerem apenas no inverno escuro.", isCorrect: false }, { text: "Não precisarem de água para viver.", isCorrect: false } ],
+            hint: "O próprio nome desta planta já diz aquilo que ela faz."
+        },
+        {
+            question: "O vento e os animais (como os pássaros) podem ajudar as plantas espalhando as suas sementes para outros lugares.",
+            options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+            hint: "Pensa no 'dente-de-leão' que voa quando sopras, ou num pássaro que come um fruto e deixa cair o caroço longe."
+        },
+        {
+            question: "Para além da cenoura, qual destas outras opções é também uma raiz que cresce debaixo da terra e serve de alimento?",
+            options: [ { text: "O tomate", isCorrect: false }, { text: "A melancia", isCorrect: false }, { text: "A batata-doce", isCorrect: true }, { text: "A laranja", isCorrect: false } ],
+            hint: "Normalmente tem a pele um pouco suja de terra quando a compramos a granel."
+        },
+        {
+            question: "Todas as flores das plantas têm o mesmo tamanho, a mesma cor e cheiram exatamente ao mesmo.",
+            options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+            hint: "Pensa num jardim com rosas vermelhas, margaridas brancas pequenas e tulipas amarelas."
+        },
+        {
+            question: "Que nome damos aos animais (como abelhas e borboletas) que visitam as flores e ajudam a planta a formar frutos?",
+            options: [ { text: "Polinizadores", isCorrect: true }, { text: "Destruidores", isCorrect: false }, { text: "Dorminhocos", isCorrect: false }, { text: "Lenhadores", isCorrect: false } ],
+            hint: "Transportam um pozinho amarelo chamado pólen de flor em flor."
+        },
+		{
+			question: "De acordo com a forma da sua margem, uma folha pode ser classificada como inteira ou...",
+			options: [ { text: "Simples", isCorrect: false }, { text: "Composta", isCorrect: false }, { text: "Recortada", isCorrect: true }, { text: "Aprumada", isCorrect: false } ],
+			hint: "Observa a diferença entre uma margem lisa e uma margem cheia de pontas."
+		},
+		{
+			question: "Como se classifica o tipo de folha que é constituída por várias folhas mais pequenas ligadas a um eixo?",
+			options: [ { text: "Simples", isCorrect: false }, { text: "Composta", isCorrect: true }, { text: "Inteira", isCorrect: false }, { text: "Fasciculada", isCorrect: false } ],
+			hint: "É a classificação oposta à de uma folha simples."
+		},
+		{
+			question: "Qual é a parte da planta que ajuda na sua reprodução e que pode dar origem ao fruto?",
+			options: [ { text: "A raiz", isCorrect: false }, { text: "A semente", isCorrect: false }, { text: "A folha", isCorrect: false }, { text: "A flor", isCorrect: true } ],
+				hint: "Estas partes podem apresentar diferentes cores, formas e cheiros."
+		},
+		{
+			question: "O fruto tem a função muito importante de proteger as sementes da planta.",
+			options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+			hint: "Pensa naquilo que encontras sempre escondido no interior de um tomate ou de uma maçã."
+		},
+		{
+			question: "Como se chama uma raiz que é caracterizada por ter uma raiz principal e outras mais finas a sair dela?",
+			options: [ { text: "Raiz fasciculada", isCorrect: false }, { text: "Raiz aprumada", isCorrect: true }, { text: "Raiz composta", isCorrect: false }, { text: "Raiz caduca", isCorrect: false } ],
+			hint: "A cenoura é um excelente exemplo deste tipo de raiz."
+		},
+		{
+			question: "A raiz fasciculada distingue-se por ser formada por várias raízes do mesmo tamanho, sem uma principal.",
+			options: [ { text: "Verdadeiro", isCorrect: true }, { text: "Falso", isCorrect: false } ],
+			hint: "Pensa num conjunto de raízes muito parecidas que se espalham debaixo da terra."
+		},
+		{
+			question: "O que fazem as plantas de folha caduca durante os meses mais frios?",
+			options: [ { text: "Mantêm todas as folhas", isCorrect: false }, { text: "Perdem as folhas para gastar menos energia", isCorrect: true }, { text: "Mudam a cor das folhas para azul", isCorrect: false }, { text: "Crescem muito mais depressa", isCorrect: false } ],
+			hint: "Pensa no que acontece aos ramos da macieira ou do castanheiro durante o inverno."
+		},
+		{
+			question: "Qual destas árvores é um exemplo de uma planta de folha persistente (que mantém as folhas durante todo o ano)?",
+			options: [ { text: "Macieira", isCorrect: false }, { text: "Pessegueiro", isCorrect: false }, { text: "Plátano", isCorrect: false }, { text: "Oliveira", isCorrect: true } ],
+			hint: "Estas plantas crescem de forma lenta nos meses frios e também incluem o pinheiro e o eucalipto."
+		},
+		{
+			question: "Todas as sementes das plantas têm exatamente a mesma dimensão, como por exemplo a da manga e a do tomate.",
+			options: [ { text: "Verdadeiro", isCorrect: false }, { text: "Falso", isCorrect: true } ],
+			hint: "Lembra-te que há sementes muito grandes, como o caroço da manga, e outras muito pequenas, como as do tomate."
+		},
+		{
+			question: "A macieira, o plátano, o castanheiro, o pessegueiro e a cerejeira são exemplos de que tipo de plantas?",
+			options: [ { text: "Plantas de folha caduca", isCorrect: true }, { text: "Plantas de folha persistente", isCorrect: false }, { text: "Plantas de folha composta", isCorrect: false }, { text: "Plantas de raiz aprumada", isCorrect: false } ],
+			hint: "São o tipo de árvores que perdem a folhagem durante os meses frios."
+		}
+    ];
+
+    // =========================================
+    // VARIÁVEIS BASE DE CONTROLO DO JOGO
+    // =========================================
+    let perguntasJogo = [];
+    let perguntaAtualIndex = 0;
+    let totalRondas = 12; // Exigência do utilizador
+    let errosTotais = 0;
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        let rondaDisplay = (perguntaAtualIndex + 1) > totalRondas ? totalRondas : (perguntaAtualIndex + 1);
+        document.getElementById('val-progresso').textContent = rondaDisplay;
+        document.getElementById('val-total').textContent = totalRondas;
+        
+        let perc = (perguntaAtualIndex / totalRondas) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    // =========================================
+    // LÓGICA DE JOGO
+    // =========================================
+    function iniciarJogo() {
+        // 1. Baralhar todo o banco de 30 perguntas
+        let bancoBaralhado = [...bancoPerguntas].sort(() => 0.5 - Math.random());
+        
+        // 2. Escolher apenas as primeiras 12 para este jogo
+        perguntasJogo = bancoBaralhado.slice(0, 12);
+        
+        // 3. Fazer reset às variáveis
+        perguntaAtualIndex = 0;
+        errosTotais = 0;
+        
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        const areaJogo = document.getElementById('area-jogo');
+        areaJogo.innerHTML = ''; // Limpar a área de jogo
+        
+        const perguntaAtual = perguntasJogo[perguntaAtualIndex];
+        
+        // Criar o texto da pergunta
+        const divPergunta = document.createElement('div');
+        divPergunta.className = 'texto-pergunta';
+        divPergunta.textContent = perguntaAtual.question;
+        areaJogo.appendChild(divPergunta);
+        
+        // Criar a grelha de respostas
+        const grelha = document.createElement('div');
+        grelha.className = 'grid-respostas';
+        
+        // Baralhar as opções de resposta para não estarem sempre na mesma posição
+        let opcoesBaralhadas = [...perguntaAtual.options].sort(() => 0.5 - Math.random());
+        
+        opcoesBaralhadas.forEach(opcao => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-resposta';
+            btn.textContent = opcao.text;
+            
+            btn.onclick = () => verificarResposta(opcao, btn);
+            grelha.appendChild(btn);
+        });
+        
+        areaJogo.appendChild(grelha);
+
+        // Adicionar a caixa de dica sempre visível
+        const divDica = document.createElement('div');
+        divDica.className = 'caixa-dica';
+        divDica.innerHTML = `<span class="caixa-dica-icon">💡</span> <span><strong>Dica: </strong> ${perguntaAtual.hint}</span>`;
+        areaJogo.appendChild(divDica);
+    }
+
+    function verificarResposta(opcaoEscolhida, btnElement) {
+        // Bloquear todos os botões imediatamente para evitar duplo clique
+        const todosBotoes = document.querySelectorAll('.btn-resposta');
+        
+        if (opcaoEscolhida.isCorrect) {
+            tocarSom('acerto');
+            btnElement.classList.add('certo');
+            todosBotoes.forEach(b => b.disabled = true);
+            
+            // Avança para a próxima ronda após 1.5 segundos
+            setTimeout(avancarRonda, 1500);
+        } else {
+            tocarSom('erro');
+            btnElement.classList.add('erro', 'error-shake');
+            btnElement.disabled = true; // Desativa apenas o botão errado
+            
+            errosTotais++;
+            atualizarPlacarUI();
+            
+            // Remove a animação de tremelique após concluir
+            setTimeout(() => {
+                btnElement.classList.remove('error-shake');
+            }, 400);
+        }
+    }
+    
+    function avancarRonda() {
+        perguntaAtualIndex++;
+        
+        if (perguntaAtualIndex >= totalRondas) {
+            finalizarJogo();
+        } else {
+            atualizarPlacarUI();
+            prepararRonda();
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() {
+        document.getElementById('confetti-container').innerHTML = ""; 
+        iniciarJogo();
+    }
+
+    function voltarAoMenu() {
+        document.getElementById('confetti-container').innerHTML = "";
+        mostrarEcra('ecra-selecao');
+        animarFolhas();
+    }
+    
+    function animarFolhas() {
+        const container = document.getElementById('folhas-container');
+        if (!container) return;
+        container.innerHTML = ""; 
+        
+        const folhas = ['🍃', '🍂', '🌿', '🌱'];
+        
+        for (let i = 0; i < 15; i++) {
+            let folha = document.createElement('div');
+            folha.className = 'folha-animada';
+            folha.textContent = folhas[Math.floor(Math.random() * folhas.length)];
+            folha.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            folha.style.top = '-10%';
+            folha.style.animationDuration = (Math.random() * 4 + 4) + 's'; // Entre 4s e 8s
+            folha.style.animationDelay = (Math.random() * 2) + 's';
+            
+            // Cria um movimento lateral aleatório
+            folha.style.setProperty('--sway', (Math.random() * 120 - 60) + 'px');
+            
+            container.appendChild(folha);
+        }
+    }
+
+    // Arranca no menu
+    window.onload = () => {
+        mostrarEcra('ecra-selecao');
+        animarFolhas();
+    };
+
+</script>
+</body>
+</html>
