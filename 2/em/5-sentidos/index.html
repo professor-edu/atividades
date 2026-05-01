@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2º Ano - O Detetive dos Sentidos 🔎</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-2ano: #e7d83f;     
+            --cor-2ano-dark: #E3C40D;
+            --cor-borda: #E3C40D;            
+            --bg-header: #fff9c4;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        
+		@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-2ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .btn-voltar { background: var(--cor-2ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-2ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-2ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; min-height: 0; padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-em); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; }
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+        
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #eaf1eb; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0; }
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 6px 0 #a4b0be; }
+        @media (hover: hover) { .btn-acao.secundario:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #a4b0be; filter: brightness(1.05); } }
+        .btn-acao.secundario:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+
+		@media (max-height: 600px) {
+			body { height: auto !important; overflow-y: auto !important; }
+			main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+			.cartao-jogo-container { margin: auto 0; }
+		}
+		@media (hover: none) and (pointer: coarse) {
+		  body { height: auto !important; overflow-y: auto !important; }
+		  main { justify-content: flex-start !important; overflow-y: visible !important; }
+		  footer { margin-top: auto; }
+		}		
+
+        /* =========================================
+           CSS ESPECÍFICO - DETETIVE DOS SENTIDOS
+           ========================================= */
+        
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
+            width: 100%; flex: 1; min-height: 0; background: transparent; padding: 10px; gap: 30px;
+            position: relative;
+        }
+
+        /* Ilhas dos Sentidos (Botões Melhorados e Animados) */
+        .ilha-sentidos {
+            display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; width: 100%;
+            margin-top: 10px;
+        }
+        .btn-sentido {
+            flex: 1; min-width: 80px; max-width: 120px; aspect-ratio: 1/1;
+            border-radius: 20px; border: 4px solid white; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.15); transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+            color: white; font-weight: 800; font-size: 0.9rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            /* Animação suave de flutuação */
+            animation: flutuar 3s ease-in-out infinite alternate;
+        }
+        
+        /* Atrasos na animação para não subirem todos ao mesmo tempo */
+        .btn-sentido:nth-child(1) { animation-delay: 0.0s; }
+        .btn-sentido:nth-child(2) { animation-delay: 0.6s; }
+        .btn-sentido:nth-child(3) { animation-delay: 1.2s; }
+        .btn-sentido:nth-child(4) { animation-delay: 0.3s; }
+        .btn-sentido:nth-child(5) { animation-delay: 0.9s; }
+
+        @keyframes flutuar {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+
+        @media (min-width: 600px) {
+            .btn-sentido { font-size: 1.1rem; min-width: 110px; }
+            .btn-sentido .emoji-sentido { font-size: 3rem; margin-bottom: 5px; }
+        }
+        
+        .btn-sentido:hover { filter: brightness(1.1); transform: scale(1.05) translateY(-5px); animation-play-state: paused; }
+        .btn-sentido:active { transform: translateY(6px); box-shadow: 0 0 transparent; animation: none; }
+        .btn-sentido:disabled { opacity: 0.6; cursor: not-allowed; animation: none; transform: none; box-shadow: 0 6px 0 rgba(0,0,0,0.1); }
+        .emoji-sentido { font-size: 2.2rem; margin-bottom: 2px; }
+
+        .bg-visao { background-color: #60a5fa; }
+        .bg-audicao { background-color: #4ade80; }
+        .bg-olfato { background-color: #facc15; }
+        .bg-paladar { background-color: #f87171; }
+        .bg-tato { background-color: #c084fc; }
+
+        /* Palco da Pista (Centro - Estilo React Draft) */
+        .palco-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: white; border: 8px dashed #7dd3fc; /* sky-300 */
+            border-radius: 50%; /* Forma Circular */
+            width: 250px; height: 250px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            position: relative; margin: auto; flex-shrink: 0;
+            transition: all 0.5s ease;
+        }
+        
+        @media (min-width: 600px) {
+            .palco-container { width: 320px; height: 320px; }
+        }
+
+        .img-pista {
+            width: 80%; height: 80%; object-fit: contain;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2));
+            animation: pulseImg 2s infinite alternate;
+        }
+
+        @keyframes pulseImg {
+            0% { transform: scale(1); filter: drop-shadow(0 10px 8px rgba(0,0,0,0.15)); }
+            100% { transform: scale(1.08); filter: drop-shadow(0 20px 15px rgba(0,0,0,0.25)); }
+        }
+
+        /* Mascote e Áudio */
+        .btn-mascote {
+            position: absolute; top: -15px; right: -15px;
+            background: white; border: 4px solid #fbc531; border-radius: 50%;
+            width: 80px; height: 80px; font-size: 2.5rem; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 6px 0 #fbc531; transition: all 0.2s;
+            z-index: 10;
+        }
+        .btn-mascote:active { transform: translateY(6px); box-shadow: 0 0 transparent; }
+        .btn-mascote.falando { animation: pulseMascote 1s infinite alternate; border-color: var(--cor-em); box-shadow: 0 6px 0 var(--cor-em); }
+        
+        .balao-fala {
+            position: absolute; top: -35px; right: 50px;
+            background: white; border: 2px solid #ced6e0; border-radius: 15px; border-bottom-right-radius: 0;
+            padding: 8px 12px; font-size: 0.85rem; font-weight: bold; color: var(--text-main);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); animation: floatBalao 2s infinite ease-in-out;
+            pointer-events: none; white-space: nowrap; z-index: 15;
+        }
+
+        @keyframes pulseMascote { from { transform: scale(1); } to { transform: scale(1.1); } }
+        @keyframes floatBalao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* Animação da Coruja Kika */
+        .anim-coruja {
+            width: 150px; height: 150px; object-fit: contain;
+            animation: vooCoruja 3s ease-in-out infinite alternate;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+        }
+        @keyframes vooCoruja {
+            0% { transform: translateY(0) rotate(-5deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Modal "Sabias Que" */
+        .modal-curiosidade {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); border-radius: 20px; z-index: 20;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; text-align: center; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal-curiosidade.ativo { opacity: 1; pointer-events: all; }
+        .curiosidade-box {
+            background: #eaf1eb; border: 4px solid var(--cor-em); border-radius: 25px; padding: 40px 20px 30px; width: 100%; max-width: 500px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .badge-sabiasque {
+            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            background: var(--cor-em); color: white; padding: 8px 25px; border-radius: 20px;
+            font-weight: 900; font-size: 1.3rem; box-shadow: 0 4px 0 #219d53; white-space: nowrap;
+        }
+        .texto-curiosidade { font-size: 1.15rem; color: var(--azul-escuro); font-weight: bold; line-height: 1.5; margin-bottom: 25px;}
+
+        /* Ecrã de Início Animado */
+        .hero-inicio { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .hero-mascote { font-size: 6rem; animation: bounce 2s infinite; }
+        .hero-texto { font-size: 1.2rem; color: var(--azul-escuro); font-weight: 500; max-width: 500px; margin-bottom: 20px;}
+		
+		/* =========================================
+		CORREÇÃO PARA PAINEIS E ECRÃS GRANDES ????
+		========================================= */
+		
+		@media (hover: none) and (pointer: coarse) {
+
+		  body {
+			height: auto !important;
+			overflow-y: auto !important;
+		  }
+
+		  main {
+			justify-content: flex-start !important;
+			overflow-y: visible !important;
+		  }
+
+		  footer {
+			margin-top: auto;
+		  }
+		}
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../../1">🎒 1º Ano</a></li>
+        <li><a href="../../">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>O Detetive dos Sentidos 🔎</h1>
+        <div class="subtitulo">Ajuda a coruja Kika na sua investigação!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
+
+        <!-- ECRÃ DE SELEÇÃO (Início Animado) -->
+        <div id="ecra-selecao" class="ecra">
+            <div class="hero-inicio">
+                <div class="hero-mascote">
+                    <img src="imagens/coruja.svg" alt="Coruja Kika" class="anim-coruja" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span style="display:none; font-size:6rem;">🦉</span>
+                </div>
+                <h2 class="titulo-menu" style="font-size: 2.2rem; margin-bottom:0;">Preparado, Detetive?</h2>
+                <p class="hero-texto">
+                    A coruja Kika encontrou várias pistas misteriosas.<br>
+                    Clica nela para ouvires a pista e escolhe a <b>Ilha do Sentido</b> certa!
+                </p>
+                <button class="btn-acao" style="font-size: 1.4rem; padding: 20px 40px; max-width: 400px; background: var(--cor-em); box-shadow: 0 6px 0 #219d53;" onclick="iniciarJogo()">
+                    COMEÇAR INVESTIGAÇÃO! 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE TRANSIÇÃO DE NÍVEL -->
+        <div id="ecra-transicao" class="ecra">
+            <div class="hero-inicio">
+                <div class="hero-mascote" id="icone-nivel">🕵️‍♂️</div>
+                <h2 class="titulo-menu" id="titulo-nivel" style="font-size: 2.5rem; margin-bottom:0;">Novo Nível!</h2>
+                <p class="hero-texto" id="desc-nivel" style="font-size: 1.4rem; font-weight: bold; color: var(--azul-escuro);">
+                    Foste promovido a Inspetor!
+                </p>
+                <p style="color: var(--text-main); margin-bottom: 20px;">As pistas vão ficar mais difíceis. Presta muita atenção!</p>
+                <button class="btn-acao" onclick="continuarParaRonda()">
+                    CONTINUAR ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">21</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <!-- Ilhas dos 5 Sentidos (Maior destaque e com animação de flutuar) -->
+                <div class="ilha-sentidos">
+                    <button class="btn-sentido bg-visao" onclick="verificarResposta('visao')">
+                        <span class="emoji-sentido">👁️</span>Visão
+                    </button>
+                    <button class="btn-sentido bg-audicao" onclick="verificarResposta('audicao')">
+                        <span class="emoji-sentido">👂</span>Audição
+                    </button>
+                    <button class="btn-sentido bg-olfato" onclick="verificarResposta('olfato')">
+                        <span class="emoji-sentido">👃</span>Olfato
+                    </button>
+                    <button class="btn-sentido bg-paladar" onclick="verificarResposta('paladar')">
+                        <span class="emoji-sentido">👅</span>Paladar
+                    </button>
+                    <button class="btn-sentido bg-tato" onclick="verificarResposta('tato')">
+                        <span class="emoji-sentido">🖐️</span>Pele/Tato
+                    </button>
+                </div> <!-- FECHO QUE ESTAVA EM FALTA -->
+
+                <!-- Palco Central Circular com a Imagem e a Mascote -->
+                <div class="palco-container" id="palco-animado">
+                    <div class="balao-fala" id="balao-fala">Clica em mim e ouve a pista!</div>
+                    <button class="btn-mascote" id="btn-mascote" onclick="tocarAudioPista()">
+                        <img src="imagens/coruja.svg" alt="Coruja" style="width:80%; height:80%;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span style="display:none; font-size:2rem;">🦉</span>
+                    </button>
+                    
+                    <img src="" id="img-pista-atual" class="img-pista" alt="Pista Mistério" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSI1MCUiIHg9IjUwJSIgZm9udC1zaXplPSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'">
+                </div>
+
+                <!-- Modal "Sabias Que" -->
+                <div class="modal-curiosidade" id="modal-curiosidade">
+                    <div class="curiosidade-box">
+                        <div class="badge-sabiasque">Acertaste! 🎉</div>
+                        <p class="texto-curiosidade" id="texto-curiosidade">A curiosidade vai aparecer aqui.</p>
+                        <button class="btn-acao" onclick="fecharCuriosidadeEAvancar()" style="margin: 0 auto;">
+                            PRÓXIMA PISTA ➡️
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Investigação Concluída! 🏆</h2>
+            <div class="end-stats">
+                Chegaste ao nível de <b>Mestre dos Sentidos</b>!<br><br>
+                Tiveste <strong id="final-erros" style="color:#ff4757; font-size:2rem;">0</strong> erros.
+            </div>
+            <button class="btn-acao" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao secundario" onclick="voltarAoMenu()">VOLTAR AO INÍCIO 🏠</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+    // =========================================
+    // BASE DE DADOS DO JOGO (3 Níveis = 30 Pistas)
+    // O JOGO IRÁ BARALHAR A ORDEM A CADA JOGADA!
+    // =========================================
+    
+    // NÍVEL 1: Detetive Estagiário (10 Pistas - Associações Diretas)
+    const BD_NIVEL_1 = [
+        { sentido: 'visao', imagem: 'imagens/arco_iris.png', audio: 'sons/pista_arcoiris.mp3', audioCuriosidade: 'sons/cur_arcoiris.mp3', 
+          fraseCao: 'Olha! Que arco-íris tão bonito e colorido! Que sentido usas para ver as suas cores no céu?', 
+          curiosidade: 'Sabias que o arco-íris tem 7 cores e que só aparece quando há sol e chuva ao mesmo tempo?', dica: 'Usa os teus olhos para procurar a resposta!' },
+        
+        { sentido: 'audicao', imagem: 'imagens/tambor.png', audio: 'sons/pista_tambor.mp3', audioCuriosidade: 'sons/cur_tambor.mp3', 
+          fraseCao: 'Alguém está a tocar tambor! Como consegues ouvir esse barulho forte?', 
+          curiosidade: 'Sabias que o som viaja pelo ar através de ondas invisíveis que entram nas tuas orelhas?', dica: 'Presta atenção ao barulho...' },
+        
+        { sentido: 'olfato', imagem: 'imagens/flor.png', audio: 'sons/pista_flor.mp3', audioCuriosidade: 'sons/cur_flor.mp3', 
+          fraseCao: 'Que cheirinho tão bom que esta flor tem! Que sentido te ajuda a sentir o perfume dela?', 
+          curiosidade: 'Sabias que o teu nariz ajuda-te a saborear a comida? É por isso que engripado a comida não sabe a nada!', dica: 'Que cheirinho bom... quem descobre cheiros?' },
+        
+        { sentido: 'paladar', imagem: 'imagens/limao.png', audio: 'sons/pista_limao.mp3', audioCuriosidade: 'sons/cur_limao.mp3', 
+          fraseCao: 'Que azedo! O menino trincou um limão amarelo. Como é que ele sentiu o sabor?', 
+          curiosidade: 'Sabias que a tua língua tem pequenos pontinhos que descobrem se a comida é doce, salgada ou azeda?', dica: 'Hum, que sabor azedo! Onde sentes o sabor?' },
+        
+        { sentido: 'tato', imagem: 'imagens/cato.png', audio: 'sons/pista_cato.mp3', audioCuriosidade: 'sons/cur_cato.mp3', 
+          fraseCao: 'Ai! Este cato verde tem picos muito afiados. Que sentido te avisa que ele pica se lhe tocares?', 
+          curiosidade: 'Sabias que a pele é o maior órgão do nosso corpo e avisa-nos logo se algo nos pica ou queima?', dica: 'Cuidado para não te picares! O que usas para tocar?' },
+        
+        { sentido: 'visao', imagem: 'imagens/livro_desenhos.png', audio: 'sons/pista_livro_desenhos.mp3', audioCuriosidade: 'sons/cur_livro_desenhos.mp3', 
+          fraseCao: 'Este livro está cheio de desenhos e imagens espetaculares. O que usas para olhar para eles?', 
+          curiosidade: 'Sabias que as imagens entram pelos nossos olhos, mas é o nosso cérebro que entende o que estamos a ver?', dica: 'Abre bem os olhos...' },
+        
+        { sentido: 'audicao', imagem: 'imagens/despertador.png', audio: 'sons/pista_despertador.mp3', audioCuriosidade: 'sons/cur_despertador.mp3', 
+          fraseCao: 'Está na hora de acordar para a escola. Que sentido usas para ouvir o despertador?', 
+          curiosidade: 'Sabias que os sons mais altos podem magoar este sentido, por isso deves evitar barulhos muito fortes?', dica: 'Toca a acordar com este barulho!' },
+        
+        { sentido: 'olfato', imagem: 'imagens/lixo.png', audio: 'sons/pista_lixo.mp3', audioCuriosidade: 'sons/cur_lixo.mp3', 
+          fraseCao: 'Este caixote do lixo cheira muito, muito mal. Como é que percebeste isso?', 
+          curiosidade: 'Sabias que o nariz também nos avisa de coisas perigosas ou que estão estragadas, como comida a cheirar mal?', dica: 'Tapa o nariz para não sentires isto!' },
+        
+        { sentido: 'paladar', imagem: 'imagens/gelado.png', audio: 'sons/pista_gelado.mp3', audioCuriosidade: 'sons/cur_gelado.mp3', 
+          fraseCao: 'Que gelado de morango tão doce e fresquinho! Onde é que sentes este sabor?', 
+          curiosidade:'Sabias que o sabor "doce" é o primeiro sabor que os bebés aprendem a gostar quando nascem?', dica: 'É docinho e derrete na boca.' },
+        
+        { sentido: 'tato', imagem: 'imagens/gelo.png', audio: 'sons/pista_gelo.mp3', audioCuriosidade: 'sons/cur_gelo.mp3', 
+          fraseCao: 'Peguei neste cubo de gelo e está muito frio! Como é que sinto o frio na minha mão?', 
+          curiosidade: 'Sabias que a ponta dos teus dedos e os teus lábios são as partes do corpo que têm o sentido do tato mais desenvolvido?', dica: 'Cuidado, congela os dedos!' }
+    ];
+
+    // NÍVEL 2: Detetive Inspetor (10 Pistas - Contextos e Alertas)
+    const BD_NIVEL_2 = [
+        { sentido: 'visao', imagem: 'imagens/semaforo.png', audio: 'sons/pista_semaforo.mp3', audioCuriosidade: 'sons/cur_semaforo.mp3', 
+          fraseCao: 'O semáforo ficou vermelho, os carros têm de parar obrigatoriamente! O que usaste para ver a cor?', 
+          curiosidade: 'Sabias que os nossos olhos piscam cerca de 15 a 20 vezes por minuto para se manterem limpos e húmidos?', dica: 'Tens de olhar bem para ver se podes atravessar a rua.' },
+        
+        { sentido: 'audicao', imagem: 'imagens/ambulancia.png', audio: 'sons/pista_ambulancia.mp3', audioCuriosidade: 'sons/cur_ambulancia.mp3', 
+          fraseCao: 'Vem aí uma ambulância a alta velocidade. Que sentido te avisa, mesmo antes de a veres a chegar?', 
+          curiosidade: 'Sabias que mesmo enquanto dormes, os teus ouvidos continuam a trabalhar para te manter em segurança?', dica: 'Ouves a sirene mesmo antes de a ver!' },
+        
+        { sentido: 'olfato', imagem: 'imagens/bolo_forno.png', audio: 'sons/pista_bolo.mp3', audioCuriosidade: 'sons/cur_bolo.mp3', 
+          fraseCao: 'Está a sair um cheirinho delicioso a chocolate do forno da avó. Que sentido te ajuda a adivinhar o que é?', 
+          curiosidade: 'Sabias que os animais, como os cães, têm este sentido muito mais forte do que os seres humanos?', dica: 'Vem um cheirinho da cozinha...' },
+        
+        { sentido: 'paladar', imagem: 'imagens/sopa_sal.png', audio: 'sons/pista_sopa.mp3', audioCuriosidade: 'sons/cur_sopa.mp3', 
+          fraseCao: 'Acho que a cozinheira deixou cair muito sal nesta sopa! Como é que descobriste que estava tão salgada?', 
+          curiosidade: 'Sabias que a tua língua está sempre a ser limpa pela saliva (o cuspo), que também ajuda a engolir a comida?', dica: 'Ai, puseram sal a mais! Como descobres isso?' },
+        
+        { sentido: 'tato', imagem: 'imagens/chavena_quente.png', audio: 'sons/pista_chavena.mp3', audioCuriosidade: 'sons/cur_chavena.mp3', 
+          fraseCao: 'Cuidado! Essa chávena de leite está a ferver. Que sentido te avisa do perigo assim que lhe tocas, antes de beberes?', 
+          curiosidade: 'Sabias que é a pele que te envia um aviso rápido de "Calor!" para não te queimares?', dica: 'Cuidado, está a ferver! Não toques!' },
+        
+        { sentido: 'visao', imagem: 'imagens/lupa.png', audio: 'sons/pista_lupa.mp3', audioCuriosidade: 'sons/cur_lupa.mp3', 
+          fraseCao: 'O detetive está a usar a lupa para procurar pegadas pequeninas no chão. O que precisa ele de usar bem aberto?', 
+          curiosidade: 'Sabias que a imagem que entra nos teus olhos está virada ao contrário, mas o cérebro endireita-a de forma mágica??', dica: 'Observa com muita atenção...' },
+        
+        { sentido: 'audicao', imagem: 'imagens/passarinhos.png', audio: 'sons/pista_passarinhos.mp3', audioCuriosidade: 'sons/cur_passarinhos.mp3', 
+          fraseCao: 'Estou a ouvir passarinhos a cantar lá no alto da árvore, mas não os consigo ver. Como os detetei?', 
+          curiosidade: 'Sabias que as tuas orelhas têm este formato estranho para ajudarem a apanhar o som como se fossem um funil?', dica: 'Piu-piu-piu... escuta bem.' },
+        
+        { sentido: 'olfato', imagem: 'imagens/perfume.png', audio: 'sons/pista_perfume.mp3', audioCuriosidade: 'sons/cur_perfume.mp3', 
+          fraseCao: 'A mãe colocou um perfume novo e muito cheiroso antes de sair de casa. Como é que notaste isso?', 
+          curiosidade: 'Sabias que o nosso cérebro lembra-se melhor das memórias mais antigas quando estão ligadas a um cheiro?', dica: 'Que perfume maravilhoso no ar.' },
+        
+        { sentido: 'paladar', imagem: 'imagens/malagueta.png', audio: 'sons/pista_malagueta.mp3', audioCuriosidade: 'sons/cur_malagueta.mp3', 
+          fraseCao: 'Ui! Esta comida levou uma malagueta e a minha boca está a arder! Que sentido me deu este aviso picante?', 
+          curiosidade: 'Sabias que o sabor picante não é bem um sabor, é um alerta de dor e calor que a tua língua envia ao cérebro?', dica: 'Aiii, água por favor, está a picar!' },
+        
+        { sentido: 'tato', imagem: 'imagens/lixa.png', audio: 'sons/pista_lixa.mp3', audioCuriosidade: 'sons/cur_lixa.mp3', 
+          fraseCao: 'Passei a mão nesta folha de lixa de madeira. Não é lisa, é muito áspera e arranha! Como é que senti isso?', 
+          curiosidade: 'Sabias que existem pessoas cegas que conseguem ler livros inteiros apenas passando os dedos em pontinhos em relevo? Chama-se Braille.', dica: 'É áspero, cuidado com os dedinhos.' }
+    ];
+
+    // NÍVEL 3: Mestre dos Sentidos (10 Pistas - Os Escondidos)
+    const BD_NIVEL_3 = [
+        { sentido: 'visao', imagem: 'imagens/estrelas.png', audio: 'sons/pista_estrelas.mp3', audioCuriosidade: 'sons/cur_estrelas.mp3', 
+          fraseCao: 'O céu está escuro, mas consigo ver que está cheio de estrelas a brilhar. Como as consegues admirar?', 
+          curiosidade: 'Sabias que a parte preta do teu olho, chamada pupila, fica maior no escuro para deixar entrar mais luz?', dica: 'Olha para cima e admira o céu.' },
+        
+        { sentido: 'audicao', imagem: 'imagens/cao_noite.png', audio: 'sons/pista_cao.mp3', audioCuriosidade: 'sons/cur_cao.mp3', 
+          fraseCao: 'Está tudo às escuras, mas sei que o cão do vizinho está lá fora a ladrar. Como é que eu descobri?', 
+          curiosidade: 'Sabias que o cão tem um sentido tão bom que consegue ouvir barulhos muito longe que tu nem imaginas que existem?', dica: 'Está escuro, mas sabes que ele está lá.' },
+        
+        { sentido: 'olfato', imagem: 'imagens/sapatos.png', audio: 'sons/pista_sapatos.mp3', audioCuriosidade: 'sons/cur_sapatos.mp3', 
+          fraseCao: 'Alguém descalçou os sapatos depois de correr muito e o quarto ficou a cheirar a chulé! Como é que sentiste isso?', 
+          curiosidade: 'Sabias que o chulé acontece quando o suor dos pés se mistura com bactérias que vivem na tua pele?', dica: 'Ugh, que cheiro horrível a chulé!' },
+        
+        { sentido: 'paladar', imagem: 'imagens/remedio.png', audio: 'sons/pista_remedio.mp3', audioCuriosidade: 'sons/cur_remedio.mp3', 
+          fraseCao: 'Este xarope para a tosse sabe muito mal, é mesmo muito amargo! Onde é que sentiste este sabor horrível?', 
+          curiosidade: 'Sabias que a zona de trás da tua língua deteta os sabores amargos para te avisar que algo pode ser venenoso?', dica: 'Bleargh, que sabor mau!' },
+        
+        { sentido: 'tato', imagem: 'imagens/gatinho.png', audio: 'sons/pista_gatinho.mp3', audioCuriosidade: 'sons/cur_gatinho.mp3', 
+          fraseCao: 'Este gatinho pequeno tem um pelo tão macio e fofinho quando lhe faço festas. Como é que eu sei que é macio?', 
+          curiosidade: 'Sabias que quando tens arrepios de frio, é este sentido a enviar uma mensagem rápida ao cérebro para te ires agasalhar?', dica: 'Que pelo tão fofinho de tocar.' },
+        
+        { sentido: 'visao', imagem: 'imagens/alvo.png', audio: 'sons/pista_alvo.mp3', audioCuriosidade: 'sons/cur_alvo.mp3', 
+          fraseCao: 'Para acertar com a flecha bem no centro do alvo lá ao fundo, é preciso muita pontaria. O que usas para focar?', 
+          curiosidade: 'Sabias que os falcões conseguem ver um pequeno rato no chão mesmo estando a voar muito alto no céu?', dica: 'Foca bem no ponto amarelo!' },
+        
+        { sentido: 'audicao', imagem: 'imagens/sussurro.png', audio: 'sons/pista_sussurro.mp3', audioCuriosidade: 'sons/cur_sussurro.mp3', 
+          fraseCao: 'O teu amigo contou-te um segredo falando muito, muito baixinho. Que sentido usaste para perceber o sussurro?', 
+          curiosidade: 'Sabias que o som viaja de forma invisível e entra pelo teu ouvido até chegar a uma pequena pele esticada chamada tímpano?', dica: 'Psss... escuta em segredo.' },
+        
+        { sentido: 'olfato', imagem: 'imagens/fumo.png', audio: 'sons/pista_fumo.mp3', audioCuriosidade: 'sons/cur_fumo.mp3', 
+          fraseCao: 'Atenção! Está no ar um cheiro a fumo! Pode haver fogo algures. Que sentido te deu este aviso super importante?', 
+          curiosidade: 'Sabias que muitos alarmes de incêndio têm cheiros irritantes misturados para acordar as pessoas que estão a dormir profundamente?', dica: 'Cheira a queimado, perigo!' },
+        
+        { sentido: 'paladar', imagem: 'imagens/pao_estragado.png', audio: 'sons/pista_pao_estragado.mp3', audioCuriosidade: 'sons/cur_pao_estragado.mp3', 
+          fraseCao: 'Trinquei este pão mas o sabor estava muito estranho, acho que está estragado. Que sentido me avisou para não engolir?', 
+          curiosidade: 'Sabias que se este sentido achar que algo está estragado, o teu cérebro faz-te cuspir imediatamente por reflexo de proteção?', dica: 'Sabe muito mal, não comas!' },
+        
+        { sentido: 'tato', imagem: 'imagens/vento.png', audio: 'sons/pista_vento.mp3', audioCuriosidade: 'sons/cur_vento.mp3', 
+          fraseCao: 'Eu não consigo ver o vento, mas sei que está a soprar muito forte porque o sinto no meu rosto e braços. Que sentido é este?', 
+          curiosidade: 'Sabias que a pele sente não só o frio e o calor, mas também a pressão do ar, por isso sentimos o vento a bater no corpo?', dica: 'Sentes a brisa a bater na pele?' }
+    ];
+
+    // =========================================
+    // UI DA PÁGINA E TEMPLATE BASE
+    // =========================================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        
+        if(isError) {
+            toast.classList.add('error-shake');
+            setTimeout(() => toast.classList.remove('error-shake'), 400);
+        }
+        
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2500);
+    }
+
+    // =========================================
+    // EFEITOS SONOROS BÁSICOS (Template)
+    // =========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = freq; 
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+            });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-container');
+        container.innerHTML = ""; 
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43', '#c084fc'];
+        
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.top = '-10%'; 
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    // LÓGICA ESPECÍFICA DO DETETIVE (Randomização e Rondas)
+    // =========================================
+    let rondaAtual = 1;
+    let totalRondas = 21; // 3 Níveis x 7 Pistas
+    let errosTotais = 0;
+    let pistaAtual = null;
+    let audioElement = null; 
+    let pistasDoJogoBaralhadas = [];
+    let rondaResolvida = false; // Controlo do balão de fala
+
+    // Função para baralhar arrays (Fisher-Yates Shuffle)
+    function baralharArray(array) {
+        let arrayCopia = [...array];
+        for (let i = arrayCopia.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arrayCopia[i], arrayCopia[j]] = [arrayCopia[j], arrayCopia[i]];
+        }
+        return arrayCopia;
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        document.getElementById('val-progresso').textContent = rondaAtual > totalRondas ? totalRondas : rondaAtual;
+        document.getElementById('val-total').textContent = totalRondas;
+        
+        let perc = ((rondaAtual - 1) / totalRondas) * 100;
+        document.getElementById('progress-fill').style.width = `${perc}%`;
+    }
+
+    function pararAudio() {
+        if(audioElement) {
+            audioElement.pause();
+            audioElement.currentTime = 0;
+        }
+        document.getElementById('btn-mascote').classList.remove('falando');
+        if(!rondaResolvida) {
+            document.getElementById('balao-fala').style.display = 'block'; 
+        }
+    }
+
+    function tocarAudio(caminhoFicheiro) {
+        pararAudio();
+        
+        audioElement = new Audio(caminhoFicheiro);
+        
+        audioElement.onplay = () => {
+            document.getElementById('btn-mascote').classList.add('falando');
+            document.getElementById('balao-fala').style.display = 'none'; 
+        };
+        
+        audioElement.onended = () => {
+            document.getElementById('btn-mascote').classList.remove('falando');
+        };
+        
+        audioElement.onerror = () => {
+            console.warn("Aviso: Ficheiro de áudio não encontrado:", caminhoFicheiro);
+            document.getElementById('btn-mascote').classList.remove('falando');
+        };
+
+        audioElement.play().catch(e => console.log("Áudio bloqueado pelo navegador até interação."));
+    }
+
+    function tocarAudioPista() {
+        if(pistaAtual && pistaAtual.audio) {
+            tocarAudio(pistaAtual.audio);
+        }
+    }
+
+    function iniciarJogo() {
+        // Seleciona 7 pistas aleatórias de cada nível
+        let nivel1 = baralharArray(BD_NIVEL_1).slice(0, 7);
+        let nivel2 = baralharArray(BD_NIVEL_2).slice(0, 7);
+        let nivel3 = baralharArray(BD_NIVEL_3).slice(0, 7);
+
+        // Prepara a sessão de jogo juntando os 3 níveis
+        pistasDoJogoBaralhadas = [...nivel1, ...nivel2, ...nivel3];
+
+        rondaAtual = 1;
+        errosTotais = 0;
+        rondaResolvida = false;
+        pararAudio();
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        rondaResolvida = false;
+        pararAudio();
+        
+        pistaAtual = pistasDoJogoBaralhadas[rondaAtual - 1];
+        
+        // Configurar Imagem
+        document.getElementById('img-pista-atual').src = pistaAtual.imagem;
+        
+        // Reset Dica, Modal e Estilos de Acerto
+        document.getElementById('btn-dica').classList.remove('esgotada');
+        document.getElementById('modal-curiosidade').classList.remove('ativo');
+        
+        const palco = document.getElementById('palco-animado');
+        palco.style.borderColor = "#7dd3fc"; // Voltar à cor base (azul céu)
+        palco.style.backgroundColor = "white";
+        
+        // Reset à pulsação (trigger reflow)
+        document.getElementById('img-pista-atual').classList.remove('anim-acerto');
+        void document.getElementById('img-pista-atual').offsetWidth; 
+        
+        // Garante que o balão está visível no início da ronda
+        document.getElementById('balao-fala').style.display = 'block';
+    }
+
+    function usarDica() {
+        if(document.getElementById('btn-dica').classList.contains('esgotada')) return;
+        showToast(pistaAtual.dica);
+        document.getElementById('btn-dica').classList.add('esgotada');
+    }
+
+    function verificarResposta(sentidoEscolhido) {
+        if (sentidoEscolhido === pistaAtual.sentido) {
+            // ACERTO
+            rondaResolvida = true; // Impede que o balão "Clica em mim!" volte a aparecer
+            pararAudio();
+            document.getElementById('balao-fala').style.display = 'none'; // Esconde o balão de imediato
+            
+            tocarSom('acerto');
+            
+            const palco = document.getElementById('palco-animado');
+            palco.style.borderColor = "var(--cor-em)"; // Verde
+            palco.style.backgroundColor = "#f0fdf4"; // Fundo verde claro
+            
+            document.getElementById('img-pista-atual').classList.add('anim-acerto');
+            document.getElementById('texto-curiosidade').textContent = pistaAtual.curiosidade;
+            
+            setTimeout(() => {
+                document.getElementById('modal-curiosidade').classList.add('ativo');
+                if(pistaAtual.audioCuriosidade) tocarAudio(pistaAtual.audioCuriosidade);
+            }, 600);
+
+        } else {
+            // ERRO
+            pararAudio();
+            tocarSom('erro');
+            errosTotais++;
+            document.getElementById('val-erros').textContent = errosTotais;
+            showToast("Hum, não me parece... Tenta outro sentido!", true);
+        }
+    }
+
+    function fecharCuriosidadeEAvancar() {
+        pararAudio();
+        document.getElementById('modal-curiosidade').classList.remove('ativo');
+        rondaAtual++;
+        
+        // Verifica transições de nível (Rondas de 1 a 21)
+        // Nível 2 começa na ronda 8 (índice 7)
+        if (rondaAtual === 8) {
+            mostrarEcraNivel("Inspetor", "🕵️‍♀️", "As pistas agora têm mais mistério e tens de ouvir com o dobro da atenção!");
+        } 
+        // Nível 3 começa na ronda 15 (índice 14)
+        else if (rondaAtual === 15) {
+            mostrarEcraNivel("Mestre dos Sentidos", "🧠", "Último desafio! São as situações mais difíceis, serás capaz?");
+        } 
+        // Acabou o jogo
+        else if (rondaAtual > totalRondas) {
+            finalizarJogo();
+        } 
+        // Próxima pista normal
+        else {
+            atualizarPlacarUI();
+            prepararRonda();
+        }
+    }
+
+    function mostrarEcraNivel(titulo, icone, descricao) {
+        document.getElementById('icone-nivel').textContent = icone;
+        document.getElementById('titulo-nivel').textContent = `Nível ${titulo}!`;
+        document.getElementById('desc-nivel').textContent = descricao;
+        mostrarEcra('ecra-transicao');
+        tocarSom('vitoria');
+    }
+
+    function continuarParaRonda() {
+        mostrarEcra('ecra-jogo');
+        atualizarPlacarUI();
+        prepararRonda();
+    }
+
+    function finalizarJogo() {
+        document.getElementById('progress-fill').style.width = `100%`;
+        document.getElementById('final-erros').textContent = errosTotais;
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        lancarConfetis();
+    }
+
+    function reiniciarJogo() {
+        document.getElementById('confetti-container').innerHTML = ""; 
+        iniciarJogo();
+    }
+
+    function voltarAoMenu() {
+        pararAudio();
+        document.getElementById('confetti-container').innerHTML = "";
+        mostrarEcra('ecra-selecao');
+    }
+    
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
