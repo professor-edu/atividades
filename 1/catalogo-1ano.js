@@ -20,7 +20,7 @@ const todosOsJogos =[
     { nome: "Comboio das Sílabas", icone: "icones/comboio_silabas.png", link: "pt/comboio-silabas/", cat: "pt" }, 
     { nome: "Memória de Imagens", icone: "icones/memoria_imagens.png", link: "pt/memoria-imagens", cat: "pt" },
     { nome: "Palavras e Imagens", icone: "icones/memoria.png", link: "pt/memoria", cat: "pt" },
-    { nome: "Ordenar Sílabas", icone: "icones/ordenar_silabas.png", link: "pt/arrastar-silabas", cat: "pt" },
+    { nome: "Ordenar Sílabas", icone: "icones/ordenar_silabas.png", link: "pt/ordenar-silabas", cat: "pt" },
     { nome: "Escrever Sílabas", icone: "icones/puzzle_silabas.png", link: "pt/escrever-silabas", cat: "pt" },
     { nome: "Bolhas de Sabão", icone: "icones/bolhas_sabao.png", link: "pt/bolhas", cat: "pt" },
     { nome: "Monstro das Sílabas", icone: "icones/monstro_silabas.png", link: "pt/monstro-silabas", cat: "pt" },
