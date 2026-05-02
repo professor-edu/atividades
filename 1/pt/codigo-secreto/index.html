@@ -2,15 +2,19 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Código Secreto 🕵️‍♂️</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     
+    <script src="../dados.js"></script>
+
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        
         /* =========================================
-           CSS DO TEMPLATE ORIGINAL
+           CSS DO TEMPLATE BASE (INTOCÁVEL)
            ========================================= */
         :root {
             --bg-body: #f0f4f8;
@@ -20,86 +24,163 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --cor-pt: #ff6b6b;
+            --sucesso: #219d53;
+            --sucesso-light: #2ed573;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
-        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
-        .hamburger:hover { background: #fff9c4; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
-        .btn-voltar:hover { transform: scale(1.05); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
         
-        /* MENU LATERAL */
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
-        
-        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
-        .cartao-jogo-container { background: white; width: 100%; max-width: 900px; min-height: 550px; padding: 30px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
-        
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
-        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
-            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
-            .hamburger { grid-column: 1; justify-self: start; }
-            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
-            h1, .subtitulo { grid-column: 2; text-align: center; }
-            .cartao-jogo-container { padding: 25px 10px; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1; min-height: 450px;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; 
         }
 
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
         /* =========================================
-           CSS ESPECÍFICO: O CÓDIGO SECRETO (3 NÍVEIS)
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; min-height: 0;}
+        .titulo-menu { font-size: clamp(1.8rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900; text-align: center;}
+
+        #ecra-jogo { justify-content: flex-start; }
+
+        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 6px 0 #093273; transition: 0.2s; display: flex; align-items: center; gap: 10px;}
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+
+        /* =========================================
+           TUTORIAL ANIMADO (NOVO)
+           ========================================= */
+        .animacao-tutorial {
+            position: relative; width: 100%; max-width: 450px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px 15px 35px 15px;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); overflow: hidden; height: 180px;
+        }
+
+        .tut-images { display: flex; gap: 15px; position: relative;}
+        .tut-img-box { width: 60px; height: 60px; border: 3px solid #ced6e0; border-radius: 12px; background: white; display: flex; align-items: center; justify-content: center; position: relative; font-size: 2.2rem;}
+        .tut-letter { position: absolute; bottom: -35px; font-size: 1.5rem; font-weight: 900; color: var(--azul-vibrante); opacity: 0; }
+        
+        .tut-lupa { position: absolute; font-size: 3rem; top: 20px; left: 15px; z-index: 10; animation: searchTut 4s infinite ease-in-out; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));}
+
+        @keyframes searchTut {
+            0%, 5% { transform: translateX(0) scale(1); }
+            20%, 25% { transform: translateX(75px) scale(1.1); }
+            40%, 45% { transform: translateX(150px) scale(1.1); }
+            60%, 65% { transform: translateX(225px) scale(1.1); }
+            85%, 100% { transform: translateX(0) scale(1); }
+        }
+
+        .tut-img-box:nth-child(1) .tut-letter { animation: showLetter1 4s infinite ease-in-out; }
+        .tut-img-box:nth-child(2) .tut-letter { animation: showLetter2 4s infinite ease-in-out; }
+        .tut-img-box:nth-child(3) .tut-letter { animation: showLetter3 4s infinite ease-in-out; }
+        .tut-img-box:nth-child(4) .tut-letter { animation: showLetter4 4s infinite ease-in-out; }
+
+        @keyframes showLetter1 { 0%, 5% { opacity: 0; transform: translateY(10px); } 10%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes showLetter2 { 0%, 25% { opacity: 0; transform: translateY(10px); } 30%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes showLetter3 { 0%, 45% { opacity: 0; transform: translateY(10px); } 50%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes showLetter4 { 0%, 65% { opacity: 0; transform: translateY(10px); } 70%, 100% { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           CSS ESPECÍFICO: O CÓDIGO SECRETO
            ========================================= */
 
-        /* HUD Superior: Tempo e Lupas */
-        .hud-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 700px; margin-bottom: 20px; padding: 0 15px; box-sizing: border-box; }
-        .timer-box { font-size: 1.2rem; font-weight: bold; color: var(--text-main); background: #f8fafc; padding: 8px 15px; border-radius: 20px; border: 2px solid #e3f2fd; display: flex; align-items: center; gap: 8px; }
-        .lupas-box { display: flex; gap: 5px; font-size: 1.5rem; }
-        .lupa { transition: 0.3s; filter: grayscale(0%); opacity: 1; }
-        .lupa.perdida { filter: grayscale(100%); opacity: 0.3; transform: scale(0.8); }
+        /* HUD Superior: Tempo e Dicas */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; max-width: 800px; background: #fdf2f2; padding: 8px 15px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        @media (hover: hover) { .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); } }
+        
+        .timer-box { font-size: 1.2rem; font-weight: 900; color: var(--cor-pt); background: white; padding: 4px 15px; border-radius: 15px; border: 2px solid var(--cor-pt); display: flex; align-items: center; gap: 8px; }
+        
+        /* BOTÃO DICA */
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 15px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica:disabled, .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); cursor: not-allowed;}
+        
+        .hint-badge {
+            position: absolute; top: -6px; right: -6px; background: #ff4757; color: white; 
+            font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
         /* Mapa de Progresso (3 Fases) */
-        .mapa-progresso { display: flex; width: 100%; max-width: 700px; background: #f0f4f8; border-radius: 20px; padding: 10px; gap: 10px; margin-bottom: 30px; box-sizing: border-box; }
+        .mapa-progresso { display: flex; width: 100%; max-width: 800px; background: #f0f4f8; border-radius: 20px; padding: 12px; gap: 10px; margin-bottom: 25px; box-sizing: border-box; border: 2px solid #e2e8f0;}
         .fase-mapa { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; }
-        .fase-titulo { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #8395a7; text-align: center; }
-        .pontos-fase { display: flex; gap: 5px; }
-        .ponto { width: 18px; height: 18px; border-radius: 50%; background: #c8d6e5; transition: 0.4s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .fase-titulo { font-size: clamp(0.7rem, 2.5vw, 0.9rem); font-weight: 900; text-transform: uppercase; color: #8395a7; text-align: center; }
+        .pontos-fase { display: flex; gap: 6px; }
+        .ponto { width: 18px; height: 18px; border-radius: 50%; background: #ced6e0; transition: 0.4s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         
         /* Cores das Fases */
         .fase-1 .fase-titulo { color: #cd6133; } 
-        .fase-1 .ponto.ativo { background: #cd6133; box-shadow: 0 0 8px rgba(205, 97, 51, 0.6); }
+        .fase-1 .ponto.ativo { background: #cd6133; box-shadow: 0 0 10px rgba(205, 97, 51, 0.6); transform: scale(1.2);}
         .fase-1 .ponto.concluido { background: #cd6133; }
         
         .fase-2 .fase-titulo { color: #7f8fa6; } 
-        .fase-2 .ponto.ativo { background: #7f8fa6; box-shadow: 0 0 8px rgba(127, 143, 166, 0.6); }
+        .fase-2 .ponto.ativo { background: #7f8fa6; box-shadow: 0 0 10px rgba(127, 143, 166, 0.6); transform: scale(1.2);}
         .fase-2 .ponto.concluido { background: #7f8fa6; }
 
         .fase-3 .fase-titulo { color: #fbc531; } 
-        .fase-3 .ponto.ativo { background: #fbc531; box-shadow: 0 0 12px rgba(251, 197, 49, 0.8); }
+        .fase-3 .ponto.ativo { background: #fbc531; box-shadow: 0 0 12px rgba(251, 197, 49, 0.8); transform: scale(1.2);}
         .fase-3 .ponto.concluido { background: #fbc531; }
 
         /* Divisória do mapa */
-        .fase-mapa:not(:last-child)::after { content: ''; position: absolute; right: -8px; top: 60%; width: 6px; height: 2px; background: #c8d6e5; }
+        .fase-mapa:not(:last-child)::after { content: ''; position: absolute; right: -8px; top: 60%; width: 6px; height: 3px; background: #ced6e0; border-radius: 2px;}
 
         /* COFRE MISTERIOSO */
-        .cofre-container { margin-bottom: 25px; position: relative; }
-        .cofre-icon { font-size: 5rem; display: inline-block; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15)); transition: transform 0.3s; }
+        .cofre-container { margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; min-height: 90px;}
+        .cofre-icon { font-size: clamp(4rem, 10vw, 5.5rem); display: inline-block; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15)); transition: transform 0.3s; line-height: 1;}
         
         @keyframes shakeCofre {
             0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -118,21 +199,18 @@
 
         /* PISTAS (IMAGENS + CAIXAS) */
         .pistas-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; max-width: 850px; margin-bottom: 20px; transition: opacity 0.5s; }
-        .pista-item { display: flex; flex-direction: column; align-items: center; background: #ffffff; padding: 15px; border-radius: 20px; border: 3px solid #e3f2fd; box-shadow: 0 4px 10px rgba(0,145,255,0.05); transition: 0.3s; }
-        .pista-img { width: 75px; height: 75px; object-fit: contain; margin-bottom: 15px; }
+        .pista-item { display: flex; flex-direction: column; align-items: center; background: #ffffff; padding: 15px; border-radius: 20px; border: 3px dashed #ced6e0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s; }
+        .pista-img { width: clamp(60px, 15vw, 85px); height: clamp(60px, 15vw, 85px); object-fit: contain; margin-bottom: 15px; }
         
-        .letra-input { width: 55px; height: 55px; font-size: 2.2rem; text-align: center; text-transform: uppercase; border: 3px solid #ced6e0; border-radius: 12px; color: var(--azul-escuro); font-weight: bold; outline: none; transition: 0.3s; background: #f8fafc; }
-        .letra-input:focus { border-color: var(--azul-vibrante); box-shadow: 0 0 15px rgba(0, 145, 255, 0.2); background: white; transform: scale(1.05); }
-        
-        .letra-input.correct { background: #eafff0 !important; border-color: #2ed573 !important; color: #219d53; pointer-events: none; }
-        .letra-input.wrong { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef; color: #ff4757; }
-
-        @keyframes shakeError {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px) rotate(-2deg); }
-            50% { transform: translateX(5px) rotate(2deg); }
-            75% { transform: translateX(-5px) rotate(-2deg); }
+        .letra-input { 
+            width: clamp(50px, 12vw, 65px); height: clamp(50px, 12vw, 65px); font-size: 2.2rem; /* Mantém a font-size alta para evitar o zoom do iOS */
+            text-align: center; text-transform: uppercase; border: 4px solid #ced6e0; border-radius: 15px; 
+            color: var(--azul-escuro); font-weight: 900; outline: none; transition: 0.3s; background: white; box-shadow: 0 4px 0 #ced6e0;
         }
+        .letra-input:focus { border-color: var(--azul-vibrante); box-shadow: 0 4px 0 var(--azul-vibrante); transform: translateY(-2px); }
+        
+        .letra-input.correct { background: #eafff0 !important; border-color: #2ed573 !important; color: #219d53; pointer-events: none; box-shadow: 0 0 0 transparent; transform: translateY(4px);}
+        .letra-input.wrong { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef; color: #ff4757; }
 
         /* ANIMAÇÃO PUFF DE FUMO */
         @keyframes puffFumo {
@@ -142,9 +220,9 @@
         .desaparecer-fumo { animation: puffFumo 0.6s forwards; pointer-events: none; }
 
         /* REVELAÇÃO DA PALAVRA */
-        .revelacao-container { display: none; flex-direction: column; align-items: center; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -40%); z-index: 10; width: 100%; }
-        .img-secreta { width: 180px; height: 180px; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(0); margin-bottom: 15px; }
-        .palavra-secreta { font-size: 3.5rem; font-weight: bold; color: var(--azul-escuro); text-transform: uppercase; letter-spacing: 5px; opacity: 0; transform: translateY(20px); text-shadow: 0 4px 10px rgba(0, 145, 255, 0.2); }
+        .revelacao-container { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 10px; }
+        .img-secreta { width: clamp(150px, 30vh, 220px); height: clamp(150px, 30vh, 220px); object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(0); margin-bottom: 15px; }
+        .palavra-secreta { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; color: var(--azul-escuro); text-transform: uppercase; letter-spacing: 5px; opacity: 0; transform: translateY(20px); text-shadow: 0 4px 10px rgba(0, 145, 255, 0.2); background: white; padding: 10px 30px; border-radius: 20px; border: 4px dashed #bcdcff;}
         
         @keyframes popOutSafe { 0% { transform: scale(0) rotate(-10deg); opacity: 0; } 70% { transform: scale(1.2) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         @keyframes slideUpWord { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -152,28 +230,30 @@
         .animar-texto { animation: slideUpWord 0.5s 0.3s forwards ease-out; }
 
         /* ECRÃ FINAL */
-        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; z-index: 20; }
-        .end-title { font-size: 2.8rem; color: var(--azul-escuro); margin-bottom: 5px; }
-        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 30px; line-height: 1.6; background: #fff; padding: 20px 30px; border-radius: 20px; border: 2px solid #e3f2fd; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
-        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); transition: 0.2s; }
-        .btn-reiniciar:active { transform: translateY(5px); box-shadow: 0 0px 0 var(--cor-1ano-dark); }
+        #ecra-fim { align-items: center; justify-content: center; text-align: center; }
+        .end-title { font-size: clamp(2.5rem, 6vw, 3.5rem); color: var(--azul-escuro); margin-bottom: 15px; }
+        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; line-height: 1.8; background: #fff; padding: 25px 40px; border-radius: 20px; border: 3px solid #e3f2fd; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-2deg); } 50% { transform: translateX(5px) rotate(2deg); } 75% { transform: translateX(-5px) rotate(-2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 
         @media (max-width: 600px) {
-            .hud-container { flex-direction: column; gap: 10px; margin-bottom: 15px; }
-            .mapa-progresso { padding: 8px; margin-bottom: 15px; }
-            .fase-titulo { font-size: 0.65rem; }
+            .status-bar-jogo { justify-content: center; }
+            .timer-box, .btn-dica { font-size: 1rem; padding: 4px 10px;}
+            .pista-item { padding: 10px; border-width: 2px;}
             .ponto { width: 14px; height: 14px; }
-            .pista-item { padding: 8px; }
-            .pista-img { width: 45px; height: 45px; margin-bottom: 10px;}
-            .letra-input { width: 40px; height: 40px; font-size: 1.5rem; }
-            .cofre-icon { font-size: 3.5rem; }
-            .img-secreta { width: 120px; height: 120px; }
-            .palavra-secreta { font-size: 2.2rem; letter-spacing: 2px; }
+            .fase-mapa:not(:last-child)::after { right: -5px; width: 4px;}
         }
-    body { scrollbar-gutter: stable; }
-</style>
+
+        @media (max-height: 650px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        body { scrollbar-gutter: stable; }
+    </style>
 </head>
 <body>
 
@@ -207,38 +287,61 @@
 <main>
     <div class="cartao-jogo-container">
         
-        <div id="game-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center; position: relative;">
+        <!-- ECRÃ 1: MENU INICIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-menu">Descobre as Palavras Secretas!</h2>
             
-            <div class="hud-container">
-                <div class="timer-box">⏱️ <span id="tempo-decorrido">00:00</span></div>
-                <div class="lupas-box" id="lupas-container">
-                    <span class="lupa">🔎</span><span class="lupa">🔎</span><span class="lupa">🔎</span>
+            <div class="animacao-tutorial">
+                <div class="tut-images">
+                    <div class="tut-img-box">🐱<span class="tut-letter">G</span></div>
+                    <div class="tut-img-box">✈️<span class="tut-letter">A</span></div>
+                    <div class="tut-img-box">🍅<span class="tut-letter">T</span></div>
+                    <div class="tut-img-box">🐑<span class="tut-letter">O</span></div>
+                    <div class="tut-lupa">🔎</div>
                 </div>
+            </div>
+
+            <p style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 30px; max-width: 500px; line-height: 1.5;">
+                Olha bem para as imagens.<br>
+                A <strong>primeira letra</strong> de cada uma forma o código secreto que abre o cofre!
+            </p>
+            <button class="btn-acao" onclick="iniciarJogo()">COMEÇAR A INVESTIGAÇÃO ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarParaSelecao()">🏠 Menu</button>
+                <div class="timer-box">⏱️ <span id="tempo-decorrido">00:00</span></div>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()" title="Dica">
+                    💡 Dica<span id="hint-count" class="hint-badge">3</span>
+                </button>
             </div>
 
             <!-- Mapa de Progressão -->
             <div class="mapa-progresso">
                 <div class="fase-mapa fase-1">
-                    <span class="fase-titulo">Nível 1 (A Rua)</span>
+                    <span class="fase-titulo">Nível 1</span>
                     <div class="pontos-fase" id="pontos-fase-1">
                         <div class="ponto" id="ponto-0"></div><div class="ponto" id="ponto-1"></div><div class="ponto" id="ponto-2"></div>
                     </div>
                 </div>
                 <div class="fase-mapa fase-2">
-                    <span class="fase-titulo">Nível 2 (A Mansão)</span>
+                    <span class="fase-titulo">Nível 2</span>
                     <div class="pontos-fase" id="pontos-fase-2">
                         <div class="ponto" id="ponto-3"></div><div class="ponto" id="ponto-4"></div><div class="ponto" id="ponto-5"></div>
                     </div>
                 </div>
                 <div class="fase-mapa fase-3">
-                    <span class="fase-titulo">Nível 3 (Cofre-Forte)</span>
+                    <span class="fase-titulo">Nível 3</span>
                     <div class="pontos-fase" id="pontos-fase-3">
                         <div class="ponto" id="ponto-6"></div><div class="ponto" id="ponto-7"></div><div class="ponto" id="ponto-8"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="cofre-container">
+            <div class="cofre-container" id="cofre-container">
                 <span id="icone-cofre" class="cofre-icon tremendo">🔒</span>
             </div>
 
@@ -251,13 +354,14 @@
 
         </div>
 
-        <div id="end-screen">
+        <!-- ECRÃ 3: FIM DO JOGO -->
+        <div id="ecra-fim" class="ecra">
             <h2 class="end-title">Caso Resolvido! 🕵️‍♂️✨</h2>
             <div class="end-stats">
                 Tempo Total: <strong id="final-tempo" style="color:var(--azul-vibrante);">00:00</strong><br>
-                Palavras Perfeitas: <strong id="final-perfeitas" style="color:#2ed573;">0/9</strong>
+                Cofres Abertos sem Falhas: <strong id="final-perfeitas" style="color:#2ed573;">0/9</strong>
             </div>
-            <button class="btn-reiniciar" onclick="iniciarJogo()">NOVO MISTÉRIO 🔄</button>
+            <button class="btn-acao" onclick="iniciarJogo()">NOVO MISTÉRIO 🔄</button>
         </div>
 
         <canvas id="confetti-canvas"></canvas>
@@ -268,24 +372,52 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<script src="../dados.js"></script>
-
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
     function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    /* =========================================
+       DADOS DE FALLBACK E IMAGENS
+       ========================================= */
+    let bancoPalavras = [];
+    if (typeof palavras !== 'undefined' && palavras.length > 0) {
+        bancoPalavras = palavras;
+    } else {
+        bancoPalavras = [
+            { palavra: "bolo", imagem: "img/bolo.png" },
+            { palavra: "fada", imagem: "img/fada.png" },
+            { palavra: "gato", imagem: "img/gato.png" },
+            { palavra: "janela", imagem: "img/janela.png" },
+            { palavra: "avião", imagem: "img/aviao.png" },
+            { palavra: "girafa", imagem: "img/girafa.png" },
+            { palavra: "águia", imagem: "img/aguia.png" },
+            { palavra: "elefante", imagem: "img/elefante.png" },
+            { palavra: "hipopótamo", imagem: "img/hipopotamo.png" },
+            { palavra: "leão", imagem: "img/leao.png" },
+            { palavra: "mota", imagem: "img/mota.png" },
+            { palavra: "uva", imagem: "img/uva.png" }
+        ];
+    }
+
+    function getImagePath(imgPath) {
+        if (!imgPath) return '';
+        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
+        return '../' + imgPath;
+    }
 
     // ==========================================
     // ESTADO DO JOGO E VARIÁVEIS
     // ==========================================
     let TOTAL_PALAVRAS = 9;
-    let palavrasDoJogo =[];
+    let palavrasDoJogo = [];
     let palavraIndex = 0;
     let letrasDescobertas = 0;
     let palavraAtualObj = null;
-    let arrayCaracteresAlvo =[];
+    let arrayCaracteresAlvo = [];
+    let cometeuErroNaPalavra = false;
     
-    // Pontuação e Precisão
-    let lupasAtuais = 3;
+    // Pontuação e Dicas
+    let dicasUsadas = [false, false, false]; 
     let palavrasPerfeitas = 0;
 
     // Tempo
@@ -293,13 +425,16 @@
     let timerInterval = null;
 
     // Elementos DOM
-    const elGameScreen = document.getElementById('game-screen');
-    const elEndScreen = document.getElementById('end-screen');
+    const elSelecao = document.getElementById('ecra-selecao');
+    const elGameScreen = document.getElementById('ecra-jogo');
+    const elEndScreen = document.getElementById('ecra-fim');
     const txtTempo = document.getElementById('tempo-decorrido');
-    const lupasDom = document.getElementById('lupas-container').children;
     const iconCofre = document.getElementById('icone-cofre');
+    const cofreContainer = document.getElementById('cofre-container');
     const boxPistas = document.getElementById('pistas-container');
     const boxRevelacao = document.getElementById('revelacao-container');
+    const btnDica = document.getElementById('btn-dica');
+    const elHintCount = document.getElementById('hint-count');
 
     // ==========================================
     // LÓGICA CORE
@@ -307,40 +442,49 @@
     function normalizar(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
-    function getImagePath(imgPath) { return imgPath.replace('img/', '../../../1/pt/img/'); }
 
     function prepararDicionario() {
-        const letrasDisponiveis =[...new Set(palavras.map(p => normalizar(p.palavra).charAt(0)))];
+        // Encontra todas as letras iniciais que estão disponíveis no banco de dados
+        const letrasDisponiveis = [...new Set(bancoPalavras.map(p => normalizar(p.palavra).charAt(0)))];
         
         function podeSerEscrita(p) {
             return normalizar(p.palavra).split('').every(char => letrasDisponiveis.includes(char));
         }
 
         // 1. Filtrar APENAS as palavras que conseguimos escrever com as iniciais disponíveis
-        const palavrasValidas = palavras.filter(podeSerEscrita);
+        const palavrasValidas = bancoPalavras.filter(podeSerEscrita);
+
+        if (palavrasValidas.length === 0) {
+            alert("Atenção: Não há palavras suficientes no dicionário para formar um Código Secreto.");
+            return;
+        }
 
         // 2. Dividir em Níveis de Dificuldade
-        let p2 = palavrasValidas.filter(p => p.num <= 2).sort(() => Math.random() - 0.5);
-        let p3 = palavrasValidas.filter(p => p.num === 3).sort(() => Math.random() - 0.5);
-        let p4 = palavrasValidas.filter(p => p.num >= 4).sort(() => Math.random() - 0.5);
+        // Nível 1: Até 4 letras
+        let p1 = palavrasValidas.filter(p => p.palavra.length <= 4).sort(() => Math.random() - 0.5); 
+        // Nível 2: 5 letras
+        let p2 = palavrasValidas.filter(p => p.palavra.length === 5).sort(() => Math.random() - 0.5); 
+        // Nível 3: 5 ou 6 letras
+        let p3 = palavrasValidas.filter(p => p.palavra.length === 5 || p.palavra.length === 6).sort(() => Math.random() - 0.5); 
 
-        let escolhidas =[];
+        let escolhidas = [];
         
         // 3. Tentar ir buscar 3 palavras de cada bloco
+        escolhidas.push(...p1.splice(0, 3));
         escolhidas.push(...p2.splice(0, 3));
         escolhidas.push(...p3.splice(0, 3));
-        escolhidas.push(...p4.splice(0, 3));
 
         // 4. Se não chegámos a 9 (porque o nível 3 ficou vazio, por exemplo),
-        // vamos preencher com as palavras válidas que sobraram nos outros níveis!
-        let restantes = [...p2, ...p3, ...p4].sort(() => Math.random() - 0.5);
+        // preenchemos com as palavras válidas que sobraram nos outros níveis!
+        let restantes = [...p1, ...p2, ...p3].sort(() => Math.random() - 0.5);
         
         while(escolhidas.length < 9 && restantes.length > 0) {
             escolhidas.push(restantes.shift());
         }
 
+        // Se mesmo assim não houver 9, jogamos com as que houver
         palavrasDoJogo = escolhidas;
-        TOTAL_PALAVRAS = palavrasDoJogo.length; // Ajusta ao real (que será garantidamente 9 neste caso)
+        TOTAL_PALAVRAS = palavrasDoJogo.length; 
     }
 
     // Cronómetro
@@ -349,6 +493,7 @@
         const s = (segundos % 60).toString().padStart(2, '0');
         return `${m}:${s}`;
     }
+
     function iniciarTimer() {
         clearInterval(timerInterval);
         tempoSegundos = 0;
@@ -360,7 +505,7 @@
     }
 
     function atualizarMapa() {
-        for (let i = 0; i < TOTAL_PALAVRAS; i++) {
+        for (let i = 0; i < 9; i++) {
             let pt = document.getElementById(`ponto-${i}`);
             if(pt) {
                 pt.className = 'ponto'; // reset
@@ -371,20 +516,49 @@
     }
 
     function atualizarCofre() {
+        cofreContainer.style.display = 'flex'; // Garante que o cofre está visível no início da palavra
         if (palavraIndex < 3) iconCofre.textContent = "📦";      // Fase 1: Caixa Forte
         else if (palavraIndex < 6) iconCofre.textContent = "🗄️"; // Fase 2: Cofre Prata
         else iconCofre.textContent = "🔐";                       // Fase 3: Cofre Ouro (Alta Segurança)
         iconCofre.classList.add('tremendo');
     }
 
+    function atualizarDicasUI() {
+        const nivelAtual = Math.floor(palavraIndex / 3);
+        let pistasRestantes = 3 - dicasUsadas.filter(Boolean).length;
+        
+        elHintCount.textContent = pistasRestantes;
+
+        if (pistasRestantes <= 0 || dicasUsadas[nivelAtual]) {
+            btnDica.classList.add('esgotada');
+        } else {
+            btnDica.classList.remove('esgotada');
+        }
+    }
+
+    function mostrarEcra(ecraID) {
+        elSelecao.style.display = 'none';
+        elGameScreen.style.display = 'none';
+        elEndScreen.style.display = 'none';
+        document.getElementById(ecraID).style.display = 'flex';
+    }
+
+    function voltarParaSelecao() {
+        clearInterval(timerInterval);
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
     function iniciarJogo() {
         prepararDicionario();
+        if (palavrasDoJogo.length === 0) return;
+
         palavraIndex = 0;
         palavrasPerfeitas = 0;
-        elEndScreen.style.display = 'none';
-        elGameScreen.style.display = 'flex';
+        dicasUsadas = [false, false, false];
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
         
+        mostrarEcra('ecra-jogo');
         iniciarTimer();
         carregarPalavra();
     }
@@ -393,13 +567,11 @@
         palavraAtualObj = palavrasDoJogo[palavraIndex];
         arrayCaracteresAlvo = normalizar(palavraAtualObj.palavra).split('');
         letrasDescobertas = 0;
-        
-        // Reset Lupas
-        lupasAtuais = 3;
-        for(let l of lupasDom) l.classList.remove('perdida');
+        cometeuErroNaPalavra = false;
 
         atualizarMapa();
         atualizarCofre();
+        atualizarDicasUI();
         
         boxRevelacao.style.display = 'none';
         document.getElementById('img-secreta').classList.remove('animar-img');
@@ -411,16 +583,17 @@
 
         // Construir Pistas
         arrayCaracteresAlvo.forEach((charAlvo, index) => {
-            const palavrasQueServem = palavras.filter(p => normalizar(p.palavra).charAt(0) === charAlvo && p.palavra !== palavraAtualObj.palavra);
+            // Escolher uma palavra cuja primeira letra seja o caractere que procuramos
+            const palavrasQueServem = bancoPalavras.filter(p => normalizar(p.palavra).charAt(0) === charAlvo && p.palavra !== palavraAtualObj.palavra);
             const pistaEscolhida = palavrasQueServem.length > 0 
                 ? palavrasQueServem[Math.floor(Math.random() * palavrasQueServem.length)] 
-                : palavras.find(p => normalizar(p.palavra).charAt(0) === charAlvo);
+                : bancoPalavras.find(p => normalizar(p.palavra).charAt(0) === charAlvo);
 
             const div = document.createElement('div');
             div.className = 'pista-item';
             div.innerHTML = `
-                <img class="pista-img" src="${getImagePath(pistaEscolhida.imagem)}" alt="Pista">
-                <input type="text" id="input-${index}" class="letra-input" maxlength="1" autocomplete="off" spellcheck="false">
+                <img class="pista-img" src="${getImagePath(pistaEscolhida.imagem)}" alt="Pista" onerror="this.style.display='none'">
+                <input type="text" id="input-${index}" class="letra-input" maxlength="1" autocomplete="off" spellcheck="false" inputmode="text">
             `;
             boxPistas.appendChild(div);
 
@@ -428,7 +601,13 @@
             input.addEventListener('input', (e) => validarLetra(e.target, charAlvo, index));
         });
 
-        setTimeout(() => document.getElementById('input-0').focus(), 100);
+        // Focar automaticamente a primeira letra, mas num timeout para evitar bugs de teclado em mobile
+        setTimeout(() => {
+            const firstInput = document.getElementById('input-0');
+            if(firstInput && window.innerWidth > 768) {
+                firstInput.focus();
+            }
+        }, 100);
     }
 
     function validarLetra(inputElement, charAlvo, index) {
@@ -443,7 +622,7 @@
             tocarSom('tecla');
             letrasDescobertas++;
 
-            // Foco Automático
+            // Foco Automático na próxima vazia
             let proximo = document.getElementById(`input-${index + 1}`);
             if (proximo && !proximo.classList.contains('correct')) proximo.focus();
             else {
@@ -452,19 +631,17 @@
                 }
             }
 
-            // Ganhou?
-            if (letrasDescobertas === arrayCaracteresAlvo.length) abrirCofre();
+            // Ganhou a Palavra?
+            if (letrasDescobertas === arrayCaracteresAlvo.length) {
+                document.activeElement.blur(); // Esconde teclado virtual no mobile
+                abrirCofre();
+            }
 
         } else {
             // ERRO
             inputElement.classList.add('wrong');
             tocarSom('erro');
-            
-            // Perde lupa (Precisão)
-            if (lupasAtuais > 0) {
-                lupasAtuais--;
-                lupasDom[2 - lupasAtuais].classList.add('perdida');
-            }
+            cometeuErroNaPalavra = true;
 
             setTimeout(() => {
                 inputElement.value = '';
@@ -473,8 +650,38 @@
         }
     }
 
+    /* --- DICA --- */
+    function usarDica() {
+        const nivelAtual = Math.floor(palavraIndex / 3);
+        
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[nivelAtual]) return;
+
+        // Procura a primeira caixa vazia
+        let primeiraVazia = null;
+        let indexVazia = -1;
+        const inputs = document.querySelectorAll('.letra-input');
+        
+        for(let i = 0; i < inputs.length; i++) {
+            if(!inputs[i].classList.contains('correct')) {
+                primeiraVazia = inputs[i];
+                indexVazia = i;
+                break;
+            }
+        }
+
+        if (primeiraVazia && indexVazia !== -1) {
+            const charAlvo = arrayCaracteresAlvo[indexVazia];
+            primeiraVazia.value = charAlvo.toUpperCase(); // Preenche a caixa visualmente
+            validarLetra(primeiraVazia, charAlvo, indexVazia); // Dispara a validação e o som
+            
+            dicasUsadas[nivelAtual] = true;
+            tocarSom('swoosh');
+            atualizarDicasUI();
+        }
+    }
+
     function abrirCofre() {
-        if (lupasAtuais === 3) palavrasPerfeitas++;
+        if (!cometeuErroNaPalavra) palavrasPerfeitas++;
         
         tocarSom('abrirCofre');
         iconCofre.textContent = "🔓";
@@ -483,6 +690,8 @@
 
         setTimeout(() => {
             boxPistas.style.display = 'none';
+            cofreContainer.style.display = 'none'; // Esconde o cofre completamente
+            
             document.getElementById('img-secreta').src = getImagePath(palavraAtualObj.imagem);
             document.getElementById('palavra-secreta').textContent = palavraAtualObj.palavra;
             
@@ -503,13 +712,12 @@
     function finalizarJogo() {
         clearInterval(timerInterval);
         
-        // Fechar o último ponto no mapa, se existir
-        let pFinal = document.getElementById(`ponto-8`);
+        // Fechar o último ponto no mapa
+        let pFinal = document.getElementById(`ponto-${TOTAL_PALAVRAS - 1}`);
         if(pFinal) pFinal.classList.add('concluido');
         
         setTimeout(() => {
-            elGameScreen.style.display = 'none';
-            elEndScreen.style.display = 'flex';
+            mostrarEcra('ecra-fim');
             
             document.getElementById('final-tempo').textContent = formatarTempo(tempoSegundos);
             document.getElementById('final-perfeitas').textContent = `${palavrasPerfeitas} de ${TOTAL_PALAVRAS}`;
@@ -522,9 +730,16 @@
     // ==========================================
     // ÁUDIO E CONFETIS
     // ==========================================
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function tocarSom(tipo) {
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
@@ -560,6 +775,10 @@
                 g.gain.setValueAtTime(0.1, agora + i * 0.2); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.2 + 0.5);
                 o.start(agora + i * 0.2); o.stop(agora + i * 0.2 + 0.5);
             });
+        } else if (tipo === 'swoosh') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
         }
     }
 
@@ -585,8 +804,6 @@
         });
         if (ativos) requestAnimationFrame(animarConfetis);
     }
-
-    window.onload = iniciarJogo;
 
 </script>
 </body>

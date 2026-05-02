@@ -2,15 +2,22 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Verdadeiro ou Falso 👍👎</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     
+    <!-- Importação do ficheiro de dados externo -->
+    <script src="../dados.js"></script>
+    
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
         /* =========================================
-           CSS DO TEMPLATE BASE
+           CSS DO TEMPLATE BASE (1º ANO)
            ========================================= */
         :root {
             --bg-body: #f0f4f8;
@@ -20,200 +27,247 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --cor-pt: #ff6b6b;
             --cor-certo: #2ed573;
             --cor-certo-dark: #219d53;
             --cor-errado: #ff4757;
             --cor-errado-dark: #d0303f;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
-        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
-        .hamburger:hover { background: #fff9c4; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-voltar:hover { transform: scale(1.05); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
-        
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
 
-        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
 
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
-        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
-        
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
-            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
-            .hamburger { grid-column: 1; justify-self: start; }
-            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
-            h1, .subtitulo { grid-column: 2; text-align: center; }
-            main { padding: 20px 15px; gap: 15px; } 
-            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
-            .game-image { height: 160px !important; margin-bottom: 15px !important; }
-            .displayed-word { font-size: 2.2rem !important; margin-bottom: 25px !important; }
-            .btn-vf { font-size: 1.2rem !important; padding: 15px !important; }
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1; min-height: 450px;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; 
         }
 
-        .status-bar { width: 100%; max-width: 700px; margin-bottom: 0; display: none; }
-        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
-        .score-certas { color: var(--cor-certo-dark); }
-        .score-erradas { color: var(--cor-errado-dark); }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        /* =========================================
+           MENU INICIAL E ECRÃS
+           ========================================= */
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; }
+        .titulo-menu { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            position: relative;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
         
-        .progress-bg { 
-			background-color: #e2e8f0; /* Um cinza mais suave */
-			border-radius: 20px; 
-			height: 35px; /* Um pouco mais grossa */
-			width: 100%; 
-			overflow: hidden; 
-			box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
-			border: 2px solid #d4dbe3;
-		}
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
-.progress-fill { 
-    height: 100%; 
-    width: 0%; 
-    border-radius: 20px; 
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    
-    /* Magia das riscas animadas */
-    background-color: var(--cor-1ano);
-    background-image: linear-gradient(
-        45deg, 
-        rgba(255, 255, 255, 0.2) 25%, 
-        transparent 25%, 
-        transparent 50%, 
-        rgba(255, 255, 255, 0.2) 50%, 
-        rgba(255, 255, 255, 0.2) 75%, 
-        transparent 75%, 
-        transparent
-    );
-    background-size: 30px 30px;
-    animation: moverRiscas 2s linear infinite;
-}
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
 
-/* Animação para fazer as riscas deslizarem */
-@keyframes moverRiscas {
-    0% { background-position: 0 0; }
-    100% { background-position: 30px 0; }
-}
-
-        .game-image {
-            height: 180px; 
-            object-fit: contain;
-            margin-bottom: 20px; 
-            border-radius: 20px;
-            background-color: #ffffff;
-            padding: 15px;
-            border: 3px solid #e3f2fd;
-            box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 850px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 25px; }
         }
 
         /* =========================================
-           ESTILOS DOS ELEMENTOS DO JOGO
+           ÁREA DE JOGO LIVRE
            ========================================= */
-        .displayed-word {
-            font-size: 3rem;
-            color: var(--azul-escuro);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 35px;
-            background: #fff9c4;
-            padding: 10px 40px;
-            border-radius: 15px;
-            border: 3px dashed #f6d04d;
-            box-shadow: 0 4px 0 #f6d04d;
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; /* CENTRADO VERTICALMENTE */
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 20px 15px; overflow-y: auto; gap: 20px;
+            position: relative; color: #94a3b8; font-weight: bold;
         }
 
+        /* =========================================
+           CSS ESPECÍFICO DO JOGO: VERDADEIRO OU FALSO
+           ========================================= */
+        
+        .btn-icon {
+            width: 28px; height: 28px; stroke: white; flex-shrink: 0;
+        }
+
+        /* Animação Inicial Tutorial */
+        .animacao-tutorial {
+            position: relative; height: 280px; width: 100%; max-width: 400px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); gap: 15px;
+        }
+        
+        .tut-img-alvo { font-size: 50px; background: white; padding: 5px 15px; border-radius: 15px; border: 3px solid #e3f2fd; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .tut-displayed-word { font-size: 1.5rem; font-weight: 900; background: #fff9c4; padding: 5px 20px; border-radius: 10px; border: 2px dashed #f6d04d; color: var(--azul-escuro); margin-bottom: 5px;}
+        
+        .tut-buttons { display: flex; gap: 10px; }
+        .tut-btn-vf { padding: 10px 15px; border-radius: 10px; font-weight: bold; color: white; font-size: 1rem; box-shadow: 0 4px 0 rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px;}
+        .tut-verdadeiro { background-color: var(--cor-certo); }
+        .tut-falso { background-color: var(--cor-errado); }
+        
+        .tut-verdadeiro.anim { position: relative; animation: clickBtnTut 3s infinite; }
+        .tut-verdadeiro.anim::after { content: '👆'; font-size: 30px; position: absolute; right: -15px; bottom: -25px; animation: handClick 3s infinite;}
+
+        @keyframes clickBtnTut {
+            0%, 40% { transform: translateY(0); box-shadow: 0 4px 0 rgba(0,0,0,0.2); filter: brightness(1); }
+            45%, 70% { transform: translateY(4px); box-shadow: 0 0px 0 transparent; filter: brightness(1.1); }
+            75%, 100% { transform: translateY(0); box-shadow: 0 4px 0 rgba(0,0,0,0.2); filter: brightness(1); }
+        }
+        @keyframes handClick {
+            0%, 35% { transform: translateY(20px); opacity: 0; }
+            40%, 70% { transform: translateY(0); opacity: 1; }
+            75%, 100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* Imagem Alvo do Jogo */
+        .game-image { 
+            height: clamp(140px, 25vh, 200px); object-fit: contain; margin-bottom: 5px; 
+            border-radius: 20px; background-color: #ffffff; padding: 15px; 
+            border: 3px solid #e3f2fd; box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;
+        }
+
+        @media (hover: hover) {
+            .game-image:hover {
+                transform: scale(1.05) translateY(-3px); 
+                box-shadow: 0 12px 30px rgba(0, 145, 255, 0.25), 0 6px 15px rgba(0,0,0,0.08);
+            }
+        }
+
+        /* Palavra Suspeita */
+        .displayed-word {
+            font-size: clamp(2rem, 6vw, 3rem); color: var(--azul-escuro); font-weight: 900;
+            text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px;
+            background: #fff9c4; padding: 10px 40px; border-radius: 15px;
+            border: 3px dashed #f6d04d; box-shadow: 0 4px 0 #f6d04d; text-align: center; word-break: break-word; line-height: 1.1;
+        }
+
+        /* Botões Verdadeiro/Falso */
         .buttons-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 600px;
+            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 600px; align-items: center; margin-top: 15px; /* Puxados para cima e centrados */
         }
 
         .btn-vf {
-            flex: 1;
-            min-width: 150px;
-            padding: 20px 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            color: white;
-            transition: all 0.1s;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            flex: 1; min-width: 200px; padding: 20px 10px; font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 700; border-radius: 20px; border: none; cursor: pointer; color: white;
+            transition: all 0.1s; text-transform: uppercase; display: flex; align-items: center;
+            justify-content: center; gap: 10px; user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-verdadeiro {
-            background-color: var(--cor-certo);
-            box-shadow: 0 8px 0 var(--cor-certo-dark);
-        }
+        .btn-verdadeiro { background-color: var(--cor-certo); box-shadow: 0 8px 0 var(--cor-certo-dark); }
+        .btn-falso { background-color: var(--cor-errado); box-shadow: 0 8px 0 var(--cor-errado-dark); }
 
-        .btn-falso {
-            background-color: var(--cor-errado);
-            box-shadow: 0 8px 0 var(--cor-errado-dark);
-        }
+        .btn-vf:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent !important; }
 
-        .btn-vf:active {
-            transform: translateY(8px);
-            box-shadow: 0 0px 0 transparent;
+        /* Animações e Feedbacks */
+        .btn-vf.success-bounce { transform: scale(1.05) translateY(4px); filter: brightness(1.1); box-shadow: 0 4px 0 transparent;}
+        .btn-vf.error-shake { animation: shakeError 0.4s ease-in-out; filter: brightness(0.8); }
+
+        /* Animação da Dica (Pisca o Botão da Opção Correta) */
+        .dica-iluminada {
+            animation: piscarDicaOpcao 0.8s infinite alternate !important;
+        }
+        @keyframes piscarDicaOpcao {
+            from { box-shadow: 0 0 10px #fbc531, 0 5px 0 #fbc531; transform: translateY(-2px); filter: brightness(1.1);}
+            to { box-shadow: 0 0 25px #fbc531, 0 7px 0 #fbc531; transform: translateY(-4px); filter: brightness(1.3);}
         }
 
         /* =========================================
-           ECRÃ FINAL E ANIMAÇÕES
+           ECRÃ FIM E BOTÕES DE AÇÃO
            ========================================= */
-        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.5s ease; }
-        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
-        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; }
-        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px) rotate(-3deg); }
-            50% { transform: translateX(8px) rotate(3deg); }
-            75% { transform: translateX(-8px) rotate(-3deg); }
-        }
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
         
-        .error-shake { 
-            animation: shake 0.4s ease-in-out; 
-            filter: brightness(0.8);
+        .btn-acao { 
+            background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; 
+            font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; 
+            box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; 
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; 
         }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
 
-        .success-bounce {
-            transform: scale(1.05) translateY(4px);
-            filter: brightness(1.1);
+        @media (max-width: 768px) {
+            .buttons-container { gap: 15px; margin-top: 5px; }
+            .btn-vf { padding: 15px; font-size: 1.3rem; }
+            .btn-icon { width: 24px; height: 24px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
 
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
-    body { scrollbar-gutter: stable; }
-</style>
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+        
+        /* Modal e Overlays Extras */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        body { scrollbar-gutter: stable; }
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        @media (hover: none) and (pointer: coarse) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; overflow-y: visible !important; }
+            footer { margin-top: auto; }
+        }
+    </style>
 </head>
 <body>
 
@@ -246,42 +300,69 @@
 </header>
 
 <main>
-    <div id="status-bar-container" class="status-bar">
-        <div class="score-container">
-            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
-            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
-        </div>
-        <div class="progress-bg">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
-    </div>
-
     <div class="cartao-jogo-container">
-        <div id="game-screen" style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <img id="game-image" class="game-image" src="" alt="Imagem secreta">
-            
-            <div id="displayed-word" class="displayed-word">PALAVRA</div>
-            
-            <div class="buttons-container">
-                <button id="btn-verdadeiro" class="btn-vf btn-verdadeiro" onclick="verificarResposta(true)">
-                    ✔️ VERDADEIRO
-                </button>
-                <button id="btn-falso" class="btn-vf btn-falso" onclick="verificarResposta(false)">
-                    ❌ FALSO
-                </button>
-            </div>
-        </div>
-
-        <div id="end-screen">
-            <h2 class="end-title" id="end-title-text">Fim do Jogo! 🎉</h2>
-            <div class="end-stats">
-                Acertaste <strong id="final-certas" style="color:#2ed573">0</strong> palavras<br>
-                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> tentativas erradas.
-            </div>
-            <button class="btn-reiniciar" onclick="iniciarJogo()">JOGAR NOVAMENTE 🔄</button>
-        </div>
-
+        
         <canvas id="confetti-canvas"></canvas>
+        <div class="toast-msg" id="toast-msg">Mensagem</div>
+
+        <!-- ECRÃ 1: MENU INICIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-menu">Como Jogar:</h2>
+            
+            <div class="animacao-tutorial">
+                <div class="tut-img-alvo">🐱</div>
+                <div class="tut-displayed-word">GATO</div>
+                <div class="tut-buttons">
+                    <div class="tut-btn-vf tut-verdadeiro anim">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> VERDADEIRO
+                    </div>
+                    <div class="tut-btn-vf tut-falso">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> FALSO
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">JOGAR AGORA ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO RIGOROSA -->
+            <div class="status-bar-jogo" id="status-bar" style="display: none;">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <img id="game-image" class="game-image" src="" alt="Imagem secreta">
+                
+                <div id="displayed-word" class="displayed-word">PALAVRA</div>
+                
+                <div class="buttons-container">
+                    <button id="btn-verdadeiro" class="btn-vf btn-verdadeiro" onclick="verificarResposta(true, this)">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> VERDADEIRO
+                    </button>
+                    <button id="btn-falso" class="btn-vf btn-falso" onclick="verificarResposta(false, this)">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> FALSO
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
+            <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
+            <p style="font-size: 1.2rem; color: var(--text-main); font-weight: bold;">Julgaste bem todas as palavras!</p>
+            <div style="font-size: 1.3rem; color: #ff4757; font-weight: bold; margin-bottom: 25px; padding: 10px 25px; border: 2px solid #ff4757; border-radius: 15px;">Erros: <span id="final-erros">0</span></div>
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto; margin-bottom: 10px;">JOGAR DE NOVO 🔄</button>
+        </div>
+
     </div>
 </main>
 
@@ -289,238 +370,321 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<script src="../dados.js"></script>
-
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    function toggleMenu() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const hamburger = document.getElementById('hamburgerBtn');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        hamburger.classList.toggle('open');
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
     }
 
-    const MAX_PALAVRAS = 10;
-    let palavrasDoJogo =[];
-    let palavraAtualIndex = 0;
-    let certas = 0;
-    let erradas = 0;
-    let isVerificando = false;
-    let isTrueExpected = true; // Guarda se a resposta correta para a ronda atual é Verdadeiro ou Falso
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2500);
+    }
 
-    const elGameScreen = document.getElementById('game-screen');
-    const elEndScreen = document.getElementById('end-screen');
-    const statusBar = document.getElementById('status-bar-container');
-    
-    const elValCertas = document.getElementById('val-certas');
-    const elValErradas = document.getElementById('val-erradas');
-    const elProgressFill = document.getElementById('progress-fill');
-    const elImage = document.getElementById('game-image');
-    const elDisplayedWord = document.getElementById('displayed-word');
-
-    const btnVerdadeiro = document.getElementById('btn-verdadeiro');
-    const btnFalso = document.getElementById('btn-falso');
+    /* =========================================
+       DADOS DE FALLBACK (Se ../dados.js falhar)
+       ========================================= */
+    let bancoPalavras = [];
+    if (typeof palavras !== 'undefined') {
+        bancoPalavras = palavras;
+    } else if (typeof window.palavras !== 'undefined') {
+        bancoPalavras = window.palavras;
+    } else {
+        bancoPalavras = [
+            { palavra: "abacaxi", imagem: "img/abacaxi.png" },
+            { palavra: "abelha", imagem: "img/abelha.png" },
+            { palavra: "bolo", imagem: "img/bolo.png" },
+            { palavra: "cavalo", imagem: "img/cavalo.png" },
+            { palavra: "dado", imagem: "img/dado.png" },
+            { palavra: "elefante", imagem: "img/elefante.png" },
+            { palavra: "fada", imagem: "img/fada.png" },
+            { palavra: "gato", imagem: "img/gato.png" },
+            { palavra: "janela", imagem: "img/janela.png" },
+            { palavra: "maca", imagem: "img/maca.png" }
+        ];
+    }
 
     function getImagePath(imgPath) {
-        return imgPath.replace('img/', '../img/');
+        if (!imgPath) return '';
+        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
+        return '../' + imgPath;
     }
 
-    function iniciarJogo() {
-        certas = 0; erradas = 0; palavraAtualIndex = 0; isVerificando = false;
-        atualizarPlacar();
-        
-        elEndScreen.style.display = 'none';
-        elGameScreen.style.display = 'flex';
-        statusBar.style.display = 'block';
-        
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    /* =========================================
+       ESTADOS E VARIÁVEIS
+       ========================================= */
+    const MAX_PALAVRAS = 10;
+    let palavrasDoJogo = [];
+    let palavraAtualIndex = 0;
+    let rondaAtual = 1; // 1 to 10
+    let errosTotais = 0;
+    let isVerificando = false;
+    let isTrueExpected = true;
 
-        // Escolhe 10 palavras baralhadas para a ronda atual
-        let baralhadas = [...palavras].sort(() => Math.random() - 0.5);
-        palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
+    // Lógica das Dicas
+    let dicasUsadas = []; 
+
+    // DOM
+    const elStatus = document.getElementById('status-bar');
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elValTotal = document.getElementById('val-total');
+    const elProgressFill = document.getElementById('progress-fill');
+    
+    const elGameScreen = document.getElementById('ecra-jogo');
+    const elEndScreen = document.getElementById('ecra-fim');
+    const elImage = document.getElementById('game-image');
+    const elDisplayedWord = document.getElementById('displayed-word');
+    
+    const btnVerdadeiro = document.getElementById('btn-verdadeiro');
+    const btnFalso = document.getElementById('btn-falso');
+    
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        elStatus.style.display = 'none';
+        mostrarEcra('ecra-selecao');
+    }
+
+    function atualizarPlacarUI() {
+        elProgresso.textContent = rondaAtual > MAX_PALAVRAS ? MAX_PALAVRAS : rondaAtual;
+        elErros.textContent = errosTotais;
+        elValTotal.textContent = MAX_PALAVRAS;
+        let percent = ((rondaAtual - 1) / MAX_PALAVRAS) * 100;
+        elProgressFill.style.width = `${percent}%`;
+    }
+
+    function atualizarDicasUI() {
+        const btnDica = document.getElementById('btn-dica');
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        
+        if (!dicasUsadas[blocoAtual]) {
+            btnDica.classList.remove('esgotada');
+        } else {
+            btnDica.classList.add('esgotada');
+        }
+    }
+
+    /* =========================================
+       LÓGICA PRINCIPAL
+       ========================================= */
+    function iniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        rondaAtual = 1;
+        palavraAtualIndex = 0;
+        errosTotais = 0;
+        isVerificando = false;
+        dicasUsadas = [];
+        
+        // Misturar o banco
+        let embaralhadas = [...bancoPalavras].sort(() => Math.random() - 0.5);
+        
+        // Prevenir erro se a lista fosse menor
+        while (embaralhadas.length < MAX_PALAVRAS) {
+            embaralhadas = embaralhadas.concat([...bancoPalavras].sort(() => Math.random() - 0.5));
+        }
+        
+        palavrasDoJogo = embaralhadas.slice(0, MAX_PALAVRAS);
+        
+        elStatus.style.display = 'flex';
+        atualizarPlacarUI();
+        atualizarDicasUI();
+        mostrarEcra('ecra-jogo');
         
         carregarPalavra();
     }
 
     function carregarPalavra() {
         isVerificando = false;
+        removerDestaquesDica();
+        atualizarDicasUI();
+
         const palavraObj = palavrasDoJogo[palavraAtualIndex];
         
         elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
+        
         elImage.src = getImagePath(palavraObj.imagem);
+        elImage.onerror = () => { elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>${palavraObj.palavra}</text></svg>`; };
 
         // Sorteia se a palavra mostrada vai ser a Correta (Verdadeiro) ou Incorreta (Falso)
         isTrueExpected = Math.random() > 0.5;
 
         if (isTrueExpected) {
-            // Mostra a palavra certa
             elDisplayedWord.textContent = palavraObj.palavra;
         } else {
             // Mostra uma palavra errada aleatória (que não seja a da imagem)
-            let palavrasErradas = palavras.filter(p => p.palavra !== palavraObj.palavra);
+            let palavrasErradas = bancoPalavras.filter(p => p.palavra.toLowerCase() !== palavraObj.palavra.toLowerCase());
             let palavraSorteada = palavrasErradas[Math.floor(Math.random() * palavrasErradas.length)].palavra;
             elDisplayedWord.textContent = palavraSorteada;
         }
     }
 
-    function verificarResposta(alunoRespondeuVerdadeiro) {
+    function verificarResposta(alunoRespondeuVerdadeiro, btn) {
         if (isVerificando) return;
         isVerificando = true;
-
-        const botaoClicado = alunoRespondeuVerdadeiro ? btnVerdadeiro : btnFalso;
+        removerDestaquesDica();
 
         if (alunoRespondeuVerdadeiro === isTrueExpected) {
-            // ACERTOU
-            certas++; 
-            atualizarPlacar(); 
+            atualizarPlacarUI(); 
             tocarSom('acerto');
             
-            botaoClicado.classList.add('success-bounce');
+            btn.classList.add('success-bounce');
 
             setTimeout(() => {
-                botaoClicado.classList.remove('success-bounce');
-                palavraAtualIndex++;
-                if (palavraAtualIndex < MAX_PALAVRAS) carregarPalavra();
-                else finalizarJogo();
+                btn.classList.remove('success-bounce');
+                avancarRonda();
             }, 1000);
+            
         } else {
-            // ERROU
-            erradas++; 
-            atualizarPlacar(); 
+            errosTotais++;
+            atualizarPlacarUI();
             tocarSom('erro');
             
-            botaoClicado.classList.add('error-shake');
+            btn.classList.add('error-shake');
             
             setTimeout(() => {
-                botaoClicado.classList.remove('error-shake');
+                btn.classList.remove('error-shake');
                 isVerificando = false;
-            }, 600);
+            }, 500);
         }
     }
 
-    function atualizarPlacar() {
-        elValCertas.textContent = certas;
-        elValErradas.textContent = erradas;
+    /* --- DICA --- */
+    function usarDica() {
+        const btnDica = document.getElementById('btn-dica');
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual] || isVerificando) return;
+
+        // Se o esperado for Verdadeiro, acende o botão verde. Se for Falso, acende o botão vermelho.
+        const btnCorreto = isTrueExpected ? btnVerdadeiro : btnFalso;
+        btnCorreto.classList.add('dica-iluminada');
+
+        dicasUsadas[blocoAtual] = true;
+        tocarSom('swoosh');
+        atualizarDicasUI();
     }
 
-    function finalizarJogo() {
-        elProgressFill.style.width = `100%`;
-        setTimeout(() => {
-            elGameScreen.style.display = 'none';
-            statusBar.style.display = 'none';
-            elEndScreen.style.display = 'flex';
-            
-            document.getElementById('final-certas').textContent = certas;
-            document.getElementById('final-erradas').textContent = erradas;
+    function removerDestaquesDica() {
+        btnVerdadeiro.classList.remove('dica-iluminada');
+        btnFalso.classList.remove('dica-iluminada');
+    }
 
-            if (erradas === 0) {
-                document.getElementById('end-title-text').textContent = "PERFEITO! 🏆";
+    /* --- GESTÃO GERAL --- */
+    function avancarRonda() {
+        palavraAtualIndex++;
+        rondaAtual++;
+        
+        if (rondaAtual > MAX_PALAVRAS) {
+            elProgressFill.style.width = `100%`;
+            document.getElementById('final-erros').textContent = errosTotais;
+            
+            const titleText = document.getElementById('end-title-text');
+            if (errosTotais === 0) {
+                titleText.textContent = "PERFEITO! 🏆";
                 tocarSom('vitoria'); dispararConfetis();
-            } else if (erradas <= 3) {
-                document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+            } else if (errosTotais <= 3) {
+                titleText.textContent = "MUITO BEM! 🎉";
                 tocarSom('vitoria'); dispararConfetis();
             } else {
-                document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+                titleText.textContent = "BOM ESFORÇO! 💪";
                 tocarSom('acerto'); 
             }
-        }, 500);
+
+            elStatus.style.display = 'none';
+            mostrarEcra('ecra-fim');
+        } 
+        else {
+            atualizarPlacarUI();
+            carregarPalavra();
+        }
     }
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function tocarSom(tipo) {
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
         const agora = audioCtx.currentTime;
 
         if (tipo === 'acerto') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, agora);
-            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
-            gain.gain.setValueAtTime(0.1, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
         } 
         else if (tipo === 'erro') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(250, agora);
-            osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
-            gain.gain.setValueAtTime(0.15, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
             osc.start(agora); osc.stop(agora + 0.4);
         }
+        else if (tipo === 'swoosh') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
         else if (tipo === 'vitoria') {
-            const notas =[523.25, 659.25, 783.99, 1046.50];
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
             notas.forEach((freq, i) => {
-                const o = audioCtx.createOscillator();
-                const g = audioCtx.createGain();
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
                 o.connect(g); g.connect(audioCtx.destination);
-                o.type = 'sine';
-                o.frequency.value = freq;
-                g.gain.setValueAtTime(0.1, agora + i * 0.15);
-                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
-                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
             });
         }
     }
 
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
-    let confetis =[];
+    let confetis = [];
 
-    function redimensionarCanvas() {
-        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
-        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
     }
     window.addEventListener('resize', redimensionarCanvas);
 
     function dispararConfetis() {
-        redimensionarCanvas();
-        confetis = [];
-        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
-        
-        for (let i = 0; i < 100; i++) {
-            confetis.push({
-                x: Math.random() * canvasConfetti.width,
-                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
-                w: Math.random() * 10 + 5,
-                h: Math.random() * 10 + 5,
-                cor: cores[Math.floor(Math.random() * cores.length)],
-                velY: Math.random() * 3 + 2,
-                velX: Math.random() * 2 - 1,
-                rotacao: Math.random() * 360,
-                velRotacao: Math.random() * 5 - 2.5
-            });
+        redimensionarCanvas(); confetis = []; const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
         }
         animarConfetis();
     }
 
     function animarConfetis() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        let ativos = false;
-
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
         confetis.forEach(c => {
-            c.y += c.velY;
-            c.x += c.velX;
-            c.rotacao += c.velRotacao;
-            if (c.y < canvasConfetti.height) ativos = true;
-
-            ctxConfetti.save();
-            ctxConfetti.translate(c.x, c.y);
-            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
-            ctxConfetti.fillStyle = c.cor;
-            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
-            ctxConfetti.restore();
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
         });
-
         if (ativos) requestAnimationFrame(animarConfetis);
     }
 
-    window.onload = iniciarJogo;
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
 
 </script>
 </body>

@@ -2,246 +2,324 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Caixa das Adivinhas 🎁</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     
+    <script src="../dados.js"></script>
+    
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        
         /* =========================================
-           CSS DO TEMPLATE BASE (INTOCÁVEL)
+           CSS DO TEMPLATE BASE
            ========================================= */
         :root {
             --bg-body: #f0f4f8;
-            --azul-vibrante: #0091ff;
-            --cor-1ano: #0091ff;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
             --cor-1ano-dark: #0070c5;
-            --bg-header: #e3f2fd;
+            --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --cor-pt: #ff6b6b;
+            --sucesso: #219d53;
+            --sucesso-light: #2ed573;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
-        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
-        .hamburger:hover { background: #fff9c4; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-voltar:hover { transform: scale(1.05); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
         
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
-        
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
-        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; flex: 1; }
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
-        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
-        
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
-            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
-            .hamburger { grid-column: 1; justify-self: start; }
-            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
-            h1, .subtitulo { grid-column: 2; text-align: center; }
-            main { padding: 20px 15px; gap: 15px; }
-            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1; min-height: 450px;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; 
         }
 
-        .status-bar { width: 100%; max-width: 700px; margin-bottom: 0; display: none; }
-        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
-        .score-certas { color: #219d53; }
-        .score-erradas { color: #d0303f; }
-        .progress-bg { 
-    background-color: #e2e8f0; /* Um cinza mais suave */
-    border-radius: 20px; 
-    height: 35px; /* Um pouco mais grossa */
-    width: 100%; 
-    overflow: hidden; 
-    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
-    border: 2px solid #d4dbe3; /* Borda branca dá um toque premium */
-}
-
-.progress-fill { 
-    height: 100%; 
-    width: 0%; 
-    border-radius: 20px; 
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    
-    /* Magia das riscas animadas */
-    background-color: var(--cor-1ano);
-    background-image: linear-gradient(
-        45deg, 
-        rgba(255, 255, 255, 0.2) 25%, 
-        transparent 25%, 
-        transparent 50%, 
-        rgba(255, 255, 255, 0.2) 50%, 
-        rgba(255, 255, 255, 0.2) 75%, 
-        transparent 75%, 
-        transparent
-    );
-    background-size: 30px 30px;
-    animation: moverRiscas 2s linear infinite;
-}
-
-/* Animação para fazer as riscas deslizarem */
-@keyframes moverRiscas {
-    0% { background-position: 0 0; }
-    100% { background-position: 30px 0; }
-}
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
         /* =========================================
-           CSS ESPECÍFICO: CAIXA DAS ADIVINHAS
+           ECRÃ INICIAL E TUTORIAL
            ========================================= */
-        #game-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; flex: 1; gap: 30px;}
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; min-height: 0;}
+        .titulo-menu { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
 
-        /* O Quadro da Adivinha */
-        .adivinha-box {
-            background-color: #fff9c4;
-            border: 4px dashed #ffda5a;
-            border-radius: 20px;
-            padding: 30px 40px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            position: relative;
-            animation: fadeInDown 0.5s ease;
+        .animacao-tutorial {
+            position: relative; width: 100%; max-width: 450px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px 15px;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); gap: 25px; overflow: hidden; height: 320px;
         }
 
-        .adivinha-icone {
-            font-size: 3rem;
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+        .tut-adivinha {
+            background: #fff9c4; border: 3px dashed #ffda5a; border-radius: 15px; padding: 15px 20px;
+            font-size: 1.1rem; font-weight: 700; color: var(--text-main); position: relative;
+        }
+        .tut-adivinha::before { content: '🤔'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .tut-caixas { display: flex; gap: 15px; justify-content: center; }
+        .tut-caixa {
+            width: 100px; height: 100px; background: white; border: 3px solid #ced6e0; border-radius: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; color: var(--azul-escuro); box-shadow: 0 4px 0 #ced6e0;
+            position: relative;
+        }
+        .tut-caixa span { margin-top: 5px; font-size: 0.9rem;}
+
+        .tut-caixa.anim { animation: openBoxTut 4s infinite ease-in-out; }
+        .tut-caixa.anim::after { content: '👆'; font-size: 30px; position: absolute; right: -15px; bottom: -25px; animation: handClick 4s infinite ease-in-out;}
+        .tut-img-revelada { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 3.5rem; /* Aumenta o tamanho do emoji do gato */
+            color: black !important; /* Impede que o gato fique transparente! */
+            opacity: 0; 
+        }
+        .tut-caixa.anim .tut-img-revelada { animation: revealImgTut 4s infinite ease-in-out; }
+
+        @keyframes openBoxTut {
+            /* 1. Caixa quietinha e cinzenta até a mão chegar (25%) */
+            0%, 25% { 
+                border-color: #ced6e0; 
+                background: white; 
+                transform: translateY(0); 
+                box-shadow: 0 4px 0 #ced6e0; 
+                color: var(--azul-escuro); 
+            }
+            /* 2. Sem tremer! Abre, fica verde e esconde o texto aos 30% e mantém-se assim até aos 95% */
+            30%, 95% { 
+                border-color: #2ed573; 
+                background: #eafff0; 
+                transform: translateY(4px); 
+                box-shadow: 0 0px 0 transparent; 
+                color: transparent; 
+                text-shadow: none; 
+            }
+            /* 3. Reseta rapidamente no finalzinho para o ciclo recomeçar limpo */
+            98%, 100% {
+                border-color: #ced6e0; 
+                background: white; 
+                transform: translateY(0); 
+                box-shadow: 0 4px 0 #ced6e0; 
+                color: var(--azul-escuro); 
+            }
+        }
+        
+        @keyframes revealImgTut {
+            /* 1. O gato está escondido até aos 25% */
+            0%, 25% { 
+                opacity: 0; 
+                transform: scale(0); 
+            }
+            /* 2. O gato salta cá para fora e fica visível até aos 95% */
+            30%, 95% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            /* 3. Desaparece num piscar de olhos mesmo antes de recomeçar */
+            98%, 100% { 
+                opacity: 0; 
+                transform: scale(0); 
+            }
+        }
+        @keyframes handClick {
+            0%, 20% { transform: translateY(20px); opacity: 0; }
+            25%, 60% { transform: translateY(0); opacity: 1; }
+            65%, 100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (RIGOROSA)
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            position: relative;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        @media (hover: hover) { .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); } }
+        
+        .btn-dica { position: relative; background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica:disabled, .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); cursor: not-allowed;}
+
+        .hint-badge {
+            position: absolute; top: -6px; right: -6px; background: #ff4757; color: white; 
+            font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .badge-ronda { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid var(--sucesso); color: var(--sucesso); }
+        .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid #ff4757; color: #ff4757; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 850px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.85rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 20px; margin: 5px 0 0 0;}
+        }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE (Caixa das Adivinhas)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 25px 15px; overflow-y: auto; gap: 30px;
+            position: relative; color: #94a3b8; font-weight: bold; overflow-x: hidden;
+        }
+
+        /* O Quadro da Adivinha */
+        .adivinha-box {
+            background-color: #fff9c4; border: 4px dashed #ffda5a; border-radius: 20px;
+            padding: 30px 40px; width: 90%; max-width: 600px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            position: relative; animation: fadeInDown 0.5s ease;
+        }
+
+        .adivinha-icone {
+            font-size: 3rem; position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            background: white; border-radius: 50%; width: 60px; height: 60px; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .adivinha-texto {
-            font-size: clamp(1.4rem, 4vw, 2rem);
-            font-weight: 700;
-            color: var(--text-main);
-            line-height: 1.4;
-            margin: 10px 0 0 0;
+            font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; color: var(--text-main);
+            line-height: 1.4; margin: 10px 0 0 0; transition: opacity 0.3s;
         }
 
         /* As Caixas Mágicas (Opções) */
         .caixas-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 700px;
+            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 700px; margin-top: 10px;
         }
 
         .btn-caixa {
-            background: white;
-            border: 4px solid #ced6e0;
-            border-radius: 20px;
-            width: clamp(120px, 25vw, 160px);
-            height: clamp(120px, 25vw, 160px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #ced6e0;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            user-select: none;
+            background: white; border: 4px solid #ced6e0; border-radius: 20px;
+            width: clamp(120px, 25vw, 190px); height: clamp(120px, 25vw, 160px); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 8px 0 #ced6e0;
+            transition: all 0.2s ease; position: relative; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-caixa:hover {
-            border-color: var(--azul-vibrante);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 0 var(--azul-vibrante);
-        }
+        @media (hover: hover) { .btn-caixa:hover { border-color: var(--azul-vibrante); transform: translateY(-4px); box-shadow: 0 12px 0 var(--azul-vibrante); } }
 
-        .btn-caixa:active {
-            transform: translateY(8px);
-            box-shadow: 0 0px 0 transparent;
-        }
+        .btn-caixa:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent !important; }
 
         .caixa-icone { font-size: 3rem; transition: 0.3s; }
-        .caixa-texto { font-size: 1.4rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase; transition: 0.3s; }
+        .caixa-texto { font-size: 1.3rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase; transition: 0.3s; }
 
         /* Estado quando a caixa abre e revela a imagem */
         .btn-caixa.opened {
-            border-color: #2ed573;
-            background-color: #eafff0;
-            box-shadow: 0 6px 0 #219d53;
-            transform: translateY(2px);
-            cursor: default;
+            border-color: #2ed573 !important; background-color: #eafff0 !important; box-shadow: 0 6px 0 #219d53 !important;
+            transform: translateY(2px); cursor: default; animation: none;
         }
 
         .btn-caixa.opened .caixa-icone, 
-        .btn-caixa.opened .caixa-texto {
-            opacity: 0;
-            position: absolute;
-        }
+        .btn-caixa.opened .caixa-texto { opacity: 0; position: absolute; pointer-events: none;}
 
         .imagem-revelada {
-            width: 85%;
-            height: 85%;
-            object-fit: contain;
-            opacity: 0;
-            transform: scale(0);
-            position: absolute;
+            width: 85%; height: 85%; object-fit: contain; opacity: 0; transform: scale(0); position: absolute;
         }
 
-        .btn-caixa.opened .imagem-revelada {
-            animation: popImage 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        .btn-caixa.opened .imagem-revelada { animation: popImage 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .error-shake { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; box-shadow: 0 6px 0 #d0303f !important; transform: none !important;}
+
+        /* Animação da Dica Suave */
+        .dica-iluminada { animation: suaveDica 1.5s infinite alternate ease-in-out !important; border-color: #fbc531 !important; background-color: #fff9c4 !important; }
+        @keyframes suaveDica {
+            from { box-shadow: 0 0 5px rgba(251, 197, 49, 0.5), 0 8px 0 #fbc531; }
+            to { box-shadow: 0 0 25px rgba(251, 197, 49, 1), 0 8px 0 #fbc531; filter: brightness(1.05); }
         }
 
         @media (max-width: 768px) {
             .adivinha-box { padding: 25px 20px; }
             .caixas-container { gap: 12px; }
-            .btn-caixa { border-width: 3px; box-shadow: 0 6px 0 #ced6e0; gap: 5px;}
-            .btn-caixa:hover { transform: none; box-shadow: 0 6px 0 #ced6e0; border-color: #ced6e0; }
+            .btn-caixa { border-width: 3px; box-shadow: 0 6px 0 #ced6e0; gap: 5px; width: clamp(100px, 40vw, 140px); height: clamp(100px, 40vw, 140px);}
             .caixa-icone { font-size: 2.2rem; }
             .caixa-texto { font-size: 1.1rem; }
         }
 
-        /* Ecrã de Fim */
-        #end-screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; flex: 1; animation: fadeIn 0.5s ease; }
-        .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
-        .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; line-height: 1.6; }
-        .btn-reiniciar { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); }
-
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 50% { transform: translateX(8px) rotate(3deg); } 75% { transform: translateX(-8px) rotate(-3deg); } }
-        .error-shake { animation: shake 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; box-shadow: 0 6px 0 #ff4757 !important;}
+        /* =========================================
+           ECRÃ FIM E BOTÕES DE AÇÃO
+           ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
         
+        .btn-acao { 
+            background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; 
+            font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; 
+            box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; 
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; 
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent !important; }
+
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes popImage { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
         
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
-    body { scrollbar-gutter: stable; }
-</style>
+        body { scrollbar-gutter: stable; }
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+    </style>
 </head>
 <body>
 
@@ -269,50 +347,79 @@
         </div>
         
         <h1>Caixa das Adivinhas 🎁</h1>
-        <div class="subtitulo">Lê com atenção e abre a caixa certa!</div>
+        <div class="subtitulo">Lê a adivinha com atenção e abre a caixa certa!</div>
     </div>
 </header>
 
 <main>
-    <div id="status-bar-container" class="status-bar">
-        <div class="score-container">
-            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
-            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
-        </div>
-        <div class="progress-bg">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
-    </div>
-
     <div class="cartao-jogo-container">
         
-        <!-- ECRÃ DE JOGO -->
-        <div id="game-screen">
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- ECRÃ 1: MENU INICIAL / TUTORIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-menu">Como Jogar:</h2>
             
-            <!-- O Quadro da Adivinha -->
-            <div class="adivinha-box">
-                <div class="adivinha-icone">🤔</div>
-                <p id="texto-adivinha" class="adivinha-texto">Adivinha mágica vai aparecer aqui...</p>
+            <div class="animacao-tutorial">
+                <div class="tut-adivinha">"Faço miau e bebo leite..."</div>
+                <div class="tut-caixas">
+                    <div class="tut-caixa">🎁<span>CÃO</span></div>
+                    <div class="tut-caixa anim">
+                        <div class="tut-img-revelada">🐱</div>
+                        🎁<span>GATO</span>
+                    </div>
+                </div>
             </div>
-            
-            <!-- As Caixas -->
-            <div class="caixas-container" id="caixas-container">
-                <!-- Botões injetados via Javascript -->
-            </div>
-            
+
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">JOGAR AGORA ▶️</button>
         </div>
 
-        <!-- ECRÃ FINAL -->
-        <div id="end-screen">
-            <h2 class="end-title" id="end-title-text">Fim do Jogo! 🎉</h2>
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO RIGOROSA -->
+            <div class="status-bar-jogo" id="status-bar" style="display: none;">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()" title="Dica">
+                    💡 Dica<span id="hint-count" class="hint-badge">2</span>
+                </button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <!-- O Quadro da Adivinha -->
+                <div class="adivinha-box">
+                    <div class="adivinha-icone">🤔</div>
+                    <p id="texto-adivinha" class="adivinha-texto">Adivinha mágica vai aparecer aqui...</p>
+                </div>
+                
+                <!-- As Caixas -->
+                <div class="caixas-container" id="caixas-container">
+                    <!-- Botões injetados via Javascript -->
+                </div>
+                
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
+            <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Fim do Jogo!</h2>
             <div class="end-stats">
-                Acertaste <strong id="final-certas" style="color:#2ed573">0</strong> adivinhas!<br>
+                Descobriste <strong id="final-certas" style="color:#2ed573">0</strong> adivinhas!<br>
                 Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> enganos.
             </div>
-            <button class="btn-reiniciar" onclick="iniciarJogo()">JOGAR NOVAMENTE 🔄</button>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 500px; margin: 0 auto;">
+                <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0; flex: 1; min-width: 200px;">JOGAR DE NOVO 🔄</button>
+                <button class="btn-acao" onclick="voltarAoMenu()" style="margin: 0; flex: 1; min-width: 200px; background-color: #ced6e0; color: var(--text-main); box-shadow: 0 6px 0 #a4b0be;">VOLTAR AO MENU 🏠</button>
+            </div>
         </div>
 
-        <canvas id="confetti-canvas"></canvas>
     </div>
 </main>
 
@@ -320,26 +427,20 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<script src="dados.js"></script>
-
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
-
-    function toggleMenu() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const hamburger = document.getElementById('hamburgerBtn');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        hamburger.classList.toggle('open');
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
     }
 
     // ==========================================
-    // AS 50 ADIVINHAS (Ligadas ao dados.js)
+    // AS 50 ADIVINHAS
     // ==========================================
-    const baseAdivinhas =[
-        { id: "pato", texto: "Tenho penas, nado no lago e faço <i>quá-quá</i>. Quem sou eu?" },
-        { id: "gato", texto: "Tenho bigodes longos, adoro dormir ao sol e faço <i>miau</i>. Quem sou eu?" },
+    const baseAdivinhas = [
+        { id: "pato", texto: "Tenho penas, nado no lago e faço quá-quá. Quem sou eu?" },
+        { id: "gato", texto: "Tenho bigodes longos, adoro dormir ao sol e faço miau. Quem sou eu?" },
         { id: "bola", texto: "Sou redonda, salto muito e as crianças adoram chutar-me. O que sou?" },
         { id: "vaca", texto: "Sou grande, como erva no prado e dou-te leite fresquinho. Quem sou eu?" },
         { id: "rato", texto: "Sou pequenino, gosto muito de queijo e fujo do gato. Quem sou eu?" },
@@ -363,7 +464,7 @@
         { id: "casaco", texto: "Tens de me vestir quando está muito frio lá fora para te aquecer. O que sou?" },
         { id: "tesoura", texto: "Tenho duas lâminas afiadas e sirvo para cortar papel na escola. O que sou?" },
         { id: "palhaço", texto: "Pinto a cara com muitas cores, uso um nariz vermelho e faço-te rir. Quem sou eu?" },
-        { id: "ovelha", texto: "Tenho lã muito fofinha e quentinha, e o meu som faz <i>mééé</i>. Quem sou eu?" },
+        { id: "ovelha", texto: "Tenho lã muito fofinha e quentinha, e o meu som faz mééé. Quem sou eu?" },
         { id: "mala", texto: "Tenho muito espaço para a tua roupa quando vais viajar. O que sou?" },
         { id: "macaco", texto: "Sou muito brincalhão, tenho um rabo comprido e adoro descascar bananas. Quem sou eu?" },
         { id: "dedo", texto: "Tens cinco em cada mão e usas-me para apontar ou agarrar as coisas. O que sou?" },
@@ -390,96 +491,168 @@
         { id: "uva", texto: "Cresço num cacho grande, posso ser verde ou roxa e faço um sumo muito bom. O que sou?" }
     ];
 
-    let adivinhasDoJogo =[];
+    /* =========================================
+       DADOS DE FALLBACK (Se ../dados.js falhar)
+       ========================================= */
+    let bancoPalavras = [];
+    if (typeof palavras !== 'undefined' && palavras.length > 0) {
+        bancoPalavras = palavras;
+    } else {
+        bancoPalavras = [
+            { palavra: "gato", imagem: "img/gato.png" },
+            { palavra: "cão", imagem: "img/cao.png" },
+            { palavra: "bolo", imagem: "img/bolo.png" },
+            { palavra: "fada", imagem: "img/fada.png" },
+            { palavra: "avião", imagem: "img/aviao.png" },
+            { palavra: "girafa", imagem: "img/girafa.png" },
+            { palavra: "elefante", imagem: "img/elefante.png" },
+            { palavra: "banana", imagem: "img/banana.png" },
+            { palavra: "macaco", imagem: "img/macaco.png" },
+            { palavra: "uva", imagem: "img/uva.png" }
+        ];
+    }
+
+    function getImagePath(imgPath) {
+        if (!imgPath) return '';
+        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
+        return '../' + imgPath;
+    }
+
+    /* =========================================
+       ESTADOS E VARIÁVEIS
+       ========================================= */
+    const MAX_PALAVRAS = 10;
+    let adivinhasDoJogo = [];
     let adivinhaAtualIndex = 0;
+    let rondaAtual = 1;
     let certas = 0;
     let erradas = 0;
     let isVerificando = false;
 
-    // DOM Elements
-    const elGameScreen = document.getElementById('game-screen');
-    const elEndScreen = document.getElementById('end-screen');
-    const statusBar = document.getElementById('status-bar-container');
-    const elValCertas = document.getElementById('val-certas');
-    const elValErradas = document.getElementById('val-erradas');
+    // Lógica das Dicas
+    let dicasUsadas = []; 
+
+    // DOM
+    const elStatus = document.getElementById('status-bar');
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elValTotal = document.getElementById('val-total');
     const elProgressFill = document.getElementById('progress-fill');
+    
+    const elGameScreen = document.getElementById('ecra-jogo');
+    const elEndScreen = document.getElementById('ecra-fim');
     
     const textoAdivinha = document.getElementById('texto-adivinha');
     const caixasContainer = document.getElementById('caixas-container');
-
-    // ==========================================
-    // FUNÇÕES AUXILIARES
-    // ==========================================
-    function getImagePath(imgPath) {
-        if (!imgPath) return '';
-        return imgPath.replace('img/', '../img/'); // Corrige a rota para o template base
+    const btnDica = document.getElementById('btn-dica');
+    const elHintCount = document.getElementById('hint-count');
+    
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
     }
 
-    // ==========================================
-    // INICIALIZAÇÃO
-    // ==========================================
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        elStatus.style.display = 'none';
+        mostrarEcra('ecra-selecao');
+    }
+
+    function atualizarPlacarUI() {
+        elProgresso.textContent = rondaAtual > MAX_PALAVRAS ? MAX_PALAVRAS : rondaAtual;
+        elErros.textContent = erradas;
+        elValTotal.textContent = adivinhasDoJogo.length;
+        let percent = ((rondaAtual - 1) / adivinhasDoJogo.length) * 100;
+        elProgressFill.style.width = `${percent}%`;
+    }
+
+    function atualizarDicasUI() {
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        let pistasRestantes = 2 - dicasUsadas.filter(Boolean).length;
+        
+        elHintCount.textContent = pistasRestantes;
+
+        if (pistasRestantes <= 0 || dicasUsadas[blocoAtual]) {
+            btnDica.classList.add('esgotada');
+        } else {
+            btnDica.classList.remove('esgotada');
+        }
+    }
+
+    /* =========================================
+       LÓGICA PRINCIPAL
+       ========================================= */
     function iniciarJogo() {
-        if (typeof palavras === 'undefined' || palavras.length === 0) {
-            console.error("Ficheiro dados.js não carregado corretamente.");
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        rondaAtual = 1;
+        adivinhaAtualIndex = 0;
+        certas = 0;
+        erradas = 0;
+        isVerificando = false;
+        dicasUsadas = [];
+
+        // Proteção essencial: Filtrar adivinhas para garantir que existem no bancoPalavras
+        const adivinhasValidas = baseAdivinhas.filter(adivinha => 
+            bancoPalavras.some(p => p.palavra.toLowerCase() === adivinha.id.toLowerCase())
+        );
+
+        if (adivinhasValidas.length === 0) {
+            alert("Atenção: Nenhuma adivinha corresponde às palavras do ficheiro dados.js!");
             return;
         }
 
-        certas = 0; 
-        erradas = 0; 
-        adivinhaAtualIndex = 0; 
-        isVerificando = false;
+        // Escolher até 10 adivinhas válidas
+        adivinhasDoJogo = [...adivinhasValidas].sort(() => Math.random() - 0.5).slice(0, Math.min(MAX_PALAVRAS, adivinhasValidas.length));
         
-        atualizarPlacar();
-        elProgressFill.style.width = "0%";
+        btnDica.style.display = 'flex'; 
+        elStatus.style.display = 'flex';
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
         
-        elEndScreen.style.display = 'none';
-        elGameScreen.style.display = 'flex';
-        statusBar.style.display = 'block'; 
-        
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-
-        // Baralhar as 10 adivinhas
-        adivinhasDoJogo = [...baseAdivinhas].sort(() => Math.random() - 0.5).slice(0, 10);
-
         carregarAdivinha();
     }
 
-    // ==========================================
-    // LÓGICA DO JOGO
-    // ==========================================
     function carregarAdivinha() {
         isVerificando = false;
+        removerDestaquesDica();
+        atualizarDicasUI();
+        atualizarPlacarUI(); 
+
         const adivinhaAtual = adivinhasDoJogo[adivinhaAtualIndex];
         
         elProgressFill.style.width = `${(adivinhaAtualIndex / adivinhasDoJogo.length) * 100}%`;
         
-        // Escreve a adivinha no quadro com uma pequena animação de reset
+        // Escreve a adivinha no quadro suavemente
         textoAdivinha.style.opacity = 0;
         setTimeout(() => {
             textoAdivinha.innerHTML = `"${adivinhaAtual.texto}"`;
             textoAdivinha.style.opacity = 1;
         }, 200);
 
-        // Encontrar o objeto correto no dados.js
-        const objCorreto = palavras.find(p => p.palavra.toLowerCase() === adivinhaAtual.id.toLowerCase());
+        // Obter objeto correto
+        const objCorreto = bancoPalavras.find(p => p.palavra.toLowerCase() === adivinhaAtual.id.toLowerCase());
         
-        // Encontrar 2 distratores aleatórios
-        let outrasPalavras = palavras.filter(p => p.palavra.toLowerCase() !== adivinhaAtual.id.toLowerCase());
+        // Obter distratores
+        let outrasPalavras = bancoPalavras.filter(p => p.palavra.toLowerCase() !== adivinhaAtual.id.toLowerCase());
         outrasPalavras = outrasPalavras.sort(() => Math.random() - 0.5);
-        let objetosErrados = outrasPalavras.slice(0, 2);
+        let objetosErrados = outrasPalavras.slice(0, 2); // 2 errados
         
-        // Juntar e baralhar as 3 opções
+        // Misturar 3 opções
         let todasOpcoes = [objCorreto, ...objetosErrados].sort(() => Math.random() - 0.5);
 
-        // Renderizar as Caixas
+        // Renderizar
         caixasContainer.innerHTML = '';
         todasOpcoes.forEach(obj => {
-            if (!obj) return; // Proteção extra
+            if (!obj) return;
 
-            const btn = document.createElement('button');
+            const btn = document.createElement('div'); // Usamos div para evitar bugs de focus do botão
             btn.className = 'btn-caixa';
             
-            // O que está visível inicialmente (Icone da caixa e Nome da palavra)
+            // Marca a correta internamente
+            if (obj.palavra === objCorreto.palavra) {
+                btn.dataset.correct = "true";
+            }
+            
             const icon = document.createElement('div');
             icon.className = 'caixa-icone';
             icon.textContent = '🎁';
@@ -488,11 +661,10 @@
             texto.className = 'caixa-texto';
             texto.textContent = obj.palavra;
 
-            // A imagem que está escondida dentro da caixa
             const imgEscondida = document.createElement('img');
             imgEscondida.className = 'imagem-revelada';
             imgEscondida.src = getImagePath(obj.imagem);
-            imgEscondida.alt = obj.palavra;
+            imgEscondida.onerror = () => { imgEscondida.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>IMG</text></svg>`; };
 
             btn.appendChild(icon);
             btn.appendChild(texto);
@@ -506,32 +678,25 @@
     function verificarResposta(palavraClicada, palavraCerta, btnElement) {
         if (isVerificando) return;
         isVerificando = true;
+        removerDestaquesDica();
 
         if (palavraClicada === palavraCerta) {
             certas++; 
-            atualizarPlacar(); 
-            tocarSom('magia'); // Som especial para a caixa abrir
+            atualizarPlacarUI(); 
+            tocarSom('magia'); 
             
-            // MAGIA: A Caixa Abre!
             btnElement.classList.add('opened');
             
-            // Bloqueia outros botões
-            const todosBotoes = document.querySelectorAll('.btn-caixa');
-            todosBotoes.forEach(b => b.style.pointerEvents = 'none');
+            Array.from(caixasContainer.children).forEach(b => b.style.pointerEvents = 'none');
 
-            // Pausa um bocadinho mais longa (2s) para a criança sorrir ao ver a imagem que descobriu
+            // Pausa de 2s para apreciar a imagem
             setTimeout(() => {
-                adivinhaAtualIndex++;
-                if (adivinhaAtualIndex < adivinhasDoJogo.length) {
-                    carregarAdivinha();
-                } else {
-                    finalizarJogo();
-                }
+                avancarRonda();
             }, 2000); 
 
         } else {
             erradas++; 
-            atualizarPlacar(); 
+            atualizarPlacarUI(); 
             tocarSom('erro');
             
             btnElement.classList.add('error-shake');
@@ -543,142 +708,135 @@
         }
     }
 
-    function atualizarPlacar() {
-        elValCertas.textContent = certas;
-        elValErradas.textContent = erradas;
+    /* --- DICA --- */
+    function usarDica() {
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual] || isVerificando) return;
+
+        const btnCorreto = document.querySelector('.btn-caixa[data-correct="true"]');
+        if (btnCorreto) {
+            btnCorreto.classList.add('dica-iluminada');
+        }
+
+        dicasUsadas[blocoAtual] = true;
+        tocarSom('swoosh');
+        atualizarDicasUI();
     }
 
-    function finalizarJogo() {
-        elProgressFill.style.width = `100%`;
+    function removerDestaquesDica() {
+        document.querySelectorAll('.dica-iluminada').forEach(el => el.classList.remove('dica-iluminada'));
+    }
+
+    /* --- GESTÃO GERAL --- */
+    function avancarRonda() {
+        adivinhaAtualIndex++;
+        rondaAtual++;
         
-        setTimeout(() => {
-            elGameScreen.style.display = 'none';
-            statusBar.style.display = 'none';
-            elEndScreen.style.display = 'flex';
-            
+        if (adivinhaAtualIndex >= adivinhasDoJogo.length) {
+            elProgressFill.style.width = `100%`;
             document.getElementById('final-certas').textContent = certas;
             document.getElementById('final-erradas').textContent = erradas;
-
+            
+            const titleText = document.getElementById('end-title-text');
             if (erradas === 0) {
-                document.getElementById('end-title-text').textContent = "GRANDE DETETIVE! 🏆";
+                titleText.textContent = "GRANDE DETETIVE! 🏆";
                 tocarSom('vitoria'); dispararConfetis();
             } else if (erradas <= 3) {
-                document.getElementById('end-title-text').textContent = "MUITO BEM! 🎉";
+                titleText.textContent = "MUITO BEM! 🎉";
                 tocarSom('vitoria'); dispararConfetis();
             } else {
-                document.getElementById('end-title-text').textContent = "BOM ESFORÇO! 💪";
+                titleText.textContent = "BOM ESFORÇO! 💪";
                 tocarSom('acerto'); 
             }
-        }, 500);
+
+            elStatus.style.display = 'none';
+            mostrarEcra('ecra-fim');
+        } 
+        else {
+            carregarAdivinha();
+        }
     }
 
-    // ==========================================
-    // EFEITOS DE SOM E CONFETIS
-    // ==========================================
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function tocarSom(tipo) {
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
         const agora = audioCtx.currentTime;
 
         if (tipo === 'magia') {
-            // Som mágico crescente (caixa a abrir)
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, agora);
-            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.3);
-            gain.gain.setValueAtTime(0, agora);
-            gain.gain.linearRampToValueAtTime(0.1, agora + 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.5);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.3);
+            gain.gain.setValueAtTime(0, agora); gain.gain.linearRampToValueAtTime(0.1, agora + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.5);
             osc.start(agora); osc.stop(agora + 0.5);
         }
         else if (tipo === 'acerto') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, agora);
-            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
-            gain.gain.setValueAtTime(0.1, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
         } 
         else if (tipo === 'erro') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(250, agora);
-            osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
-            gain.gain.setValueAtTime(0.15, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
             osc.start(agora); osc.stop(agora + 0.4);
         }
+        else if (tipo === 'swoosh') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
         else if (tipo === 'vitoria') {
-            const notas =[523.25, 659.25, 783.99, 1046.50];
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
             notas.forEach((freq, i) => {
-                const o = audioCtx.createOscillator();
-                const g = audioCtx.createGain();
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
                 o.connect(g); g.connect(audioCtx.destination);
-                o.type = 'sine';
-                o.frequency.value = freq;
-                g.gain.setValueAtTime(0.1, agora + i * 0.15);
-                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
-                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
             });
         }
     }
 
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
-    let confetis =[];
+    let confetis = [];
 
-    function redimensionarCanvas() {
-        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth;
-        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight;
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
     }
     window.addEventListener('resize', redimensionarCanvas);
 
     function dispararConfetis() {
-        redimensionarCanvas();
-        confetis =[];
-        const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
-        
-        for (let i = 0; i < 100; i++) {
-            confetis.push({
-                x: Math.random() * canvasConfetti.width,
-                y: Math.random() * canvasConfetti.height - canvasConfetti.height,
-                w: Math.random() * 10 + 5,
-                h: Math.random() * 10 + 5,
-                cor: cores[Math.floor(Math.random() * cores.length)],
-                velY: Math.random() * 3 + 2,
-                velX: Math.random() * 2 - 1,
-                rotacao: Math.random() * 360,
-                velRotacao: Math.random() * 5 - 2.5
-            });
+        redimensionarCanvas(); confetis = []; const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
         }
         animarConfetis();
     }
 
     function animarConfetis() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        let ativos = false;
-
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
         confetis.forEach(c => {
-            c.y += c.velY;
-            c.x += c.velX;
-            c.rotacao += c.velRotacao;
-            if (c.y < canvasConfetti.height) ativos = true;
-
-            ctxConfetti.save();
-            ctxConfetti.translate(c.x, c.y);
-            ctxConfetti.rotate(c.rotacao * Math.PI / 180);
-            ctxConfetti.fillStyle = c.cor;
-            ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
-            ctxConfetti.restore();
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
         });
-
         if (ativos) requestAnimationFrame(animarConfetis);
     }
 
-    window.onload = iniciarJogo;
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
 
 </script>
 </body>

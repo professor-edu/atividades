@@ -2,15 +2,27 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Comboio das Letras 🚂</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Script para o Arrastar funcionar na perfeição em ecrãs táteis -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    
+    <!-- Importação do ficheiro de dados externo -->
     <script src="../dados.js"></script>
-
+    
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        /* =========================================
+           CSS DO TEMPLATE BASE (1º ANO)
+           ========================================= */
         :root {
             --bg-body: #f0f4f8;
             --azul-vibrante: #0091ff; 
@@ -19,155 +31,278 @@
             --bg-header: #e3f2fd;    
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
-            --sucesso: #48bb78;
+            --cor-pt: #ff6b6b;
+            --sucesso: #219d53;
+            --sucesso-light: #2ed573;
         }
 
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            text-align: center; 
-            background-color: var(--bg-body); 
-            margin: 0; 
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; 
-            overflow-x: hidden;
-        }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
 
-        /* HEADER DO TEMPLATE */
-        header {
-            background-color: var(--bg-header);
-            padding: 25px 20px;
-            border-bottom: 1px solid var(--azul-vibrante);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative;
-            flex-shrink: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .nav-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-        }
-
-        .hamburger {
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.4);
-            border: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.4s ease;
-        }
-        .hamburger:hover { background: #fff9c4; }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-        .btn-voltar {
-            background: var(--cor-1ano);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            text-decoration: none;
-            font-size: 0.9rem;
-            box-shadow: 0 3px 0 var(--cor-1ano-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-voltar:hover { transform: scale(1.05); }
-
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
 
-        /* SIDEBAR DO TEMPLATE */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
         .sidebar.active { left: 0; }
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
-
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        /* JOGO: COMBOIO DAS LETRAS */
-        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 30px 20px; }
-        .cartao-jogo-container {
-            background: white; width: 100%; max-width: 800px; min-height: 450px;
-            padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-            border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center;
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1; min-height: 450px;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; 
         }
 
-        .img-pergunta { max-width: 200px; height: 160px; object-fit: contain; margin-bottom: 20px; }
-
-        .comboio-container { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
-
-        .carruagem {
-            width: 65px; height: 65px; border: 3px dashed #cbd5e0; border-radius: 12px;
-            background: #f8fafc; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 700; color: var(--azul-escuro); position: relative;
-        }
-        .carruagem::after { content: "● ●"; position: absolute; bottom: -12px; font-size: 0.8rem; color: #4a5568; }
-        .carruagem.correct { background: #c6f6d5; border: 3px solid var(--sucesso); }
-
-        .letras-espalhadas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .letra-peca {
-            width: 55px; height: 55px; background: #fff9c4; border: 2px solid var(--azul-vibrante);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; font-weight: 700; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            user-select: none; touch-action: none;
-        }
-       .letra-peca:active {
-    cursor: grabbing;
-    background: var(--azul-vibrante); /* Muda de cor ao clicar */
-    color: white;
-    transform: scale(1.1); /* Aumenta um pouco de tamanho */
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-}
-
-        #feedback-msg { min-height: 1.6em; margin-top: 25px; font-weight: 700; font-size: 1.4rem; }
-
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
 
-        @media (max-width: 768px) {
-            header { padding: 15px 10px; }
-            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
-            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
-            .hamburger { grid-column: 1; justify-self: start; }
-            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
-            h1, .subtitulo { grid-column: 2; text-align: center; }
-            main { padding: 20px 15px; gap: 15px; }
-            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
-            .game-image { height: 160px !important; margin-bottom: 25px !important; }
+        /* =========================================
+           MENU INICIAL E ECRÃS
+           ========================================= */
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; min-height: 0; }
+        .titulo-menu { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
         }
-    body { scrollbar-gutter: stable; }
-</style>
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 15px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative; }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica:disabled, .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); cursor: not-allowed;}
+
+        .hint-badge {
+            position: absolute; top: -6px; right: -6px; background: #ff4757; color: white; 
+            font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .badge-ronda { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid var(--sucesso); color: var(--sucesso); }
+        .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid #ff4757; color: #ff4757; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 850px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.85rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 20px; margin: 5px 0 0 0;}
+        }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 20px 15px; overflow-y: auto; gap: 15px;
+            position: relative; color: #94a3b8; font-weight: bold;
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO DO JOGO: COMBOIO DAS LETRAS
+           ========================================= */
+        
+        /* Animação Inicial Tutorial */
+        .animacao-tutorial {
+            position: relative; width: 100%; max-width: 400px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); gap: 15px;
+        }
+
+        .tut-img-alvo { font-size: 55px; background: white; padding: 5px 15px; border-radius: 15px; border: 3px solid #e3f2fd; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+
+        .tut-comboio { display: flex; gap: 6px; align-items: center; margin-bottom: 10px;}
+        .tut-locomotiva { font-size: 2.5rem; line-height: 1; transform: scaleX(-1); position: relative; margin-left: 2px;}
+        .tut-locomotiva::after { content: ''; position: absolute; right: -6px; top: 60%; width: 8px; height: 5px; background: #ced6e0; }
+
+        .tut-carruagem { width: 45px; height: 45px; border: 3px dashed #ced6e0; border-radius: 8px 8px 0 0; position: relative; background: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: var(--azul-escuro);}
+        .tut-carruagem::after { content: ''; position: absolute; bottom: -8px; left: 4px; width: 10px; height: 10px; background: #455a64; border-radius: 50%; box-shadow: 20px 0 0 #455a64; }
+        .tut-carruagem:not(:first-child)::before { content: ''; position: absolute; left: -9px; top: 50%; width: 6px; height: 4px; background: #ced6e0; }
+        
+        .tut-carruagem.filled { border-style: solid; border-color: var(--sucesso-light); background: #eafff0; color: var(--sucesso); }
+
+        .tut-pool { display: flex; gap: 10px; justify-content: center; width: 100%; border-top: 2px dashed #bcdcff; padding-top: 15px; position: relative; height: 60px;}
+        .tut-piece { width: 45px; height: 45px; border: 3px solid var(--azul-vibrante); background: #fff9c4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: var(--azul-escuro); position: absolute; box-shadow: 0 4px 0 var(--azul-vibrante);}
+        
+        .tut-piece.anim { animation: dragToTrainTut 4s infinite ease-in-out; z-index: 5; }
+
+        @keyframes dragToTrainTut {
+            0%, 20% { top: 15px; left: 50%; transform: translateX(-50%) scale(1); }
+            30%, 60% { top: -65px; left: 50%; transform: translateX(-50%) scale(1.1); }
+            65%, 90% { top: -65px; left: 50%; transform: translateX(-50%) scale(1); opacity: 0; }
+            100% { top: -65px; left: 50%; transform: translateX(-50%) scale(1); opacity: 0; }
+        }
+
+        /* Imagem Alvo do Jogo */
+        .game-image { 
+            height: clamp(120px, 20vh, 180px); object-fit: contain; margin-bottom: 5px; 
+            border-radius: 20px; background-color: #ffffff; padding: 15px; 
+            border: 3px solid #e3f2fd; box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
+            flex-shrink: 0;
+        }
+
+        .pop-in-anim { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* O COMBOIO (As Carruagens/Slots) */
+        .comboio-container {
+            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;
+            padding: 10px; width: 100%; align-items: center;
+        }
+
+        /* Locomotiva na direita */
+        .locomotiva {
+            font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; z-index: 2;
+            transform: scaleX(-1); position: relative; margin-left: 2px;
+        }
+        /* Ligação da locomotiva à última carruagem */
+        .locomotiva::after {
+            content: ''; position: absolute; right: -8px; top: 60%; width: 10px; height: 5px; background: #cbd5e0;
+        }
+
+        .carruagem {
+            width: clamp(50px, 12vw, 70px); height: clamp(50px, 12vw, 70px);
+            border: 3px dashed #cbd5e0; border-radius: 12px 12px 0 0;
+            background: white; display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 900; color: var(--azul-escuro);
+            position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        
+        /* As Rodas da Carruagem */
+        .carruagem::after {
+            content: ''; position: absolute; bottom: -12px; left: 10%; width: clamp(12px, 3vw, 16px); height: clamp(12px, 3vw, 16px);
+            background: #455a64; border-radius: 50%; box-shadow: calc(clamp(50px, 12vw, 70px) * 0.6) 0 0 #455a64;
+        }
+        /* A ligação entre carruagens (exceto a 1ª à esquerda) */
+        .carruagem:not(:first-child)::before {
+            content: ''; position: absolute; left: -14px; top: 50%; width: 12px; height: 6px; background: #cbd5e0;
+        }
+
+        .carruagem.drag-over { background-color: #e3f2fd; border-color: var(--azul-vibrante); transform: scale(1.05); }
+        .carruagem.correct { background: #eafff0; border: 3px solid var(--sucesso-light); border-bottom-color: var(--sucesso-light); color: var(--sucesso); box-shadow: 0 4px 10px rgba(46, 213, 115, 0.2); animation: popIn 0.3s ease; }
+
+        /* As Peças Soltas (Letras) */
+        .pool-container {
+            display: flex; gap: clamp(10px, 2.5vw, 15px); justify-content: center; flex-wrap: wrap;
+            width: 100%; max-width: 700px; margin-top: auto; padding: 20px 10px;
+            border-top: 3px dashed #e2e8f0; min-height: 100px; align-items: center;
+        }
+
+        .letra-peca {
+            width: clamp(50px, 12vw, 70px); height: clamp(50px, 12vw, 70px);
+            background: #fff9c4; border: 3px solid var(--azul-vibrante); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 900; color: var(--azul-escuro);
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--azul-vibrante); user-select: none; -webkit-tap-highlight-color: transparent;
+            transition: transform 0.1s, box-shadow 0.1s; touch-action: none; z-index: 10;
+        }
+        
+        @media (hover: hover) { .letra-peca:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--azul-vibrante); filter: brightness(1.05);} }
+        
+        .letra-peca:active { cursor: grabbing; transform: translateY(5px); box-shadow: 0 0px 0 transparent; background: var(--azul-vibrante); color: white;}
+        .letra-peca.dragging { opacity: 0; }
+        .letra-peca.placed { opacity: 0; pointer-events: none; transform: scale(0); transition: 0.3s; }
+
+        /* Animação da Dica Suave */
+        .dica-iluminada {
+            animation: suaveDica 1.5s infinite alternate ease-in-out !important;
+            border-color: #fbc531 !important; background-color: white !important; color: #b18500 !important;
+        }
+        @keyframes suaveDica {
+            from { box-shadow: 0 0 5px rgba(251, 197, 49, 0.5), 0 5px 0 #fbc531; }
+            to { box-shadow: 0 0 25px rgba(251, 197, 49, 1), 0 5px 0 #fbc531; filter: brightness(1.05); }
+        }
+
+        .error-shake { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; box-shadow: 0 5px 0 #d0303f !important; transform: none !important;}
+
+        /* =========================================
+           ECRÃ FIM E BOTÕES DE AÇÃO
+           ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
+        
+        .btn-acao { 
+            background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; 
+            font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; 
+            box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-bottom: 20px; width: 100%; max-width: 320px; 
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; 
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0;} 60% { transform: scale(1.1); opacity: 1;} 100% { transform: scale(1); opacity: 1;} }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+        
+        body { scrollbar-gutter: stable; }
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        @media (hover: none) and (pointer: coarse) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; overflow-y: visible !important; }
+            footer { margin-top: auto; }
+        }
+    </style>
 </head>
 <body>
+
+<!-- Polyfill initialization para o Arrastar em Touch -->
+<script>
+    MobileDragDrop.polyfill({
+        dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+    });
+    window.addEventListener('touchmove', function() {}, {passive: false});
+</script>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
@@ -191,17 +326,85 @@
             </button>
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
+        
         <h1>Comboio das Letras 🚂</h1>
-        <div class="subtitulo">Arrasta as letras para as carruagens certas e forma a palavra!</div>
+        <div class="subtitulo">Arrasta (ou clica) nas letras para carregar o comboio!</div>
     </div>
 </header>
 
 <main>
     <div class="cartao-jogo-container">
-        <img src="" id="img-alvo" class="img-pergunta">
-        <div id="comboio" class="comboio-container"></div>
-        <div id="letras-disponiveis" class="letras-espalhadas"></div>
-        <div id="feedback-msg"></div>
+        
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- ECRÃ 1: MENU INICIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-menu">Como Jogar:</h2>
+            
+            <div class="animacao-tutorial">
+                <div class="tut-img-alvo">🐱</div>
+                <div class="tut-comboio">
+                    <div class="tut-carruagem filled">G</div>
+                    <div class="tut-carruagem filled">A</div>
+                    <div class="tut-carruagem"></div>
+                    <div class="tut-carruagem"></div>
+                    <div class="tut-locomotiva">🚂</div>
+                </div>
+                <div class="tut-pool">
+                    <div class="tut-piece" style="left: 10px;">O</div>
+                    <div class="tut-piece anim">T</div>
+                    <div class="tut-piece" style="right: 10px;">B</div>
+                </div>
+            </div>
+
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">JOGAR AGORA ▶️</button>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO RIGOROSA -->
+            <div class="status-bar-jogo" id="status-bar" style="display: none;">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()" title="Dica">
+                    💡<span id="hint-count" class="hint-badge">2</span>
+                </button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                <img id="game-image" class="game-image" src="" alt="Imagem secreta">
+                
+                <!-- O Comboio (Destino) -->
+                <div id="comboio-container" class="comboio-container">
+                    <!-- Locomotiva e Carruagens injetadas via JS -->
+                </div>
+
+                <!-- As Letras Espalhadas (Origem) -->
+                <div id="pool-container" class="pool-container">
+                    <!-- Letras injetadas via JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
+            <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
+            <div class="end-stats">
+                Carregaste <strong id="final-certas" style="color:#219d53">0</strong> comboios!<br>
+                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> descarrilamentos.
+            </div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 500px; margin: 0 auto;">
+                <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0; flex: 1; min-width: 200px;">JOGAR DE NOVO 🔄</button>
+                <button class="btn-acao" onclick="voltarAoMenu()" style="margin: 0; flex: 1; min-width: 200px; background-color: #ced6e0; color: var(--text-main); box-shadow: 0 6px 0 #a4b0be;">VOLTAR AO MENU 🏠</button>
+            </div>
+        </div>
+
     </div>
 </main>
 
@@ -210,85 +413,470 @@
 </footer>
 
 <script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    /* =========================================
+       DADOS DE FALLBACK (Se ../dados.js falhar)
+       ========================================= */
+    let bancoPalavras = [];
+    if (typeof palavras !== 'undefined') {
+        bancoPalavras = palavras;
+    } else {
+        bancoPalavras = [
+            { palavra: "bolo", imagem: "img/bolo.png" },
+            { palavra: "fada", imagem: "img/fada.png" },
+            { palavra: "gato", imagem: "img/gato.png" },
+            { palavra: "janela", imagem: "img/janela.png" },
+            { palavra: "avião", imagem: "img/aviao.png" },
+            { palavra: "girafa", imagem: "img/girafa.png" },
+            { palavra: "águia", imagem: "img/aguia.png" },
+            { palavra: "elefante", imagem: "img/elefante.png" }
+        ];
+    }
+
+    function getImagePath(imgPath) {
+        if (!imgPath) return '';
+        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
+        return '../' + imgPath;
+    }
+
+    /* =========================================
+       ESTADOS E VARIÁVEIS
+       ========================================= */
+    const MAX_PALAVRAS = 10;
+    const MAX_LETRAS_PERMITIDAS = 10; // Para caberem bem no ecrã sem partir muito o comboio
+
+    let palavrasDoJogo = [];
+    let palavraAtualIndex = 0;
+    let rondaAtual = 1;
+    let certas = 0;
+    let erradas = 0;
+    let isVerificando = false;
+    
     let palavraAlvo = "";
     let letrasColocadas = 0;
 
-    function iniciarJogo() {
-        // Seleciona uma palavra aleatória do ficheiro dados.js
-        const item = palavras[Math.floor(Math.random() * palavras.length)];
-        palavraAlvo = item.palavra.toUpperCase();
-        letrasColocadas = 0;
-        
-        document.getElementById('img-alvo').src = "../" + item.imagem;
-        document.getElementById('feedback-msg').innerHTML = "";
-        
-        const comboio = document.getElementById('comboio');
-        const letrasBox = document.getElementById('letras-disponiveis');
-        comboio.innerHTML = "";
-        letrasBox.innerHTML = "";
+    // Lógica das Dicas
+    let dicasUsadas = []; 
 
-        // Criar as carruagens (slots)
-        for(let i=0; i < palavraAlvo.length; i++) {
+    // DOM
+    const elStatus = document.getElementById('status-bar');
+    const elProgresso = document.getElementById('val-progresso');
+    const elErros = document.getElementById('val-erros');
+    const elValTotal = document.getElementById('val-total');
+    const elProgressFill = document.getElementById('progress-fill');
+    
+    const elGameScreen = document.getElementById('ecra-jogo');
+    const elEndScreen = document.getElementById('ecra-fim');
+    
+    const elImage = document.getElementById('game-image');
+    const comboioContainer = document.getElementById('comboio-container');
+    const poolContainer = document.getElementById('pool-container');
+    const btnDica = document.getElementById('btn-dica');
+    const elHintCount = document.getElementById('hint-count');
+    
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        elStatus.style.display = 'none';
+        mostrarEcra('ecra-selecao');
+    }
+
+    function atualizarPlacarUI() {
+        elProgresso.textContent = rondaAtual > MAX_PALAVRAS ? MAX_PALAVRAS : rondaAtual;
+        elErros.textContent = erradas;
+        elValTotal.textContent = MAX_PALAVRAS;
+        let percent = ((rondaAtual - 1) / MAX_PALAVRAS) * 100;
+        elProgressFill.style.width = `${percent}%`;
+    }
+
+    function atualizarDicasUI() {
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        let pistasRestantes = 2 - dicasUsadas.filter(Boolean).length;
+        
+        elHintCount.textContent = pistasRestantes;
+
+        if (pistasRestantes <= 0 || dicasUsadas[blocoAtual]) {
+            btnDica.classList.add('esgotada');
+        } else {
+            btnDica.classList.remove('esgotada');
+        }
+    }
+
+    /* =========================================
+       LÓGICA PRINCIPAL
+       ========================================= */
+    function iniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        rondaAtual = 1;
+        palavraAtualIndex = 0;
+        certas = 0;
+        erradas = 0;
+        isVerificando = false;
+        dicasUsadas = [];
+        
+        // Filtra palavras que cabem num comboio simpático (máx 10 letras)
+        let palavrasValidas = bancoPalavras.filter(p => p.palavra.length <= MAX_LETRAS_PERMITIDAS);
+        let baralhadas = [...palavrasValidas].sort(() => Math.random() - 0.5);
+        
+        // Fallback
+        while (baralhadas.length < MAX_PALAVRAS) {
+            baralhadas = baralhadas.concat([...palavrasValidas].sort(() => Math.random() - 0.5));
+        }
+        
+        palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
+        
+        btnDica.style.display = 'flex'; // Dicas ativas neste jogo
+        elStatus.style.display = 'flex';
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        
+        carregarPalavra();
+    }
+
+    function carregarPalavra() {
+        isVerificando = false;
+        letrasColocadas = 0;
+        removerDestaquesDica();
+        atualizarDicasUI();
+        atualizarPlacarUI(); // Garante que a UI atualiza no início de cada palavra
+
+        const palavraObj = palavrasDoJogo[palavraAtualIndex];
+        palavraAlvo = palavraObj.palavra.toUpperCase();
+        
+        elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
+        
+        // Animação da Imagem
+        elImage.classList.remove('pop-in-anim');
+        void elImage.offsetWidth; // Força Reflow
+        elImage.classList.add('pop-in-anim');
+        
+        elImage.src = getImagePath(palavraObj.imagem);
+        elImage.onerror = () => { elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>${palavraObj.palavra}</text></svg>`; };
+
+        construirComboio();
+        construirLetras();
+    }
+
+    function construirComboio() {
+        comboioContainer.innerHTML = '';
+
+        // Adiciona as Carruagens (Slots)
+        for(let i = 0; i < palavraAlvo.length; i++) {
             const slot = document.createElement('div');
             slot.className = 'carruagem';
             slot.dataset.index = i;
-            slot.addEventListener('dragover', e => e.preventDefault());
-            slot.addEventListener('drop', lidarComDrop);
-            comboio.appendChild(slot);
+            slot.dataset.requiredLetter = palavraAlvo[i];
+            
+            // Eventos de Drop
+            slot.addEventListener('dragover', handleDragOver);
+            slot.addEventListener('dragleave', handleDragLeave);
+            slot.addEventListener('drop', handleDrop);
+            
+            comboioContainer.appendChild(slot);
         }
+        
+        // Adiciona a Locomotiva no FIM (Direita)
+        const locomotiva = document.createElement('div');
+        locomotiva.className = 'locomotiva';
+        locomotiva.textContent = '🚂';
+        comboioContainer.appendChild(locomotiva);
+    }
 
-        // Criar as letras baralhadas
-        const letrasBaralhadas = palavraAlvo.split('').sort(() => Math.random() - 0.5);
-        letrasBaralhadas.forEach((letra, i) => {
+    function construirLetras() {
+        poolContainer.innerHTML = '';
+        
+        // Criar as letras corretas
+        let letrasPool = palavraAlvo.split('');
+        
+        // Adicionar alguns intrusos para dificultar ligeiramente? (Opcional, mas mantém simples no 1º ano. Aqui usaremos apenas as letras exatas da palavra baralhadas, como no código base original).
+        
+        letrasPool.sort(() => Math.random() - 0.5);
+        
+        letrasPool.forEach((letra, i) => {
             const peca = document.createElement('div');
             peca.className = 'letra-peca';
             peca.draggable = true;
-            peca.innerText = letra;
-            peca.id = "letra-" + i;
-            peca.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text', letra);
-                e.dataTransfer.setData('sourceId', peca.id);
-            });
-            letrasBox.appendChild(peca);
+            peca.textContent = letra;
+            peca.id = "letra-" + palavraAtualIndex + "-" + i;
+            
+            // Eventos de Drag
+            peca.addEventListener('dragstart', handleDragStart);
+            peca.addEventListener('dragend', handleDragEnd);
+            
+            // Evento de Clique (NOVA FEATURE)
+            peca.addEventListener('click', () => tentarColocarPorClique(peca));
+            
+            poolContainer.appendChild(peca);
         });
     }
 
-    function lidarComDrop(e) {
-        e.preventDefault();
-        const letraData = e.dataTransfer.getData('text');
-        const sourceId = e.dataTransfer.getData('sourceId');
-        const slotIndex = e.target.dataset.index;
+    /* =========================================
+       LÓGICA: ARRASTAR OU CLICAR
+       ========================================= */
+    let draggedPiece = null;
 
-        // Verifica se a letra é a correta para aquela posição específica
-        if (letraData === palavraAlvo[slotIndex] && !e.target.innerText) {
-            e.target.innerText = letraData;
-            e.target.classList.add('correct');
-            document.getElementById(sourceId).style.visibility = 'hidden';
-            letrasColocadas++;
-            
-            if (letrasColocadas === palavraAlvo.length) {
-                concluirPalavra();
-            }
-        } else {
-            e.target.style.borderColor = "#e53e3e";
-            setTimeout(() => e.target.style.borderColor = "#cbd5e0", 500);
+    function handleDragStart(e) {
+        if (isVerificando) { e.preventDefault(); return; }
+        draggedPiece = this;
+        e.dataTransfer.effectAllowed = 'move';
+        // Fallback info
+        e.dataTransfer.setData('text/plain', this.textContent);
+        
+        setTimeout(() => this.classList.add('dragging'), 0);
+    }
+
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+        draggedPiece = null;
+        document.querySelectorAll('.carruagem').forEach(s => s.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e) {
+        if (isVerificando || this.textContent !== "") return; 
+        e.preventDefault(); 
+        e.dataTransfer.dropEffect = 'move';
+        this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (isVerificando || !draggedPiece || this.textContent !== "") return;
+
+        const letterText = draggedPiece.textContent;
+        const requiredLetter = this.dataset.requiredLetter;
+
+        validarColocacao(letterText, requiredLetter, this, draggedPiece);
+    }
+
+    // NOVA LÓGICA DE CLIQUE
+    function tentarColocarPorClique(pecaElemento) {
+        if (isVerificando || pecaElemento.classList.contains('placed')) return;
+
+        // Procura a primeira carruagem vazia (da esquerda para a direita)
+        const carruagens = Array.from(document.querySelectorAll('.carruagem'));
+        const primeiraVazia = carruagens.find(c => c.textContent === "");
+
+        if (primeiraVazia) {
+            const letterText = pecaElemento.textContent;
+            const requiredLetter = primeiraVazia.dataset.requiredLetter;
+            validarColocacao(letterText, requiredLetter, primeiraVazia, pecaElemento);
         }
     }
 
-    function concluirPalavra() {
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        document.getElementById('feedback-msg').innerHTML = "<span style='color:var(--sucesso)'>Muito bem! 🚂💨 O comboio está pronto!</span>";
-        setTimeout(iniciarJogo, 3000);
+    function validarColocacao(letterText, requiredLetter, slotElemento, pecaElemento) {
+        removerDestaquesDica();
+
+        if (letterText === requiredLetter) {
+            // Acertou na carruagem
+            tocarSom('pop');
+            
+            slotElemento.textContent = letterText;
+            slotElemento.classList.add('correct');
+            
+            pecaElemento.classList.add('placed'); // Esconde a peça da pool
+            
+            letrasColocadas++;
+            
+            if (letrasColocadas === palavraAlvo.length) {
+                completouPalavra();
+            }
+        } else {
+            // Errou a carruagem
+            erradas++;
+            atualizarPlacarUI();
+            tocarSom('erro');
+            
+            pecaElemento.classList.add('error-shake');
+            slotElemento.style.borderColor = "#ff4757"; // Fica vermelho 
+            
+            setTimeout(() => {
+                pecaElemento.classList.remove('error-shake');
+                slotElemento.style.borderColor = "#cbd5e0"; // Volta ao normal
+            }, 500);
+        }
     }
 
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('overlay').classList.toggle('active');
-        document.getElementById('hamburgerBtn').classList.toggle('open');
+    /* --- DICA --- */
+    function usarDica() {
+        const blocoAtual = Math.floor((rondaAtual - 1) / 5);
+        
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual] || isVerificando) return;
+
+        // 1. Encontra a primeira carruagem vazia
+        const carruagens = Array.from(document.querySelectorAll('.carruagem'));
+        const primeiraVazia = carruagens.find(c => c.textContent === "");
+
+        if (primeiraVazia) {
+            const requiredLetter = primeiraVazia.dataset.requiredLetter;
+            
+            // 2. Encontra a peça correspondente na pool
+            const pecas = Array.from(document.querySelectorAll('.letra-peca:not(.placed)'));
+            const pecaCorreta = pecas.find(p => p.textContent === requiredLetter);
+
+            if (pecaCorreta) {
+                // Efetua a colocação automática como recompensa da dica
+                validarColocacao(pecaCorreta.textContent, requiredLetter, primeiraVazia, pecaCorreta);
+                tocarSom('swoosh');
+            }
+        }
+
+        dicasUsadas[blocoAtual] = true;
+        atualizarDicasUI();
     }
 
-    document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    window.onload = iniciarJogo;
+    function removerDestaquesDica() {
+        // Neste jogo, a dica resolve automaticamente, por isso não usamos o 'dica-iluminada' para piscar
+    }
+
+    /* --- GESTÃO GERAL --- */
+    function completouPalavra() {
+        isVerificando = true;
+        certas++;
+        tocarSom('vitoria_curta');
+        
+        // Faz o comboio "saltitar" de alegria
+        document.querySelectorAll('.carruagem').forEach((c, idx) => {
+            setTimeout(() => {
+                c.style.transform = "translateY(-10px)";
+                setTimeout(() => c.style.transform = "translateY(0)", 200);
+            }, idx * 100);
+        });
+
+        setTimeout(() => {
+            avancarRonda();
+        }, 1500);
+    }
+
+    function avancarRonda() {
+        palavraAtualIndex++;
+        rondaAtual++;
+        
+        if (rondaAtual > MAX_PALAVRAS) {
+            elProgressFill.style.width = `100%`;
+            document.getElementById('final-certas').textContent = certas;
+            document.getElementById('final-erradas').textContent = erradas;
+            
+            const titleText = document.getElementById('end-title-text');
+            if (erradas === 0) {
+                titleText.textContent = "PERFEITO! 🏆";
+                tocarSom('vitoria'); dispararConfetis();
+            } else if (erradas <= 3) {
+                titleText.textContent = "MUITO BEM! 🎉";
+                tocarSom('vitoria'); dispararConfetis();
+            } else {
+                titleText.textContent = "BOM ESFORÇO! 💪";
+                tocarSom('acerto'); 
+            }
+
+            elStatus.style.display = 'none';
+            mostrarEcra('ecra-fim');
+        } 
+        else {
+            carregarPalavra();
+        }
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS
+       ========================================= */
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1500, agora + 0.05);
+            gain.gain.setValueAtTime(0.3, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+        else if (tipo === 'swoosh') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        }
+        else if (tipo === 'vitoria_curta') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, agora); osc.frequency.setValueAtTime(659.25, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
+
 </script>
 </body>
 </html>

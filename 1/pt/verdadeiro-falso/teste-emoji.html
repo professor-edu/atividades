@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Palavra Flash 📸</title>
+    <title>1º Ano - Verdadeiro ou Falso 👍👎</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js"></script>
     <!-- Importação do ficheiro de dados externo -->
     <script src="../dados.js"></script>
     
@@ -28,7 +28,19 @@
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
             --cor-pt: #ff6b6b;
+            --cor-certo: #2ed573;
+            --cor-certo-dark: #219d53;
+            --cor-errado: #ff4757;
+            --cor-errado-dark: #d0303f;
         }
+
+		/* Faz com que os emojis do Twemoji tenham o mesmo tamanho da letra */
+		img.emoji {
+			height: 1em;
+			width: 1em;
+			margin: 0 .05em 0 .1em;
+			vertical-align: -0.1em;
+		}
 
         body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
         
@@ -90,163 +102,140 @@
         .titulo-menu { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
 
         /* =========================================
-           BARRA DE ESTADO DO JOGO (RIGOROSA AO TEMPLATE BASE)
+           BARRA DE ESTADO DO JOGO
            ========================================= */
         .status-bar-jogo {
             display: flex; align-items: center; justify-content: space-between; gap: 10px;
             width: 100%; background: #fdf2f2; padding: 8px 12px;
             border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            position: relative;
         }
 
         .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
         .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
         
-        .btn-dica { 
-            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 15px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative;
-        }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
         .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
-        .btn-dica:disabled, .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); cursor: not-allowed;}
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
-        .badge-ronda { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid #219d53; color: #219d53; }
-        .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid #ff4757; color: #ff4757; }
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
 
-        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; min-width: 50px;}
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
         .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
         
         @media (max-width: 850px) {
             .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
-            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.85rem;}
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
             .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
-            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 20px; margin: 5px 0 0 0;}
+            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 25px; }
         }
 
         /* =========================================
            ÁREA DE JOGO LIVRE
            ========================================= */
         .area-jogo-custom {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; /* CENTRADO VERTICALMENTE */
             width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 20px 15px; overflow-y: auto; gap: 20px;
             position: relative; color: #94a3b8; font-weight: bold;
         }
 
         /* =========================================
-           CSS ESPECÍFICO DO JOGO: PALAVRA FLASH
+           CSS ESPECÍFICO DO JOGO: VERDADEIRO OU FALSO
            ========================================= */
         
+        .btn-icon {
+            width: 28px; height: 28px; stroke: white; flex-shrink: 0;
+        }
+
         /* Animação Inicial Tutorial */
         .animacao-tutorial {
             position: relative; height: 280px; width: 100%; max-width: 400px; background: #f4faff;
             border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0,145,255,0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); gap: 15px;
         }
-
-        .tut-flash-phase, .tut-options-phase {
-            position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        /* Fases da animação tutorial */
-        .tut-flash-phase { animation: phase1 5s infinite; }
-        .tut-options-phase { animation: phase2 5s infinite; opacity: 0; visibility: hidden; gap: 15px; flex-direction: row;}
-
-        @keyframes phase1 { 
-            0%, 40% { opacity: 1; visibility: visible; } 
-            45%, 100% { opacity: 0; visibility: hidden; } 
-        }
-        @keyframes phase2 { 
-            0%, 40% { opacity: 0; visibility: hidden; } 
-            45%, 95% { opacity: 1; visibility: visible; } 
-            100% { opacity: 0; visibility: hidden; } 
-        }
-
-        .tut-word { font-size: 3.5rem; font-weight: 900; color: var(--azul-escuro); letter-spacing: 3px; }
-        .tut-timer-bg { width: 60%; height: 10px; background: #e3f2fd; border-radius: 10px; overflow: hidden; margin-top: 15px;}
-        .tut-timer-fill { width: 100%; height: 100%; background: #ff4757; animation: timerShrink 5s infinite linear; }
         
-        @keyframes timerShrink { 0% { width: 100%; } 40% { width: 0%; } 100% { width: 0%; } }
-
-        .tut-opt { width: 80px; height: 80px; background: white; border: 3px solid #ced6e0; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 4px 0 #ced6e0; }
+        .tut-img-alvo { font-size: 50px; background: white; padding: 5px 15px; border-radius: 15px; border: 3px solid #e3f2fd; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .tut-displayed-word { font-size: 1.5rem; font-weight: 900; background: #fff9c4; padding: 5px 20px; border-radius: 10px; border: 2px dashed #f6d04d; color: var(--azul-escuro); margin-bottom: 5px;}
         
-        .tut-opt.anim { animation: clickBtnTut 5s infinite ease-in-out; position: relative; border-color: #ced6e0; box-shadow: 0 4px 0 #ced6e0;}
-        .tut-opt.anim::after { content: '👆'; font-size: 35px; position: absolute; right: -20px; bottom: -25px; animation: handClick 5s infinite ease-in-out;}
+        .tut-buttons { display: flex; gap: 10px; }
+        .tut-btn-vf { padding: 10px 15px; border-radius: 10px; font-weight: bold; color: white; font-size: 1rem; box-shadow: 0 4px 0 rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px;}
+        .tut-verdadeiro { background-color: var(--cor-certo); }
+        .tut-falso { background-color: var(--cor-errado); }
+        
+        .tut-verdadeiro.anim { position: relative; animation: clickBtnTut 3s infinite; }
+        .tut-verdadeiro.anim::after { content: '👆'; font-size: 30px; position: absolute; right: -15px; bottom: -25px; animation: handClick 3s infinite;}
 
         @keyframes clickBtnTut {
-            0%, 65% { background: white; border-color: #ced6e0; transform: translateY(0); box-shadow: 0 4px 0 #ced6e0;}
-            70%, 90% { background: #eafff0; border-color: #2ed573; transform: translateY(4px); box-shadow: 0 0px 0 transparent;}
-            95%, 100% { background: white; border-color: #ced6e0; transform: translateY(0); box-shadow: 0 4px 0 var#ced6e0;}
+            0%, 40% { transform: translateY(0); box-shadow: 0 4px 0 rgba(0,0,0,0.2); filter: brightness(1); }
+            45%, 70% { transform: translateY(4px); box-shadow: 0 0px 0 transparent; filter: brightness(1.1); }
+            75%, 100% { transform: translateY(0); box-shadow: 0 4px 0 rgba(0,0,0,0.2); filter: brightness(1); }
         }
         @keyframes handClick {
-            0%, 60% { transform: translateY(20px); opacity: 0; }
-            65%, 85% { transform: translateY(0); opacity: 1; }
-            90%, 100% { transform: translateY(20px); opacity: 0; }
+            0%, 35% { transform: translateY(20px); opacity: 0; }
+            40%, 70% { transform: translateY(0); opacity: 1; }
+            75%, 100% { transform: translateY(20px); opacity: 0; }
         }
 
-        /* Fase 1 do Jogo Real: Flash */
-        #fase-flash { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; }
-        
-        .palavra-gigante {
-            font-size: clamp(3.5rem, 10vw, 6rem); font-weight: 900; color: var(--azul-escuro);
-            text-transform: uppercase; letter-spacing: 4px; margin-bottom: 30px;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center;
-        }
-
-        .timer-flash-bg { width: 80%; max-width: 450px; height: 15px; background-color: #e3f2fd; border-radius: 10px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-        .timer-flash-fill { width: 100%; height: 100%; background-color: #ff4757; border-radius: 10px; }
-
-        /* Fase 2 do Jogo Real: Opções Imagens */
-        #fase-opcoes { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; animation: fadeIn 0.4s ease; }
-        
-        .instrucao-opcoes { font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--cor-1ano-dark); font-weight: 800; margin-bottom: 25px; text-align: center;}
-
-        .opcoes-area { display: flex; gap: clamp(15px, 3vw, 30px); justify-content: center; flex-wrap: wrap; width: 100%; max-width: 800px; }
-
-        .btn-opcao-img {
-            background-color: white; border: 4px solid #ced6e0; border-radius: 25px;
-            cursor: pointer; box-shadow: 0 8px 0 #ced6e0; transition: all 0.2s ease;
-            width: clamp(120px, 25vw, 200px); height: clamp(120px, 25vw, 200px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 15px; position: relative; user-select: none; -webkit-tap-highlight-color: transparent;
+        /* Imagem Alvo do Jogo */
+        .game-image { 
+            height: clamp(140px, 25vh, 200px); object-fit: contain; margin-bottom: 5px; 
+            border-radius: 20px; background-color: #ffffff; padding: 15px; 
+            border: 3px solid #e3f2fd; box-shadow: 0 8px 25px rgba(0, 145, 255, 0.15), 0 4px 10px rgba(0,0,0,0.05); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; flex-shrink: 0;
         }
 
         @media (hover: hover) {
-            .btn-opcao-img:hover { border-color: var(--azul-vibrante); transform: translateY(-4px); box-shadow: 0 12px 0 var(--azul-vibrante); }
+            .game-image:hover {
+                transform: scale(1.05) translateY(-3px); 
+                box-shadow: 0 12px 30px rgba(0, 145, 255, 0.25), 0 6px 15px rgba(0,0,0,0.08);
+            }
         }
 
-        .btn-opcao-img:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent !important; }
-
-        .img-dentro-btn { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-
-        .btn-opcao-img.success-bounce {
-            border-color: #2ed573 !important; background-color: #eafff0 !important;
-            transform: translateY(8px); box-shadow: 0 0px 0 transparent !important; animation: popIn 0.3s ease;
+        /* Palavra Suspeita */
+        .displayed-word {
+            font-size: clamp(2rem, 6vw, 3rem); color: var(--azul-escuro); font-weight: 900;
+            text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px;
+            background: #fff9c4; padding: 10px 40px; border-radius: 15px;
+            border: 3px dashed #f6d04d; box-shadow: 0 4px 0 #f6d04d; text-align: center; word-break: break-word; line-height: 1.1;
         }
 
-        .btn-opcao-img.error-shake { animation: shakeError 0.4s ease-in-out; border-color: #ff4757 !important; background-color: #ffefef !important; box-shadow: 0 8px 0 #d0303f !important; transform: none !important;}
-
-        /* Etiqueta de Reforço */
-        .etiqueta-reforco {
-            position: absolute; bottom: -15px; background-color: #2ed573; color: white;
-            padding: 8px 20px; border-radius: 15px; font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 900;
-            text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            display: none; animation: popIn 0.3s ease;
+        /* Botões Verdadeiro/Falso */
+        .buttons-container {
+            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 600px; align-items: center; margin-top: 15px; /* Puxados para cima e centrados */
         }
 
-        /* Animação da Dica Suave */
+        .btn-vf {
+            flex: 1; min-width: 200px; padding: 20px 10px; font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 700; border-radius: 20px; border: none; cursor: pointer; color: white;
+            transition: all 0.1s; text-transform: uppercase; display: flex; align-items: center;
+            justify-content: center; gap: 10px; user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-verdadeiro { background-color: var(--cor-certo); box-shadow: 0 8px 0 var(--cor-certo-dark); }
+        .btn-falso { background-color: var(--cor-errado); box-shadow: 0 8px 0 var(--cor-errado-dark); }
+
+        .btn-vf:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent !important; }
+
+        /* Animações e Feedbacks */
+        .btn-vf.success-bounce { transform: scale(1.05) translateY(4px); filter: brightness(1.1); box-shadow: 0 4px 0 transparent;}
+        .btn-vf.error-shake { animation: shakeError 0.4s ease-in-out; filter: brightness(0.8); }
+
+        /* Animação da Dica (Pisca o Botão da Opção Correta) */
         .dica-iluminada {
-            animation: suaveDica 1.5s infinite alternate ease-in-out !important;
-            border-color: #fbc531 !important; background-color: #fff9c4 !important;
+            animation: piscarDicaOpcao 0.8s infinite alternate !important;
         }
-        
-        @keyframes suaveDica {
-            from { box-shadow: 0 0 5px rgba(251, 197, 49, 0.5), 0 8px 0 #fbc531; }
-            to { box-shadow: 0 0 25px rgba(251, 197, 49, 1), 0 8px 0 #fbc531; filter: brightness(1.05); }
+        @keyframes piscarDicaOpcao {
+            from { box-shadow: 0 0 10px #fbc531, 0 5px 0 #fbc531; transform: translateY(-2px); filter: brightness(1.1);}
+            to { box-shadow: 0 0 25px #fbc531, 0 7px 0 #fbc531; transform: translateY(-4px); filter: brightness(1.3);}
         }
 
         /* =========================================
            ECRÃ FIM E BOTÕES DE AÇÃO
            ========================================= */
         .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
-        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
         
         .btn-acao { 
             background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; 
@@ -258,13 +247,22 @@
         @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
         .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
 
+        @media (max-width: 768px) {
+            .buttons-container { gap: 15px; margin-top: 5px; }
+            .btn-vf { padding: 15px; font-size: 1.3rem; }
+            .btn-icon { width: 24px; height: 24px; }
+        }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0;} 60% { transform: scale(1.1); opacity: 1;} 100% { transform: scale(1); opacity: 1;} }
         @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
         @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
 
         #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
         
+        /* Modal e Overlays Extras */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
         body { scrollbar-gutter: stable; }
 
         @media (max-height: 600px) {
@@ -277,6 +275,9 @@
             main { justify-content: flex-start !important; overflow-y: visible !important; }
             footer { margin-top: auto; }
         }
+		
+		
+		
     </style>
 </head>
 <body>
@@ -304,8 +305,8 @@
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
         
-        <h1>Palavra Flash 📸</h1>
-        <div class="subtitulo">Lê rapidamente a palavra e depois escolhe a imagem correta!</div>
+        <h1>Verdadeiro ou Falso 👍👎</h1>
+        <div class="subtitulo">Olha para a imagem. A palavra escrita em baixo está correta?</div>
     </div>
 </header>
 
@@ -313,20 +314,22 @@
     <div class="cartao-jogo-container">
         
         <canvas id="confetti-canvas"></canvas>
+        <div class="toast-msg" id="toast-msg">Mensagem</div>
 
         <!-- ECRÃ 1: MENU INICIAL -->
         <div id="ecra-selecao" class="ecra" style="display: flex;">
             <h2 class="titulo-menu">Como Jogar:</h2>
             
             <div class="animacao-tutorial">
-                <div class="tut-flash-phase">
-                    <div class="tut-word">GATO</div>
-                    <div class="tut-timer-bg"><div class="tut-timer-fill"></div></div>
-                </div>
-                <div class="tut-options-phase">
-                    <div class="tut-opt">⚽</div>
-                    <div class="tut-opt anim">🐱</div>
-                    <div class="tut-opt">🍎</div>
+                <div class="tut-img-alvo">🐱</div>
+                <div class="tut-displayed-word">GATO</div>
+                <div class="tut-buttons">
+                    <div class="tut-btn-vf tut-verdadeiro anim">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> VERDADEIRO
+                    </div>
+                    <div class="tut-btn-vf tut-falso">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> FALSO
+                    </div>
                 </div>
             </div>
 
@@ -339,30 +342,25 @@
             <!-- BARRA DE ESTADO RIGOROSA -->
             <div class="status-bar-jogo" id="status-bar" style="display: none;">
                 <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
-                <button id="btn-dica" class="btn-dica" onclick="usarDica()" title="Dica">💡 Dica</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
                 <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
                 <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
                 <div class="badge-erros">❌ <span id="val-erros">0</span></div>
             </div>
 
             <div class="area-jogo-custom" id="area-jogo">
+                <img id="game-image" class="game-image" src="" alt="Imagem secreta">
                 
-                <!-- FASE 1: FLASH -->
-                <div id="fase-flash">
-                    <div id="texto-flash" class="palavra-gigante">CAVALO</div>
-                    <div class="timer-flash-bg">
-                        <div id="timer-bar" class="timer-flash-fill"></div>
-                    </div>
+                <div id="displayed-word" class="displayed-word">PALAVRA</div>
+                
+                <div class="buttons-container">
+                    <button id="btn-verdadeiro" class="btn-vf btn-verdadeiro" onclick="verificarResposta(true, this)">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> VERDADEIRO
+                    </button>
+                    <button id="btn-falso" class="btn-vf btn-falso" onclick="verificarResposta(false, this)">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> FALSO
+                    </button>
                 </div>
-
-                <!-- FASE 2: OPÇÕES -->
-                <div id="fase-opcoes">
-                    <div class="instrucao-opcoes">O que leste? Clica na imagem correta!</div>
-                    <div class="opcoes-area" id="opcoes-container">
-                        <!-- Botões com imagens gerados aqui -->
-                    </div>
-                </div>
-
             </div>
 
         </div>
@@ -371,15 +369,9 @@
         <div id="ecra-fim" class="ecra">
             <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
             <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
-            <div class="end-stats">
-                Acertaste <strong id="final-certas" style="color:#2ed573">0</strong> palavras!<br>
-                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> tentativas erradas.
-            </div>
-            
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 500px; margin: 0 auto;">
-                <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0; flex: 1; min-width: 200px;">JOGAR DE NOVO 🔄</button>
-                <button class="btn-acao" onclick="voltarAoMenu()" style="margin: 0; flex: 1; min-width: 200px; background-color: #ced6e0; color: var(--text-main); box-shadow: 0 6px 0 #a4b0be;">VOLTAR AO MENU 🏠</button>
-            </div>
+            <p style="font-size: 1.2rem; color: var(--text-main); font-weight: bold;">Julgaste bem todas as palavras!</p>
+            <div style="font-size: 1.3rem; color: #ff4757; font-weight: bold; margin-bottom: 25px; padding: 10px 25px; border: 2px solid #ff4757; border-radius: 15px;">Erros: <span id="final-erros">0</span></div>
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto; margin-bottom: 10px;">JOGAR DE NOVO 🔄</button>
         </div>
 
     </div>
@@ -397,6 +389,16 @@
         document.getElementById('hamburgerBtn').classList.toggle('open'); 
     }
 
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = msg;
+        toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+        toast.style.color = isError ? "#ff4757" : "#b18500";
+        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2500);
+    }
+
     /* =========================================
        DADOS DE FALLBACK (Se ../dados.js falhar)
        ========================================= */
@@ -407,14 +409,16 @@
         bancoPalavras = window.palavras;
     } else {
         bancoPalavras = [
+            { palavra: "abacaxi", imagem: "img/abacaxi.png" },
+            { palavra: "abelha", imagem: "img/abelha.png" },
             { palavra: "bolo", imagem: "img/bolo.png" },
+            { palavra: "cavalo", imagem: "img/cavalo.png" },
+            { palavra: "dado", imagem: "img/dado.png" },
+            { palavra: "elefante", imagem: "img/elefante.png" },
             { palavra: "fada", imagem: "img/fada.png" },
             { palavra: "gato", imagem: "img/gato.png" },
             { palavra: "janela", imagem: "img/janela.png" },
-            { palavra: "macaco", imagem: "img/macaco.png" },
-            { palavra: "girafa", imagem: "img/girafa.png" },
-            { palavra: "abacaxi", imagem: "img/abacaxi.png" },
-            { palavra: "elefante", imagem: "img/elefante.png" }
+            { palavra: "maca", imagem: "img/maca.png" }
         ];
     }
 
@@ -428,15 +432,12 @@
        ESTADOS E VARIÁVEIS
        ========================================= */
     const MAX_PALAVRAS = 10;
-    const TEMPO_FLASH_MS = 2500; // Tempo em que a palavra fica visível
-
     let palavrasDoJogo = [];
     let palavraAtualIndex = 0;
-    let rondaAtual = 1;
-    let certas = 0;
-    let erradas = 0;
+    let rondaAtual = 1; // 1 to 10
+    let errosTotais = 0;
     let isVerificando = false;
-    let flashTimeoutId = null;
+    let isTrueExpected = true;
 
     // Lógica das Dicas
     let dicasUsadas = []; 
@@ -450,14 +451,11 @@
     
     const elGameScreen = document.getElementById('ecra-jogo');
     const elEndScreen = document.getElementById('ecra-fim');
+    const elImage = document.getElementById('game-image');
+    const elDisplayedWord = document.getElementById('displayed-word');
     
-    const faseFlash = document.getElementById('fase-flash');
-    const textoFlash = document.getElementById('texto-flash');
-    const timerBar = document.getElementById('timer-bar');
-    
-    const faseOpcoes = document.getElementById('fase-opcoes');
-    const opcoesContainer = document.getElementById('opcoes-container');
-    const btnDica = document.getElementById('btn-dica');
+    const btnVerdadeiro = document.getElementById('btn-verdadeiro');
+    const btnFalso = document.getElementById('btn-falso');
     
     function mostrarEcra(id) {
         document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
@@ -465,7 +463,6 @@
     }
 
     function voltarAoMenu() {
-        if (flashTimeoutId) clearTimeout(flashTimeoutId);
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
         elStatus.style.display = 'none';
         mostrarEcra('ecra-selecao');
@@ -473,17 +470,17 @@
 
     function atualizarPlacarUI() {
         elProgresso.textContent = rondaAtual > MAX_PALAVRAS ? MAX_PALAVRAS : rondaAtual;
-        elErros.textContent = erradas;
+        elErros.textContent = errosTotais;
         elValTotal.textContent = MAX_PALAVRAS;
         let percent = ((rondaAtual - 1) / MAX_PALAVRAS) * 100;
         elProgressFill.style.width = `${percent}%`;
     }
 
     function atualizarDicasUI() {
+        const btnDica = document.getElementById('btn-dica');
         const blocoAtual = Math.floor((rondaAtual - 1) / 5);
         
-        // A dica só deve estar visualmente "ativável" se estivermos na fase das opções
-        if (!dicasUsadas[blocoAtual] && faseOpcoes.style.display !== 'none') {
+        if (!dicasUsadas[blocoAtual]) {
             btnDica.classList.remove('esgotada');
         } else {
             btnDica.classList.add('esgotada');
@@ -494,156 +491,96 @@
        LÓGICA PRINCIPAL
        ========================================= */
     function iniciarJogo() {
-        if (flashTimeoutId) clearTimeout(flashTimeoutId);
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
         rondaAtual = 1;
         palavraAtualIndex = 0;
-        certas = 0;
-        erradas = 0;
+        errosTotais = 0;
         isVerificando = false;
         dicasUsadas = [];
         
-        let baralhadas = [...bancoPalavras].sort(() => Math.random() - 0.5);
+        // Misturar o banco
+        let embaralhadas = [...bancoPalavras].sort(() => Math.random() - 0.5);
         
-        // Garante que temos pelo menos MAX_PALAVRAS
-        while (baralhadas.length < MAX_PALAVRAS) {
-            baralhadas = baralhadas.concat([...bancoPalavras].sort(() => Math.random() - 0.5));
+        // Prevenir erro se a lista fosse menor
+        while (embaralhadas.length < MAX_PALAVRAS) {
+            embaralhadas = embaralhadas.concat([...bancoPalavras].sort(() => Math.random() - 0.5));
         }
         
-        palavrasDoJogo = baralhadas.slice(0, MAX_PALAVRAS);
+        palavrasDoJogo = embaralhadas.slice(0, MAX_PALAVRAS);
         
         elStatus.style.display = 'flex';
         atualizarPlacarUI();
+        atualizarDicasUI();
         mostrarEcra('ecra-jogo');
         
-        carregarPalavraFlash();
+        carregarPalavra();
     }
 
-    function carregarPalavraFlash() {
+    function carregarPalavra() {
         isVerificando = false;
         removerDestaquesDica();
+        atualizarDicasUI();
 
         const palavraObj = palavrasDoJogo[palavraAtualIndex];
         
         elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
         
-        // Mostrar Flash e Esconder Opções
-        faseOpcoes.style.display = 'none';
-        faseFlash.style.display = 'flex';
-        
-        // A dica não pode ser usada enquanto a palavra está a ser mostrada
-        atualizarDicasUI();
-        
-        textoFlash.textContent = palavraObj.palavra.toUpperCase();
-        tocarSom('flash');
+        elImage.src = getImagePath(palavraObj.imagem);
+        elImage.onerror = () => { elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>${palavraObj.palavra}</text></svg>`; };
 
-        // Reiniciar barra e animar
-        timerBar.style.transition = 'none';
-        timerBar.style.width = '100%';
-        void timerBar.offsetWidth; // Force reflow
-        
-        timerBar.style.transition = `width ${TEMPO_FLASH_MS}ms linear`;
-        timerBar.style.width = '0%';
+        // Sorteia se a palavra mostrada vai ser a Correta (Verdadeiro) ou Incorreta (Falso)
+        isTrueExpected = Math.random() > 0.5;
 
-        if (flashTimeoutId) clearTimeout(flashTimeoutId);
-        
-        flashTimeoutId = setTimeout(() => {
-            mostrarOpcoesImagens(palavraObj);
-        }, TEMPO_FLASH_MS);
+        if (isTrueExpected) {
+            elDisplayedWord.textContent = palavraObj.palavra;
+        } else {
+            // Mostra uma palavra errada aleatória (que não seja a da imagem)
+            let palavrasErradas = bancoPalavras.filter(p => p.palavra.toLowerCase() !== palavraObj.palavra.toLowerCase());
+            let palavraSorteada = palavrasErradas[Math.floor(Math.random() * palavrasErradas.length)].palavra;
+            elDisplayedWord.textContent = palavraSorteada;
+        }
     }
 
-    function mostrarOpcoesImagens(palavraObjCerta) {
-        faseFlash.style.display = 'none';
-        faseOpcoes.style.display = 'flex';
-        opcoesContainer.innerHTML = '';
-        
-        atualizarDicasUI(); // Agora sim, a dica pode ficar disponível
-
-        const opcaoCerta = palavraObjCerta;
-
-        // Escolher 2 imagens erradas aleatórias
-        let outrasPalavras = bancoPalavras.filter(p => p.palavra !== palavraObjCerta.palavra);
-        outrasPalavras = outrasPalavras.sort(() => Math.random() - 0.5);
-        let opcoesErradas = outrasPalavras.slice(0, 2);
-
-        // Juntar 1 certa + 2 erradas e baralhar
-        let opcoesMisturadas = [opcaoCerta, ...opcoesErradas].sort(() => Math.random() - 0.5);
-
-        // Criar os 3 botões
-        opcoesMisturadas.forEach(obj => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-opcao-img';
-            
-            // Atributo secreto para a dica funcionar sem falhas
-            if (obj.palavra === palavraObjCerta.palavra) {
-                btn.dataset.correct = "true";
-            }
-            
-            const img = document.createElement('img');
-            img.src = getImagePath(obj.imagem);
-            img.className = 'img-dentro-btn';
-            img.onerror = () => { img.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>IMG</text></svg>`; };
-
-            // Etiqueta escondida
-            const etiqueta = document.createElement('div');
-            etiqueta.className = 'etiqueta-reforco';
-            etiqueta.textContent = obj.palavra;
-
-            btn.appendChild(img);
-            btn.appendChild(etiqueta);
-            
-            btn.onclick = () => verificarResposta(obj.palavra, btn, palavraObjCerta.palavra, etiqueta);
-            opcoesContainer.appendChild(btn);
-        });
-    }
-
-    function verificarResposta(palavraClicada, btnElemento, palavraCerta, etiquetaElemento) {
+    function verificarResposta(alunoRespondeuVerdadeiro, btn) {
         if (isVerificando) return;
         isVerificando = true;
         removerDestaquesDica();
 
-        if (palavraClicada === palavraCerta) {
-            certas++; 
+        if (alunoRespondeuVerdadeiro === isTrueExpected) {
             atualizarPlacarUI(); 
             tocarSom('acerto');
             
-            btnElemento.classList.add('success-bounce');
-            etiquetaElemento.style.display = 'block'; // Revela o texto de reforço
-            
-            // Bloqueia todos os botões
-            const todosBotoes = document.querySelectorAll('.btn-opcao-img');
-            todosBotoes.forEach(b => b.style.pointerEvents = 'none');
+            btn.classList.add('success-bounce');
 
             setTimeout(() => {
+                btn.classList.remove('success-bounce');
                 avancarRonda();
-            }, 1500); // 1.5s para a criança processar a vitória e ler o texto
+            }, 1000);
             
         } else {
-            erradas++; 
-            atualizarPlacarUI(); 
+            errosTotais++;
+            atualizarPlacarUI();
             tocarSom('erro');
             
-            btnElemento.classList.add('error-shake');
+            btn.classList.add('error-shake');
             
             setTimeout(() => {
-                btnElemento.classList.remove('error-shake');
-                isVerificando = false; 
+                btn.classList.remove('error-shake');
+                isVerificando = false;
             }, 500);
         }
     }
 
     /* --- DICA --- */
     function usarDica() {
+        const btnDica = document.getElementById('btn-dica');
         const blocoAtual = Math.floor((rondaAtual - 1) / 5);
         
-        // Só funciona se estiver na fase das opções e a dica não foi usada
-        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual] || isVerificando || faseOpcoes.style.display === 'none') return;
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual] || isVerificando) return;
 
-        // Procura o botão correto pela tag oculta e aplica a animação SUAVE
-        const btnCorreto = document.querySelector('.btn-opcao-img[data-correct="true"]');
-        if (btnCorreto) {
-            btnCorreto.classList.add('dica-iluminada');
-        }
+        // Se o esperado for Verdadeiro, acende o botão verde. Se for Falso, acende o botão vermelho.
+        const btnCorreto = isTrueExpected ? btnVerdadeiro : btnFalso;
+        btnCorreto.classList.add('dica-iluminada');
 
         dicasUsadas[blocoAtual] = true;
         tocarSom('swoosh');
@@ -651,7 +588,8 @@
     }
 
     function removerDestaquesDica() {
-        document.querySelectorAll('.dica-iluminada').forEach(el => el.classList.remove('dica-iluminada'));
+        btnVerdadeiro.classList.remove('dica-iluminada');
+        btnFalso.classList.remove('dica-iluminada');
     }
 
     /* --- GESTÃO GERAL --- */
@@ -661,14 +599,13 @@
         
         if (rondaAtual > MAX_PALAVRAS) {
             elProgressFill.style.width = `100%`;
-            document.getElementById('final-certas').textContent = certas;
-            document.getElementById('final-erradas').textContent = erradas;
+            document.getElementById('final-erros').textContent = errosTotais;
             
             const titleText = document.getElementById('end-title-text');
-            if (erradas === 0) {
+            if (errosTotais === 0) {
                 titleText.textContent = "PERFEITO! 🏆";
                 tocarSom('vitoria'); dispararConfetis();
-            } else if (erradas <= 3) {
+            } else if (errosTotais <= 3) {
                 titleText.textContent = "MUITO BEM! 🎉";
                 tocarSom('vitoria'); dispararConfetis();
             } else {
@@ -681,7 +618,7 @@
         } 
         else {
             atualizarPlacarUI();
-            carregarPalavraFlash();
+            carregarPalavra();
         }
     }
 
@@ -702,12 +639,7 @@
         osc.connect(gain); gain.connect(audioCtx.destination);
         const agora = audioCtx.currentTime;
 
-        if (tipo === 'flash') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.1);
-            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
-            osc.start(agora); osc.stop(agora + 0.1);
-        }
-        else if (tipo === 'acerto') {
+        if (tipo === 'acerto') {
             osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
@@ -761,6 +693,9 @@
         });
         if (ativos) requestAnimationFrame(animarConfetis);
     }
+	
+	// O { folder: 'svg', ext: '.svg' } garante que usa SVGs para a máxima qualidade!
+	twemoji.parse(document.body, { folder: 'svg', ext: '.svg' });
 
     // Arranca no menu
     window.onload = () => mostrarEcra('ecra-selecao');
