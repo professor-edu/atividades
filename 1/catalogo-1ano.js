@@ -10,7 +10,7 @@ const todosOsJogos =[
     // ------------------------------------
     { nome: "O Meu Teclado", icone: "icones/meu-teclado.png", link: "pt/meu-teclado/", cat: "pt" },
     { nome: "Palavra Certa", icone: "icones/palavra_certa.png", link: "pt/palavra-certa/", cat: "pt" },
-    { nome: "Letra em Falta", icone: "icones/letra_em_falta.png", link: "pt/letra-em-falta/", cat: "pt" },
+    { nome: "Letras em Falta", icone: "icones/letra_em_falta.png", link: "pt/letras-em-falta/", cat: "pt" },
     { nome: "Contar Sílabas", icone: "icones/contar_silabas.png", link: "pt/contar-silabas/", cat: "pt" },
     { nome: "Rimas", icone: "icones/rimas.png", link: "pt/rimas/", cat: "pt" },
     { nome: "Comboio das Letras", icone: "icones/comboio_letras.png", link: "pt/comboio-letras/", cat: "pt" },

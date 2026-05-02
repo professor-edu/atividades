@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Sopa de Letras 🔎</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Importação do ficheiro de dados externo -->
+    <script src="../dados.js"></script>
+    
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        /* =========================================
+           CSS DO TEMPLATE BASE (1º ANO)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-pt: #ff6b6b;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: hidden; } }
+
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        
+        .hamburger { cursor: pointer; background: rgba(255, 255, 255, 0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+            .nav-container { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; height: 40px; margin-bottom: 5px; transform: none; top: 0; }
+            .hamburger { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+            .btn-voltar { margin: 0 auto; position: relative; z-index: 5; }
+            h1 { text-align: center; font-size: 1.8rem; }
+            .subtitulo { text-align: center; margin-top: 5px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; min-height: 0;}
+
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; flex: 1; min-height: 0;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); 
+            border-top: 8px solid var(--cor-pt); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; 
+        }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; z-index: 10;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+
+        /* =========================================
+           MENU INICIAL E ECRÃS
+           ========================================= */
+        .ecra { width: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; flex: 1; min-height: 0; }
+        .titulo-menu { font-size: 2rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        #ecra-jogo { justify-content: flex-start; }
+
+        /* Quadrados de Dificuldade */
+        .diff-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 600px; padding-bottom: 10px;}
+        
+        .btn-diff {
+            width: 140px; height: 140px; padding: 10px; font-size: 1.4rem; font-weight: 900; color: white;
+            border: none; border-radius: 20px; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex: 1; min-width: 120px;
+        }
+        .btn-diff:hover { transform: translateY(-3px); filter: brightness(1.05); }
+        .btn-diff:active { transform: translateY(2px); }
+        .btn-diff small { font-size: 0.85rem; font-weight: 500; opacity: 0.9; text-align: center; line-height: 1.3;}
+        
+        .btn-facil { background-color: #2ed573; box-shadow: 0 6px 0 #219d53; }
+        .btn-medio { background-color: #ffa502; box-shadow: 0 6px 0 #d35400; }
+        .btn-dificil { background-color: #ff4757; box-shadow: 0 6px 0 #c0392b; }
+
+        /* Adaptação Mobile: Os botões empilham na vertical */
+        @media (max-width: 550px) {
+            .diff-container { flex-direction: column; align-items: center; gap: 12px; }
+            .btn-diff { width: 100%; max-width: 300px; height: auto; padding: 15px; font-size: 1.2rem; border-radius: 15px; flex-direction: column; gap: 5px; flex: none;}
+            .btn-diff small { font-size: 0.85rem; }
+        }
+
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative;
+        }
+        .btn-dica:hover { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica:disabled, .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); cursor: not-allowed;}
+        
+        .hint-badge {
+            position: absolute; top: -6px; right: -6px; background: #ff4757; color: white; 
+            font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .badge-ronda { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; border: 2px solid #219d53; color: #219d53; }
+        
+        .timer-box { font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; background: #e3f2fd; border: 2px solid var(--azul-vibrante); color: var(--azul-escuro); transition: 0.3s; }
+        .timer-flash { animation: flashRed 1s infinite; color: #ff4757 !important; background: #ffefef; border-color: #ff4757;}
+        @keyframes flashRed { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; min-width: 50px;}
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 850px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.85rem;}
+            .badge-ronda, .timer-box { font-size: 0.85rem; padding: 4px 8px; }
+            .progress-bg { order: 6; min-width: 100%; margin-top: 5px; height: 20px; margin: 5px 0 0 0;}
+        }
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 15px; overflow-y: auto; gap: 15px;
+            position: relative; color: #94a3b8; font-weight: bold;
+        }
+
+        /* =========================================
+           CSS ESPECÍFICO DO JOGO: SOPA DE LETRAS
+           ========================================= */
+        
+        /* Animação Inicial Tutorial */
+        .animacao-tutorial {
+            position: relative; width: 100%; max-width: 350px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 30px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); gap: 15px;
+        }
+
+        .mini-grid { display: grid; grid-template-columns: repeat(4, 40px); gap: 4px; }
+        .mini-cell {
+            width: 40px; height: 40px; background: white; border: 2px solid #ced6e0; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; color: var(--azul-escuro);
+        }
+
+        .hl-g { animation: findGato 3s infinite 0.2s; }
+        .hl-a { animation: findGato 3s infinite 0.4s; }
+        .hl-t { animation: findGato 3s infinite 0.6s; }
+        .hl-o { animation: findGato 3s infinite 0.8s; }
+
+        @keyframes findGato {
+            0%, 60% { background: white; color: var(--azul-escuro); border-color: #ced6e0; transform: scale(1);}
+            70%, 90% { background: #2ed573; color: white; border-color: #26b360; transform: scale(1.1); box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3); z-index: 5;}
+            100% { background: white; color: var(--azul-escuro); border-color: #ced6e0; transform: scale(1);}
+        }
+
+        /* Layout em Jogo (Grelha lado a lado com Palavras em Desktop) */
+        .game-layout {
+            display: flex; flex-direction: row; gap: 30px; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0;
+        }
+
+        /* Contentor Grelha - Fixo em formato quadrado */
+        .grid-wrapper {
+            background: white; padding: 10px; border: 3px solid #e3f2fd; border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); touch-action: none;
+            width: 100%; max-width: 420px; 
+            aspect-ratio: 1; /* Quadrado perfeito garantido */
+            display: flex; align-items: center; justify-content: center;
+            box-sizing: border-box; flex-shrink: 0;
+        }
+
+        /* Grelha Sempre 10x10 */
+        .word-grid { 
+            width: 100%; height: 100%; display: grid; gap: 3px; user-select: none; 
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+        }
+        
+        .grid-cell {
+            width: 100%; height: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            font-size: clamp(0.9rem, 3.5vmin, 1.4rem); font-weight: 900; color: var(--azul-escuro);
+            background: #f8fafc; border-radius: 6px; cursor: pointer; text-transform: uppercase;
+            box-sizing: border-box; border: 2px solid transparent; transition: background 0.1s;
+        }
+        
+        /* Estados das Letras */
+        .grid-cell.selected { background-color: #ffeaa7; color: var(--azul-escuro); border-color: #fbd561; z-index: 10; transform: scale(1.05); box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .grid-cell.found { background-color: #2ed573; color: white; border-color: #219d53; z-index: 5; }
+        .grid-cell.missed { background-color: #ffefef; color: #ff4757; border-color: #ff4757; z-index: 4; transition: all 0.5s ease; }
+
+        /* Animação de Pista */
+        @keyframes pulseHint {
+            0% { background-color: #f8fafc; transform: scale(1); box-shadow: 0 0 0 rgba(251, 197, 49, 0); }
+            50% { background-color: #fbc531; color: white; transform: scale(1.2); box-shadow: 0 0 15px rgba(251, 197, 49, 0.8); z-index: 20; border-color: #e1b12c; }
+            100% { background-color: #f8fafc; transform: scale(1); box-shadow: 0 0 0 rgba(251, 197, 49, 0); }
+        }
+        .hint-pulse { animation: pulseHint 1s ease-in-out 3; }
+
+        /* Lista de Palavras - Lateral (Desktop 2 Colunas) */
+        .words-list {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+            width: 100%; max-width: 380px; align-content: center; justify-content: center;
+        }
+        
+        .word-card {
+            display: flex; align-items: center; gap: 8px; justify-content: flex-start;
+            padding: 6px 12px; background: white; border: 2px solid #e3f2fd;
+            border-radius: 30px; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--azul-escuro); letter-spacing: 0.5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .word-card img { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0;}
+        .word-card.found { background: #eafff0; border-color: #2ed573; opacity: 0.6; color: #219d53; text-decoration: line-through;}
+
+        /* Adaptação Mobile: Grelha no topo, Palavras por baixo (sem imagens) para caber bem */
+        @media (max-width: 850px) {
+            .game-layout { flex-direction: column; gap: 15px; align-items: center; justify-content: flex-start;}
+            .grid-wrapper { max-width: 100%; width: 100%; margin: 0 auto;}
+            
+            .words-list { 
+                display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; 
+                max-width: 100%; align-content: flex-start; gap: 8px;
+            }
+            .word-card { padding: 6px 12px; border-radius: 20px; justify-content: center; }
+            .word-card span { font-size: 0.85rem; }
+        }
+
+        /* Regra rigorosa apenas para ecrãs na vertical (onde a altura é crítica) */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .word-card img { display: none; } /* Remove imagens na vertical para poupar espaço real */
+        }
+
+        /* =========================================
+           ECRÃ FIM E BOTÕES DE AÇÃO
+           ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: #fff; padding: 30px 20px; border-radius: 20px; border: 2px solid #ffebeb; line-height: 1.5; }
+        
+        .btn-acao { 
+            background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; 
+            font-size: 1.1rem; font-weight: 700; border-radius: 15px; cursor: pointer; 
+            box-shadow: 0 6px 0 #093273; display: flex; align-items: center; justify-content: center; 
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; 
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #093273; filter: brightness(1.15); } }
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+        
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        
+        <h1>Sopa de Letras 🔎</h1>
+        <div class="subtitulo">Encontra todas as palavras escondidas! Consegues?</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container">
+        
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- ECRÃ 1: MENU INICIAL -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="titulo-menu">Escolhe a Dificuldade:</h2>
+            
+            <div class="animacao-tutorial">
+                <div class="mini-grid">
+                    <div class="mini-cell hl-g">G</div>
+                    <div class="mini-cell">X</div>
+                    <div class="mini-cell">B</div>
+                    <div class="mini-cell">R</div>
+                    <div class="mini-cell hl-a">A</div>
+                    <div class="mini-cell">P</div>
+                    <div class="mini-cell">L</div>
+                    <div class="mini-cell">O</div>
+                    <div class="mini-cell hl-t">T</div>
+                    <div class="mini-cell">M</div>
+                    <div class="mini-cell">Z</div>
+                    <div class="mini-cell">E</div>
+                    <div class="mini-cell hl-o">O</div>
+                    <div class="mini-cell">V</div>
+                    <div class="mini-cell">C</div>
+                    <div class="mini-cell">Q</div>
+                </div>
+            </div>
+
+            <div class="diff-container">
+                <button class="btn-diff btn-facil" onclick="iniciarJogo('facil')">
+                    <span>Fácil</span><small>6 palavras<br>3 min</small>
+                </button>
+                <button class="btn-diff btn-medio" onclick="iniciarJogo('medio')">
+                    <span>Médio</span><small>8 palavras<br>4 min</small>
+                </button>
+                <button class="btn-diff btn-dificil" onclick="iniciarJogo('dificil')">
+                    <span>Difícil</span><small>10 palavras<br>5 min</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO RIGOROSA AO TEMPLATE -->
+            <div class="status-bar-jogo" id="status-bar" style="display: none;">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-hint" class="btn-dica" onclick="usarPista()" style="display: none;" title="Pistas">
+                    💡<span id="hint-count" class="hint-badge">2</span>
+                </button>
+                <div class="badge-ronda">⭐ <span id="val-certas">0</span>/<span id="val-total">0</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="timer-box" id="timer-box" style="font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; border: 2px solid var(--azul-vibrante); color: var(--azul-escuro); background: #e3f2fd;">⏳ <span id="timer-val">00:00</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo">
+                
+                <div class="game-layout">
+                    <!-- Grelha Responsiva sempre 10x10 e quadrada -->
+                    <div class="grid-wrapper">
+                        <div id="word-grid" class="word-grid"></div>
+                    </div>
+                    
+                    <!-- Cartões de Palavras -->
+                    <div id="words-list" class="words-list"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
+            <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Fim do Jogo!</h2>
+            <div class="end-stats" id="end-stats-text"></div>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 500px; margin: 0 auto;">
+                <button class="btn-acao" onclick="reiniciarMesmoNivel()" style="margin: 0; flex: 1; min-width: 200px;">JOGAR DE NOVO 🔄</button>
+                <button class="btn-acao" onclick="voltarAoMenu()" style="margin: 0; flex: 1; min-width: 200px; background-color: #ced6e0; color: var(--text-main); box-shadow: 0 6px 0 #a4b0be;">MUDAR NÍVEL 🏠</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    /* =========================================
+       DADOS DE FALLBACK (Se ../dados.js falhar)
+       ========================================= */
+    let bancoPalavras = [];
+    if (typeof palavras !== 'undefined') {
+        bancoPalavras = palavras;
+    } else if (typeof window.palavras !== 'undefined') {
+        bancoPalavras = window.palavras;
+    } else {
+        bancoPalavras = [
+            { palavra: "uva", imagem: "img/uva.png" },
+            { palavra: "pato", imagem: "img/pato.png" },
+            { palavra: "mola", imagem: "img/mola.png" },
+            { palavra: "balão", imagem: "img/balao.png" },
+            { palavra: "escola", imagem: "img/escola.png" },
+            { palavra: "macaco", imagem: "img/macaco.png" },
+            { palavra: "borboleta", imagem: "img/borboleta.png" },
+            { palavra: "bicicleta", imagem: "img/bicicleta.png" },
+            { palavra: "fada", imagem: "img/fada.png" },
+            { palavra: "gato", imagem: "img/gato.png" }
+        ];
+    }
+
+    function removerAcentos(palavra) {
+        return palavra.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function getImagePath(imgPath) {
+        if (!imgPath) return '';
+        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
+        return '../' + imgPath;
+    }
+
+    /* =========================================
+       ESTADOS E VARIÁVEIS
+       ========================================= */
+    let palavrasDoJogo = [];
+    let grelha = [];
+    let tamanhoGrelha = 10; // Fixo 10x10 para caber sempre bem
+    let palavrasEncontradas = 0;
+    
+    let tempoRestante = 0;
+    let timerInterval = null;
+    let isGameOver = false;
+    let dificuldadeAtual = 'facil';
+
+    // Sistema de Pistas
+    let pistasRestantes = 0;
+
+    let isDragging = false;
+    let startCell = null;
+    let currentPath = [];
+
+    // DOM
+    const elGameScreen = document.getElementById('ecra-jogo');
+    const elEndScreen = document.getElementById('ecra-fim');
+    const elStatus = document.getElementById('status-bar');
+    const elBtnHint = document.getElementById('btn-hint');
+    const elHintCount = document.getElementById('hint-count');
+    
+    const gridContainer = document.getElementById('word-grid');
+    const wordsListContainer = document.getElementById('words-list');
+    const elValCertas = document.getElementById('val-certas');
+    const elValTotal = document.getElementById('val-total');
+    const elTimerVal = document.getElementById('timer-val');
+    const elTimerBox = document.getElementById('timer-box');
+    const elProgressFill = document.getElementById('progress-fill');
+    
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        pararTimer();
+        elStatus.style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarMesmoNivel() {
+        iniciarJogo(dificuldadeAtual);
+    }
+
+    /* =========================================
+       LÓGICA PRINCIPAL
+       ========================================= */
+    function iniciarJogo(dificuldade) {
+        dificuldadeAtual = dificuldade;
+        palavrasEncontradas = 0;
+        isGameOver = false;
+        let numPalavras = 6;
+        let minutos = 3;
+        tamanhoGrelha = 10; // Mantém-se 10x10
+        
+        if (dificuldade === 'facil') { numPalavras = 6; minutos = 3; pistasRestantes = 0; }
+        else if (dificuldade === 'medio') { numPalavras = 8; minutos = 4; pistasRestantes = 0; }
+        else if (dificuldade === 'dificil') { numPalavras = 10; minutos = 5; pistasRestantes = 2; }
+
+        tempoRestante = minutos * 60;
+
+        // Configurar Botão de Pistas
+        if (dificuldade === 'dificil') {
+            elBtnHint.style.display = 'flex';
+            elBtnHint.disabled = false;
+            elHintCount.textContent = pistasRestantes;
+        } else {
+            elBtnHint.style.display = 'none';
+        }
+
+        // Transições de Ecrã
+        elStatus.style.display = 'flex';
+        elTimerBox.classList.remove('timer-flash');
+        mostrarEcra('ecra-jogo');
+
+        elValTotal.textContent = numPalavras;
+        atualizarPlacar();
+
+        // Filtra palavras que cabem na grelha 10x10 (máx 10 letras)
+        let palavrasValidas = bancoPalavras.filter(p => removerAcentos(p.palavra).length <= tamanhoGrelha);
+        let baralhadas = [...palavrasValidas].sort(() => Math.random() - 0.5);
+        
+        // Fallback se faltarem palavras
+        while (baralhadas.length < numPalavras) {
+            baralhadas = baralhadas.concat([...palavrasValidas].sort(() => Math.random() - 0.5));
+        }
+
+        palavrasDoJogo = baralhadas.slice(0, numPalavras).map(obj => ({
+            ...obj, 
+            palavraLimpa: removerAcentos(obj.palavra).toUpperCase(), 
+            encontrada: false,
+            path: [],
+            startR: null,
+            startC: null
+        }));
+
+        gerarGrelhaLogica();
+        desenharGrelha();
+        desenharListaPalavras();
+        
+        iniciarTimer();
+    }
+
+    // =========================================
+    // LÓGICA DA GRELHA
+    // =========================================
+    function gerarGrelhaLogica() {
+        grelha = Array(tamanhoGrelha).fill(null).map(() => Array(tamanhoGrelha).fill(''));
+
+        const direcoesPermitidas = [0, 1]; 
+
+        palavrasDoJogo.forEach(item => {
+            let colocada = false;
+            let tentativas = 0;
+            const word = item.palavraLimpa;
+
+            while (!colocada && tentativas < 500) {
+                tentativas++;
+                let dir = direcoesPermitidas[Math.floor(Math.random() * direcoesPermitidas.length)];
+                let startR = Math.floor(Math.random() * tamanhoGrelha);
+                let startC = Math.floor(Math.random() * tamanhoGrelha);
+
+                let cabe = true;
+                for (let i = 0; i < word.length; i++) {
+                    let r = startR + (dir === 1 ? i : 0);
+                    let c = startC + (dir === 0 ? i : 0);
+                    
+                    if (r >= tamanhoGrelha || c >= tamanhoGrelha || (grelha[r][c] !== '' && grelha[r][c] !== word[i])) {
+                        cabe = false; break;
+                    }
+                }
+
+                if (cabe) {
+                    item.startR = startR;
+                    item.startC = startC;
+                    for (let i = 0; i < word.length; i++) {
+                        let r = startR + (dir === 1 ? i : 0);
+                        let c = startC + (dir === 0 ? i : 0);
+                        grelha[r][c] = word[i];
+                        item.path.push({r, c});
+                    }
+                    colocada = true;
+                }
+            }
+        });
+
+        const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let r = 0; r < tamanhoGrelha; r++) {
+            for (let c = 0; c < tamanhoGrelha; c++) {
+                if (grelha[r][c] === '') {
+                    grelha[r][c] = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // FUNÇÃO DA PISTA
+    // =========================================
+    function usarPista() {
+        if (pistasRestantes <= 0 || isGameOver) return;
+        
+        const palavraFalta = palavrasDoJogo.find(p => !p.encontrada);
+        if (!palavraFalta) return;
+
+        const cellEl = document.querySelector(`.grid-cell[data-r="${palavraFalta.startR}"][data-c="${palavraFalta.startC}"]`);
+        if (cellEl) {
+            cellEl.classList.remove('hint-pulse');
+            void cellEl.offsetWidth; 
+            cellEl.classList.add('hint-pulse');
+            tocarSom('acerto'); 
+        }
+
+        pistasRestantes--;
+        elHintCount.textContent = pistasRestantes;
+        
+        if (pistasRestantes === 0) {
+            elBtnHint.disabled = true;
+        }
+    }
+
+    // =========================================
+    // DESENHO NO DOM
+    // =========================================
+    function desenharGrelha() {
+        gridContainer.innerHTML = '';
+        
+        for (let r = 0; r < tamanhoGrelha; r++) {
+            for (let c = 0; c < tamanhoGrelha; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.textContent = grelha[r][c];
+                cell.dataset.r = r;
+                cell.dataset.c = c;
+                
+                cell.addEventListener('mousedown', iniciarSelecao);
+                cell.addEventListener('mouseenter', arrastarSelecao);
+                
+                gridContainer.appendChild(cell);
+            }
+        }
+    }
+
+    function desenharListaPalavras() {
+        wordsListContainer.innerHTML = '';
+        palavrasDoJogo.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.id = `word-card-${index}`;
+            card.innerHTML = `
+                <img src="${getImagePath(item.imagem)}" alt="${item.palavra}" onerror="this.onerror=null; this.style.display='none';">
+                <span>${item.palavra}</span>
+            `;
+            wordsListContainer.appendChild(card);
+        });
+    }
+
+    // =========================================
+    // LÓGICA DE INTERAÇÃO (SELEÇÃO)
+    // =========================================
+    document.addEventListener('mouseup', () => { if(isDragging) terminarSelecao(); });
+
+    gridContainer.addEventListener('touchstart', e => {
+        if (e.target.classList.contains('grid-cell')) {
+            e.preventDefault(); 
+            iniciarSelecao({ target: e.target });
+        }
+    }, {passive: false});
+
+    gridContainer.addEventListener('touchmove', e => {
+        if (!isDragging || isGameOver) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (elem && elem.classList.contains('grid-cell')) {
+            arrastarSelecao({ target: elem });
+        }
+    }, {passive: false});
+
+    gridContainer.addEventListener('touchend', e => {
+        if (isDragging) terminarSelecao();
+    });
+
+    function iniciarSelecao(e) {
+        if (isGameOver) return;
+        const r = parseInt(e.target.dataset.r);
+        const c = parseInt(e.target.dataset.c);
+        isDragging = true;
+        startCell = { r, c };
+        
+        limparSelecaoVisual();
+        currentPath = [{r, c}];
+        e.target.classList.add('selected');
+        e.target.classList.remove('hint-pulse'); 
+    }
+
+    function arrastarSelecao(e) {
+        if (!isDragging || !startCell || isGameOver) return;
+        const currentR = parseInt(e.target.dataset.r);
+        const currentC = parseInt(e.target.dataset.c);
+
+        const dr = currentR - startCell.r;
+        const dc = currentC - startCell.c;
+
+        limparSelecaoVisual();
+        currentPath = [];
+
+        if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
+            const passos = Math.max(Math.abs(dr), Math.abs(dc));
+            const passoR = dr === 0 ? 0 : (dr > 0 ? 1 : -1);
+            const passoC = dc === 0 ? 0 : (dc > 0 ? 1 : -1);
+
+            for (let i = 0; i <= passos; i++) {
+                const row = startCell.r + i * passoR;
+                const col = startCell.c + i * passoC;
+                currentPath.push({r: row, c: col});
+                
+                const cellEl = document.querySelector(`.grid-cell[data-r="${row}"][data-c="${col}"]`);
+                if (cellEl) cellEl.classList.add('selected');
+            }
+        } else {
+            const cellEl = document.querySelector(`.grid-cell[data-r="${currentR}"][data-c="${currentC}"]`);
+            if (cellEl) cellEl.classList.add('selected');
+        }
+    }
+
+    function terminarSelecao() {
+        if (!isDragging || isGameOver) return;
+        isDragging = false;
+
+        if (currentPath.length < 2) {
+            limparSelecaoVisual();
+            return;
+        }
+
+        let palavraLida = currentPath.map(p => grelha[p.r][p.c]).join('');
+        let palavraLidaRev = palavraLida.split('').reverse().join('');
+
+        let encontrou = false;
+        
+        palavrasDoJogo.forEach((item, idx) => {
+            if (!item.encontrada && (item.palavraLimpa === palavraLida || item.palavraLimpa === palavraLidaRev)) {
+                encontrou = true;
+                item.encontrada = true;
+                palavrasEncontradas++;
+                
+                currentPath.forEach(p => {
+                    const cellEl = document.querySelector(`.grid-cell[data-r="${p.r}"][data-c="${p.c}"]`);
+                    cellEl.classList.remove('selected');
+                    cellEl.classList.add('found');
+                });
+                
+                document.getElementById(`word-card-${idx}`).classList.add('found');
+            }
+        });
+
+        limparSelecaoVisual(); 
+
+        if (encontrou) {
+            tocarSom('acerto');
+            atualizarPlacar();
+            if (palavrasEncontradas === palavrasDoJogo.length) {
+                isGameOver = true;
+                finalizarJogo(true);
+            }
+        }
+    }
+
+    function limparSelecaoVisual() {
+        document.querySelectorAll('.grid-cell.selected').forEach(el => el.classList.remove('selected'));
+    }
+
+    // =========================================
+    // TEMPO E PONTUAÇÃO
+    // =========================================
+    function atualizarPlacar() {
+        elValCertas.textContent = palavrasEncontradas;
+        let percent = (palavrasEncontradas / palavrasDoJogo.length) * 100;
+        elProgressFill.style.width = `${percent}%`;
+    }
+
+    function formatarTempo(segs) {
+        let m = Math.floor(segs / 60);
+        let s = segs % 60;
+        return `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+    }
+
+    function iniciarTimer() {
+        pararTimer();
+        elTimerVal.textContent = formatarTempo(tempoRestante);
+        
+        timerInterval = setInterval(() => {
+            tempoRestante--;
+            elTimerVal.textContent = formatarTempo(tempoRestante);
+            
+            if (tempoRestante <= 10 && tempoRestante > 0) {
+                elTimerBox.classList.add('timer-flash');
+            }
+            
+            if (tempoRestante <= 0) {
+                pararTimer();
+                isGameOver = true;
+                revelarPalavrasFalta();
+            }
+        }, 1000);
+    }
+
+    function pararTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+    }
+
+    // =========================================
+    // CORREÇÃO E FIM DE JOGO
+    // =========================================
+    function revelarPalavrasFalta() {
+        let revelouAlguma = false;
+        
+        palavrasDoJogo.forEach(item => {
+            if (!item.encontrada) {
+                revelouAlguma = true;
+                item.path.forEach(p => {
+                    const cellEl = document.querySelector(`.grid-cell[data-r="${p.r}"][data-c="${p.c}"]`);
+                    if (cellEl && !cellEl.classList.contains('found')) {
+                        cellEl.classList.add('missed');
+                    }
+                });
+            }
+        });
+
+        if (revelouAlguma) {
+            tocarSom('erro'); 
+            setTimeout(() => finalizarJogo(false), 3000);
+        } else {
+            finalizarJogo(false);
+        }
+    }
+
+    function finalizarJogo(vitoria) {
+        pararTimer();
+        
+        setTimeout(() => {
+            elStatus.style.display = 'none';
+            mostrarEcra('ecra-fim');
+            
+            document.getElementById('end-stats-text').innerHTML = 
+                `Encontraste <strong style="color:#2ed573">${palavrasEncontradas}</strong> de ${palavrasDoJogo.length} palavras!`;
+
+            if (vitoria) {
+                document.getElementById('end-title-text').textContent = "MUITO BEM! 🏆";
+                tocarSom('vitoria'); 
+                dispararConfetis();
+            } else {
+                document.getElementById('end-title-text').textContent = "TEMPO ESGOTADO! ⏰";
+            }
+        }, 500); 
+    }
+
+    // =========================================
+    // EFEITOS DE SOM E CONFETIS
+    // =========================================
+    let audioCtx = null;
+    function iniciarAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.body.addEventListener('click', iniciarAudio, { once: true });
+    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+
+    function tocarSom(tipo) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } 
+        else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.4);
+            osc.start(agora); osc.stop(agora + 0.4);
+        }
+        else if (tipo === 'vitoria') {
+            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
+            });
+        }
+    }
+
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+
+    function redimensionarCanvas() { 
+        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
+        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+
+    // Arranca no menu
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>
