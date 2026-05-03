@@ -2,15 +2,17 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Ligar Quantidades 🔗</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         /* =========================================
-           CSS DO TEMPLATE BASE E MOLDE INTOCÁVEL (BOM.HTML)
+           CSS DO TEMPLATE BASE E MOLDE INTOCÁVEL
            ========================================= */
         :root {
             --bg-body: #f0f4f8;
@@ -20,20 +22,27 @@
             --bg-header: #e3f2fd;
             --azul-escuro: #0d47a1;
             --text-main: #455a64;
+            --cor-mat: #4dabf7; 
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
-        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        
+        /* HEADER OFICIAL (CONFORME PEDIDO) */
+        header { 
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--azul-vibrante);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
         .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
         .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
-        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
-        .hamburger:hover { background: #fff9c4; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; touch-action: manipulation; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
         .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
         .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-voltar:hover { transform: scale(1.05); }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; touch-action: manipulation;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
         h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
         
@@ -42,13 +51,15 @@
         .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
         .sidebar ul { list-style: none; padding: 15px; margin: 0; }
         .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
         
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; gap: 25px; }
-        .cartao-jogo-container { background: white; width: 100%; max-width: 800px; min-height: 450px; padding: 40px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-1ano); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); flex-shrink: 0; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; min-height: 0; padding: 25px 20px; border-radius: 30px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); border-top: 8px solid var(--cor-mat); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; }
+        
+        /* FOOTER OFICIAL (CONFORME PEDIDO) */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; flex-shrink: 0;}
         footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
         
         @media (max-width: 768px) {
@@ -58,151 +69,268 @@
             .hamburger { grid-column: 1; justify-self: start; }
             .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
             h1, .subtitulo { grid-column: 2; text-align: center; }
-            main { padding: 20px 15px; gap: 15px; }
-            .cartao-jogo-container { padding: 25px 15px; min-height: 350px; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; }
         }
 
-        .status-bar { width: 100%; max-width: 700px; margin-bottom: 0; display: none; }
-        .score-container { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.3rem; padding: 0 15px; }
-        .score-certas { color: #219d53; }
-        .score-erradas { color: #d0303f; }
-        .progress-bg { 
-			background-color: #e2e8f0; /* Um cinza mais suave */
-			border-radius: 20px; 
-			height: 35px; /* Um pouco mais grossa */
-			width: 100%; 
-			overflow: hidden; 
-			box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
-			border: 2px solid #d4dbe3;
-		}
+        /* =========================================
+           TUTORIAL ANIMADO & MENU INICIAL
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box;}
+        #ecra-inicio { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.6rem, 5vw, 2.2rem); color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
+        
+        .animacao-tutorial {
+            position: relative; width: 100%; max-width: 350px; background: #f4faff;
+            border-radius: 20px; border: 3px dashed #bcdcff; margin: 0 auto 25px;
+            display: flex; align-items: center; justify-content: space-between; padding: 25px;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.1); height: 160px; overflow: hidden;
+        }
 
-.progress-fill { 
-    height: 100%; 
-    width: 0%; 
-    border-radius: 20px; 
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    
-    /* Magia das riscas animadas */
-    background-color: var(--cor-1ano);
-    background-image: linear-gradient(
-        45deg, 
-        rgba(255, 255, 255, 0.2) 25%, 
-        transparent 25%, 
-        transparent 50%, 
-        rgba(255, 255, 255, 0.2) 50%, 
-        rgba(255, 255, 255, 0.2) 75%, 
-        transparent 75%, 
-        transparent
-    );
-    background-size: 30px 30px;
-    animation: moverRiscas 2s linear infinite;
-}
+        .tut-card { width: 80px; height: 80px; background: white; border: 3px solid #ced6e0; border-radius: 12px; font-size: 1.5rem; font-weight: bold; color: var(--azul-escuro); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #ced6e0; z-index: 2;}
+        .tut-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;}
+        .tut-line { stroke: #2ed573; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawTutLine 3s infinite;}
+        .tut-hand { position: absolute; font-size: 2.5rem; animation: moveHandTut 3s infinite; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2)); }
+        
+        @keyframes drawTutLine { 0%, 20% { stroke-dashoffset: 200; } 50%, 80% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 200; opacity: 0; } }
+        @keyframes moveHandTut { 
+            0%, 10% { transform: translate(65px, 65px); opacity: 0;} 
+            20% { transform: translate(65px, 65px); opacity: 1;} 
+            50%, 80% { transform: translate(250px, 65px); opacity: 1;} 
+            90%, 100% { transform: translate(250px, 80px); opacity: 0;} 
+        }
 
-/* Animação para fazer as riscas deslizarem */
-@keyframes moverRiscas {
-    0% { background-position: 0 0; }
-    100% { background-position: 30px 0; }
-}
+        /* NOVOS BOTÕES DE NÍVEL (Estilo Premium) */
+        .grid-niveis { display: flex; flex-direction: column; gap: 18px; width: 100%; max-width: 450px; margin: 0 auto 20px; }
+        
+        .btn-nivel-novo {
+            width: 100%; padding: 15px 20px; border-radius: 20px; border: 4px solid white;
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: flex-start;
+            gap: 15px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: left;
+        }
 
+        .nivel-icon-novo { font-size: 2.2rem; background: rgba(255,255,255,0.3); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); text-shadow: none;}
+        .nivel-text-novo { display: flex; flex-direction: column; gap: 4px;}
+        .nivel-titulo-novo { font-size: 1.3rem; font-weight: 900; color: white; display: block;}
+        .nivel-desc-novo { font-size: 0.95rem; color: white; opacity: 0.95; font-weight: 600; text-shadow: none; display: block;}
+
+        .btn-n1 { background-color: #2ed573; }
+        .btn-n2 { background-color: #ffa502; }
+        .btn-n3 { background-color: #ff4757; }
+
+        @media (hover: hover) { 
+            .btn-nivel-novo:hover { 
+                transform: translateY(-2px); 
+                box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); 
+                filter: brightness(1.05); 
+            } 
+        }
+        .btn-nivel-novo:active { 
+            transform: translateY(6px) !important; 
+            box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; 
+        }
 
         /* =========================================
-           CSS ESPECÍFICO: LIGAR QUANTIDADES (COMPACTO)
+           BARRA DE PROGRESSO DO JOGO
            ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+        }
+        
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 8px 15px; border-radius: 20px; font-size: 1rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; touch-action: manipulation; }
+        @media (hover: hover) { .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); } }
 
-        #ecra-inicio, #ecra-jogo, #ecra-transicao { width: 100%; display: none; flex-direction: column; align-items: center; z-index: 20; }
-        #ecra-inicio { display: flex; justify-content: center; }
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 15px; border-radius: 20px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; position: relative; touch-action: manipulation;}
+        @media (hover: hover) { .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.05); } }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+        .hint-badge { position: absolute; top: -6px; right: -6px; background: #ff4757; color: white; font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        /* SELETOR DE NÍVEL NO TOPO DO JOGO */
-        .painel-topo { display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px dashed #e3f2fd; position: relative; }
-        .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; flex: 1; }
-        .btn-nivel-topo { background: #f8fafc; border: 2px solid #ced6e0; padding: 6px 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: var(--text-main); box-shadow: 0 3px 0 #ced6e0; transition: all 0.2s ease;}
-        .btn-nivel-topo:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #ced6e0; background-color: #e3f2fd; }
-        .btn-nivel-topo:active { transform: translateY(3px); box-shadow: 0 0px 0 transparent; }
-        .btn-nivel-topo.ativo { border-color: var(--cor-1ano); background-color: #e3f2fd; color: var(--azul-escuro); box-shadow: 0 3px 0 var(--cor-1ano-dark); transform: translateY(0); }
+        .score-certas, .score-erradas { font-weight: 800; font-size: 1rem; background: white; padding: 8px 12px; border-radius: 15px; border: 2px solid; white-space: nowrap;}
+        .score-certas { color: #219d53; border-color: #219d53; }
+        .score-erradas { color: #d0303f; border-color: #d0303f;}
+        .badge-ronda { font-weight: 800; font-size: 1rem; background: white; padding: 8px 12px; border-radius: 15px; border: 2px solid #0091ff; color: #0091ff; white-space: nowrap;}
+		.badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { border: 2px solid #ff4757; color: #ff4757; }
+		
+		
+		/* PROGRESS BAR COM 35PX E RISCAS */
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-mat); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+		@media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+		
+        @media (max-width: 768px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; padding: 8px; gap: 8px;}
+            .score-certas, .score-erradas, .badge-ronda { font-size: 0.85rem; padding: 4px 8px; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.85rem;}
+            .progress-bg { order: 10; min-width: 100%; margin-top: 5px; height: 15px;}
+        }
+
+        /* =========================================
+           ÁREA DE JOGO CUSTOM (SEM ESPAÇOS BRANCOS)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed #ced6e0; border-radius: 20px; padding: 20px;
+            position: relative;
+        }
 
         /* ÁREA DE LIGAÇÕES */
-        .board-wrapper { position: relative; width: 100%; max-width: 600px; margin: 0 auto; flex-grow: 1; padding: 5px 0; }
-        .board-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 40px; width: 100%; }
+        .board-wrapper { position: relative; width: 100%; max-width: 750px; margin: 0 auto; flex-grow: 1; padding: 10px; display: flex; flex-direction: column; justify-content: center;}
+        .board-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 80px; width: 100%; }
         
-        .card { background: white; border: 3px solid #ced6e0; border-radius: 12px; min-height: 70px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); user-select: none; padding: 5px; position: relative; z-index: 2;}
-        .card:hover { transform: scale(1.02); border-color: var(--azul-vibrante); }
-        .card.selected { border-color: var(--azul-vibrante); box-shadow: 0 0 0 4px rgba(0, 145, 255, 0.2); background: #f0f8ff; transform: scale(1.05); z-index: 10; }
+        /* CARTÕES MAIORES */
+        .card { 
+            background: white; border: 4px solid #ced6e0; border-radius: 20px; 
+            min-height: 110px; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 12px rgba(0,0,0,0.06); 
+            user-select: none; padding: 10px; position: relative; z-index: 2; touch-action: manipulation;
+        }
+        @media (hover: hover) { .card:hover { transform: scale(1.03); border-color: var(--azul-vibrante); } }
+        .card.selected { border-color: var(--azul-vibrante); box-shadow: 0 0 0 5px rgba(0, 145, 255, 0.2); background: #f0f8ff; transform: scale(1.05); z-index: 10; }
         .card.matched { background: #eafff0; border-color: #2ed573; color: #219d53; pointer-events: none; opacity: 0.9; }
         .card.wrong { animation: shakeError 0.4s; border-color: #ff4757; background: #ffefef; }
         
-        .card-texto { font-size: clamp(2rem, 6vw, 2.5rem); font-weight: 900; color: var(--azul-escuro); line-height: 1;}
-        .conta-texto { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 900; color: var(--azul-escuro); line-height: 1;}
+        /* Contentor interno para não chocar com a lupa */
+        .card-content { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none;}
+
+        .card-texto { font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; color: var(--azul-escuro); line-height: 1;}
+        .conta-texto { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: var(--azul-escuro); line-height: 1;}
+
+        /* BOTÃO LUPA (POP-UP) */
+        .btn-lupa {
+            position: absolute; top: -10px; right: -10px;
+            width: 35px; height: 35px; background: white; border: 3px solid var(--azul-vibrante);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: 0.2s; z-index: 5; pointer-events: auto;
+        }
+        @media (hover: hover) { .btn-lupa:hover { transform: scale(1.15) rotate(10deg); background: #e3f2fd; } }
+        .btn-lupa:active { transform: scale(0.95); }
 
         #svg-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .match-line { stroke: #2ed573; stroke-width: 5; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 0.5s forwards ease-out; stroke-linecap: round; }
+        .match-line { stroke: #2ed573; stroke-width: 6; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 0.5s forwards ease-out; stroke-linecap: round; }
         
         @keyframes drawLine { to { stroke-dashoffset: 0; } }
 
-        /* RECURSOS VISUAIS MATEMÁTICOS (Encolhidos para evitar scroll) */
-        .emoji-grid { font-size: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 120px; line-height: 1.2; }
+        /* RECURSOS VISUAIS MATEMÁTICOS OTIMIZADOS PARA CARTÕES MAIORES */
+        .emoji-grid { font-size: 2.2rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 180px; line-height: 1.2; }
         
         /* Material Dourado */
-        .multibase-box { display: flex; gap: 6px; align-items: flex-end; justify-content: center; }
-        .dezena-barra { width: 12px; height: 50px; background: #f1c40f; border: 1px solid #d35400; border-radius: 2px; box-shadow: 1px 1px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
-        .dezena-barra::before { content: ''; width: 100%; height: 100%; background-image: repeating-linear-gradient(to bottom, transparent, transparent 4px, #d35400 4px, #d35400 5px); }
-        .unidades-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; align-content: end; }
-        .unidade-cubo { width: 8px; height: 8px; background: #f1c40f; border: 1px solid #d35400; border-radius: 2px; }
+        .multibase-box { display: flex; gap: 8px; align-items: flex-end; justify-content: center; }
+        .dezena-barra { width: 16px; height: 70px; background: #f1c40f; border: 2px solid #d35400; border-radius: 3px; box-shadow: 2px 2px 0 rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .dezena-barra::before { content: ''; width: 100%; height: 100%; background-image: repeating-linear-gradient(to bottom, transparent, transparent 5px, #d35400 5px, #d35400 7px); }
+        .unidades-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; align-content: end; }
+        .unidade-cubo { width: 12px; height: 12px; background: #f1c40f; border: 2px solid #d35400; border-radius: 3px; }
         
         /* Ábaco */
-        .abaco-box { display: flex; flex-direction: column; align-items: center; margin-top: 2px; }
-        .abaco-hastes { display: flex; gap: 25px; border-bottom: 4px solid #8e44ad; padding-bottom: 2px; height: 45px; align-items: flex-end; justify-content: center; position: relative; }
-        .haste { width: 3px; height: 50px; background: #bdc3c7; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; position: relative; border-radius: 2px; }
-        .argola-d { width: 18px; height: 6px; background: #e74c3c; border-radius: 10px; border: 1px solid #c0392b; margin-bottom: -1px; z-index: 2; }
-        .argola-u { width: 18px; height: 6px; background: #3498db; border-radius: 10px; border: 1px solid #2980b9; margin-bottom: -1px; z-index: 2; }
-        .abaco-labels { display: flex; gap: 30px; font-weight: 900; color: #8e44ad; font-size: 0.9rem; margin-top: 1px; }
+        .abaco-box { display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+        .abaco-hastes { display: flex; gap: 35px; border-bottom: 6px solid #8e44ad; padding-bottom: 3px; height: 60px; align-items: flex-end; justify-content: center; position: relative; }
+        .haste { width: 4px; height: 65px; background: #bdc3c7; display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; position: relative; border-radius: 2px; }
+        .argola-d { width: 26px; height: 8px; background: #e74c3c; border-radius: 10px; border: 2px solid #c0392b; margin-bottom: -2px; z-index: 2; }
+        .argola-u { width: 26px; height: 8px; background: #3498db; border-radius: 10px; border: 2px solid #2980b9; margin-bottom: -2px; z-index: 2; }
+        .abaco-labels { display: flex; gap: 40px; font-weight: 900; color: #8e44ad; font-size: 1.2rem; margin-top: 4px; }
 
-        /* Botão Ação Ecrã Inicial/Final */
-        .titulo-destaque { font-size: clamp(2rem, 6vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 10px; text-align: center; }
-        .btn-acao { background-color: var(--cor-1ano); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-1ano-dark); transition: 0.2s; }
-        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 var(--cor-1ano-dark); }
-        .btn-acao:hover { background-color: #0084eb; filter: brightness(1.05); }
-        .btn-acao.verde { background-color: #2ed573; box-shadow: 0 5px 0 #219d53; }
-        .btn-acao.verde:hover { background-color: #28c76a; }
-
-        /* TRANSIÇÃO ECRÃ FINAL EM POSIÇÃO ABSOLUTA */
-        #ecra-transicao { 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0; 
-            background: rgba(255,255,255,0.95); z-index: 20; border-radius: 30px; animation: fadeIn 0.5s ease;
+        /* =========================================
+           POP-UP DA LUPA
+           ========================================= */
+        #popup-lupa {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(240, 244, 248, 0.95); z-index: 300; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 30px; animation: fadeIn 0.3s ease; backdrop-filter: blur(5px);
         }
+        .popup-box {
+            background: white; border: 6px solid var(--cor-mat); border-radius: 25px;
+            padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            min-width: 300px; min-height: 250px; justify-content: center;
+        }
+        /* Ampliar os elementos dentro do Popup */
+        #popup-inner .emoji-grid { font-size: 3.5rem; max-width: 280px; gap: 8px;}
+        #popup-inner .multibase-box { gap: 12px; }
+        #popup-inner .dezena-barra { width: 25px; height: 120px; border-width: 3px; }
+        #popup-inner .dezena-barra::before { background-image: repeating-linear-gradient(to bottom, transparent, transparent 8px, #d35400 8px, #d35400 11px); }
+        #popup-inner .unidades-grid { gap: 5px; }
+        #popup-inner .unidade-cubo { width: 20px; height: 20px; border-width: 3px;}
+        #popup-inner .abaco-hastes { gap: 50px; height: 100px; border-bottom-width: 8px;}
+        #popup-inner .haste { width: 6px; height: 110px; }
+        #popup-inner .argola-d, #popup-inner .argola-u { width: 40px; height: 14px; border-width: 3px; margin-bottom: -3px;}
+        #popup-inner .abaco-labels { gap: 60px; font-size: 1.8rem; }
+        #popup-inner .conta-texto { font-size: 4rem; }
 
-        /* Animações GLOBAIS */
+        .btn-fechar-popup { background: var(--cor-pt); color: var(--azul-escuro); border: none; padding: 10px 30px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 0 #d0303f; transition: 0.2s;}
+        .btn-fechar-popup:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+
+        /* =========================================
+           TRANSIÇÃO ECRÃ FINAL
+           ========================================= */
+        #ecra-transicao { background: transparent; }
+        .titulo-destaque { font-size: clamp(2rem, 6vw, 3rem); color: var(--azul-escuro); margin-bottom: 10px; text-align: center; }
+        .texto-transicao { 
+            font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; 
+            text-align: center; background: #fff; padding: 25px 40px; 
+            border-radius: 20px; border: 3px solid #e3f2fd; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            line-height: 1.5;
+        }
+        
+        .botoes-principais { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn-acao { background-color: var(--cor-mat); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 6px 0 #3b8cdb; transition: 0.2s; touch-action: manipulation; display: flex; align-items: center; gap: 8px;}
+        .btn-acao:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        @media (hover: hover) { .btn-acao:hover { filter: brightness(1.1); transform: translateY(-3px); box-shadow: 0 9px 0 #3b8cdb; } }
+        .btn-acao.verde { background-color: #2ed573; box-shadow: 0 6px 0 #219d53; }
+        @media (hover: hover) { .btn-acao.verde:hover { background-color: #28c76a; box-shadow: 0 9px 0 #219d53;} }
+
+        /* Animações GLOBAIS e Dicas */
         @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-1deg); } 50% { transform: translateX(5px) rotate(1deg); } 75% { transform: translateX(-5px) rotate(-1deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* Dica Suave */
+        .dica-iluminada { animation: suaveDica 1.5s infinite alternate ease-in-out !important; border-color: #fbc531 !important; box-shadow: 0 0 15px rgba(251, 197, 49, 0.6) !important; z-index: 15;}
+        @keyframes suaveDica {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.1); box-shadow: 0 0 25px rgba(251, 197, 49, 1) !important;}
+        }
 
         /* CONFETIS */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
 
         /* Responsividade Extrema (Evitar Scroll) */
         @media (max-width: 600px) {
-            .painel-topo { margin-bottom: 10px; padding-bottom: 5px; }
-            .level-selector { gap: 5px; }
-            .btn-nivel-topo { padding: 5px 8px; font-size: 0.8rem; border-radius: 8px;}
+            .board-grid { gap: 15px; }
+            .card { min-height: 80px; padding: 10px; border-radius: 15px; border-width: 3px;}
             
-            .board-grid { gap: 10px 15px; }
-            .card { min-height: 55px; padding: 5px; border-radius: 10px; border-width: 2px;}
+            .card-texto { font-size: 2.2rem; }
+            .conta-texto { font-size: 1.8rem; }
+            .emoji-grid { font-size: 1.6rem; max-width: 140px;}
             
-            .card-texto { font-size: 1.8rem; }
-            .conta-texto { font-size: 1.5rem; }
-            .emoji-grid { font-size: 1.1rem; max-width: 100px;}
-            
-            /* Material Dourado Mobile */
-            .dezena-barra { width: 10px; height: 40px; }
-            .dezena-barra::before { background-image: repeating-linear-gradient(to bottom, transparent, transparent 4px, #d35400 4px, #d35400 5px); }
-            
-            /* Ábaco Mobile */
-            .abaco-hastes { gap: 20px; height: 40px; border-bottom-width: 3px;}
-            .haste { height: 45px; width: 3px;}
-            .argola-d, .argola-u { width: 16px; height: 5px; }
-            .abaco-labels { gap: 20px; font-size: 0.8rem; margin-top: 1px;}
+            .btn-lupa { width: 30px; height: 30px; font-size: 0.9rem; top: -8px; right: -8px;}
         }
-    body { scrollbar-gutter: stable; }
-</style>
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+            .popup-box { transform: scale(0.8); }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }   
+    </style>
 </head>
 <body>
 
@@ -212,11 +340,11 @@
     <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
     <ul>
         <li><a href="../../../">🏠 Início</a></li>
-<li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
-<li><a href="../../">🎒 1º Ano</a></li>
-<li><a href="../../../2/">💡 2º Ano</a></li>
-<li><a href="../../../3/">🔍 3º Ano</a></li>
-<li><a href="../../../4/">🚀 4º Ano</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2/">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
     </ul>
 </nav>
 
@@ -229,66 +357,90 @@
             <a href="../" class="btn-voltar">⬅️ Voltar</a>
         </div>
         <h1>Ligar Quantidades 🔗</h1>
-        <div class="subtitulo">Toca na imagem ou conta e liga ao número certo!</div>
+        <div class="subtitulo">Conta, calcula e liga ao número certo!</div>
     </div>
 </header>
 
 <main>
-    <!-- BARRA DE PROGRESSO E PONTUAÇÕES IDÊNTICA AO BOM.HTML -->
-    <div id="status-bar-container" class="status-bar">
-        <div class="score-container">
-            <span class="score-certas">✔️ Certas: <span id="val-certas">0</span></span>
-            <span class="score-erradas">❌ Erradas: <span id="val-erradas">0</span></span>
-        </div>
-        <div class="progress-bg">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
-    </div>
-
     <div class="cartao-jogo-container">
         
-        <!-- ECRÃ 1: INÍCIO OTIMIZADO E CENTRADO -->
-        <div id="ecra-inicio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin: auto;">
-            <div style="font-size: 5rem; margin-bottom: 10px; line-height: 1; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));">🔗📝</div>
-            <h2 class="titulo-destaque" style="margin: 0 0 15px 0;">Vamos Ligar!</h2>
-            <p style="font-size: 1.1rem; color: var(--text-main); margin: 0 0 35px 0; line-height: 1.5; max-width: 600px;">
-                Treina a tua contagem e cálculo.<br>Clica numa caixa e liga ao número correto!
-            </p>
-            <button class="btn-acao verde" style="padding: 18px 40px; font-size: 1.3rem; border-radius: 50px;" onclick="selecionarNivel(1)">
-                COMEÇAR A JOGAR! ▶️
-            </button>
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-inicio" class="ecra">
+            <h2 class="titulo-menu">Como Jogar:</h2>
+            
+            <div class="animacao-tutorial">
+                <div class="tut-card">🍎🍎</div>
+                <svg class="tut-svg"><line x1="50" y1="80" x2="250" y2="80" class="tut-line"></line></svg>
+                <div class="tut-card">2</div>
+                <div class="tut-hand">👆</div>
+            </div>
+            
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo btn-n1" onclick="iniciarJogo(1)">
+                    <span class="nivel-icon-novo">🟢</span>
+                    <span class="nivel-text-novo">
+                        <span class="nivel-titulo-novo">Nível 1: Até 10</span>
+                        <span class="nivel-desc-novo">Conta e liga os elementos.</span>
+                    </span>
+                </button>
+                <button class="btn-nivel-novo btn-n2" onclick="iniciarJogo(2)">
+                    <span class="nivel-icon-novo">🟡</span>
+                    <span class="nivel-text-novo">
+                        <span class="nivel-titulo-novo">Nível 2: Até 20</span>
+                        <span class="nivel-desc-novo">Material dourado e ábacos!</span>
+                    </span>
+                </button>
+                <button class="btn-nivel-novo btn-n3" onclick="iniciarJogo(3)">
+                    <span class="nivel-icon-novo">🔴</span>
+                    <span class="nivel-text-novo">
+                        <span class="nivel-titulo-novo">Nível 3: Até 50</span>
+                        <span class="nivel-desc-novo">Somas e subtrações.</span>
+                    </span>
+                </button>
+            </div>
         </div>
 
         <!-- ECRÃ 2: JOGO -->
-        <div id="ecra-jogo">
+        <div id="ecra-jogo" class="ecra">
             
-            <!-- SELETOR DE NÍVEIS NO TOPO DO JOGO -->
-            <div class="painel-topo">
-                <div class="level-selector" id="level-selector">
-                    <button class="btn-nivel-topo ativo" id="btn-niv-1" onclick="selecionarNivel(1)">Nível 1 (até 10)</button>
-                    <button class="btn-nivel-topo" id="btn-niv-2" onclick="selecionarNivel(2)">Nível 2 (até 20)</button>
-                    <button class="btn-nivel-topo" id="btn-niv-3" onclick="selecionarNivel(3)">Nível 3 (até 50)</button>
+            <div class="status-bar-jogo" id="status-bar-container">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica <span id="hint-count" class="hint-badge">3</span></button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">15</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom">
+                <!-- TABULEIRO DE JOGO -->
+                <div class="board-wrapper" id="board-wrapper">
+                    <svg id="svg-lines"></svg>
+                    <div class="board-grid" id="board-grid"></div>
                 </div>
             </div>
 
-            <!-- TABULEIRO DE JOGO -->
-            <div class="board-wrapper" id="board-wrapper">
-                <svg id="svg-lines"></svg>
-                <div class="board-grid" id="board-grid"></div>
-            </div>
-
         </div>
 
-        <!-- ECRÃ 3: TRANSIÇÃO/FIM DE NÍVEL (OVERLAY) -->
-        <div id="ecra-transicao">
+        <!-- ECRÃ 3: TRANSIÇÃO/FIM DE NÍVEL -->
+        <div id="ecra-transicao" class="ecra">
             <div style="font-size: 5rem; margin-bottom: 10px;">⭐</div>
             <h2 class="titulo-destaque">Nível Completo!</h2>
-            <p style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px;" id="transicao-msg">Fizeste 15 ligações com sucesso!</p>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                <button class="btn-acao" onclick="selecionarNivel(nivelAtual)" style="background:#f39c12; box-shadow:0 5px 0 #d68910;">Repetir 🔄</button>
-                <button class="btn-acao verde" onclick="proximoNivel()" id="btn-proximo">Próximo ➔</button>
+            <div class="texto-transicao" id="transicao-msg">Fizeste 15 ligações com sucesso!</div>
+            
+            <div class="botoes-principais">
+                <button class="btn-acao secundario" onclick="iniciarJogo(nivelAtual)">🔄 Repetir Nível</button>
+                <button class="btn-acao verde" onclick="proximoNivel()" id="btn-proximo">Próximo Nível ➔</button>
             </div>
         </div>
+
+        <!-- POP-UP DA LUPA -->
+        <div id="popup-lupa">
+            <div class="popup-box">
+                <div id="popup-inner"></div>
+                <button class="btn-fechar-popup" onclick="fecharPopup()">Fechar ✖</button>
+            </div>
+        </div>
+
     </div>
 </main>
 
@@ -384,25 +536,30 @@
     
     let cardSelecionadoEsq = null;
     let cardSelecionadoDir = null;
-    let ligacoesFeitas =[];
+    let ligacoesFeitas = [];
+    let dicasUsadas = []; // Controlo de dicas (1 a cada 5 rondas)
 
     const boardGrid = document.getElementById('board-grid');
     const svgLines = document.getElementById('svg-lines');
-    const elCertas = document.getElementById('val-certas');
-    const elErradas = document.getElementById('val-erradas');
+    const elCertas = document.getElementById('val-certas'); // Pode ser null se não usares no HTML
+	const elErradas = document.getElementById('val-erros'); // Corrigido para corresponder ao HTML
     const elProgressFill = document.getElementById('progress-fill');
-    const statusBar = document.getElementById('status-bar-container');
+    const elProgresso = document.getElementById('val-progresso');
+    const elTotal = document.getElementById('val-total');
+    const btnDica = document.getElementById('btn-dica');
+    const elHintCount = document.getElementById('hint-count');
 
     // Inicialização
-    mostrarEcra('ecra-inicio');
+    window.onload = () => mostrarEcra('ecra-inicio');
 
-    function mostrarEcra(id) {['ecra-inicio', 'ecra-jogo', 'ecra-transicao'].forEach(e => document.getElementById(e).style.display = 'none');
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
         document.getElementById(id).style.display = 'flex';
     }
 
-    function iniciarJogo() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        selecionarNivel(1);
+    function iniciarJogo(nivel) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        selecionarNivel(nivel);
     }
 
     function selecionarNivel(n) {
@@ -410,12 +567,9 @@
         certas = 0;
         erradas = 0;
         paresFeitosNoNivel = 0;
+        dicasUsadas = [false, false, false]; // 3 blocos de 5 perguntas
         atualizarScore();
-        
-        statusBar.style.display = 'block'; // Exibe a barra do BOM.html perfeitamente
-        
-        document.querySelectorAll('.btn-nivel-topo').forEach(b => b.classList.remove('ativo'));
-        document.getElementById(`btn-niv-${n}`).classList.add('ativo');
+        atualizarDicasUI();
         
         mostrarEcra('ecra-jogo');
         carregarPainel();
@@ -425,11 +579,35 @@
         if (nivelAtual < 3) selecionarNivel(nivelAtual + 1);
         else selecionarNivel(1);
     }
+    
+    function voltarAoMenu() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-inicio');
+    }
 
     function atualizarScore() {
-        elCertas.textContent = certas;
-        elErradas.textContent = erradas;
-        elProgressFill.style.width = `${(paresFeitosNoNivel / QUESTOES_POR_NIVEL) * 100}%`;
+		if (elCertas) elCertas.textContent = certas; // Só atualiza se o elemento existir
+		if (elErradas) elErradas.textContent = erradas; // Só atualiza se o elemento existir
+		
+		let p = paresFeitosNoNivel + 1;
+		if(p > QUESTOES_POR_NIVEL) p = QUESTOES_POR_NIVEL;
+		elProgresso.textContent = p;
+		elTotal.textContent = QUESTOES_POR_NIVEL;
+		elProgressFill.style.width = `${(paresFeitosNoNivel / QUESTOES_POR_NIVEL) * 100}%`;
+	}
+
+    function atualizarDicasUI() {
+        // Dica a cada 5 rondas -> Temos 15 questoes -> Blocos: 0-4 (1), 5-9 (2), 10-14 (3)
+        const blocoAtual = Math.floor(paresFeitosNoNivel / 5); 
+        let pistasRestantes = 3 - dicasUsadas.filter(Boolean).length;
+        
+        elHintCount.textContent = pistasRestantes;
+
+        if (pistasRestantes <= 0 || dicasUsadas[blocoAtual]) {
+            btnDica.classList.add('esgotada');
+        } else {
+            btnDica.classList.remove('esgotada');
+        }
     }
 
     function carregarPainel() {
@@ -438,6 +616,7 @@
         ligacoesFeitas =[];
         svgLines.innerHTML = '';
         boardGrid.innerHTML = '';
+        removerDestaquesDica();
 
         let min = 1, max = 10;
         if (nivelAtual === 2) { min = 11; max = 20; }
@@ -453,7 +632,18 @@
         let rightCards =[];
 
         numerosPainel.forEach(n => {
-            leftCards.push({ val: n, html: gerarVisual(n, nivelAtual) });
+            let visHtml = gerarVisual(n, nivelAtual);
+            
+            // Começa por criar o cartão apenas com o conteúdo
+            let finalLeftHtml = `<div class="card-content">${visHtml}</div>`;
+            
+            // Se o html gerado NÃO incluir a classe 'conta-texto', significa que é uma imagem
+            // Só nesse caso é que adicionamos o botão da lupa
+            if (!visHtml.includes('conta-texto')) {
+                finalLeftHtml += `<div class="btn-lupa" onclick="abrirPopup(event)">🔍</div>`;
+            }
+            
+            leftCards.push({ val: n, html: finalLeftHtml });
             rightCards.push({ val: n, html: `<div class="card-texto">${n}</div>` });
         });
 
@@ -480,11 +670,13 @@
         window.addEventListener('resize', desenharLinhas);
         
         setTimeout(desenharLinhas, 50);
+        atualizarDicasUI();
     }
 
     function cliqueCard(card, lado) {
         if (card.classList.contains('matched')) return;
         tocarSom('select');
+        removerDestaquesDica();
 
         if (lado === 'esq') {
             if (cardSelecionadoEsq) cardSelecionadoEsq.classList.remove('selected');
@@ -513,6 +705,10 @@
             cardSelecionadoDir.classList.remove('selected');
             cardSelecionadoEsq.classList.add('matched');
             cardSelecionadoDir.classList.add('matched');
+            
+            // Esconde a lupa quando acerta
+            let lupa = cardSelecionadoEsq.querySelector('.btn-lupa');
+            if(lupa) lupa.style.display = 'none';
 
             ligacoesFeitas.push({ esq: cardSelecionadoEsq, dir: cardSelecionadoDir });
             desenharLinhas();
@@ -520,13 +716,14 @@
             cardSelecionadoEsq = null;
             cardSelecionadoDir = null;
 
-            // Se completou a ronda atual (3 pares)
             if (paresFeitosNoNivel % PARES_POR_PAINEL === 0) {
                 if (paresFeitosNoNivel >= QUESTOES_POR_NIVEL) {
                     setTimeout(fimDoNivel, 1000);
                 } else {
-                    setTimeout(carregarPainel, 1000); // Passa à próxima ronda
+                    setTimeout(carregarPainel, 1000); 
                 }
+            } else {
+                atualizarDicasUI();
             }
 
         } else {
@@ -571,28 +768,69 @@
         });
     }
 
+    /* --- SISTEMA DE DICAS --- */
+    function usarDica() {
+        const blocoAtual = Math.floor(paresFeitosNoNivel / 5);
+        if(btnDica.classList.contains('esgotada') || dicasUsadas[blocoAtual]) return;
+
+        // Procura um par que não esteja matched
+        let leftCard = Array.from(document.querySelectorAll('.left-card')).find(c => !c.classList.contains('matched'));
+        if (leftCard) {
+            let val = leftCard.dataset.val;
+            let rightCard = Array.from(document.querySelectorAll('.right-card')).find(c => c.dataset.val === val);
+            
+            if (rightCard) {
+                leftCard.classList.add('dica-iluminada');
+                rightCard.classList.add('dica-iluminada');
+            }
+        }
+
+        dicasUsadas[blocoAtual] = true;
+        tocarSom('swoosh');
+        atualizarDicasUI();
+    }
+
+    function removerDestaquesDica() {
+        document.querySelectorAll('.dica-iluminada').forEach(el => el.classList.remove('dica-iluminada'));
+    }
+
+    /* --- POPUP DE LUPA --- */
+    function abrirPopup(e) {
+        e.stopPropagation(); // Evita que cliqueCard seja disparado
+        tocarSom('select');
+        let cardContent = e.currentTarget.previousElementSibling.innerHTML;
+        document.getElementById('popup-inner').innerHTML = cardContent;
+        document.getElementById('popup-lupa').style.display = 'flex';
+    }
+
+    function fecharPopup() {
+        tocarSom('select');
+        document.getElementById('popup-lupa').style.display = 'none';
+        document.getElementById('popup-inner').innerHTML = '';
+    }
+
     function fimDoNivel() {
         tocarSom('vitoria');
         dispararConfetis();
         let proxBtn = document.getElementById('btn-proximo');
         
-        statusBar.style.display = 'none';
-
         if (nivelAtual === 3) {
             document.getElementById('transicao-msg').innerHTML = `Completaste todos os níveis maravilhosamente!<br>Tiveste <strong>${certas}</strong> acertos e apenas <strong>${erradas}</strong> erros.`;
             proxBtn.style.display = 'none'; 
         } else {
-            document.getElementById('transicao-msg').innerHTML = `Fizeste as ${QUESTOES_POR_NIVEL} ligações com sucesso!`;
-            proxBtn.style.display = 'inline-block';
+            document.getElementById('transicao-msg').innerHTML = `Fizeste as ${QUESTOES_POR_NIVEL} ligações com sucesso!<br>Tiveste <strong>${erradas}</strong> erros.`;
+            proxBtn.style.display = 'inline-flex';
         }
         
         mostrarEcra('ecra-transicao');
     }
 
     // ==========================================
-    // ÁUDIO E CONFETIS ATUALIZADOS PARA FULLSCREEN
+    // ÁUDIO E CONFETIS ATUALIZADOS
     // ==========================================
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = new AudioContext();
+    
     function tocarSom(tipo) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
@@ -612,6 +850,10 @@
             osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, agora);
             gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
             osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'swoosh') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(100, agora + 0.2);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
         } else if (tipo === 'vitoria') {
             const notas =[440, 554.37, 659.25, 880, 1046.50]; 
             notas.forEach((freq, i) => {
@@ -632,11 +874,8 @@
         canvasConfetti.width = window.innerWidth; 
         canvasConfetti.height = window.innerHeight; 
     }
-    
-    window.addEventListener('resize', () => {
-        redimensionarCanvas();
-        desenharLinhas();
-    });
+    window.addEventListener('resize', redimensionarCanvas);
+    redimensionarCanvas();
     
     function dispararConfetis() {
         redimensionarCanvas(); confetis =[]; const cores =['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#eccc68'];
@@ -654,7 +893,6 @@
         });
         if (ativos) requestAnimationFrame(animarConfetis);
     }
-
 </script>
 </body>
 </html>
