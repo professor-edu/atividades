@@ -51,6 +51,7 @@ const todosOsJogos =[
     { nome: "Máquina de Somar", icone: "icones/maquina_somar.png", link: "mat/maquina-somar", cat: "mat" },
     { nome: "Máquina de Subtrair", icone: "icones/maquina_subtrair.png", link: "mat/maquina-subtrair", cat: "mat" },
     { nome: "Comboio das Sequências", icone: "icones/comboio_sequencias.png", link: "mat/sequencias", cat: "mat" },
+	{ nome: "Missão Espacial", icone: "icones/missao_espacial.png", link: "mat/missao-espacial", cat: "mat" },
     
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em") 
