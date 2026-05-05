@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Balança dos Monstros ⚖️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --cor-borda: #0091ff;            
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+            
+            /* Cores de Feedback */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+        
+        /* HEADER E NAVEGAÇÃO */
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--azul-vibrante);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* CARTÃO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px #4dabf7a8; 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* CONTENTOR DOS CONFETIS */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO DA BALANÇA)
+           ========================================= */
+        .titulo-destaque { font-size: 3rem; color: var(--azul-escuro); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        .subtitulo-menu { font-size: 1.3rem; color: var(--text-main); max-width: 600px; margin: 0 auto 30px auto; line-height: 1.6; }
+
+        .super-animacao-monstro {
+            width: 100%; max-width: 450px; height: 180px;
+            background: linear-gradient(180deg, #E0F6FF 0%, #ffffff 100%);
+            border-radius: 20px; border: 4px solid #B0E0E6;
+            position: relative; overflow: hidden; margin-bottom: 25px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 8px 15px rgba(0,0,0,0.1);
+            display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px;
+        }
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 800px; margin: 0 auto 20px; }
+        @media (max-width: 768px) { .grid-niveis { grid-template-columns: 1fr; max-width: 320px; } }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 15px 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.3rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center; line-height: 1.2;
+        }
+        @media (hover: hover) { .btn-nivel-novo:not(.bloqueado):hover { transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05); } }
+        .btn-nivel-novo:not(.bloqueado):active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+        .bg-roxo { background-color: #8c7ae6; }
+        
+        .btn-nivel-novo.bloqueado { background-color: #bdc3c7; box-shadow: 0 6px 0 #95a5a6; cursor: not-allowed; color: #7f8c8d; border-color: #ecf0f1; text-shadow: none; }
+        .btn-chave { position: absolute; bottom: 15px; right: 15px; background: none; border: none; font-size: 2rem; cursor: pointer; opacity: 0.2; transition: 0.3s; z-index: 50; }
+        .btn-chave:hover { opacity: 1; transform: scale(1.1); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO
+           ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px; z-index: 5;
+        }
+
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; touch-action: manipulation;}
+        @media (hover: hover) { .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); } }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; touch-action: manipulation;}
+        @media (hover: hover) { .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.05); } }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid var(--cor-erro); color: var(--cor-erro); }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        /* Sem Emojis, usamos aspas para não aparecer símbolo quebrado */
+        .icone-erro { display: inline-block; width: 14px; height: 14px; background-color: var(--cor-erro); border-radius: 50%; margin-right: 5px; }
+        #val-erradas { font-size: 1rem; font-weight: 900; color: var(--cor-mat); }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        /* =========================================
+           ÁREA DE JOGO (BALANÇA DOS MONSTROS)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 15px 15px 0 15px; gap: 5px;
+            position: relative; overflow: hidden; transition: background 0.5s ease;
+        }
+
+        /* Temas dos Níveis */
+        .area-jogo-custom.tema-1 { background: linear-gradient(135deg, #e6f9e6 0%, #c8f0d8 100%); } /* O Bosque */
+        .area-jogo-custom.tema-2 { background: linear-gradient(135deg, #e8f4f8 0%, #c4e4f3 100%); } /* A Caverna */
+        .area-jogo-custom.tema-3 { background: linear-gradient(135deg, #fdebd0 0%, #fad7a1 100%); } /* O Vulcão */
+        .area-jogo-custom.tema-4 { background: linear-gradient(135deg, #e8ecf1 0%, #c8d6e5 100%); } /* O Castelo */
+
+        /* Tracker de Níveis no Canto (Sem Emojis, com SVG icon simple) */
+        .level-tracker {
+            position: absolute; top: 15px; left: 15px;
+            display: flex; flex-direction: column; gap: 5px;
+            background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 15px;
+            border: 2px solid var(--cor-borda); box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: left; z-index: 5;
+        }
+        .level-dot { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: var(--text-main); opacity: 0.4; transition: 0.3s; }
+        .level-dot.active { opacity: 1; color: var(--azul-escuro); transform: scale(1.05); }
+        .level-dot.completed { opacity: 0.8; color: var(--cor-sucesso-dark); text-decoration: line-through; }
+        
+        @media (max-width: 600px) {
+            .level-tracker { position: relative; top: 0; left: 0; width: 100%; flex-direction: row; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; padding: 5px; }
+            .level-dot { font-size: 0.8rem; }
+        }
+
+        /* INSTRUÇÃO VISUAL (Painel Principal) */
+        .painel-instrucao {
+            background: white; padding: 10px 30px; border-radius: 20px;
+            border: 4px solid var(--cor-borda); box-shadow: 0 6px 0 var(--cor-borda);
+            margin-bottom: 10px; animation: fadeIn 0.4s ease;
+            font-size: 1.8rem; font-weight: 900; color: var(--azul-escuro);
+            z-index: 2;
+        }
+
+        /* =========================================
+           A BALANÇA 3D E O MONSTRO
+           ========================================= */
+        .cenario-balanca {
+            position: relative; width: 100%; max-width: 450px; 
+            height: 250px; margin-bottom: 10px;
+            display: flex; justify-content: center; align-items: flex-end;
+            perspective: 1000px;
+        }
+
+        .monstro-base { position: absolute; bottom: 0; width: 150px; height: 180px; z-index: 1; }
+        
+        .eixo-balanca {
+            position: absolute; bottom: 120px; width: 320px; height: 16px;
+            background: linear-gradient(to bottom, #f1c40f, #d35400);
+            border-radius: 8px; z-index: 2;
+            transform-origin: center center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            border: 2px solid #9c88ff;
+        }
+        
+        .pino-central {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 24px; height: 24px; background: #9b59b6; border-radius: 50%;
+            border: 4px solid #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 3;
+        }
+
+        /* Pratos da balança */
+        .prato {
+            position: absolute; top: 10px; width: 120px; height: 100px;
+            display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start;
+            padding-bottom: 25px; /* Espaço do prato */
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .prato-esquerda { left: -10px; }
+        .prato-direita { right: -10px; }
+
+        /* Desenho do prato metálico pendurado */
+        .prato::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background: #bdc3c7; z-index: -1;
+        }
+        .prato::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 25px; border-radius: 50%;
+            background: radial-gradient(ellipse at center, #ecf0f1 0%, #95a5a6 100%);
+            box-shadow: 0 8px 10px rgba(0,0,0,0.3); border: 2px solid #7f8c8d;
+            z-index: 0;
+        }
+
+        /* O ESTALEIRO (Chão / Inventário) */
+        .estaleiro-container {
+            display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; align-items: center;
+            width: calc(100% + 40px); min-height: 110px; 
+            padding: 20px 20px 25px 20px; 
+            background: linear-gradient(180deg, #34495e 0%, #2c3e50 100%);
+            border-top: 6px solid #f1c40f;
+            border-radius: 0 0 20px 20px; margin-top: auto; margin-bottom: -15px; position: relative;
+            box-shadow: inset 0 10px 15px rgba(0,0,0,0.3);
+        }
+
+        /* PESO 3D (Elemento) */
+        .peso-item {
+            position: relative; display: flex; align-items: center; justify-content: center;
+            width: 50px; height: 60px; cursor: pointer; 
+            transition: transform 0.2s, filter 0.2s;
+            user-select: none; touch-action: manipulation; z-index: 10;
+        }
+        .peso-alvo { pointer-events: none; width: 60px; height: 75px; } /* O peso que já vem colado */
+
+        @media (hover: hover) { 
+            .peso-item:not(.peso-alvo):hover { transform: translateY(-5px) scale(1.05); filter: brightness(1.2); } 
+        }
+        .peso-item:not(.peso-alvo):active { transform: translateY(2px) scale(0.95); }
+        .peso-item.dica-ativa { animation: pulseDica 1s infinite alternate; }
+        
+        .peso-svg { width: 100%; height: 100%; position: absolute; top:0; left:0; filter: drop-shadow(0px 5px 3px rgba(0,0,0,0.5));}
+        .peso-number {
+            position: relative; z-index: 2;
+            color: #ffffff; font-weight: 900; font-size: 1.4rem;
+            text-shadow: 1px 2px 2px rgba(0,0,0,0.8); margin-top: 10px;
+        }
+        .peso-alvo .peso-number { font-size: 1.8rem; color: #f1c40f; text-shadow: 1px 2px 4px rgba(0,0,0,1); }
+
+        /* =========================================
+           ECRÃ TRANSIÇÃO E FIM
+           ========================================= */
+        .icone-gigante { margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); animation: floatUp 3s ease-in-out infinite; width: 120px; height: 120px;}
+        @keyframes floatUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: var(--bg-header); padding: 30px 20px; border-radius: 20px; border: 2px dashed var(--cor-mat); line-height: 1.5; }
+        
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+        @media (min-width: 600px) { .botoes-acao-container { flex-direction: row; justify-content: center; } }
+
+        .btn-acao { border: 4px solid white; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; text-transform: uppercase; letter-spacing: 1px; }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-1ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { width: 80px; height: 80px; margin: 0 auto 10px auto; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        .shake { animation: shakeError 0.4s; }
+        @keyframes pulseDica { 0% { filter: drop-shadow(0 0 5px var(--cor-sucesso)); transform: scale(1); } 100% { filter: drop-shadow(0 0 15px var(--cor-sucesso)); transform: scale(1.1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Confetis Limitados ao Container */
+        .confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+        @keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        @media (max-width: 600px) {
+            .cenario-balanca { height: 200px; transform: scale(0.9); transform-origin: bottom center; }
+            .estaleiro-container { padding: 15px 10px; width: calc(100% + 30px); margin-left: -15px; margin-right: -15px;}
+        }
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <h1>Balança dos Monstros ⚖️</h1>
+        <div class="subtitulo">Adiciona pesos para equilibrar os dois lados!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="main-card">
+        
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
+
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-selecao" class="ecra ativo">
+            <button onclick="desbloquearTudo()" title="Desbloquear todos os níveis" class="btn-chave">🗝️</button>
+
+            <h2 class="titulo-destaque" style="margin-bottom: 5px;">Mestre do Peso</h2>
+            <p class="subtitulo-menu">Aprende a somar e a subtrair com os nossos monstrinhos!</p>
+            
+            <div id="anim-menu-container" style="margin-bottom: 30px; width: 180px; height: 180px;"></div>
+
+            <div class="grid-niveis" id="grid-niveis" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px;">
+                <!-- Gerado dinamicamente via JS -->
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
+                <button id="btn-ajuda" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"> <span class="icone-erro"></span> <span id="val-erradas">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo-custom">
+                
+                <div class="level-tracker" id="level-tracker">
+                    <div class="level-dot" id="dot-1">O Bosque</div>
+                    <div class="level-dot" id="dot-2">A Caverna</div>
+                    <div class="level-dot" id="dot-3">O Vulcão</div>
+                    <div class="level-dot" id="dot-4">O Castelo</div>
+                </div>
+
+                <!-- Painel da Equação (Adição ou Subtração) -->
+                <div class="painel-instrucao" id="painel-instrucao">
+                    Faz 10!
+                </div>
+
+                <!-- A Balança Falsa 3D -->
+                <div class="cenario-balanca">
+                    <div class="monstro-base" id="monstro-base-svg"></div>
+                    
+                    <div class="eixo-balanca" id="eixo-balanca">
+                        <div class="pino-central"></div>
+                        <div class="prato prato-esquerda" id="prato-esquerda"></div>
+                        <div class="prato prato-direita" id="prato-direita"></div>
+                    </div>
+                </div>
+
+                <!-- O ESTALEIRO (Pesos Disponíveis) -->
+                <div class="estaleiro-container" id="estaleiro-container">
+                    <!-- Gerados via JS -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: TRANSIÇÃO -->
+        <div id="ecra-transicao" class="ecra" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95);">
+            <div class="icone-gigante" id="transicao-icone"></div>
+            <h2 class="end-title">Fase Concluída!</h2>
+            <div class="end-stats">
+                <p id="transicao-mensagem"></p>
+            </div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao secundario" onclick="reiniciarJogoAtual()">🔄 Repetir</button>
+                <button class="btn-acao primario" id="btn-proximo-nivel" onclick="proximoNivel()">Avançar ➔</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 4: FIM -->
+        <div id="ecra-fim" class="ecra" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95);">
+            <div class="icone-gigante" id="fim-icone"></div>
+            <h2 class="end-title">És o Rei da Balança!</h2>
+            <div class="end-stats" style="max-width: 600px;">
+                Equilibraste todos os pesos com sucesso!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros durante a missão.
+            </div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="voltarAoMenu()">Voltar ao Menu 🏠</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // SVGs 3D: MONSTRO, PESOS E ÍCONES
+    // ==========================================
+    const SVG_MONSTRO = `
+    <svg viewBox="0 0 200 200" width="100%" height="100%">
+        <!-- Pernas -->
+        <rect x="65" y="150" width="20" height="30" rx="10" fill="#2c3e50"/>
+        <rect x="115" y="150" width="20" height="30" rx="10" fill="#2c3e50"/>
+        <!-- Corpo -->
+        <rect x="40" y="60" width="120" height="100" rx="45" fill="#1abc9c"/>
+        <circle cx="100" cy="115" r="30" fill="#16a085" opacity="0.5"/>
+        <!-- Olho Cíclope -->
+        <circle cx="100" cy="85" r="22" fill="#ffffff" stroke="#2c3e50" stroke-width="3"/>
+        <circle cx="100" cy="85" r="8" fill="#2c3e50" id="monstro-pupila"/>
+        <circle cx="95" cy="80" r="3" fill="#ffffff"/>
+        <!-- Boca (Padrão sorridente) -->
+        <path id="monstro-boca" d="M85,130 Q100,145 115,130" fill="none" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/>
+        <!-- Braços segurando o eixo central -->
+        <path d="M45,95 Q20,60 100,35" fill="none" stroke="#1abc9c" stroke-width="12" stroke-linecap="round"/>
+        <path d="M155,95 Q180,60 100,35" fill="none" stroke="#1abc9c" stroke-width="12" stroke-linecap="round"/>
+        <!-- Mãos -->
+        <circle cx="100" cy="35" r="10" fill="#16a085"/>
+    </svg>`;
+
+    const SVG_PESO_METAL = `
+    <svg viewBox="0 0 60 60" class="peso-svg">
+        <!-- Base de sombra -->
+        <ellipse cx="30" cy="52" rx="25" ry="8" fill="#34495e"/>
+        <!-- Corpo Cilindro -->
+        <rect x="5" y="15" width="50" height="37" fill="url(#gradMetal)"/>
+        <!-- Topo Cilindro -->
+        <ellipse cx="30" cy="15" rx="25" ry="10" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="2"/>
+        <circle cx="30" cy="15" r="4" fill="#7f8c8d"/>
+        <!-- Argola -->
+        <path d="M20,10 C20,-5 40,-5 40,10" fill="none" stroke="#bdc3c7" stroke-width="4"/>
+        
+        <defs>
+            <linearGradient id="gradMetal" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#7f8c8d;stop-opacity:1" />
+                <stop offset="30%" style="stop-color:#bdc3c7;stop-opacity:1" />
+                <stop offset="70%" style="stop-color:#95a5a6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>`;
+
+    const SVG_PESO_DOURO = `
+    <svg viewBox="0 0 60 60" class="peso-svg">
+        <ellipse cx="30" cy="52" rx="25" ry="8" fill="#d35400"/>
+        <rect x="5" y="15" width="50" height="37" fill="url(#gradGold)"/>
+        <ellipse cx="30" cy="15" rx="25" ry="10" fill="#f1c40f" stroke="#e67e22" stroke-width="2"/>
+        <circle cx="30" cy="15" r="4" fill="#e67e22"/>
+        <path d="M20,10 C20,-5 40,-5 40,10" fill="none" stroke="#f1c40f" stroke-width="4"/>
+        <defs>
+            <linearGradient id="gradGold" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#e67e22;stop-opacity:1" />
+                <stop offset="40%" style="stop-color:#f1c40f;stop-opacity:1" />
+                <stop offset="80%" style="stop-color:#f39c12;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#d35400;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>`;
+
+    const SVG_ICONE_TROFEU = `<svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M20,20 L80,20 L70,60 C65,80 35,80 30,60 Z" fill="#f1c40f"/><path d="M45,80 L55,80 L60,95 L40,95 Z" fill="#e67e22"/><path d="M10,25 C10,10 30,10 30,25" fill="none" stroke="#f1c40f" stroke-width="6"/><path d="M90,25 C90,10 70,10 70,25" fill="none" stroke="#f1c40f" stroke-width="6"/></svg>`;
+
+    // Injetar Menu
+    document.getElementById('anim-menu-container').innerHTML = SVG_MONSTRO;
+    document.getElementById('monstro-base-svg').innerHTML = SVG_MONSTRO;
+
+    // ==========================================
+    // VARIÁVEIS DO JOGO E PROGRESSO
+    // ==========================================
+    let nivelDesbloqueado = 1; 
+
+    let nivelAtual = 1;
+    let desafioAtual = 0;
+    let erradas = 0;
+    const RONDAS_POR_NIVEL = 10;
+    let rondasParaDica = 0;
+    let isAnimating = false;
+
+    // Lógica da Balança
+    let targetTotal = 0; // O que a balança tem de pesar no final
+    let currentLeft = 0; // Peso atual prato esquerda
+    let currentRight = 0; // Peso atual prato direita
+    let ladoAtivo = 'right'; // Qual prato recebe os pesos atirados ('right' adição, 'left' subtração)
+    
+    let inventarioGerado = []; // Peças disponíveis para atirar
+
+    // Elementos Interativos da Balança
+    const eixoBalanca = document.getElementById('eixo-balanca');
+    const pratoEsquerda = document.getElementById('prato-esquerda');
+    const pratoDireita = document.getElementById('prato-direita');
+    const bBoca = document.getElementById('monstro-boca'); // Para animação facial
+
+    const elProgresso = document.getElementById('val-progresso');
+    const elErradas = document.getElementById('val-erradas');
+    const elProgressFill = document.getElementById('progress-fill');
+    const btnDica = document.getElementById('btn-ajuda');
+    
+    const painelInstrucao = document.getElementById('painel-instrucao');
+    const estaleiroCont = document.getElementById('estaleiro-container');
+    const areaJogoCustom = document.getElementById('area-jogo-custom');
+
+    function renderMenu() {
+        const botoes = [
+            { id: 1, cor: 'bg-verde', titulo: 'O Bosque', desc: 'Adição até 10' },
+            { id: 2, cor: 'bg-azul', titulo: 'A Caverna', desc: 'Adição até 20' },
+            { id: 3, cor: 'bg-laranja', titulo: 'O Vulcão', desc: 'Subtração até 10' },
+            { id: 4, cor: 'bg-roxo', titulo: 'O Castelo', desc: 'Subtração até 20' }
+        ];
+        
+        const grid = document.getElementById('grid-niveis');
+        if(!grid) return;
+        grid.innerHTML = '';
+        
+        botoes.forEach(b => {
+            const isLocked = b.id > nivelDesbloqueado;
+            const btn = document.createElement('button');
+            btn.className = `btn-nivel-novo ${isLocked ? 'bloqueado' : b.cor}`;
+            btn.onclick = () => {
+                if (!isLocked) iniciarJogo(b.id);
+                else tocarSom('erro');
+            };
+            
+            btn.innerHTML = `
+                Nível ${b.id} ${isLocked ? '🔒' : ''}<br>
+                <span style="font-size: 1.5rem;">${b.titulo}</span><br>
+                <small style="font-size: 0.95rem; font-weight: 500;">${isLocked ? 'Bloqueado' : b.desc}</small>
+            `;
+            grid.appendChild(btn);
+        });
+    }
+
+    function desbloquearTudo() {
+        nivelDesbloqueado = 4; 
+        tocarSom('vitoria');
+        renderMenu();
+    }
+
+    function mostrarEcra(idEcra) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(idEcra).style.display = 'flex';
+    }
+
+    function aplicarTema(nivel) {
+        if (!areaJogoCustom) return;
+        areaJogoCustom.className = 'area-jogo-custom'; 
+        if (nivel > 0) areaJogoCustom.classList.add(`tema-${nivel}`); 
+    }
+
+    function atualizarTrackerNiveis() {
+        for(let i=1; i<=4; i++) {
+            let dot = document.getElementById(`dot-${i}`);
+            if(dot) {
+                dot.className = 'level-dot';
+                if (i < nivelAtual) dot.classList.add('completed');
+                else if (i === nivelAtual) dot.classList.add('active');
+            }
+        }
+    }
+
+    function atualizarBotaoDica() {
+        if (rondasParaDica <= 0) {
+            btnDica.classList.remove('esgotada');
+            btnDica.innerHTML = '💡 Dica';
+        } else {
+            btnDica.classList.add('esgotada');
+            btnDica.innerHTML = `⏳ ${rondasParaDica}`;
+        }
+    }
+
+    function iniciarJogo(nivel) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        nivelAtual = nivel;
+        desafioAtual = 0;
+        erradas = 0;
+        rondasParaDica = 0;
+        
+        document.getElementById('confetti-container').innerHTML = '';
+        aplicarTema(nivelAtual);
+        atualizarTrackerNiveis();
+        atualizarPlacar();
+        
+        mostrarEcra('ecra-jogo');
+        novaRonda();
+    }
+
+    function reiniciarJogoAtual() { iniciarJogo(nivelAtual); }
+    
+    function proximoNivel() {
+        if (nivelAtual < 4) iniciarJogo(nivelAtual + 1);
+        else voltarAoMenu();
+    }
+    
+    function voltarAoMenu() {
+        document.getElementById('confetti-container').innerHTML = '';
+        renderMenu(); 
+        mostrarEcra('ecra-selecao');
+        aplicarTema(0); 
+    }
+
+    function atualizarPlacar() { 
+        if (elErradas) elErradas.textContent = erradas;
+        if (elProgresso) elProgresso.textContent = Math.min(desafioAtual + 1, RONDAS_POR_NIVEL);
+        const percentagem = (desafioAtual / RONDAS_POR_NIVEL) * 100;
+        if (elProgressFill) elProgressFill.style.width = percentagem + '%';
+        atualizarBotaoDica();
+    }
+
+    // ==========================================
+    // MECÂNICA DA BALANÇA
+    // ==========================================
+    function atualizarInclinacaoBalanca() {
+        // Calcula a diferença. Se esquerda pesa mais, inclina negativamente. Direita mais, positivamente.
+        let diferenca = currentRight - currentLeft; 
+        
+        // Limita o ângulo para não girar a 360
+        let angulo = diferenca * 4; 
+        if (angulo > 25) angulo = 25;
+        if (angulo < -25) angulo = -25;
+
+        eixoBalanca.style.transform = `rotate(${angulo}deg)`;
+        
+        // Pratos devem ter rotação inversa para ficarem pendurados a direito
+        pratoEsquerda.style.transform = `rotate(${-angulo}deg)`;
+        pratoDireita.style.transform = `rotate(${-angulo}deg)`;
+
+        // Cara do monstro reage
+        if (Math.abs(angulo) > 15) {
+            bBoca.setAttribute('d', 'M90,135 A10,10 0 1,1 110,135 A10,10 0 1,1 90,135'); // Boca O de surpresa
+        } else {
+            bBoca.setAttribute('d', 'M85,130 Q100,145 115,130'); // Sorriso
+        }
+    }
+
+    function novaRonda() {
+        isAnimating = false;
+        pratoEsquerda.innerHTML = '';
+        pratoDireita.innerHTML = '';
+        estaleiroCont.innerHTML = '';
+        inventarioGerado = [];
+        
+        let a, b, target;
+        
+        if (nivelAtual === 1) {
+            // Adição até 10
+            target = Math.floor(Math.random() * 9) + 2; // 2 a 10
+            let p1 = Math.floor(Math.random() * (target - 1)) + 1; // Parte 1
+            let p2 = target - p1; // Parte 2
+            
+            painelInstrucao.textContent = `Faz ${target}!`;
+            ladoAtivo = 'right';
+            
+            // Setup Balança
+            currentLeft = target;
+            currentRight = 0;
+            pratoEsquerda.appendChild(criarPesoAlvo(target)); // Alvo dourado na esquerda
+            
+            // Inventário: As partes certas + 3 distratores
+            inventarioGerado.push(p1, p2);
+            while(inventarioGerado.length < 5) {
+                let r = Math.floor(Math.random() * 9) + 1;
+                if(!inventarioGerado.includes(r)) inventarioGerado.push(r);
+            }
+        } 
+        else if (nivelAtual === 2) {
+            // Adição até 20
+            target = Math.floor(Math.random() * 10) + 11; // 11 a 20
+            let p1 = Math.floor(Math.random() * (target - 2)) + 1; 
+            let p2 = target - p1;
+            
+            painelInstrucao.textContent = `Faz ${target}!`;
+            ladoAtivo = 'right';
+            
+            currentLeft = target;
+            currentRight = 0;
+            pratoEsquerda.appendChild(criarPesoAlvo(target));
+            
+            inventarioGerado.push(p1, p2);
+            while(inventarioGerado.length < 6) {
+                let r = Math.floor(Math.random() * 18) + 1;
+                if(!inventarioGerado.includes(r)) inventarioGerado.push(r);
+            }
+        }
+        else if (nivelAtual === 3) {
+            // Subtração até 10: "Total - ? = Resto"
+            let total = Math.floor(Math.random() * 5) + 6; // 6 a 10
+            let resto = Math.floor(Math.random() * (total - 1)) + 1; 
+            let remover = total - resto;
+            
+            painelInstrucao.textContent = `${total} - ? = ${resto}`;
+            ladoAtivo = 'left'; // A criança vai atirar pesos para a esquerda (Resto + Remover = Total)
+            
+            currentLeft = resto;
+            currentRight = total;
+            
+            pratoDireita.appendChild(criarPesoAlvo(total)); // Alvo Total na Direita
+            pratoEsquerda.appendChild(criarPesoPrata(resto)); // O Resto já fica na Esquerda
+            
+            // Inventário: Valor certo a remover + 4 distratores
+            inventarioGerado.push(remover);
+            while(inventarioGerado.length < 5) {
+                let r = Math.floor(Math.random() * 9) + 1;
+                if(!inventarioGerado.includes(r)) inventarioGerado.push(r);
+            }
+        }
+        else if (nivelAtual === 4) {
+            // Subtração até 20
+            let total = Math.floor(Math.random() * 9) + 12; // 12 a 20
+            let resto = Math.floor(Math.random() * (total - 3)) + 2; 
+            let remover = total - resto;
+            
+            painelInstrucao.textContent = `${total} - ? = ${resto}`;
+            ladoAtivo = 'left'; 
+            
+            currentLeft = resto;
+            currentRight = total;
+            
+            pratoDireita.appendChild(criarPesoAlvo(total)); 
+            pratoEsquerda.appendChild(criarPesoPrata(resto));
+            
+            inventarioGerado.push(remover);
+            while(inventarioGerado.length < 6) {
+                let r = Math.floor(Math.random() * 15) + 1;
+                if(!inventarioGerado.includes(r)) inventarioGerado.push(r);
+            }
+        }
+
+        // Renderiza inventário baralhado
+        inventarioGerado.sort(() => Math.random() - 0.5);
+        inventarioGerado.forEach((val, idx) => {
+            estaleiroCont.appendChild(criarPesoInterativo(val, `peso-${idx}`));
+        });
+
+        // Simula queda inicial para calcular a inclinação
+        setTimeout(atualizarInclinacaoBalanca, 100);
+    }
+
+    function criarPesoAlvo(valor) {
+        let el = document.createElement('div');
+        el.className = 'peso-item peso-alvo';
+        el.innerHTML = `${SVG_PESO_DOURO}<div class="peso-number">${valor}</div>`;
+        return el;
+    }
+
+    function criarPesoPrata(valor) {
+        let el = document.createElement('div');
+        el.className = 'peso-item peso-alvo'; // usa as mesmas regras de não clicar
+        el.innerHTML = `${SVG_PESO_METAL}<div class="peso-number">${valor}</div>`;
+        return el;
+    }
+
+    function criarPesoInterativo(valor, id) {
+        let el = document.createElement('div');
+        el.className = 'peso-item';
+        el.id = id;
+        el.dataset.valor = valor;
+        el.innerHTML = `${SVG_PESO_METAL}<div class="peso-number">${valor}</div>`;
+        
+        el.onclick = () => {
+            if (isAnimating) return;
+            
+            tocarSom('flip');
+            document.querySelectorAll('.peso-item').forEach(r => r.classList.remove('dica-ativa'));
+            
+            // Verifica onde o peso está (Inventário ou Prato Ativo)
+            if (el.parentElement === estaleiroCont) {
+                // Vai para a balança
+                if (ladoAtivo === 'right') {
+                    pratoDireita.appendChild(el);
+                    currentRight += valor;
+                } else {
+                    pratoEsquerda.appendChild(el);
+                    currentLeft += valor;
+                }
+            } else {
+                // Estava na balança, volta para o inventário
+                estaleiroCont.appendChild(el);
+                if (ladoAtivo === 'right') currentRight -= valor;
+                else currentLeft -= valor;
+            }
+            
+            atualizarInclinacaoBalanca();
+
+            // Verifica se equilibrou
+            if (currentLeft === currentRight && currentLeft > 0) {
+                validarVitoria();
+            }
+        };
+        return el;
+    }
+
+    function validarVitoria() {
+        isAnimating = true;
+        
+        // Trancar todos os cliques
+        estaleiroCont.style.pointerEvents = 'none';
+        
+        tocarSom('acerto');
+        setTimeout(() => tocarSom('magia'), 200);
+
+        // Piscar os pratos
+        pratoEsquerda.style.filter = "drop-shadow(0 0 15px var(--cor-sucesso))";
+        pratoDireita.style.filter = "drop-shadow(0 0 15px var(--cor-sucesso))";
+
+        if (rondasParaDica > 0) rondasParaDica--;
+
+        setTimeout(() => {
+            // Limpa estilos de vitória
+            pratoEsquerda.style.filter = "none";
+            pratoDireita.style.filter = "none";
+            estaleiroCont.style.pointerEvents = 'auto';
+
+            desafioAtual++;
+            atualizarPlacar();
+            
+            if (desafioAtual >= RONDAS_POR_NIVEL) finalizarNivel();
+            else novaRonda();
+        }, 1800); 
+    }
+
+    function usarDica() {
+        if (rondasParaDica > 0 || isAnimating) return;
+
+        // Descobrir o peso que falta para equilibrar
+        let falta = Math.abs(currentLeft - currentRight);
+        
+        // Encontrar no inventário um peso interativo igual ao que falta
+        let pesoCerto = Array.from(estaleiroCont.children).find(el => parseInt(el.dataset.valor) === falta);
+        
+        if (pesoCerto) {
+            tocarSom('flip');
+            pesoCerto.classList.add('dica-ativa');
+            rondasParaDica = 5;
+            atualizarBotaoDica();
+        }
+    }
+
+    function finalizarNivel() {
+        elProgressFill.style.width = `100%`;
+        tocarSom('vitoria');
+        dispararConfetis();
+        
+        if (nivelAtual === nivelDesbloqueado && nivelDesbloqueado < 4) {
+            nivelDesbloqueado++;
+        }
+
+        setTimeout(() => {
+            if (nivelAtual === 4) {
+                document.getElementById('fim-icone').innerHTML = SVG_ICONE_TROFEU;
+                mostrarEcra('ecra-fim');
+                document.getElementById('final-erros').textContent = erradas;
+            } else {
+                document.getElementById('transicao-icone').innerHTML = SVG_ICONE_TROFEU;
+                mostrarEcra('ecra-transicao');
+                document.getElementById('transicao-mensagem').innerHTML = `Balança perfeitamente equilibrada!<br>Tentativas falhadas (erros p/ desequilíbrio não contam, não dá para errar sem tirar, é magia!): Apenas ${erradas}.`;
+            }
+        }, 500);
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS DO TEMPLATE
+       ========================================= */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        renderMenu(); 
+        mostrarEcra('ecra-selecao');
+    });
+
+    document.body.addEventListener('click', function initAudio() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        document.body.removeEventListener('click', initAudio);
+    });
+
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas = [523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.5);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.5);
+            });
+        } else if (tipo === 'flip' || tipo === 'plop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.2, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'magia') { 
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1500, agora + 0.4);
+            gain.gain.setValueAtTime(0, agora); gain.gain.linearRampToValueAtTime(0.1, agora + 0.2); gain.gain.linearRampToValueAtTime(0, agora + 0.6);
+            osc.start(agora); osc.stop(agora + 0.6);
+        }
+    }
+
+    function dispararConfetis() {
+        const container = document.getElementById('confetti-container');
+        if (!container) return;
+        container.innerHTML = ""; 
+        const colors = ['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#9b59b6'];
+        
+        for (let i = 0; i < 80; i++) {
+            let conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 100) + '%';
+            conf.style.top = '-20px';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+</script>
+</body>
+</html>
