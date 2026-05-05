@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - A Viagem dos Números ⛴️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+        :root {
+            --bg-body: #f0f4f8;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --cor-borda: #0091ff;            
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --cor-mat: #4dabf7;
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-laranja: #FA983A;
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+		.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px #4dabf7a8; 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; gap: 8px; }
+        #ecra-jogo { justify-content: flex-start; }
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO DA ARCA)
+           ========================================= */
+        .titulo-destaque { font-size: clamp(1.8rem, 4vh, 2.5rem); color: var(--azul-escuro); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 2px; }
+        .subtitulo-menu { font-size: clamp(0.9rem, 2vh, 1.2rem); color: var(--text-main); margin: 0 0 10px 0; }
+
+        .super-animacao-mar {
+            width: 100%; max-width: 450px; height: 160px;
+            background: linear-gradient(180deg, #87CEEB 0%, #e0f7fa 100%);
+            border-radius: 20px; border: 4px solid #B0E0E6;
+            position: relative; overflow: hidden; margin-bottom: 25px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 8px 15px rgba(0,0,0,0.1);
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+
+        .anim-ondas {
+            position: absolute; bottom: -10px; left: -50%; width: 200%; height: 50px;
+            background: #3498db; opacity: 0.7; border-radius: 40% 60% 40% 60%;
+            animation: waveAnim 4s linear infinite; z-index: 2;
+        }
+        .anim-ondas:nth-child(2) { bottom: -15px; background: #2980b9; animation: waveAnim 5s linear infinite reverse; z-index: 3; }
+
+        @keyframes waveAnim { 0% { transform: translateX(0); } 100% { transform: translateX(25%); } }
+        @keyframes balancoArca { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-5px); } }
+
+        .arca-menu { width: 120px; height: 120px; z-index: 1; margin-bottom: 10px; animation: balancoArca 3s ease-in-out infinite; }
+
+        .grid-niveis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 600px; margin: 0 auto; flex-shrink: 1; }
+        @media (max-width: 768px) { .grid-niveis { grid-template-columns: 1fr; max-width: 300px; } }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 10px 15px; border-radius: 15px; border: 3px solid white;
+            color: white; font-size: clamp(1.1rem, 2.5vh, 1.3rem); font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 4px 0 #e2e8f0, 0 8px 12px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center; line-height: 1.1;
+        }
+        @media (hover: hover) { .btn-nivel-novo:not(.bloqueado):hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 6px 0 #cbd5e1, 0 10px 15px rgba(0,0,0,0.12); } }
+        .btn-nivel-novo:not(.bloqueado):active { transform: translateY(4px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+        
+        .btn-nivel-novo.bloqueado { background-color: #bdc3c7; box-shadow: 0 4px 0 #95a5a6; cursor: not-allowed; color: #7f8c8d; border-color: #ecf0f1; text-shadow: none; }
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+        .bg-roxo { background-color: #A55EEA; }
+
+        .btn-chave { position: absolute; top: 15px; right: 15px; background: none; border: none; width: 30px; height: 30px; cursor: pointer; opacity: 0.2; transition: 0.3s; z-index: 50; }
+        .btn-chave:hover { opacity: 1; transform: scale(1.1); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO E ÍCONES SVG
+           ========================================= */
+        .svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+        
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #e0ecf3; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 10px; box-sizing: border-box; flex-shrink: 0; max-width: 900px; z-index: 5; }
+        
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);}
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);}
+        
+        /* Hover Ativo para Menu e Dica */
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); } 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.05); filter: brightness(1.05); } 
+        }
+        .btn-voltar-menu:active, .btn-dica:active:not(.esgotada) { transform: scale(0.95); }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); transform: scale(1) !important; }
+
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; display: flex; align-items: center;}
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { border: 2px solid var(--cor-erro); color: var(--cor-erro); }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        /* O ícone de erro em CSS puro (Cruz) */
+        .icone-erro { display: inline-block; width: 14px; height: 14px; position: relative; margin-right: 5px; vertical-align: middle; }
+        .icone-erro::before, .icone-erro::after { content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 3px; background-color: var(--cor-erro); border-radius: 2px; }
+        .icone-erro::before { transform: translate(-50%, -50%) rotate(45deg); }
+        .icone-erro::after { transform: translate(-50%, -50%) rotate(-45deg); }
+        
+        #val-erradas { font-size: 1rem; font-weight: 900; color: var(--cor-mat); }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        /* =========================================
+           ÁREA DE JOGO (ARCA DOS ANIMAIS)
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            width: 100%; flex: 1; min-height: 0; background: #e0f7fa; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 15px 15px 0 15px; gap: 5px;
+            position: relative; overflow: hidden; transition: background 0.5s ease;
+        }
+
+        .level-tracker { position: absolute; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 15px; border: 2px solid var(--cor-borda); box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left; z-index: 5; }
+        .level-dot { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: var(--text-main); opacity: 0.4; transition: 0.3s; }
+        .level-dot.active { opacity: 1; color: var(--azul-escuro); transform: scale(1.05); }
+        .level-dot.completed { opacity: 0.8; color: var(--cor-sucesso-dark); text-decoration: line-through; }
+        
+        @media (max-width: 600px) {
+            .level-tracker { position: relative; top: 0; left: 0; width: 100%; flex-direction: row; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; padding: 5px; }
+            .level-dot { font-size: 0.8rem; }
+        }
+
+        /* Cábula Visual (Badge Informativo) COM MAIS RESPIRAÇÃO */
+        .cabula-container {
+            background: white; padding: 15px 30px; border-radius: 15px;
+            border: 3px solid #f1c40f; box-shadow: 0 4px 0 #f1c40f;
+            display: flex; gap: 30px; align-items: center; justify-content: center;
+            margin-bottom: 5px; z-index: 2; flex-wrap: wrap;
+            width: 100%; max-width: 500px;
+        }
+        .cabula-col { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1;}
+        .cabula-titulo { font-weight: 900; font-size: 1.1rem; color: var(--azul-escuro); text-transform: uppercase;}
+        .cabula-numeros { font-weight: 700; color: var(--text-main); letter-spacing: 2px;}
+        .cabula-desenho { display: flex; gap: 4px; }
+        .cabula-dot { width: 12px; height: 12px; border-radius: 50%; background: #3498db;}
+        .cabula-dot.impar { background: #e74c3c; }
+
+        .instrucao-texto { font-size: 1.1rem; font-weight: 800; color: var(--cor-erro); margin-bottom: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* O Bilhete Central */
+        .bilhete-area {
+            flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 10; min-height: 160px;
+        }
+        .bilhete {
+            width: 160px; min-height: 100px; height: auto; padding: 20px 0;
+            background: #fff9c4; border: 3px solid #d4a000;
+            border-radius: 10px; position: relative; box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s;
+        }
+        /* Recortes laterais típicos de bilhete */
+        .bilhete::before, .bilhete::after {
+            content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+            width: 24px; height: 24px; background: #e0f7fa; border-radius: 50%;
+            border: 3px solid #d4a000;
+        }
+        .bilhete::before { left: -14px; border-right-color: transparent; border-top-color: transparent; transform: translateY(-50%) rotate(45deg);}
+        .bilhete::after { right: -14px; border-left-color: transparent; border-top-color: transparent; transform: translateY(-50%) rotate(-135deg);}
+        
+        .bilhete-numero { font-size: 3.5rem; font-weight: 900; color: #d35400; line-height: 1; z-index: 2;}
+        
+        /* Grid de Pontos para Nível 1 - Bolinhas em linha/pares horizontais! */
+        .bilhete-dots {
+            display: grid; grid-template-rows: repeat(2, 14px); grid-auto-flow: column; gap: 6px; 
+            margin-top: 10px; z-index: 2; justify-content: center;
+        }
+        .b-dot { width: 14px; height: 14px; background: #d35400; border-radius: 50%; }
+
+        /* Zonas de Destino (Arca e Ilha) */
+        .destinos-container {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            width: 100%; max-width: 600px; padding: 0 20px 20px 20px;
+            margin-top: auto; z-index: 5;
+        }
+        .destino-zona {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            cursor: pointer; transition: transform 0.2s, filter 0.2s;
+            touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+        }
+        @media (hover: hover) { .destino-zona:hover { transform: translateY(-5px); filter: brightness(1.1); } }
+        .destino-zona:active { transform: translateY(2px) scale(0.95); }
+        .destino-zona.dica-ativa { animation: pulseDicaVerde 1s infinite alternate; }
+
+        .destino-svg-wrapper { width: 120px; height: 100px; display: flex; align-items: flex-end; justify-content: center;}
+        .destino-label {
+            background: white; color: var(--azul-escuro); font-weight: 900; font-size: 1.2rem;
+            padding: 5px 15px; border-radius: 20px; border: 3px solid var(--cor-mat);
+            box-shadow: 0 4px 0 var(--cor-mat); text-transform: uppercase;
+        }
+
+        /* Animações da Dica */
+        @keyframes pulseDicaVerde { 0% { filter: drop-shadow(0 0 5px var(--cor-sucesso)); transform: scale(1); } 100% { filter: drop-shadow(0 0 20px var(--cor-sucesso)); transform: scale(1.05); } }
+        
+        /* =========================================
+           ECRÃ TRANSIÇÃO E FIM
+           ========================================= */
+        .icone-gigante { margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); animation: floatUp 3s ease-in-out infinite; width: 120px; height: 120px;}
+        @keyframes floatUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .end-stats { font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; text-align: center; background: var(--bg-header); padding: 30px 20px; border-radius: 20px; border: 2px dashed var(--cor-mat); line-height: 1.5; }
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+        @media (min-width: 600px) { .botoes-acao-container { flex-direction: row; justify-content: center; } }
+
+        .btn-acao { border: 4px solid white; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; text-transform: uppercase; letter-spacing: 1px; }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px) rotate(-5deg); } 75% { transform: translateX(10px) rotate(5deg); } }
+        .shake { animation: shakeError 0.4s; }
+
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+        @media (max-width: 600px) {
+            .destino-svg-wrapper { width: 90px; height: 75px; }
+            .destino-label { font-size: 1rem; padding: 4px 10px; }
+            .cabula-container { padding: 8px 10px; gap: 10px; }
+            .cabula-titulo { font-size: 0.9rem; }
+            .cabula-numeros { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../">🏠 Início</a></li>
+        <li><a href="../../../pre/">🎨 Pré-Escolar</a></li>
+        <li><a href="../../">🎒 1º Ano</a></li>
+        <li><a href="../../../2">💡 2º Ano</a></li>
+        <li><a href="../../../3/">🔍 3º Ano</a></li>
+        <li><a href="../../../4/">🚀 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+        <!-- Inserção do Barco SVG no Header ao lado do título (OPCIONAL)-->
+        <h1>A Viagem dos Números ⛴️</h1>
+        <div class="subtitulo">Separa os bilhetes Pares e Ímpares!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="main-card">
+        
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- ECRÃ 1: INÍCIO -->
+        <div id="ecra-selecao" class="ecra ativo">
+            <button onclick="desbloquearTudo()" title="Desbloquear todos os níveis" class="btn-chave" id="btn-chave-svg"></button>
+
+            <h2 class="titulo-destaque">Os Viajantes</h2>
+            <p class="subtitulo-menu">No Barco entram aos Pares, na Ilha ficam os Ímpares!</p>
+            
+            <div class="super-animacao-mar">
+                <div class="anim-ondas"></div>
+                <div class="anim-ondas"></div>
+                <div class="arca-menu" id="arca-menu-svg"></div>
+            </div>
+
+            <div class="grid-niveis" id="grid-niveis"></div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+                <button id="btn-ajuda" class="btn-dica" onclick="usarDica()">Dica</button>
+                <div class="badge-ronda" id="badge-ronda-svg"></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"> <span class="icone-erro"></span> <span id="val-erradas">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo-custom">
+                
+                <div class="level-tracker" id="level-tracker">
+                    <div class="level-dot" id="dot-1"><span class="svg-icon" id="icon-lvl-1"></span> A Praia</div>
+                    <div class="level-dot" id="dot-2"><span class="svg-icon" id="icon-lvl-2"></span> O Cais</div>
+                    <div class="level-dot" id="dot-3"><span class="svg-icon" id="icon-lvl-3"></span> O Porto</div>
+                    <div class="level-dot" id="dot-4"><span class="svg-icon" id="icon-lvl-4"></span> O Oceano</div>
+                </div>
+
+                <!-- CÁBULA VISUAL COM MAIS RESPIRAÇÃO -->
+                <div class="cabula-container">
+                    <div class="cabula-col">
+                        <div class="cabula-titulo">PARES</div>
+                        <div class="cabula-numeros">0, 2, 4, 6, 8</div>
+                        <div class="cabula-desenho">
+                            <div class="cabula-dot"></div><div class="cabula-dot"></div>
+                            <div class="cabula-dot" style="margin-left: 5px;"></div><div class="cabula-dot"></div>
+                        </div>
+                    </div>
+                    <div style="width: 3px; height: 50px; background: #f1c40f; opacity: 0.5;"></div>
+                    <div class="cabula-col">
+                        <div class="cabula-titulo">ÍMPARES</div>
+                        <div class="cabula-numeros">1, 3, 5, 7, 9</div>
+                        <div class="cabula-desenho">
+                            <div class="cabula-dot"></div><div class="cabula-dot"></div>
+                            <div class="cabula-dot" style="margin-left: 5px;"></div><div class="cabula-dot"></div>
+                            <div class="cabula-dot impar" style="margin-left: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="instrucao-texto">Barco dos Pares ou Ilha dos Ímpares?</div>
+
+                <!-- ÁREA DO BILHETE (Maior e com Grid no Nível 1) -->
+                <div class="bilhete-area">
+                    <div class="bilhete" id="bilhete-jogo">
+                        <!-- Conteúdo gerado no JS -->
+                    </div>
+                </div>
+
+                <!-- ZONAS DE DESTINO -->
+                <div class="destinos-container">
+                    <div class="destino-zona" id="zona-par" onclick="verificarResposta(true)">
+                        <div class="destino-svg-wrapper" id="svg-arca-wrapper"></div>
+                        <div class="destino-label">PARES</div>
+                    </div>
+					
+					
+					<div class="destino-zona" id="zona-impar" onclick="verificarResposta(false)">
+                        <div class="destino-svg-wrapper" id="svg-ilha-wrapper"></div>
+                        <div class="destino-label">ÍMPARES</div>
+                    </div>
+                                        
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 3: TRANSIÇÃO -->
+        <div id="ecra-transicao" class="ecra">
+            <div class="icone-gigante" id="transicao-icone"></div>
+            <h2 class="end-title">Nível Concluído!</h2>
+            <div class="end-stats"><p id="transicao-mensagem"></p></div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao secundario" onclick="reiniciarJogoAtual()">🔄 Repetir</button>
+                <button class="btn-acao primario" id="btn-proximo-nivel" onclick="proximoNivel()">Avançar ➔</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ 4: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div class="icone-gigante" id="fim-icone"></div>
+            <h2 class="end-title">Todos a Bordo!</h2>
+            <div class="end-stats" style="max-width: 600px;">
+                Fizeste uma triagem perfeita de todos os bilhetes!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> enganos.
+            </div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="voltarAoMenu()">Voltar ao Menu</button>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+
+    // ==========================================
+    // SVGs (100% CÓDIGO)
+    // ==========================================
+    const SVG_ARCA = `
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+        <!-- Casco -->
+        <path d="M10,60 L30,90 L70,90 L90,60 Z" fill="#8e44ad"/>
+        <path d="M10,60 L30,90 L70,90 L90,60 Z" fill="none" stroke="#6c3483" stroke-width="4"/>
+        <line x1="20" y1="75" x2="80" y2="75" stroke="#6c3483" stroke-width="4"/>
+        <!-- Cabine -->
+        <rect x="35" y="30" width="30" height="30" fill="#f39c12" stroke="#e67e22" stroke-width="3" rx="4"/>
+        <!-- Telhado -->
+        <path d="M30,30 L50,15 L70,30 Z" fill="#c0392b" stroke="#922b21" stroke-width="2" stroke-linejoin="round"/>
+        <!-- Porta -->
+        <rect x="42" y="45" width="16" height="15" fill="#7f8c8d" rx="2"/>
+        <!-- Rampa -->
+        <rect x="75" y="60" width="8" height="35" fill="#d35400" transform="rotate(30, 75, 60)" rx="2"/>
+    </svg>`;
+
+    const SVG_ILHA = `
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+        <!-- Areia -->
+        <path d="M10,85 Q50,65 90,85 Q70,100 30,100 Z" fill="#f1c40f"/>
+        <!-- Tronco -->
+        <path d="M45,75 Q55,45 60,35 L65,35 Q60,45 55,75 Z" fill="#d35400"/>
+        <!-- Folhas -->
+        <path d="M60,35 Q30,25 20,40 Q40,30 60,35 Z" fill="#2ecc71"/>
+        <path d="M60,35 Q50,10 70,5 Q65,20 60,35 Z" fill="#27ae60"/>
+        <path d="M60,35 Q90,20 95,40 Q75,30 60,35 Z" fill="#2ecc71"/>
+        <!-- Côcos -->
+        <circle cx="55" cy="38" r="4" fill="#8e44ad"/>
+        <circle cx="63" cy="40" r="4" fill="#8e44ad"/>
+    </svg>`;
+
+    const SVG_KEY = `<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M12.65 10A5.99 5.99 0 0 0 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6a5.99 5.99 0 0 0 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>`;
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+        <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+    </svg> Menu`;
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_SHELL = `<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10c0-6-8-10-8-10S4 6 4 12c0 6 8 10 8 10z"/></svg>`;
+    const SVG_ANCHOR = `<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>`;
+    const SVG_COMPASS = `<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`;
+    const SVG_HELM = `<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><line x1="12" y1="22" x2="12" y2="19"/><line x1="12" y1="5" x2="12" y2="2"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/><line x1="19.07" y1="19.07" x2="16.95" y2="16.95"/><line x1="7.05" y1="7.05" x2="4.93" y2="4.93"/><line x1="19.07" y1="4.93" x2="16.95" y2="7.05"/><line x1="7.05" y1="16.95" x2="4.93" y2="19.07"/></svg>`;
+    const SVG_TROPHY = `<svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M20,20 L80,20 L70,60 C65,80 35,80 30,60 Z" fill="#f1c40f"/><path d="M45,80 L55,80 L60,95 L40,95 Z" fill="#e67e22"/><path d="M10,25 C10,10 30,10 30,25" fill="none" stroke="#f1c40f" stroke-width="6"/><path d="M90,25 C90,10 70,10 70,25" fill="none" stroke="#f1c40f" stroke-width="6"/></svg>`;
+
+    // Injeção inicial de ícones UI
+    document.getElementById('btn-chave-svg').innerHTML = SVG_KEY;
+    document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+    document.getElementById('badge-ronda-svg').innerHTML = `${SVG_STAR} <span id="val-progresso">1</span>/<span id="val-total">10</span>`;
+    document.getElementById('icon-lvl-1').innerHTML = SVG_SHELL;
+    document.getElementById('icon-lvl-2').innerHTML = SVG_ANCHOR;
+    document.getElementById('icon-lvl-3').innerHTML = SVG_COMPASS;
+    document.getElementById('icon-lvl-4').innerHTML = SVG_HELM;
+    
+    document.getElementById('arca-menu-svg').innerHTML = SVG_ARCA;
+    //document.getElementById('header-arca-svg').innerHTML = SVG_ARCA; // Barco do titulo
+    document.getElementById('svg-arca-wrapper').innerHTML = SVG_ARCA;
+    document.getElementById('svg-ilha-wrapper').innerHTML = SVG_ILHA;
+
+    // ==========================================
+    // VARIÁVEIS E LÓGICA DO JOGO
+    // ==========================================
+    let nivelDesbloqueado = 1; 
+    let nivelAtual = 1;
+    let desafioAtual = 0;
+    let erradas = 0;
+    const RONDAS_POR_NIVEL = 10;
+    let rondasParaDica = 0;
+    let isAnimating = false;
+
+    let numeroAtual = 0; 
+    let isParCorreto = false;
+
+    const elProgresso = document.getElementById('val-progresso');
+    const elErradas = document.getElementById('val-erradas');
+    const elProgressFill = document.getElementById('progress-fill');
+    const btnDica = document.getElementById('btn-ajuda');
+    const bilheteContainer = document.getElementById('bilhete-jogo');
+
+    function renderMenu() {
+        const botoes = [
+            { id: 1, cor: 'bg-verde', icone: SVG_SHELL, titulo: 'A Praia', desc: 'Até 10' },
+            { id: 2, cor: 'bg-azul', icone: SVG_ANCHOR, titulo: 'O Cais', desc: 'Até 20' },
+            { id: 3, cor: 'bg-laranja', icone: SVG_COMPASS, titulo: 'O Porto', desc: 'Até 50' },
+            { id: 4, cor: 'bg-roxo', icone: SVG_HELM, titulo: 'O Oceano', desc: 'Até 100' }
+        ];
+        
+        const grid = document.getElementById('grid-niveis');
+        if(!grid) return;
+        grid.innerHTML = '';
+        
+        botoes.forEach(b => {
+            const isLocked = b.id > nivelDesbloqueado;
+            const btn = document.createElement('button');
+            btn.className = `btn-nivel-novo ${isLocked ? 'bloqueado' : b.cor}`;
+            btn.onclick = () => { if (!isLocked) iniciarJogo(b.id); else tocarSom('erro'); };
+            
+            btn.innerHTML = `
+                <div style="font-size: 0.8em; font-weight: 500; opacity: 0.9; margin-bottom: 2px;">Nível ${b.id} ${isLocked ? '🔒' : ''}</div>
+                <div style="display:flex; align-items:center; gap:8px;">${isLocked ? '' : b.icone} ${b.titulo}</div>
+                <div style="font-size: 0.7em; font-weight: 500; opacity: 0.9; margin-top: 2px;">${isLocked ? 'Bloqueado' : b.desc}</div>
+            `;
+            grid.appendChild(btn);
+        });
+    }
+
+    function desbloquearTudo() { nivelDesbloqueado = 4; tocarSom('vitoria'); renderMenu(); }
+
+    function mostrarEcra(idEcra) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        document.getElementById(idEcra).style.display = 'flex';
+    }
+
+    function atualizarTrackerNiveis() {
+        for(let i=1; i<=4; i++) {
+            let dot = document.getElementById(`dot-${i}`);
+            if(dot) { dot.className = 'level-dot'; if (i < nivelAtual) dot.classList.add('completed'); else if (i === nivelAtual) dot.classList.add('active'); }
+        }
+    }
+
+    function atualizarBotaoDica() {
+        if (rondasParaDica <= 0) { btnDica.classList.remove('esgotada'); btnDica.innerHTML = SVG_BULB + ' Dica'; } 
+        else { btnDica.classList.add('esgotada'); btnDica.innerHTML = `⏳ ${rondasParaDica}`; }
+    }
+
+    function iniciarJogo(nivel) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        nivelAtual = nivel; desafioAtual = 0; erradas = 0; rondasParaDica = 0;
+        document.getElementById('confetti-container').innerHTML = '';
+        atualizarTrackerNiveis(); atualizarPlacar();
+        mostrarEcra('ecra-jogo'); novaRonda();
+    }
+
+    function reiniciarJogoAtual() { iniciarJogo(nivelAtual); }
+    function proximoNivel() { if (nivelAtual < 4) iniciarJogo(nivelAtual + 1); else voltarAoMenu(); }
+    function voltarAoMenu() { document.getElementById('confetti-container').innerHTML = ''; renderMenu(); mostrarEcra('ecra-selecao'); }
+
+    function atualizarPlacar() { 
+        if (elErradas) elErradas.textContent = erradas;
+        if (elProgresso) elProgresso.textContent = Math.min(desafioAtual + 1, RONDAS_POR_NIVEL);
+        const percentagem = (desafioAtual / RONDAS_POR_NIVEL) * 100;
+        if (elProgressFill) elProgressFill.style.width = percentagem + '%';
+        atualizarBotaoDica();
+    }
+
+    // ==========================================
+    // MECÂNICA PAR / ÍMPAR
+    // ==========================================
+    function novaRonda() {
+        isAnimating = false;
+        bilheteContainer.style.transform = 'translate(0, 0) scale(1)';
+        bilheteContainer.style.opacity = '1';
+        
+        let min = 0, max = 10;
+        if (nivelAtual === 1) { min = 1; max = 10; }
+        else if (nivelAtual === 2) { min = 1; max = 20; }
+        else if (nivelAtual === 3) { min = 1; max = 50; }
+        else if (nivelAtual === 4) { min = 1; max = 100; }
+
+        numeroAtual = Math.floor(Math.random() * (max - min + 1)) + min;
+        isParCorreto = (numeroAtual % 2 === 0);
+
+        // Limpar zonas ativas da dica
+        document.getElementById('zona-par').classList.remove('dica-ativa');
+        document.getElementById('zona-impar').classList.remove('dica-ativa');
+
+        // Construir Bilhete
+        let htmlBilhete = `<div class="bilhete-numero">${numeroAtual}</div>`;
+        
+        // No Nível 1 mostramos bolinhas em Grid horizontal/em linha!
+        if (nivelAtual === 1) {
+            htmlBilhete += `<div class="bilhete-dots">`;
+            for (let i = 0; i < numeroAtual; i++) {
+                htmlBilhete += `<div class="b-dot"></div>`;
+            }
+            htmlBilhete += `</div>`;
+        }
+        
+        bilheteContainer.innerHTML = htmlBilhete;
+    }
+
+    function verificarResposta(escolheuPar) {
+        if (isAnimating) return;
+        
+        document.getElementById('zona-par').classList.remove('dica-ativa');
+        document.getElementById('zona-impar').classList.remove('dica-ativa');
+
+        if (escolheuPar === isParCorreto) {
+            // ACERTOU
+            isAnimating = true;
+            tocarSom('acerto');
+            
+            if (escolheuPar) {
+                bilheteContainer.style.transform = 'translate(-100px, 100px) scale(0.2) rotate(-15deg)';
+                document.getElementById('zona-par').style.transform = 'scale(1.1)';
+                setTimeout(()=> document.getElementById('zona-par').style.transform = 'scale(1)', 300);
+            } else {
+                bilheteContainer.style.transform = 'translate(100px, 100px) scale(0.2) rotate(15deg)';
+                document.getElementById('zona-impar').style.transform = 'scale(1.1)';
+                setTimeout(()=> document.getElementById('zona-impar').style.transform = 'scale(1)', 300);
+            }
+            
+            bilheteContainer.style.opacity = '0';
+
+            if (rondasParaDica > 0) rondasParaDica--;
+
+            setTimeout(() => {
+                desafioAtual++;
+                atualizarPlacar();
+                if (desafioAtual >= RONDAS_POR_NIVEL) finalizarNivel();
+                else novaRonda();
+            }, 500);
+
+        } else {
+            // ERROU
+            erradas++;
+            atualizarPlacar();
+            tocarSom('erro');
+            bilheteContainer.classList.add('shake');
+            setTimeout(() => bilheteContainer.classList.remove('shake'), 400);
+        }
+    }
+
+    function usarDica() {
+        if (rondasParaDica > 0 || isAnimating) return;
+        tocarSom('flip');
+        
+        if (isParCorreto) {
+            document.getElementById('zona-par').classList.add('dica-ativa');
+        } else {
+            document.getElementById('zona-impar').classList.add('dica-ativa');
+        }
+        
+        rondasParaDica = 4; // Usa uma dica, espera 4 rondas certas
+        atualizarBotaoDica();
+    }
+
+    function finalizarNivel() {
+        elProgressFill.style.width = `100%`; tocarSom('vitoria'); dispararConfetis();
+        if (nivelAtual === nivelDesbloqueado && nivelDesbloqueado < 4) nivelDesbloqueado++;
+
+        setTimeout(() => {
+            if (nivelAtual === 4) {
+                document.getElementById('fim-icone').innerHTML = SVG_ICONE_TROFEU;
+                mostrarEcra('ecra-fim');
+                document.getElementById('final-erros').textContent = erradas;
+            } else {
+                document.getElementById('transicao-icone').innerHTML = SVG_ICONE_TROFEU;
+                mostrarEcra('ecra-transicao');
+                document.getElementById('transicao-mensagem').innerHTML = `Bilhetes verificados com sucesso!<br>Tentativas erradas: Apenas ${erradas}.`;
+            }
+        }, 500);
+    }
+
+    /* =========================================
+       SISTEMA DE SOM E CONFETIS DO TEMPLATE
+       ========================================= */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    document.addEventListener('DOMContentLoaded', () => { renderMenu(); mostrarEcra('ecra-selecao'); });
+    document.body.addEventListener('click', function initAudio() { if (audioCtx.state === 'suspended') audioCtx.resume(); document.body.removeEventListener('click', initAudio); });
+
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, agora);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas = [523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.5);
+                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.5);
+            });
+        } else if (tipo === 'flip') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            gain.gain.setValueAtTime(0.05, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        }
+    }
+
+    function dispararConfetis() {
+        const container = document.getElementById('confetti-container'); if (!container) return;
+        container.innerHTML = ""; const colors = ['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#9b59b6'];
+        for (let i = 0; i < 80; i++) {
+            let conf = document.createElement('div'); conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 100) + '%'; conf.style.top = '-20px';
+            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; conf.style.animationDelay = (Math.random() * 1.5) + 's';
+            container.appendChild(conf);
+        }
+    }
+</script>
+</body>
+</html>
