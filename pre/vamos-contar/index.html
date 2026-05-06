@@ -112,13 +112,41 @@
         }
         .top-row { width: 100%; display: flex; justify-content: space-between; align-items: center; }
         
-        .btn-voltar-menu {
-            background-color: #f0f4f8; color: #334e68; border: none; padding: 8px 15px;
-            border-radius: 20px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: 0.2s;
-        }
-        .btn-voltar-menu:hover { background-color: #e2e8f0; transform: translateY(-2px); }
+		.btn-voltar-menu {
+		  background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+		  color: #334e68;
+		  border: 2px solid #cbd5e1;
+		  padding: 10px 18px;
+		  border-radius: 999px;
+		  font-size: 0.95rem;
+		  font-weight: 800;
+		  cursor: pointer;
+
+		  display: flex;
+		  align-items: center;
+		  gap: 10px;
+
+		  box-shadow: 0 4px 0 #cbd5e1;
+		  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.3s ease;
+		}
+        .btn-voltar-menu:hover {
+		  background: linear-gradient(135deg, #e6fffa, #d5fff6);
+		  transform: translateY(-2px);
+		  box-shadow: 0 6px 0 var(--cor-pre-dark);
+		}
+
+		.btn-voltar-menu:active {
+		  transform: translateY(3px);
+		  box-shadow: 0 1px 0 var(--cor-pre-dark);
+		}
+		
+		.btn-voltar-menu span {
+		  font-size: 1.2rem;
+		}
+		.btn-voltar-menu.desativado {
+		  opacity: 0.5;
+		  pointer-events: none;
+		}
 
         .level-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
         .btn-nivel-topo { background: #f8fafc; border: 2px solid #ced6e0; padding: 8px 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: var(--text-main); box-shadow: 0 3px 0 #ced6e0; transition: all 0.2s ease;}
@@ -325,11 +353,19 @@
 
         <!-- ECRÃ 3: FIM DO JOGO -->
         <div id="ecra-fim" class="ecra">
-            <div style="font-size: 5rem; margin-bottom: 5px;">🏆</div>
-            <h2 class="titulo-destaque">Parabéns!</h2>
-            <p class="texto-intro" style="margin-bottom: 30px;">És um campeão a contar!</p>
-            <button class="btn-acao" onclick="voltarMenu()" style="width: 100%; max-width: 300px;">Jogar Outro 🔄</button>
-        </div>
+		  <div style="font-size: 5rem;">🎉</div>
+		  <h2 class="titulo-destaque">Parabéns!</h2>
+		  <p class="texto-intro">Terminaste todos os níveis!</p>
+
+		  <button class="btn-acao" onclick="reiniciarJogo()">
+			Jogar Novamente 🔄
+		  </button>
+
+		  <button class="btn-voltar-menu" onclick="voltarMenu()" style="margin-top:15px;">
+			Voltar ao Menu 🏠
+		  </button>
+		</div>
+
 
         <canvas id="confetti-canvas"></canvas>
     </div>
@@ -359,11 +395,22 @@
     /* =========================================
        MOTOR DE ESTADOS DO JOGO
        ========================================= */
-    let jogoAtivo = 0; // 1=Monstro, 2=Arvore, 3=Comboio, 4=Simples
+    let ultimoAlvoNumero = null;
+	
+	let historicoAlvos = [];
+	const TAMANHO_HISTORICO = 3;
+
+	let jogoAtivo = 0; // 1=Monstro, 2=Arvore, 3=Comboio, 4=Simples
     let nivelAtual = 1;
     let rondaAtual = 0;
     const RONDAS_MAX = 5; 
     
+	
+	let fimDeNivel = false;
+	const NIVEL_MAX = 3
+	
+	let permitirConfetis = false;
+
     let alvoNumero = 0;
     let carregados = 0;
     let isVerificando = false;
@@ -391,11 +438,13 @@
     }
 
     function voltarMenu() {
-        caminhoMagico.style.display = 'none';
-        subtitulo.textContent = "Brinca com os números e quantidades!";
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        mostrarEcra('ecra-selecao');
-    }
+		limparConfetis();
+		permitirConfetis = false;
+
+		caminhoMagico.style.display = 'none';
+		subtitulo.textContent = "Brinca com os números e quantidades!";
+		mostrarEcra('ecra-selecao');
+	}
 
     function selecionarJogo(idJogo) {
         jogoAtivo = idJogo;
@@ -414,28 +463,59 @@
         mudarNivel(1);
     }
 
-    function mudarNivel(n) {
-        nivelAtual = n;
-        rondaAtual = 0;
-        
-        document.querySelectorAll('.btn-nivel-topo').forEach(b => b.classList.remove('ativo'));
-        document.getElementById(`btn-niv-${n}`).classList.add('ativo');
+	function mudarNivel(n) {
+		ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+		nivelAtual = n;
+		rondaAtual = 0;
+		avatar.style.left = '0%';
+		historicoAlvos = [];
+		ultimoAlvoNumero = null;
 
-        mostrarEcra('ecra-jogo');
-        prepararRonda();
-    }
+		document.querySelectorAll('.btn-nivel-topo')
+			.forEach(b => b.classList.remove('ativo'));
+
+		document.getElementById(`btn-niv-${n}`).classList.add('ativo');
+
+		mostrarEcra('ecra-jogo');
+		prepararRonda();
+	}
+	
+	function mostrarEcraFinal() {
+		permitirConfetis = true;
+		dispararConfetis();
+		caminhoMagico.style.display = 'none';
+		mostrarEcra('ecra-fim');
+	}
 
     function atualizarCaminho() {
-        let percent = (rondaAtual / RONDAS_MAX) * 100;
-        avatar.style.left = `${percent}%`;
-        labelContagem.textContent = `${rondaAtual}/${RONDAS_MAX}`;
-    }
+		const progresso = Math.min(rondaAtual, RONDAS_MAX - 1);
+		let percent = (progresso / (RONDAS_MAX - 1)) * 100;
+		avatar.style.left = `${percent}%`;
+		labelContagem.textContent = `${rondaAtual}/${RONDAS_MAX}`;
+	}
 
-    function gerarAlvo() {
-        if(nivelAtual === 1) return Math.floor(Math.random() * 5) + 1; // 1-5
-        if(nivelAtual === 2) return Math.floor(Math.random() * 5) + 6; // 6-10
-        if(nivelAtual === 3) return Math.floor(Math.random() * 11);    // 0-10
-    }
+	function gerarAlvo() {
+		let min, max;
+
+		if (nivelAtual === 1) { min = 1; max = 5; }
+		if (nivelAtual === 2) { min = 6; max = 10; }
+		if (nivelAtual === 3) { min = 0; max = 10; }
+
+		let novo;
+		let tentativas = 0;
+
+		do {
+			novo = Math.floor(Math.random() * (max - min + 1)) + min;
+			tentativas++;
+		} while (historicoAlvos.includes(novo) && tentativas < 10);
+
+		historicoAlvos.push(novo);
+		if (historicoAlvos.length > TAMANHO_HISTORICO) {
+			historicoAlvos.shift();
+		}
+
+		return novo;
+	}
 
     function getPontos(n) {
         if(n === 0) return "";
@@ -620,22 +700,26 @@
     /* =========================================
        RESULTADOS E TRANSIÇÕES
        ========================================= */
-    function acertou() {
-    tocarSom('acerto');
-    rondaAtual++;
-    atualizarCaminho();
-    setTimeout(() => {
-        if (rondaAtual >= RONDAS_MAX) {
-            // Só mostra feedback no final do nível
-            tocarSom('vitoria');
-            dispararConfetis();
-            document.getElementById('modal-transicao').classList.add('active');
-        } else {
-            // Continua automaticamente sem mostrar modal
-            continuarRonda();
-        }
-    }, 800);
-}
+	function acertou() {
+		tocarSom('acerto');
+		rondaAtual++;
+		atualizarCaminho();
+
+		setTimeout(() => {
+			if (rondaAtual >= RONDAS_MAX) {
+				fimDeNivel = true;
+				tocarSom('vitoria');
+
+			if (permitirConfetis) {
+				dispararConfetis();
+			}
+
+			document.getElementById('modal-transicao').classList.add('active');
+			} else {
+				prepararRonda();
+			}
+		}, 800);
+	}
 
     function errou(elementoAnimar) {
         tocarSom('erro');
@@ -646,10 +730,36 @@
         }, 500);
     }
 
-    function continuarRonda() {
-        document.getElementById('modal-transicao').classList.remove('active');
-        prepararRonda();
-    }
+	function continuarRonda() {
+		document.getElementById('modal-transicao').classList.remove('active');
+
+		if (fimDeNivel) {
+			fimDeNivel = false;
+			permitirConfetis = false;
+
+			if (nivelAtual < NIVEL_MAX) {
+				mudarNivel(nivelAtual + 1);
+			} else {
+				mostrarEcraFinal();
+			}
+			return;
+		}
+
+		prepararRonda();
+	}
+	
+	function reiniciarJogo() {
+		limparConfetis();
+		permitirConfetis = false;
+
+		jogoAtivo = 0;
+		nivelAtual = 1;
+		rondaAtual = 0;
+		avatar.style.left = '0%';
+
+		mostrarEcra('ecra-selecao');
+	}
+
 
     /* =========================================
        SISTEMA DE SOM E CONFETIS
@@ -732,6 +842,11 @@
         });
         if (ativos) requestAnimationFrame(animarConfetis);
     }
+	
+	function limparConfetis() {
+		confetis = [];
+		ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+	}
 </script>
 </body>
 </html>
