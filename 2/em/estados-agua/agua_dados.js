@@ -36,7 +36,7 @@ const gotinhaDados =[
     { id: 2, texto: "Lá no alto do céu estava muito frio. A Gotinha, que era vapor, abraçou outras amigas e viraram uma nuvem de água líquida. Isto foi a...", resposta: "Condensação", imagem: "img/gotinha_nuvem.png" },
     { id: 3, texto: "A nuvem ficou muito pesada e a Gotinha caiu na montanha num dia gelado, transformando-se num floco de neve. Isto foi a...", resposta: "Solidificação", imagem: "img/gotinha_neve_1.png" },
     { id: 4, texto: "Na primavera, o Sol voltou a aquecer a montanha. O floco de neve derreteu e a Gotinha voltou a ser água. Isto foi a...", resposta: "Fusão", imagem: "img/gotinha_derrete.png" },
-    { id: 5, texto: "A Gotinha caiu numa poça na rua. Estava tanto calor que ela logo virou vapor invisível outra vez. Isto foi a...", resposta: "Evaporação", imagem: "img/gotinha_sol.png" },
+    { id: 5, texto: "A Gotinha caiu numa poça na rua. Estava tanto calor que ela tornou-se vapor invisível outra vez. Isto foi a...", resposta: "Evaporação", imagem: "img/gotinha_sol.png" },
     { id: 6, texto: "O vapor viajou até bater no vidro frio de um avião, formando um pingo de água a escorrer. Isto foi a...", resposta: "Condensação", imagem: "img/gotinha_janela.png" },
     { id: 7, texto: "A Gotinha escorreu e caiu num lago congelado onde a temperatura era negativa. Ficou presa no gelo! Isto foi a...", resposta: "Solidificação", imagem: "img/gotinha_gelada.png" },
     { id: 8, texto: "Um urso polar caminhou sobre o gelo e partiu-o. A luz do sol bateu no gelo solto e ele derreteu lentamente. Isto foi a...", resposta: "Fusão", imagem: "img/gotinha_urso.png" },
