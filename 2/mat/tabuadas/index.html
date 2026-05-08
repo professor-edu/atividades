@@ -77,8 +77,21 @@
             background: white; width: 100%; max-width: 950px; flex: 1;
             padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px #4dabf7a8; 
             border-top: 8px solid var(--cor-mat); 
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; box-sizing: border-box;
         }
+		
+		
+		.confetti-canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 99;
+			display: block;
+		}
+
 
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
         footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
@@ -182,16 +195,8 @@
 			white-space: nowrap; 
 		}
 
-		.badge-erros { 
-			background: white; 
-			border: 2px solid #ff4757; 
-			color: #ff4757; 
-			font-weight: 800; 
-			font-size: 1rem; 
-			padding: 6px 12px; 
-			border-radius: 15px; 
-			white-space: nowrap; 
-		}
+		.badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
 
 		.progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
 
@@ -373,7 +378,7 @@
         }
 
         .opcao-giz {
-            background: white; border: 4px solid #ced6e0; border-radius: 20px;
+            background: var(--bg-header); border: 4px solid #ced6e0; border-radius: 20px;
             padding: clamp(10px, 2vh, 20px) clamp(20px, 4vw, 35px);
             font-size: clamp(1.8rem, 4vh, 2.5rem); font-weight: 900; color: var(--azul-escuro);
             cursor: grab; box-shadow: 0 6px 0 #ced6e0; display: inline-flex; align-items: center; justify-content: center;
@@ -490,7 +495,7 @@
 
 <main>
     <div class="cartao-jogo-container">
-        
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
         <div id="ecra-selecao" class="ecra">
             <h2 class="titulo-menu">Escolhe o teu treino:</h2>
             
@@ -548,11 +553,12 @@
         <div id="ecra-jogo" class="ecra">
             
             <div class="status-bar-jogo">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
-                <button id="btn-dica" class="btn-dica" onclick="Motor.usarDica()">💡 Dica</button>
-                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/15</div>
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="Motor.usarDica()"></button>
+
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/15</div> 
                 <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
-                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+                <div class="badge-erros"> <span id="icone-erro-svg"></span> <span id="val-erros">0</span></div>
             </div>
 
             <div class="toast-msg" id="toast-msg"></div>
@@ -574,7 +580,8 @@
         </div>
 
         <div id="ecra-fim" class="ecra">
-            <h2 class="end-title" id="end-title-text">Génio da Matemática! 🎉</h2>
+            
+			<h2 class="end-title" id="end-title-text">Génio da Matemática! 🎉</h2>
             <div class="end-stats">
                 Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros.<br>
                 A tabuada já não tem segredos para ti!
@@ -589,10 +596,33 @@
     <p><span id="ano-atual"></span> 🏫 <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
 </footer>
 
-<canvas id="confetti-canvas"></canvas>
+
 
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+	 // ==========================================
+    // SVGs BARRA DE ESTADO
+    // ==========================================
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt, #ff4757)" stroke-width="3" stroke-linecap="round" /></svg>`;
+    
+    // Injeção visual na carga da página
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnHome = document.getElementById('btn-home-svg');
+        const badgeRonda = document.getElementById('badge-ronda-svg');
+        const btnAjuda = document.getElementById('btn-dica');
+        const iconeErro = document.getElementById('icone-erro-svg');
+        
+        if(btnHome) btnHome.innerHTML = SVG_HOME;
+        if(btnAjuda) btnAjuda.innerHTML = SVG_BULB + ' Dica';
+        if(iconeErro) iconeErro.innerHTML = SVG_ERRO;
+        if(badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+        
+    });
+
 
     // =========================================
     // UI DA PÁGINA
@@ -979,10 +1009,16 @@
         finalizarJogo: function() {
             document.getElementById('progress-fill').style.width = `100%`;
             document.getElementById('final-erros').textContent = this.errosTotais;
-            tocarSom('vitoria');
-            dispararConfetis();
-            mostrarEcra('ecra-fim');
-        },
+            
+			tocarSom('vitoria');
+			mostrarEcra('ecra-fim');
+
+			setTimeout(() => {
+				ajustarCanvasAoCartao();
+				dispararConfetis();
+			}, 50);
+		},
+
 
         reiniciarJogo: function() {
             let base = DADOS_MISTO;
@@ -1024,23 +1060,64 @@
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
     let confetis =[];
-    window.addEventListener('resize', () => { canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight; });
+    
+	function ajustarCanvasAoCartao() {
+		const cartao = document.querySelector('.cartao-jogo-container');
+		const canvas = document.getElementById('confetti-canvas');
+		
+		// Ajusta a resolução interna do canvas para o tamanho real do cartão
+		canvas.width = cartao.offsetWidth;
+		canvas.height = cartao.offsetHeight;
+	}
 
-    function dispararConfetis() {
-        canvasConfetti.width = window.innerWidth; canvasConfetti.height = window.innerHeight;
-        confetis =[]; const cores =['#ff6b6b', '#4dabf7', '#51cf66', '#fbc531', '#9b59b6'];
-        for (let i = 0; i < 150; i++) confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
-        animarConfetis();
-    }
+	window.addEventListener('resize', ajustarCanvasAoCartao);
+
+	function dispararConfetis() {
+		ajustarCanvasAoCartao(); // Recalcula antes de disparar
+		confetis = [];
+		const cores = ['#ff6b6b', '#4dabf7', '#51cf66', '#fbc531', '#9b59b6'];
+
+		for (let i = 0; i < 100; i++) {
+			confetis.push({
+				x: Math.random() * canvasConfetti.width,
+				y: Math.random() * -50, // Começam logo acima do topo do cartão
+				w: Math.random() * 8 + 4,
+				h: Math.random() * 8 + 4,
+				cor: cores[Math.floor(Math.random() * cores.length)],
+				velY: Math.random() * 3 + 2,
+				velX: (Math.random() * 2 - 1),
+				rotacao: Math.random() * 360,
+				velRotacao: Math.random() * 10 - 5
+			});
+		}
+		animarConfetis();
+	}
+	
     function animarConfetis() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
-        confetis.forEach(c => {
-            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
-            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
-            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
-        });
-        if (ativos) requestAnimationFrame(animarConfetis); else ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-    }
+		ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+		let ativos = false;
+
+		confetis.forEach(c => {
+			c.y += c.velY;
+			c.x += c.velX;
+			c.rotacao += c.velRotacao;
+
+			// Se o confeti ainda estiver dentro da altura do canvas/cartão
+			if (c.y < canvasConfetti.height) {
+				ativos = true;
+				ctxConfetti.save();
+				ctxConfetti.translate(c.x, c.y);
+				ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+				ctxConfetti.fillStyle = c.cor;
+				ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+				ctxConfetti.restore();
+			}
+		});
+
+		if (ativos) {
+			requestAnimationFrame(animarConfetis);
+		}
+	}
 
     window.onload = () => mostrarEcra('ecra-selecao'); 
 

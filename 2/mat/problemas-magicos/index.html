@@ -27,6 +27,19 @@
             --cor-pt: #ff6b6b;
             --cor-mat: #4dabf7;
             --cor-em: #51cf66;
+			/* NOVAS CORES DO MENU INICIAL (Referência da Imagem) */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
         }
 
         body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
@@ -81,7 +94,19 @@
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto;}
         footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
         
-        .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
+        .ecra {
+			width: 100%;
+			display: none; /* Quando for 'flex' através do JS, as regras abaixo aplicam-se */
+			flex-direction: column;
+			align-items: center;      /* Centra horizontalmente */
+			justify-content: center;  /* Centra verticalmente */
+			text-align: center;       /* Garante que o texto interno também alinhe */
+			animation: fadeIn 0.4s ease;
+			box-sizing: border-box;
+			z-index: 5;
+			flex: 1;
+			min-height: 100%;         /* Garante que o ecrã ocupa toda a altura do pai */
+		}
         #ecra-selecao { display: flex; }
         #ecra-jogo { justify-content: flex-start; }
         .titulo-menu { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 25px; font-weight: 900;}
@@ -100,7 +125,8 @@
         .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
         .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
         .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
-        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
         .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
 		.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
         
@@ -114,8 +140,50 @@
         }
         @media (max-width: 360px) { .grelha-opcoes { grid-template-columns: 1fr; } }
 
-        .toast-msg { background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; margin-bottom: 10px; opacity: 0; transform: translateY(-10px); transition: 0.3s; pointer-events: none; z-index: 50; }
-        .toast-msg.active { opacity: 1; transform: translateY(0); }
+        .toast-msg {
+			background: #fff9c4;
+			border: 2px solid #fbc531;
+			color: #b18500;
+			padding: 8px 20px;
+			border-radius: 20px;
+			font-weight: 900;
+			font-size: 1.1rem;
+			
+
+			
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			top: 70px;
+			z-index: 999; /* Garante que fica por cima de tudo */
+			left: 50%;
+			white-space: nowrap;
+
+			
+			transform: translate(-50%, -20px); 
+			
+			/* Suavizar a entrada e a saída */
+			transition: transform 0.3s ease, opacity 0.3s ease;
+		}
+
+		/* Quando o toast está visível */
+		.toast-msg.active {
+			opacity: 1;
+			/* Mantém o -50% (centro) e move para a posição final (0) */
+			transform: translate(-50%, 0);
+		}
+
+
+		.toast-msg.error-shake {
+			animation: shakeCenter 0.4s ease-in-out;
+		}
+
+		@keyframes shakeCenter {
+			0%, 100% { transform: translate(-50%, 0); }
+			25% { transform: translate(-55%, 0); }
+			75% { transform: translate(-45%, 0); }
+		}
+		
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
 
@@ -175,8 +243,27 @@
         /* Menus Finais */
         .end-title { font-size: 2.5rem; color: var(--azul-escuro); margin-bottom: 10px; }
         .end-stats { font-size: 1.5rem; color: var(--text-main); margin-bottom: 30px; text-align: center; background: #fff; padding: 20px; border-radius: 20px; border: 2px solid #ffebeb;}
-        .btn-acao { background-color: var(--azul-escuro); color: white; border: none; padding: 15px 35px; font-size: 1.2rem; font-weight: 700; border-radius: 15px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-2ano-dark); display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 300px;}
-        .btn-acao.secundario { background-color: #ced6e0; color: #2d3436; box-shadow: 0 5px 0 #a4b0be; }
+        
+		.btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px;
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+		
+		.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		
+		.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
 		
         .confetti { position: absolute; width: 10px; height: 10px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
         @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
@@ -257,6 +344,7 @@
 
 <main>
     <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
         
         <div id="ecra-selecao" class="ecra">
 			<h2 class="titulo-menu">Escolhe a tua Missão:</h2>
@@ -297,14 +385,17 @@
         </div>
 
         <div id="ecra-jogo" class="ecra">
-            <div class="status-bar-jogo">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
-                <div class="badge-ronda">⭐ Ronda <span id="val-ronda">1</span> | <span id="val-progresso">1</span>/5</div>
+            
+			
+			<div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+                
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-ronda">1</span> | <span id="val-progresso">1</span>/5</div>
 				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
-                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+                <div class="badge-erros"> <span id="icone-erro-svg"></span> <span id="val-erros">0</span></div>
             </div>
 
-            
+            <div class="toast-msg" id="toast-msg"></div>
 
             <div class="area-jogo-custom" id="area-jogo">
                 <!-- O conteúdo dinâmico do exercício entra aqui gerado pelo JS -->
@@ -314,9 +405,9 @@
         <div id="ecra-transicao" class="ecra">
             <h2 class="titulo-menu">Ronda Concluída! 🌟</h2>
             <div class="end-stats" style="border: 2px solid #51cf66;">
-                Nesta ronda tiveste apenas <strong id="transicao-erros" style="color:#ff4757">0</strong> erros.
+                Nesta ronda tiveste <strong id="transicao-erros" style="color:#ff4757">0</strong> erros.
             </div>
-            <button class="btn-acao" onclick="avancarRonda()">PRÓXIMA RONDA ➡️</button>
+            <button class="btn-acao secundario" onclick="avancarRonda()">PRÓXIMA RONDA ➡️</button>
         </div>
 
         <div id="ecra-fim" class="ecra">
@@ -325,7 +416,8 @@
                 Completaste todos os problemas!<br>
                 Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> erros no total.
             </div>
-            <button class="btn-acao" onclick="voltarAoMenu()">OUTRAS MISSÕES 🏠</button>
+            <button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO 🔄</button>
+			<button class="btn-acao terciario" onclick="voltarAoMenu()">OUTRAS MISSÕES 🏠</button>
         </div>
     </div>
 </main>
@@ -337,23 +429,80 @@
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
+
     // =========================================
-    // UI DA PÁGINA 
+    // VARIÁVEIS DE JOGO E ESTADO
     // =========================================
-    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
-    function mostrarEcra(id) { document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); document.getElementById(id).style.display = 'flex'; pararVoz(); }
+    let jogoAtual = '';
+    let rondaAtual = 1;
+    let exercicioAtual = 1;
+    let errosTotais = 0;
+    let errosRonda = 0;
+    let exerciciosDaRonda = [];
+    
+    // Sistema de Voz e Som
+    const synth = window.speechSynthesis;
+    let atualUtterance = null;
+    let audioCtx = null; 
+
+    // ==========================================
+    // INICIALIZAÇÃO E SVGs
+    // ==========================================
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="#ff4757" stroke-width="3" stroke-linecap="round" /></svg>`;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const elemAno = document.getElementById('ano-atual');
+        if(elemAno) elemAno.innerText = new Date().getFullYear();
+
+        const btnHome = document.getElementById('btn-home-svg');
+        const badgeRonda = document.getElementById('badge-ronda-svg');
+        const iconeErro = document.getElementById('icone-erro-svg');
+        
+        if(btnHome) btnHome.innerHTML = SVG_HOME;
+        if(iconeErro) iconeErro.innerHTML = SVG_ERRO;
+        if(badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+    });
+
+    // =========================================
+    // UI E NAVEGAÇÃO
+    // =========================================
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    function mostrarEcra(id) { 
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); 
+        const alvo = document.getElementById(id);
+        if(alvo) alvo.style.display = 'flex'; 
+        pararVoz(); 
+    }
+
     function showToast(msg, isError = false) {
-        const toast = document.getElementById('toast-msg'); toast.textContent = msg;
-        toast.style.borderColor = isError ? "#ff4757" : "#fbc531"; toast.style.color = isError ? "#ff4757" : "#b18500";
-        toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
-        toast.classList.add('active'); if(isError) toast.classList.add('error-shake');
-        setTimeout(() => { toast.classList.remove('active', 'error-shake'); }, 3000);
+        const toast = document.getElementById('toast-msg'); 
+        if(!toast) {
+            // Cria o toast dinamicamente se não existir no HTML
+            const t = document.createElement('div');
+            t.id = 'toast-msg'; t.className = 'toast-msg';
+            document.getElementById('cartao-jogo').prepend(t);
+        }
+        const t = document.getElementById('toast-msg');
+        t.textContent = msg;
+        t.style.borderColor = isError ? "#ff4757" : "#fbc531"; 
+        t.style.color = isError ? "#ff4757" : "#b18500";
+        t.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        t.classList.add('active'); 
+        if(isError) t.classList.add('error-shake');
+        setTimeout(() => { t.classList.remove('active', 'error-shake'); }, 2500);
     }
 
     // =========================================
-    // 📖 A GRANDE BASE DE DADOS DE PROBLEMAS
-    // Podes adicionar mais copiando o formato!
+    // BASE DE DADOS (BANCO_DE_PROBLEMAS)
     // =========================================
+
     const BANCO_DE_PROBLEMAS = {
         'detetive':[
             { txt: "O João tinha 12 berlindes. Deu 4 ao amigo. Com quantos ficou?", n1: 12, n2: 4, res: 8, respCerta: "-", img: "👦" },
@@ -521,17 +670,7 @@
     };
 
     // =========================================
-    // VARIÁVEIS DE JOGO
-    // =========================================
-    let jogoAtual = '';
-    let rondaAtual = 1;
-    let exercicioAtual = 1;
-    let errosTotais = 0;
-    let errosRonda = 0;
-    let exerciciosDaRonda =[];
-
-    // =========================================
-    // LÓGICA PRINCIPAL
+    // LÓGICA PRINCIPAL DO JOGO
     // =========================================
     function iniciarJogo(tipo) {
         jogoAtual = tipo;
@@ -543,43 +682,37 @@
     function prepararRonda() {
         exercicioAtual = 1;
         errosRonda = 0;
-        
-        // Baralhar o banco do jogo atual e apanhar 5 (evita repetições)
-        let pool =[...BANCO_DE_PROBLEMAS[jogoAtual]];
+        let pool = [...BANCO_DE_PROBLEMAS[jogoAtual]];
         pool = pool.sort(() => Math.random() - 0.5);
         exerciciosDaRonda = pool.slice(0, 5); 
-
+        
         atualizarPlacarUI();
         mostrarEcra('ecra-jogo');
         prepararExercicio();
     }
 
-    function avancarRonda() {
-        rondaAtual++;
-        prepararRonda();
-    }
-
     function prepararExercicio() {
         pararVoz();
         const areaJogo = document.getElementById('area-jogo');
-        areaJogo.innerHTML = ''; // Limpa a área
-        atualizarPlacarUI();
+        if(!areaJogo) return;
+        areaJogo.innerHTML = ''; 
 
         const problema = exerciciosDaRonda[exercicioAtual - 1];
+        
+        // Limpar HTML para a voz (evita ler as tags e evita quebra de aspas no onclick)
+        const textoPuro = problema.txt.replace(/<[^>]*>/g, "").replace(/'/g, "");
 
-        // 1. Cria a Caixa do Problema (Comum a todos)
         const caixaHTML = `
             <div class="caixa-problema">
                 <div class="imagem-problema">${problema.img}</div>
                 <div class="texto-problema">${problema.txt}</div>
-                <button class="btn-ler" onclick="lerTextoGeral('${problema.txt.replace(/'/g, "\\'")}', this)">🔊</button>
+                <button class="btn-ler" onclick="lerTextoGeral('${textoPuro}', this)">🔊</button>
             </div>
         `;
-        areaJogo.innerHTML += caixaHTML;
-
-        // 2. Injeta a Mecânica consoante o Jogo
+        
+        let acaoHTML = '';
         if (jogoAtual === 'detetive') {
-            areaJogo.innerHTML += `
+            acaoHTML = `
                 <div class="equacao-detetive">
                     <span>${problema.n1}</span>
                     <div class="caixa-misterio">?</div>
@@ -594,25 +727,30 @@
                 </div>
             `;
         } else {
-            // Loja, Máquina e Quinta usam botões de Múltipla Escolha Baralhados
             let opcoes = [...problema.opcoes].sort(() => Math.random() - 0.5);
-            let botoesHTML = '<div class="opcoes-resposta">';
+            acaoHTML = '<div class="opcoes-resposta">';
             opcoes.forEach(op => {
-                botoesHTML += `<button class="btn-resposta" onclick="validarResposta('${op}')">${op}</button>`;
+                acaoHTML += `<button class="btn-resposta" onclick="validarResposta('${op}')">${op}</button>`;
             });
-            botoesHTML += '</div>';
-            areaJogo.innerHTML += botoesHTML;
+            acaoHTML += '</div>';
         }
+        
+        areaJogo.innerHTML = caixaHTML + acaoHTML;
+        atualizarPlacarUI();
     }
 
     function validarResposta(respostaDada) {
-        pararVoz(); // Cala ao responder
         const problema = exerciciosDaRonda[exercicioAtual - 1];
         
-        if (respostaDada === problema.respCerta) {
+        // Comparação flexível (string vs string)
+        if (String(respostaDada) === String(problema.respCerta)) {
             tocarSom('acerto');
             showToast("Excelente! Acertaste!", false);
             
+            // Impede cliques múltiplos
+            const botoes = document.querySelectorAll('.btn-resposta');
+            botoes.forEach(b => b.style.pointerEvents = 'none');
+
             setTimeout(() => {
                 exercicioAtual++;
                 if (exercicioAtual > 5) {
@@ -625,7 +763,7 @@
             tocarSom('erro');
             errosRonda++;
             errosTotais++;
-            document.getElementById('val-erros').textContent = errosTotais;
+            atualizarPlacarUI();
             showToast("Ops! Tenta de novo.", true);
         }
     }
@@ -644,94 +782,109 @@
         }
     }
 
+    function avancarRonda() {
+        rondaAtual++;
+        prepararRonda();
+    }
+
     function atualizarPlacarUI() {
-        document.getElementById('val-erros').textContent = errosTotais;
-        document.getElementById('val-ronda').textContent = rondaAtual;
-        document.getElementById('val-progresso').textContent = exercicioAtual;
+        if(document.getElementById('val-erros')) document.getElementById('val-erros').textContent = errosTotais;
+        if(document.getElementById('val-ronda')) document.getElementById('val-ronda').textContent = rondaAtual;
+        if(document.getElementById('val-progresso')) document.getElementById('val-progresso').textContent = exercicioAtual;
         
-        let perc = (((rondaAtual - 1) * 5) + (exercicioAtual - 1)) / 10 * 100;
-        document.getElementById('progress-fill').style.width = `${perc}%`;
+        const fill = document.getElementById('progress-fill');
+        if(fill) {
+            let perc = (((rondaAtual - 1) * 5) + (exercicioAtual - 1)) / 10 * 100;
+            fill.style.width = `${perc}%`;
+        }
     }
 
     function voltarAoMenu() {
         pararVoz();
+        limparConfetis();
         mostrarEcra('ecra-selecao');
     }
+	
+	
 
     // =========================================
-    // 🔊 TEXT TO SPEECH (SISTEMA DE VOZ)
+    // SOM E VOZ
     // =========================================
-    const synth = window.speechSynthesis;
-    let atualUtterance = null;
-
     function lerTextoGeral(texto, btnElement) {
-        if (synth.speaking) synth.cancel(); // Pára a voz anterior se clicar de novo
-        
+        if (synth.speaking) synth.cancel();
         atualUtterance = new SpeechSynthesisUtterance(texto);
-        atualUtterance.lang = 'pt-PT'; // Sotaque de Portugal
-        atualUtterance.rate = 0.9;     // Leitura calma e pausada
-        
+        atualUtterance.lang = 'pt-PT';
+        atualUtterance.rate = 0.9;
         atualUtterance.onstart = () => btnElement.classList.add('falando');
         atualUtterance.onend = () => btnElement.classList.remove('falando');
-        
         synth.speak(atualUtterance);
     }
 
-    function pararVoz() {
-        if (synth.speaking) synth.cancel();
-    }
+    function pararVoz() { if (synth.speaking) synth.cancel(); }
 
-    // =========================================
-    // EFEITOS SONOROS (WEB AUDIO API) E VISUAIS
-    // =========================================
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
     function tocarSom(tipo) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const agora = audioCtx.currentTime;
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const agora = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
 
-        if (tipo === 'acerto') {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; 
-            osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
-            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
-            osc.start(agora); osc.stop(agora + 0.3);
-        } else if (tipo === 'erro') {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; 
-            osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
-            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
-            osc.start(agora); osc.stop(agora + 0.3);
-        } else if (tipo === 'vitoria') {
-            const notas =[523.25, 659.25, 783.99, 1046.50];
-            notas.forEach((freq, i) => {
-                const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); 
-                o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq; 
-                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
-                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3);
-            });
-        }
+            if (tipo === 'acerto') {
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(600, agora); 
+                osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+                gain.gain.setValueAtTime(0.1, agora); 
+                gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); 
+                osc.start(agora); osc.stop(agora + 0.3);
+            } else if (tipo === 'erro') {
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(250, agora); 
+                osc.frequency.linearRampToValueAtTime(150, agora + 0.2);
+                gain.gain.setValueAtTime(0.1, agora); 
+                gain.gain.linearRampToValueAtTime(0.01, agora + 0.3); 
+                osc.start(agora); osc.stop(agora + 0.3);
+            } else if (tipo === 'vitoria') {
+                const notas = [523.25, 659.25, 783.99, 1046.50];
+                notas.forEach((f, i) => {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.value = f;
+                    g.gain.setValueAtTime(0.1, agora + i*0.15);
+                    g.gain.exponentialRampToValueAtTime(0.01, agora + i*0.15 + 0.3);
+                    o.start(agora + i*0.15); o.stop(agora + i*0.15 + 0.3);
+                });
+            }
+        } catch(e) { console.log("Audio Error:", e); }
     }
 
     function lancarConfetis() {
         const container = document.getElementById('cartao-jogo');
-        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
-        for (let i = 0; i < 60; i++) {
+        const colors = ['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 50; i++) {
             let conf = document.createElement('div');
             conf.className = 'confetti';
-            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
+            conf.style.left = Math.random() * 95 + '%';
             conf.style.top = '-20px';
             conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            conf.style.animationDelay = (Math.random() * 2) + 's';
+            conf.style.animationDelay = (Math.random() * 1) + 's';
             container.appendChild(conf);
         }
     }
 
-    function limparConfetis() { document.querySelectorAll('.confetti').forEach(c => c.remove()); }
+    function limparConfetis() { 
+        document.querySelectorAll('.confetti').forEach(c => c.remove()); 
+    }
+	
+	function reiniciarJogo() {
+		limparConfetis(); // Remove os papelinhos da vitória
+		iniciarJogo(jogoAtual); // Reaproveita a função inicial com o jogo que estava selecionado
+	}
 
     window.onload = () => mostrarEcra('ecra-selecao');
-
 </script>
 </body>
 </html>

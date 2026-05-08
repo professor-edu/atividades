@@ -82,7 +82,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; box-sizing: border-box; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; gap: 15px; width: 100%; overflow: hidden; box-sizing: border-box; }
         .cartao-jogo-container { 
             background: white; width: 100%; max-width: 950px; flex: 1;
             padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px #4dabf7a8; 
@@ -113,9 +113,11 @@
         .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
         .badge-ronda { background: white; border: 2px solid #219d53; color: #219d53; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
-        .badge-erros { background: white; border: 2px solid #ff4757; color: #ff4757; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
 
-        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; width: 100%; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; }
+       
+		.progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
 		.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-2ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
         
         @media (max-width: 600px) {
@@ -143,8 +145,28 @@
         /* =========================================
            SISTEMA DE CONFETIS E SONS (WEB AUDIO API)
            ========================================= */
-        .confetti { position: absolute; width: 10px; height: 10px; z-index: 10; animation: fall linear forwards; pointer-events: none;}
-        @keyframes fall { to { transform: translateY(400px) rotate(360deg); opacity: 0; } }
+        .confetti-container {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none; /* Deixa clicar nos botões por baixo */
+			overflow: hidden;
+			z-index: 999; /* Fica por cima de quase tudo */
+		}
+		
+		.confetti { position: absolute; width: 10px; height: 10px; z-index: 1000; animation: fall linear forwards; opacity: 0.9; }
+        @keyframes fall {
+			0% {
+				transform: translateY(-50px) rotate(0deg);
+				opacity: 1;
+			}
+			100% {
+				transform: translateY(600px) rotate(720deg); /* Ajusta 600px se o teu cartão for mais alto */
+				opacity: 0;
+			}
+		}
 
         /* =========================================
            ÁREA DE JOGO: CRUZADAS DINÂMICAS
@@ -252,6 +274,22 @@
         .overlay-nivel h2 { color: var(--cor-2ano-dark); font-size: 2.5rem; margin-bottom: 10px; text-align: center;}
         .overlay-nivel p { font-size: 1.2rem; color: var(--text-main); font-weight: bold; text-align: center; padding: 0 20px;}
 		
+		/* Animação de pulsação */
+		@keyframes pulsarVerificar {
+			0% { transform: scale(1); box-shadow: 0 4px 0 #2980b9; }
+			50% { transform: scale(1.05); box-shadow: 0 0 15px var(--cor-mat); }
+			100% { transform: scale(1); box-shadow: 0 4px 0 #2980b9; }
+		}
+
+		/* Classe que será aplicada via JS */
+		.btn-pulsar {
+			animation: pulsarVerificar 0.8s infinite ease-in-out;
+			background-color: #2ed573 !important; /* Muda para verde para destacar que está pronto */
+			border-color: #27ae60 !important;
+			color: white !important;
+		}
+		
+		
 		/* =========================================
 		CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
 		========================================= */
@@ -327,7 +365,7 @@
 
 <main>
     <div class="cartao-jogo-container" id="cartao-jogo">
-        
+        <div id="confetti-container" class="confetti-container"></div>
         <!-- ECRÃ DE SELEÇÃO -->
         <div id="ecra-selecao" class="ecra">
 			<h2 class="titulo-menu">Escolhe a dificuldade:</h2>
@@ -351,11 +389,12 @@
         <div id="ecra-jogo" class="ecra">
             
             <div class="status-bar-jogo">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
-				<button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
-                <div class="badge-ronda">⭐ Ronda <span id="val-ronda">1</span>/<span id="val-total-rondas">5</span></div>
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-ronda">1</span>/<span id="val-total-rondas">5</span></div> 
 				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
-                <div class="badge-erros">❌ <span id="val-erros">0</span></div>
+                <div class="badge-erros"> <span id="icone-erro-svg"></span> <span id="val-erros">0</span></div>
             </div>
 
             <div class="toast-msg" id="toast-msg">Aviso entra aqui!</div>
@@ -425,6 +464,28 @@
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
 
+	// ==========================================
+    // SVGs BARRA DE ESTADO
+    // ==========================================
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt, #ff4757)" stroke-width="3" stroke-linecap="round" /></svg>`;
+    
+    // Injeção visual na carga da página
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnHome = document.getElementById('btn-home-svg');
+        const badgeRonda = document.getElementById('badge-ronda-svg');
+        const btnAjuda = document.getElementById('btn-dica');
+        const iconeErro = document.getElementById('icone-erro-svg');
+        
+        if(btnHome) btnHome.innerHTML = SVG_HOME;
+        if(btnAjuda) btnAjuda.innerHTML = SVG_BULB + ' Dica';
+        if(iconeErro) iconeErro.innerHTML = SVG_ERRO;
+        if(badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+        
+    });
+
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         document.getElementById('overlay').classList.toggle('active');
@@ -473,18 +534,47 @@
     }
 
     function lancarConfetis() {
-        const container = document.getElementById('cartao-jogo');
-        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b'];
-        for (let i = 0; i < 60; i++) {
-            let conf = document.createElement('div');
-            conf.className = 'confetti';
-            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%';
-            conf.style.top = Math.floor(Math.random() * -15 - 5) + '%';
-            conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            conf.style.animationDelay = (Math.random() * 2) + 's';
-            container.appendChild(conf);
-        }
+		const container = document.getElementById('confetti-container');
+		if (!container) return;
+
+		// Limpar confetes de vitórias anteriores
+		container.innerHTML = ""; 
+
+		const colors = ['#ff4757', '#2ed573', '#0091ff', '#ffa502', '#9b59b6'];
+		const totalConfetis = 80;
+
+		for (let i = 0; i < totalConfetis; i++) {
+			const conf = document.createElement('div');
+			conf.className = 'confetti';
+			
+			// Posição horizontal aleatória (0 a 100%)
+			conf.style.left = Math.random() * 100 + '%';
+			
+			// Começa um pouco acima do topo do container
+			conf.style.top = '-20px'; 
+			
+			// Cor aleatória
+			conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+			
+			// Tamanhos e formas aleatórias para parecer real
+			const size = Math.random() * 8 + 5 + 'px';
+			conf.style.width = size;
+			conf.style.height = (Math.random() > 0.5 ? size : '5px'); // Alguns são retângulos
+			
+			// Velocidade e atraso aleatórios
+			const duration = Math.random() * 2 + 2 + 's';
+			const delay = Math.random() * 1.5 + 's';
+			
+			conf.style.animationDuration = duration;
+			conf.style.animationDelay = delay;
+			
+			container.appendChild(conf);
+
+			// Remove o elemento do DOM após a animação acabar para poupar memória
+			setTimeout(() => {
+				conf.remove();
+			}, (parseFloat(duration) + parseFloat(delay)) * 1000);
+		}
     }
 
     function limparConfetis() {
@@ -743,6 +833,7 @@
     function atualizarVisualizacaoInputs() {
         if (!palavraAtiva) return;
         const visor = document.getElementById('visor-resposta');
+        const btnVerificar = document.querySelector('.btn-acao-num'); // Definido aqui fora
         
         for(let i=0; i<palavraAtiva.ans.length; i++) {
             let coords = getGridCoord(palavraAtiva, i);
@@ -755,7 +846,7 @@
             if (char !== '') {
                 digUI.textContent = char;
                 digUI.classList.add('preenchido');
-                if (!grelhaDados[coords.r][coords.c].travada) cellUI.textContent = char; // Live preview na grelha!
+                if (!grelhaDados[coords.r][coords.c].travada) cellUI.textContent = char;
             } else {
                 digUI.textContent = "_";
                 digUI.classList.remove('preenchido');
@@ -767,6 +858,15 @@
                 digUI.classList.add('cursor-ativo');
             } else {
                 digUI.classList.remove('cursor-ativo');
+            }
+        }
+
+        // LÓGICA DO PULSAR (Fora do loop for)
+        if (btnVerificar) {
+            if (!inputAtualArray.includes('')) {
+                btnVerificar.classList.add('btn-pulsar');
+            } else {
+                btnVerificar.classList.remove('btn-pulsar');
             }
         }
     }
@@ -826,6 +926,8 @@
 
     function verificarResposta() {
         if (!palavraAtiva) return;
+		// Remove o pulsar assim que clica
+		document.querySelector('.btn-acao-num').classList.remove('btn-pulsar');
         if (inputAtualArray.includes('')) { showToast("Preenche todos os espaços antes de verificar!", true); return; }
 
         let respostaVisor = inputAtualArray.join('');
