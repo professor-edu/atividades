@@ -181,7 +181,7 @@
 		.bg-roxo { background-color: var(--cor-btn-roxo); }
         
         .btn-nivel-novo.bloqueado { background-color: #bdc3c7; box-shadow: 0 6px 0 #95a5a6; cursor: not-allowed; color: #7f8c8d; border-color: #ecf0f1; text-shadow: none; }
-        .btn-chave { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 2rem; cursor: pointer; opacity: 0.2; transition: 0.3s; z-index: 50; }
+        .btn-chave { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.2; transition: 0.3s; z-index: 50; }
         .btn-chave:hover { opacity: 1; transform: scale(1.1); }
         
         /* =========================================
@@ -201,9 +201,10 @@
         @media (hover: hover) { .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.05); } }
         .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
-        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
         .badge-ronda { border: 2px solid #219d53; color: #219d53; }
-        .badge-erros { border: 2px solid var(--cor-erro); color: var(--cor-erro); }
+        .badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 0.9rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
 
         .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
         .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
@@ -449,11 +450,12 @@
         <div id="ecra-jogo" class="ecra">
             
             <div class="status-bar-jogo">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()">🏠 Menu</button>
-                <button id="btn-ajuda" class="btn-dica" onclick="usarDica()">💡 Dica</button>
-                <div class="badge-ronda">⭐ <span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()">💡 Dica</button>
+
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
                 <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
-                <div class="badge-erros"> <span class="emoji-erro">❌</span> <span id="val-erradas">0</span></div>
+				<div class="badge-erros"> <span id="icone-erro-svg"></span> <span id="val-erradas">0</span></div>
             </div>
 
             <div class="area-jogo-custom" id="area-jogo-custom">
@@ -518,7 +520,31 @@
 
 <script>
     document.getElementById('ano-atual').innerText = new Date().getFullYear();
-    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+    
+	// ==========================================
+    // SVGs BARRA DE ESTADO
+    // ==========================================
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt, #ff4757)" stroke-width="3" stroke-linecap="round" /></svg>`;
+    
+    // Injeção visual na carga da página
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnHome = document.getElementById('btn-home-svg');
+        const badgeRonda = document.getElementById('badge-ronda-svg');
+        const btnAjuda = document.getElementById('btn-dica');
+        const iconeErro = document.getElementById('icone-erro-svg');
+        
+        if(btnHome) btnHome.innerHTML = SVG_HOME;
+        if(btnAjuda) btnAjuda.innerHTML = SVG_BULB + ' Dica';
+        if(iconeErro) iconeErro.innerHTML = SVG_ERRO;
+        if(badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+        
+    });
+
+	
+	function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
 
     // ==========================================
     // FUNÇÃO REUTILIZÁVEL: SVG DO BLOCO DE PRÉDIO (Com Falso 3D) 🏗️
@@ -568,7 +594,7 @@
     const elProgresso = document.getElementById('val-progresso');
     const elErradas = document.getElementById('val-erradas');
     const elProgressFill = document.getElementById('progress-fill');
-    const btnDica = document.getElementById('btn-ajuda');
+    const btnDica = document.getElementById('btn-dica');
     
     const perguntaVisual = document.getElementById('pergunta-visual');
     const textoLegenda = document.getElementById('texto-legenda');
