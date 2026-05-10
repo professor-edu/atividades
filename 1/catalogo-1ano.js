@@ -54,7 +54,7 @@ const todosOsJogos =[
 	{ nome: "Missão Espacial", icone: "icones/missao_espacial.png", link: "mat/missao-espacial", cat: "mat" },
 	{ nome: "Torre de Blocos", icone: "icones/torre_blocos.png", link: "mat/torre-blocos", cat: "mat" },
 	{ nome: "O Monstro da Balança", icone: "icones/monstro_balanca.png", link: "mat/monstro-balanca", cat: "mat" },
-	{ nome: "A Viagem dos Números", icone: "icones/viagem_numeros.png", link: "mat/viagem-numeros", cat: "mat" },
+	{ nome: "Viagem dos Números", icone: "icones/viagem_numeros.png", link: "mat/viagem-numeros", cat: "mat" },
 	{ nome: "Cálculo por Decomposição", icone: "icones/calculo_decompsicao.png", link: "mat/calculo-decomposicao", cat: "mat" },
     
     // ------------------------------------
