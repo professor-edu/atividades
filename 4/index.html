@@ -299,6 +299,33 @@
         .cartao-jogo-dia .icone-wrapper-dia { font-size: 3rem; }
         .cartao-jogo-dia .nome-jogo-dia { color: var(--azul-escuro); font-weight: 700; font-size: 1.05rem; padding: 0 10px; line-height: 1.2;}
         
+		/* =========================================
+          MICRO-SELO DA DISCIPLINA (NOS CARTÕES)
+        ========================================= */
+        .badge-disciplina {
+            position: absolute;
+            top: -8px;   /* Puxa para cima para morder a borda */
+            right: -8px; /* Puxa para a direita */
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Sombra para descolar do cartão */
+            z-index: 5;
+            border: 2px solid var(--cor-tema, #ccc); /* Aro branco para dar acabamento premium */
+        }
+
+        .badge-disciplina img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+		
+		
+		
         /* Cores das Bordas Dinâmicas */
         /* --- PORTUGUÊS --- */
 		.borda-pt { 
@@ -415,7 +442,7 @@
 		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
 		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
 		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
-
+		.icon-svg-dado { width: 1.1em; height: 1.1em; vertical-align: middle; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2)); /* Uma sombrinha 3D para destacar! */ }
 		
     body { scrollbar-gutter: stable; }
 </style>
@@ -473,7 +500,7 @@
     <!-- SEPARADOR VISUAL -->
     <div class="separador">
 		<span class="separador-texto">
-			Descobre e Joga! <span class="dado-animado">🎲</span>
+			Descobre e Joga! <img src="../SVG/dado.svg" class="dado-animado icon-svg-dado" alt="">
 			<span class="separador-badge">Sempre Diferente!</span>
 		</span>
 	</div>
@@ -526,50 +553,60 @@
     // FUNÇÃO QUE GERA 6 JOGOS (2 DE CADA CATEGORIA)
     // =========================================================
     function gerarJogosDoDia() {
-        const container = document.getElementById('jogos-dia-container');
-        if (!container || typeof todosOsJogos === 'undefined') return; 
+		const container = document.getElementById('jogos-dia-container');
+		if (!container || typeof todosOsJogos === 'undefined') return;
 
-        container.innerHTML = ''; 
-        
-        // 1. Filtrar e baralhar cada categoria individualmente
-        const jogosPT = todosOsJogos.filter(j => j.cat === 'pt').sort(() => Math.random() - 0.5);
-        const jogosMAT = todosOsJogos.filter(j => j.cat === 'mat').sort(() => Math.random() - 0.5);
-        const jogosEM = todosOsJogos.filter(j => j.cat === 'em').sort(() => Math.random() - 0.5);
+		container.innerHTML = '';
 
-        // 2. Selecionar os primeiros 2 de cada lista
-        const selecionados = [
-            ...jogosPT.slice(0, 2),
-            ...jogosMAT.slice(0, 2),
-            ...jogosEM.slice(0, 2)
-        ];
+		// CONFIGURAÇÃO: Centraliza cores, classes e caminhos num único lugar
+		const configCategorias = {
+			"pt":  { classe: "borda-pt",  svg: "../SVG/pt.svg", cor: "var(--cor-pt)" }, 
+			"mat": { classe: "borda-mat", svg: "../SVG/mat.svg", cor: "var(--cor-mat)" }, 
+			"em":  { classe: "borda-em",  svg: "../SVG/em.svg", cor: "var(--cor-em)" } 
+		};
 
-        // 3. (Opcional) Baralhar os 6 selecionados para a ordem das cores ser mista
-        selecionados.sort(() => Math.random() - 0.5);
-        
-        selecionados.forEach(jogo => {
-            let classeBorda = "";
-            if(jogo.cat === "pt") classeBorda = "borda-pt";
-            else if(jogo.cat === "mat") classeBorda = "borda-mat";
-            else if(jogo.cat === "em") classeBorda = "borda-em";
+		// 1. Filtrar e baralhar cada categoria
+		const jogosPT = todosOsJogos.filter(j => j.cat === 'pt').sort(() => Math.random() - 0.5);
+		const jogosMAT = todosOsJogos.filter(j => j.cat === 'mat').sort(() => Math.random() - 0.5);
+		const jogosEM = todosOsJogos.filter(j => j.cat === 'em').sort(() => Math.random() - 0.5);
 
-            // Lógica de ícone (Imagem ou Emoji)
-            let htmlDoIcone = "";
-            if (jogo.icone.includes('.')) {
-                htmlDoIcone = `<img src="${jogo.icone}" alt="${jogo.nome}" style="width: 90%; height: 90%; object-fit: contain;">`;
-            } else {
-                htmlDoIcone = jogo.icone;
-            }
+		// 2. Selecionar 2 de cada
+		const selecionados = [
+			...jogosPT.slice(0, 2),
+			...jogosMAT.slice(0, 2),
+			...jogosEM.slice(0, 2)
+		];
 
-            const a = document.createElement('a');
-            a.href = jogo.link;
-            a.className = `cartao-jogo-dia ${classeBorda}`;
-            a.innerHTML = `
-                <div class="icone-wrapper-dia" style="display:flex; align-items:center; justify-content:center; width:90px; height:90px;">${htmlDoIcone}</div>
-                <span class="nome-jogo-dia">${jogo.nome}</span>
-            `;
-            container.appendChild(a);
-        });
-    }
+		// 3. Baralhar a ordem final
+		selecionados.sort(() => Math.random() - 0.5);
+
+		// 4. Renderizar
+		selecionados.forEach(jogo => {
+			const config = configCategorias[jogo.cat] || { classe: "", svg: "", cor: "#ccc" };
+
+			const htmlDoIcone = jogo.icone.includes('.') 
+				? `<img src="${jogo.icone}" alt="${jogo.nome}" style="width: 90%; height: 90%; object-fit: contain;">`
+				: jogo.icone;
+
+			const a = document.createElement('a');
+			a.href = jogo.link;
+			
+			// Aplicamos a classe e a variável de cor diretamente no estilo do elemento
+			a.className = `cartao-jogo-dia ${config.classe}`;
+			a.style.setProperty('--cor-tema', config.cor);
+
+			a.innerHTML = `
+				<div class="badge-disciplina">
+					<img src="${config.svg}" alt="${jogo.cat}">
+				</div>
+				<div class="icone-wrapper-dia" style="display:flex; align-items:center; justify-content:center; width:90px; height:90px;">
+					${htmlDoIcone}
+				</div>
+				<span class="nome-jogo-dia">${jogo.nome}</span>
+			`;
+			container.appendChild(a);
+		});
+	}
 
     // =========================================================
     // ARRANQUE DO SITE
