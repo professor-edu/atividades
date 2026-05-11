@@ -400,20 +400,18 @@
        MOTOR DE ESTADOS DO JOGO
        ========================================= */
     let ultimoAlvoNumero = null;
-	
-	let historicoAlvos = [];
-	const TAMANHO_HISTORICO = 3;
+    let historicoAlvos =[];
+    const TAMANHO_HISTORICO = 3;
 
-	let jogoAtivo = 0; // 1=Monstro, 2=Arvore, 3=Comboio, 4=Simples
+    let jogoAtivo = 0; // 1=Monstro, 2=Arvore, 3=Comboio, 4=Simples
     let nivelAtual = 1;
     let rondaAtual = 0;
     const RONDAS_MAX = 5; 
     
-	
-	let fimDeNivel = false;
-	const NIVEL_MAX = 3
-	
-	let permitirConfetis = false;
+    let fimDeNivel = false;
+    const NIVEL_MAX = 3;
+    
+    let permitirConfetis = false;
 
     let alvoNumero = 0;
     let carregados = 0;
@@ -442,13 +440,21 @@
     }
 
     function voltarMenu() {
-		limparConfetis();
-		permitirConfetis = false;
+        limparConfetis();
+        permitirConfetis = false;
 
-		caminhoMagico.style.display = 'none';
-		subtitulo.textContent = "Brinca com os números e quantidades!";
-		mostrarEcra('ecra-selecao');
-	}
+        caminhoMagico.style.display = 'none';
+        subtitulo.textContent = "Brinca com os números e quantidades!";
+        
+        // CORREÇÃO: Reset seguro
+        jogoAtivo = 0;
+        nivelAtual = 1;
+        rondaAtual = 0;
+        historicoAlvos =[];
+        ultimoAlvoNumero = null;
+        
+        mostrarEcra('ecra-selecao');
+    }
 
     function selecionarJogo(idJogo) {
         jogoAtivo = idJogo;
@@ -467,59 +473,60 @@
         mudarNivel(1);
     }
 
-	function mudarNivel(n) {
-		ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-		nivelAtual = n;
-		rondaAtual = 0;
-		avatar.style.left = '0%';
-		historicoAlvos = [];
-		ultimoAlvoNumero = null;
+    function mudarNivel(n) {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        nivelAtual = n;
+        rondaAtual = 0;
+        avatar.style.left = '0%';
+        historicoAlvos =[];
+        ultimoAlvoNumero = null;
 
-		document.querySelectorAll('.btn-nivel-topo')
-			.forEach(b => b.classList.remove('ativo'));
+        document.querySelectorAll('.btn-nivel-topo')
+            .forEach(b => b.classList.remove('ativo'));
 
-		document.getElementById(`btn-niv-${n}`).classList.add('ativo');
+        const btn = document.getElementById(`btn-niv-${n}`);
+        if(btn) btn.classList.add('ativo');
 
-		mostrarEcra('ecra-jogo');
-		prepararRonda();
-	}
-	
-	function mostrarEcraFinal() {
-		permitirConfetis = true;
-		dispararConfetis();
-		caminhoMagico.style.display = 'none';
-		mostrarEcra('ecra-fim');
-	}
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+    
+    function mostrarEcraFinal() {
+        permitirConfetis = true;
+        dispararConfetis();
+        caminhoMagico.style.display = 'none';
+        mostrarEcra('ecra-fim');
+    }
 
     function atualizarCaminho() {
-		const progresso = Math.min(rondaAtual, RONDAS_MAX - 1);
-		let percent = (progresso / (RONDAS_MAX - 1)) * 100;
-		avatar.style.left = `${percent}%`;
-		labelContagem.textContent = `${rondaAtual}/${RONDAS_MAX}`;
-	}
+        const progresso = Math.min(rondaAtual, RONDAS_MAX - 1);
+        let percent = (progresso / (RONDAS_MAX - 1)) * 100;
+        avatar.style.left = `${percent}%`;
+        labelContagem.textContent = `${rondaAtual}/${RONDAS_MAX}`;
+    }
 
-	function gerarAlvo() {
-		let min, max;
+    function gerarAlvo() {
+        let min, max;
 
-		if (nivelAtual === 1) { min = 1; max = 5; }
-		if (nivelAtual === 2) { min = 6; max = 10; }
-		if (nivelAtual === 3) { min = 0; max = 10; }
+        if (nivelAtual === 1) { min = 1; max = 5; }
+        if (nivelAtual === 2) { min = 6; max = 10; }
+        if (nivelAtual === 3) { min = 1; max = 10; } // CORREÇÃO: min 1 para não sair 0 e travar o jogo interativo
 
-		let novo;
-		let tentativas = 0;
+        let novo;
+        let tentativas = 0;
 
-		do {
-			novo = Math.floor(Math.random() * (max - min + 1)) + min;
-			tentativas++;
-		} while (historicoAlvos.includes(novo) && tentativas < 10);
+        do {
+            novo = Math.floor(Math.random() * (max - min + 1)) + min;
+            tentativas++;
+        } while (historicoAlvos.includes(novo) && tentativas < 10);
 
-		historicoAlvos.push(novo);
-		if (historicoAlvos.length > TAMANHO_HISTORICO) {
-			historicoAlvos.shift();
-		}
+        historicoAlvos.push(novo);
+        if (historicoAlvos.length > TAMANHO_HISTORICO) {
+            historicoAlvos.shift();
+        }
 
-		return novo;
-	}
+        return novo;
+    }
 
     function getPontos(n) {
         if(n === 0) return "";
@@ -547,66 +554,58 @@
        JOGOS 1, 2 e 3: INTERATIVOS (Mover itens)
        ========================================= */
     function gerarJogoInterativo() {
-    sourceZone.innerHTML = '';
-    destZone.innerHTML = '';
+        sourceZone.innerHTML = '';
+        destZone.innerHTML = '';
 
-    // Ativar a receção de drops
-    sourceZone.ondragover = allowDrop;
-    destZone.ondragover = allowDrop;
-    sourceZone.ondrop = dropItem;
-    destZone.ondrop = dropItem;
+        sourceZone.ondragover = allowDrop;
+        destZone.ondragover = allowDrop;
+        sourceZone.ondrop = dropItem;
+        destZone.ondrop = dropItem;
 
-    let emojiItem = "";
+        let emojiItem = "";
 
-    if (jogoAtivo === 1) {
-        instrucao.innerHTML = alvoNumero === 0 ? `👾 O monstro está cheio! (0)` : `👾 Quero ${alvoNumero} 🍪`;
-        emojiItem = "🍪";
-    } else if (jogoAtivo === 2) {
-        instrucao.innerHTML = alvoNumero === 0 ? `🌳 Cesto vazio! (0)` : `🌳 Colhe ${alvoNumero} 🍎`;
-        emojiItem = "🍎";
-    } else if (jogoAtivo === 3) {
-        instrucao.innerHTML = alvoNumero === 0 ? `🚂 Comboio sem viagem! (0)` : `🚂 Faltam ${alvoNumero} animais!`;
-        const animais = ["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐨","🐯","🦁"];
-        emojiItem = "random_animal";
-        window.animaisRonda = [...animais].sort(() => Math.random() - 0.5);
+        if (jogoAtivo === 1) {
+            instrucao.innerHTML = alvoNumero === 0 ? `👾 O monstro está cheio! (0)` : `👾 Quero ${alvoNumero} 🍪`;
+            emojiItem = "🍪";
+        } else if (jogoAtivo === 2) {
+            instrucao.innerHTML = alvoNumero === 0 ? `🌳 Cesto vazio! (0)` : `🌳 Colhe ${alvoNumero} 🍎`;
+            emojiItem = "🍎";
+        } else if (jogoAtivo === 3) {
+            instrucao.innerHTML = alvoNumero === 0 ? `🚂 Comboio sem viagem! (0)` : `🚂 Faltam ${alvoNumero} animais!`;
+            const animais = ["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐨","🐯","🦁"];
+            emojiItem = "random_animal";
+            window.animaisRonda = [...animais].sort(() => Math.random() - 0.5);
+        }
+
+        dicaPontos.innerHTML = getPontos(alvoNumero);
+
+        for (let i = 0; i < 10; i++) {
+            let item = document.createElement('div');
+            item.className = 'click-item';
+            item.id = "item-" + i + "-" + Date.now();
+            item.draggable = true;
+            item.ondragstart = dragStart;
+
+            if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
+            else item.innerHTML = emojiItem;
+
+            item.onclick = function() {
+                if (isVerificando) return;
+                tocarSom('pop');
+
+                if (item.parentElement === sourceZone) {
+                    destZone.appendChild(item);
+                } else {
+                    sourceZone.appendChild(item);
+                }
+                
+                // CORREÇÃO: Conta fisicamente os elementos em vez de somar/subtrair cegamente
+                carregados = destZone.childElementCount;
+            };
+
+            sourceZone.appendChild(item);
+        }
     }
-
-    dicaPontos.innerHTML = getPontos(alvoNumero);
-
-    // Gera sempre 10 itens para a criança poder escolher
-    for (let i = 0; i < 10; i++) {
-
-        let item = document.createElement('div');
-        item.className = 'click-item';
-
-        // PASSO 4 — ID único
-        item.id = "item-" + i + "-" + Date.now();
-
-        // Ativar arrastar
-        item.draggable = true;
-        item.ondragstart = dragStart;
-
-        // Emoji
-        if (emojiItem === "random_animal") item.innerHTML = window.animaisRonda[i];
-        else item.innerHTML = emojiItem;
-
-        // Clique tradicional
-        item.onclick = function() {
-            if (isVerificando) return;
-            tocarSom('pop');
-
-            if (item.parentElement === sourceZone) {
-                destZone.appendChild(item);
-                carregados++;
-            } else {
-                sourceZone.appendChild(item);
-                carregados--;
-            }
-        };
-
-        sourceZone.appendChild(item);
-    } // <-- ESTA CHAVE FALTAVA!
-}
 
     function verificarInterativo() {
         if (isVerificando) return;
@@ -629,7 +628,7 @@
         opts.innerHTML = '';
 
         instrucao.innerHTML = `Quantos vês aqui?`;
-        dicaPontos.innerHTML = ""; // No jogo simples não há dica de pontos, eles têm de contar!
+        dicaPontos.innerHTML = "";
 
         const emojis =["🚗","🎈","🌻","🐟","⚽","🧸"];
         const emoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -645,7 +644,6 @@
             }
         }
 
-        // Gerar 3 opções
         let options = [alvoNumero];
         while(options.length < 3) {
             let max = nivelAtual === 1 ? 5 : 10;
@@ -673,7 +671,7 @@
         });
     }
 
-        function allowDrop(ev) {
+    function allowDrop(ev) {
         ev.preventDefault();
     }
     
@@ -683,47 +681,40 @@
     
     function dropItem(ev) {
         ev.preventDefault();
-    
         const id = ev.dataTransfer.getData("text/plain");
         const item = document.getElementById(id);
         if (!item) return;
     
-        // Só permite drop em zonas válidas
         if (ev.currentTarget.classList.contains('zone-box')) {
             ev.currentTarget.appendChild(item);
-    
-            // Atualiza contagem tal como no clique
-            if (ev.currentTarget === destZone) carregados++;
-            else if (ev.currentTarget === sourceZone) carregados--;
+            // CORREÇÃO: Conta fisicamente
+            carregados = destZone.childElementCount;
         }
     }
 
-
-
-    
     /* =========================================
        RESULTADOS E TRANSIÇÕES
        ========================================= */
-	function acertou() {
-		tocarSom('acerto');
-		rondaAtual++;
-		atualizarCaminho();
+    function acertou() {
+        tocarSom('acerto');
+        rondaAtual++;
+        atualizarCaminho();
 
-		setTimeout(() => {
-			if (rondaAtual >= RONDAS_MAX) {
-				fimDeNivel = true;
-				tocarSom('vitoria');
+        setTimeout(() => {
+            if (rondaAtual >= RONDAS_MAX) {
+                fimDeNivel = true;
+                tocarSom('vitoria');
 
-			if (permitirConfetis) {
-				dispararConfetis();
-			}
+                if (permitirConfetis) {
+                    dispararConfetis();
+                }
 
-			document.getElementById('modal-transicao').classList.add('active');
-			} else {
-				prepararRonda();
-			}
-		}, 800);
-	}
+                document.getElementById('modal-transicao').classList.add('active');
+            } else {
+                prepararRonda();
+            }
+        }, 800);
+    }
 
     function errou(elementoAnimar) {
         tocarSom('erro');
@@ -734,35 +725,36 @@
         }, 500);
     }
 
-	function continuarRonda() {
-		document.getElementById('modal-transicao').classList.remove('active');
+    function continuarRonda() {
+        document.getElementById('modal-transicao').classList.remove('active');
 
-		if (fimDeNivel) {
-			fimDeNivel = false;
-			permitirConfetis = false;
+        if (fimDeNivel) {
+            fimDeNivel = false;
+            permitirConfetis = false;
 
-			if (nivelAtual < NIVEL_MAX) {
-				mudarNivel(nivelAtual + 1);
-			} else {
-				mostrarEcraFinal();
-			}
-			return;
-		}
+            if (nivelAtual < NIVEL_MAX) {
+                mudarNivel(nivelAtual + 1);
+            } else {
+                mostrarEcraFinal();
+            }
+            return;
+        }
 
-		prepararRonda();
-	}
-	
-	function reiniciarJogo() {
-		limparConfetis();
-		permitirConfetis = false;
+        prepararRonda();
+    }
+    
+    function reiniciarJogo() {
+        limparConfetis();
+        permitirConfetis = false;
 
-		jogoAtivo = 0;
-		nivelAtual = 1;
-		rondaAtual = 0;
-		avatar.style.left = '0%';
+        jogoAtivo = 0;
+        nivelAtual = 1;
+        rondaAtual = 0;
+        avatar.style.left = '0%';
+        historicoAlvos =[];
 
-		mostrarEcra('ecra-selecao');
-	}
+        mostrarEcra('ecra-selecao');
+    }
 
 
     /* =========================================
