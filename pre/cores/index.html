@@ -265,7 +265,8 @@
             <div style="font-size: 5rem; margin-bottom: 5px;">🏆</div>
             <h2 class="titulo-destaque">Parabéns!</h2>
             <p id="feedback-fim" style="font-size: 1.2rem; margin-bottom: 30px; color: var(--text-main);">Concluíste o nível com sucesso!</p>
-            <button class="btn-acao" onclick="voltarMenu()">Jogar Outro 🔄</button>
+            <button id="btn-proximo-nivel" class="btn-acao" onclick="proximoNivel()">Próximo Nível ➡️</button>
+			<button class="btn-acao" onclick="voltarMenu()" style="background-color: #95a5a6; box-shadow: 0 6px 0 #7f8c8d;">Outros Jogos 🔄</button>
         </div>
 
         <canvas id="confetti-canvas"></canvas>
@@ -394,6 +395,24 @@
         ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
         mostrarEcra('ecra-selecao');
     }
+	
+	
+	function proximoNivel() {
+		nivelAtual++;
+		
+		// Chamamos a função mudarNivel que já limpa a ronda e prepara o jogo
+		mudarNivel(nivelAtual);
+		
+		// Atualizamos visualmente os botões do seletor de níveis (aqueles do topo)
+		const botoes = document.querySelectorAll('.btn-nivel-topo');
+		botoes.forEach((btn, index) => {
+			if (index === (nivelAtual - 1)) {
+				btn.classList.add('ativo');
+			} else {
+				btn.classList.remove('ativo');
+			}
+		});
+	}
 
     function selecionarJogo(id) {
         jogoAtivo = id;
@@ -814,15 +833,34 @@
     }
 
     function verificarVitoriaRonda() {
-        rondaAtual++;
-        if(rondaAtual >= totalRondas) {
-            atualizarCaminho(); tocarSom('vitoria'); dispararConfetis();
-            document.getElementById('feedback-fim').innerText = `Fizeste um excelente trabalho!`;
-            mostrarEcra('ecra-fim');
-        } else {
-            prepararRonda();
-        }
-    }
+		rondaAtual++;
+		if(rondaAtual >= totalRondas) {
+			atualizarCaminho(); 
+			tocarSom('vitoria'); 
+			dispararConfetis();
+			
+			document.getElementById('feedback-fim').innerText = `Fizeste um excelente trabalho no Nível ${nivelAtual}!`;
+
+			// Definir quantos níveis tem cada jogo
+			let maxNiveis = 3; 
+			if(jogoAtivo === 4) maxNiveis = 2; // Misturador só tem 2
+
+			const btnProximo = document.getElementById('btn-proximo-nivel');
+
+			if (nivelAtual < maxNiveis) {
+				// Se ainda não é o último nível, mostra o botão
+				btnProximo.style.display = 'inline-block';
+			} else {
+				// Se for o último nível, esconde o botão e muda o texto
+				btnProximo.style.display = 'none';
+				document.getElementById('feedback-fim').innerText = `Uau! Completaste todos os níveis deste jogo!`;
+			}
+
+			mostrarEcra('ecra-fim');
+		} else {
+			prepararRonda();
+		}
+	}
 
     /* =========================================
        SISTEMA DE SOM E CONFETIS
