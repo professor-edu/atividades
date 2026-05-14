@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Os Amigos do 🔟</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           CSS DO TEMPLATE BASE (INVIOLÁVEL)
+           ========================================= */
+        *, *::before, *::after { box-sizing: border-box; }
+        :root {
+            --bg-body: #f0f4f8; --azul-vibrante: #0091ff; --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5; --cor-borda: #0091ff; --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1; --text-main: #455a64; --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b; --cor-mat: #4dabf7; --cor-em: #51cf66;
+            --cor-btn-azul: #61A0FF; --cor-btn-verde: #5DD279; --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B; --cor-btn-roxo: #A55EEA; --cor-btn-laranja: #FA983A;
+            --cor-sucesso: #2ed573; --cor-sucesso-dark: #219d53; --cor-erro: #ff4757; --cor-erro-dark: #d0303f;
+        }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100dvh; overflow-x: hidden; }
+        *:focus-visible { outline: 4px solid var(--cor-btn-amarelo); border-radius: 8px; }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--azul-vibrante); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+		@media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        .cartao-jogo-container { background: white; width: 100%; max-width: 950px; flex: 1; min-height: 0; padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(77, 171, 247, 0.66); border-top: 8px solid var(--cor-mat); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box; }
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--azul-vibrante); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--azul-vibrante); margin: 0; }
+        
+		
+		.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+		#ecra-selecao { display: flex; }
+		#ecra-jogo { justify-content: flex-start; }
+		
+		/* Grelha Ecrã Inicial */
+		
+		.grid-niveis {
+			display: grid;
+			/* No PC: mostramos os 3 cartões lado a lado */
+			grid-template-columns: repeat(3, 1fr); 
+			gap: 20px;
+			width: 100%;
+			max-width: 900px; /* Mantém um tamanho elegante no PC */
+			margin: 20px auto;
+			padding: 10px;
+		}
+
+		/* Quando o ecrã for pequeno (Telemóvel Vertical) */
+		@media (max-width: 768px) {
+			.grid-niveis {
+				/* Empilha os cartões um por baixo do outro */
+				grid-template-columns: 1fr; 
+				max-width: 320px; /* Garante que os cartões não fiquem excessivamente largos */
+			}
+			
+			.btn-nivel-novo {
+				/* Garante que os teus botões mantenham uma boa altura no mobile */
+				min-height: 120px;
+			}
+		}		
+		
+		.btn-nivel-novo {
+            width: 100%; min-height: 140px; padding: 20px; border-radius: 25px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+		
+		/* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		
+		/* =========================================
+           ANIMAçÃO ECRÃ INICIAL 
+        ========================================= */
+		
+		/* ANIMAÇÃO INICIAL - ADAPTADA AO TEU TEMPLATE */
+		.tutorial-container {
+			background: #f4faff;
+			padding: 15px;
+			border-radius: 20px;
+			border: 3px dashed #bcdcff;
+			margin: 10px auto 25px;
+			text-align: center;
+			box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+			width: fit-content;
+		}
+
+		.moldura-grid {
+			display: grid;
+			grid-template-columns: repeat(5, 45px);
+			grid-template-rows: repeat(2, 45px);
+			gap: 6px;
+			margin-bottom: 10px;
+		}
+
+		.slot {
+			width: 45px;
+			height: 45px;
+			border: 2px solid #e2e8f0;
+			border-radius: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #f8fafc;
+		}
+
+		.bola {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			transform: scale(0);
+			animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		/* Usando as cores do teu :root */
+		.bola.verde { background: var(--cor-em); border: 3px solid #3ca352; }
+		.bola.laranja { background: var(--cor-btn-laranja); border: 3px solid #d35400; }
+
+		@keyframes popIn { to { transform: scale(1); } }
+
+		#tutorial-texto {
+			margin: 5px 0 0;
+			font-size: 1.2rem;
+			color: var(--azul-escuro);
+			font-weight: 900;
+		}
+		
+        /* STATUS BAR JOGO e SVGs */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		.btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; touch-action: manipulation;}
+        @media (hover: hover) { .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.02); } }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; touch-action: manipulation;}
+        @media (hover: hover) { .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.02); } }
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+        .badge-ronda { background: white; font-weight: 800; font-size: 0.9rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; display: flex; align-items: center; border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 0.9rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		@media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Mudamos para Grid para forçar o layout em 2 linhas */
+                display: grid;
+                grid-template-columns: auto auto auto auto;
+                grid-template-rows: auto auto;
+                justify-content: space-between;
+                gap: 10px 4px; /* 10px entre linhas, 4px entre colunas */
+                padding: 10px 8px;
+            }
+            
+            /* Colocamos cada item na sua "cadeira" na 1ª linha */
+            .btn-voltar-menu { grid-column: 1; grid-row: 1; }
+            .btn-dica        { grid-column: 2; grid-row: 1; }
+            .badge-ronda     { grid-column: 3; grid-row: 1; }
+            .badge-erros     { grid-column: 4; grid-row: 1; }
+            
+            /* A barra de progresso ocupa a 2ª linha de uma ponta à outra */
+            .progress-bg { 
+                grid-column: 1 / -1; 
+                grid-row: 2; 
+                margin: 0; 
+                min-width: 100%;
+                height: 25px; /* Fica ligeiramente mais elegante no mobile */
+            }
+
+            /* Encolhemos os paddings para caber até nos telemóveis mais fininhos */
+            .btn-voltar-menu, .btn-dica { padding: 4px 6px; font-size: 0.75rem; gap: 3px; }
+            .badge-ronda, .badge-erros { padding: 4px 6px; font-size: 0.8rem; }
+        }
+		
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+		
+		/* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+           ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-mat); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+		
+		/* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao {
+			transform: translateX(4px);
+			transition: transform 0.2s ease;
+		}
+		
+		/* CONTENTOR DOS CONFETIS */
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+
+        /* ÁREA DE JOGO LIVRE - COM AJUSTE DE LAYOUT PARA NÃO TER SCROLL */
+        .area-jogo-custom { display: flex; flex-direction: row; align-items: center; justify-content: center; width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 20px; gap: 35px; position: relative; color: var(--cor-1ano-dark); font-weight: bold; overflow: hidden; }
+        @media (max-width: 768px) { .area-jogo-custom { flex-direction: column; padding: 10px; } }
+
+        /* ESTILOS INTERNOS DOS AMIGOS DO 10 */
+		
+		.titulo-nivel-interno {
+			width: 100%;
+			text-align: center;
+			color: var(--azul-escuro);
+			font-size: 1.1rem;
+			font-weight: 700;
+			margin: 0 0 20px 0; /* Espaço abaixo do título para o SVG */
+			opacity: 0.8;
+			text-transform: uppercase;
+		}
+		
+        .game-main-content {
+		display: flex;
+		gap: 25px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		flex: 1; /* Mantém este para ocupar o centro */
+		min-width: 0; /* Evita que o conteúdo interno force larguras estranhas */
+		text-align: center;
+	}
+        .numpad {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-auto-rows: 60px; 
+			gap: 10px;
+			width: 220px;
+			min-width: 220px; 
+			background-color: #e2e8f0;
+			border: 2px solid var(--azul-vibrante);
+			padding: 15px;
+			border-radius: 20px;
+			box-sizing: border-box; /* Garante que o padding não aumente os 220px */
+		}
+        .btn-apagar {
+			grid-column: span 2;
+			background-color: var(--cor-erro);
+			color: white; /* Corrigido */
+			border-color: var(--cor-erro-dark);
+			box-shadow: 0 4px var(--cor-erro-dark);
+		}
+		}
+		@media (max-width: 768px) { 
+			.numpad { 
+				width: 220px; /* Mantém fixo para não deformar o grid */
+				margin: 0 auto; 
+			} 
+		}
+        .btn-num {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: white;
+			border: 2px solid var(--azul-vibrante);
+			border-radius: 12px;
+			color: var(--azul-escuro);
+			font-size: 1.5rem;
+			font-weight: 900;
+			box-shadow: 0 4px var(--azul-vibrante);
+			cursor: pointer;
+			transition: all 0.1s;
+		}
+
+		.btn-num:active {
+			transform: translateY(2px);
+			box-shadow: 0 2px #cbd5e1;
+		}
+        .input-box { min-width: 70px; width: auto; padding: 0 10px; height: 80px; border: 4px solid var(--borda-cartao); border-radius: 15px; background: white; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 900; }
+        .input-box.active { border-color: var(--cor-btn-amarelo); box-shadow: 0 0 10px var(--cor-btn-amarelo); }
+        .input-box.glow-hint { animation: hintPulse 1s infinite alternate; border-color: var(--cor-btn-amarelo); color: var(--cor-btn-amarelo); }
+        @keyframes hintPulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+		
+		/* Brilho base para as caixas */
+		.input-verde {
+			border: 3px solid var(--cor-btn-verde) !important;
+			color: var(--cor-btn-verde) !important;
+			transition: all 0.3s ease; /* Transição suave para o brilho */
+		}
+
+		.input-laranja {
+			border: 3px solid var(--cor-btn-laranja) !important;
+			color: var(--cor-btn-laranja) !important;
+			transition: all 0.3s ease;
+		}
+
+		/* Glow acentuado quando a caixa está ativa (foco) */
+		.input-verde.active {
+			box-shadow: 0 0 20px 5px rgba(46, 213, 115, 0.6); 
+			background-color: rgba(46, 213, 115, 0.05); /* Fundo levemente colorido */
+			transform: scale(1.05); /* Aumenta ligeiramente o tamanho */
+		}
+
+		.input-laranja.active {
+			box-shadow: 0 0 20px 5px rgba(255, 165, 2, 0.6);
+			background-color: rgba(255, 165, 2, 0.05);
+			transform: scale(1.05);
+		}
+
+		/* Opcional: Efeito de pulsação para a caixa ativa */
+		.input-box.active {
+			animation: pulsarGlow 1.5s infinite alternate;
+		}
+
+		@keyframes pulsarGlow {
+			from { filter: brightness(1); }
+			to { filter: brightness(1.2); box-shadow: 0 0 25px 8px rgba(0, 0, 0, 0.2); }
+		}
+		
+		
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" width="18"> Voltar</a>
+        </div>
+        <h1>Os Amigos do<img src="../img-titulos/amigos_10.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Treina a moldura do 10!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- ECRÃ SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+            <h2 class="subtitulo" style="font-size: 1.4rem; margin-bottom: 20px;">Pronto para os Amigos do 10?</h2>
+            <div class="tutorial-container"><div class="moldura-grid" id="tutorial-grid"></div><p id="tutorial-texto">7 + 3 = 10</p></div>
+            <div class="grid-niveis">
+               
+				<button class="btn-nivel-novo bg-vermelho" onclick="iniciarNivel(1)">
+						<img src="../img-titulos/amigos_10_nivel_1.svg" class="icon-btn-nivel" alt="">
+						Completa a conta
+				</button>
+				<button class="btn-nivel-novo bg-amarelo" onclick="iniciarNivel(2)">
+						<img src="../img-titulos/amigos_10_nivel_2.svg" class="icon-btn-nivel" alt="">
+						Quantos faltam?
+				</button>
+				<button class="btn-nivel-novo bg-verde" onclick="iniciarNivel(3)">
+						<img src="../img-titulos/amigos_10_nivel_3.svg" class="icon-btn-nivel" alt="">
+						Conta completa
+				</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">15</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                És um Amigo do 10!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            </div>
+           
+			
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="iniciarNivel(estado.nível)">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+			</div>
+			
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/1_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    /* SVGS GLOBAIS */
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+    <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
+    <rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+    </svg> Menu`;
+
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>`;
+
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;">
+    <path d="M9 18h6"></path><path d="M10 22h4"></path>
+    <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+    </svg>`;
+
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;">
+    <path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
+    </svg>`;
+    
+    let estado = { 
+        nível: 1, ronda: 1, erros: 0, p1: 0, p2: 0, 
+        foco: 1, roundsDica: 0, 
+        ultimoP1: null, maxRondas: 10 
+    };
+    let audioCtx = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const ano = document.getElementById('ano-atual');
+        if (ano) ano.textContent = new Date().getFullYear();
+        
+        document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+        document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+        document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+        document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+        
+        // Inicia a nova animação tutorial
+        iniciarAnimacaoTutorial();
+    });
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+    }
+    
+    function iniciarAnimacaoTutorial() {
+        const grid = document.getElementById('tutorial-grid');
+        const texto = document.getElementById('tutorial-texto');
+        if(!grid) return;
+
+        function correrCiclo() {
+            grid.innerHTML = '';
+            for(let i=0; i<10; i++) grid.innerHTML += '<div class="slot"></div>';
+            const slots = grid.querySelectorAll('.slot');
+
+            const numVerdes = 7;
+            for(let i=0; i < numVerdes; i++) {
+                setTimeout(() => {
+                    slots[i].innerHTML = '<div class="bola verde"></div>';
+                }, i * 250);
+            }
+
+            setTimeout(() => {
+                [7, 8, 9].forEach((i, idx) => {
+                    setTimeout(() => {
+                        slots[i].innerHTML = '<div class="bola laranja"></div>';
+                    }, idx * 250);
+                });
+                texto.innerHTML = "<strong>7 + 3 = 10!</strong>";
+            }, 2200);
+
+            setTimeout(() => {
+                texto.innerHTML = "7 + ? = 10";
+                correrCiclo();
+            }, 6000);
+        }
+        correrCiclo();
+    }
+
+    function iniciarNivel(n) {
+        // Agora todos os níveis (1, 2 e 3) têm 10 rondas
+        const max = 10;
+
+        estado = { 
+            nível: n, 
+            ronda: 1, 
+            erros: 0, 
+            foco: 1, 
+            roundsDica: 0, 
+            ultimoP1: null, 
+            maxRondas: max 
+        };
+        
+        document.getElementById('val-total').textContent = max; 
+        document.getElementById('val-erros').textContent = 0;
+        mostrarEcra('ecra-jogo');
+        proximaRonda();
+    }
+    
+	function proximaRonda() {
+		if (estado.ronda > estado.maxRondas) { finalizar(); return; }
+		const area = document.getElementById('game-area');
+		area.innerHTML = ''; 
+		estado.foco = 1;
+		atualizarPlacar();
+
+		// Lógica de números (Amigos do 10)
+		let novoP1;
+		do {
+			novoP1 = Math.floor(Math.random() * 11);
+		} while (novoP1 === estado.ultimoP1); 
+		
+		estado.p1 = novoP1;
+		estado.ultimoP1 = novoP1; 
+		estado.p2 = 10 - estado.p1;
+
+		const mainCol = document.createElement('div'); 
+		mainCol.className = 'game-main-content';
+		
+		// 1. Determinar o título do nível para a área de jogo
+		let textoTitulo = "";
+		if (estado.nível === 1) textoTitulo = "Completa a conta para dar 10!";
+		else if (estado.nível === 2) textoTitulo = "Quantos faltam para 10?";
+		else if (estado.nível === 3) textoTitulo = "Amigos do 10: conta completa.";
+
+		// 2. Injetar o título no topo da mainCol
+		mainCol.innerHTML = `<h3 class="titulo-nivel-interno">${textoTitulo}</h3>`;
+
+		const numpad = document.createElement('div'); 
+		numpad.className = 'numpad';
+		
+		for (let i = 1; i <= 9; i++) {
+			numpad.innerHTML += `<button class="btn-num" onclick="inputNum(${i})">${i}</button>`;
+		}
+
+		numpad.innerHTML += `
+			<button class="btn-num btn-apagar" onclick="apagarNum()">
+				<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="none" stroke="var(--cor-pt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+					<line x1="18" y1="9" x2="12" y2="15"></line>
+					<line x1="12" y1="9" x2="18" y2="15"></line>
+				</svg>
+			</button>`;
+
+		numpad.innerHTML += `<button class="btn-num" onclick="inputNum(0)">0</button>`;
+
+		// 3. Adicionar o conteúdo específico do nível (usando += para não apagar o título)
+		if (estado.nível === 1) {
+			mainCol.innerHTML += `${gerarSVG(estado.p1)} <div style="font-size:2.2rem; font-weight:900;">${estado.p1} + <span id="in1" class="input-box active" style="display:inline-flex; color:var(--cor-erro)">?</span> = 10</div>`;
+		} else if (estado.nível === 2) {
+			mainCol.innerHTML += `${gerarSVG(estado.p1)} <div style="font-size:2.2rem; font-weight:900;">Faltam: <span id="in1" class="input-box active" style="display:inline-flex;">?</span></div>`;
+		} else if (estado.nível === 3) {
+			mainCol.innerHTML += `${gerarSVG(estado.p1, estado.p2)} <div style="font-size:2.2rem; font-weight:900; display:flex; align-items:center; justify-content:center; gap:10px;"><span id="in1" class="input-box input-verde active">?</span> + <span id="in2" class="input-box input-laranja">?</span> = 10</div>`;
+		}
+
+		area.appendChild(mainCol); 
+		area.appendChild(numpad);
+	}
+    
+    function apagarNum() {
+        const input = document.getElementById(`in${estado.foco}`);
+        if (!input || input.textContent === '?') return;
+        let texto = input.textContent.slice(0, -1);
+        input.textContent = (texto === '') ? '?' : texto;
+        beep(330, 0.05); 
+    }
+
+    function gerarSVG(v1, v2 = null) {
+        let dots = '';
+        for(let i=0; i<10; i++) {
+            let x = (i%5)*50+5, y = Math.floor(i/5)*50+5;
+            let cor = 'none';
+            if (v2 !== null) cor = (i < v1) ? 'var(--cor-btn-verde)' : 'var(--cor-btn-laranja)';
+            else cor = (i < v1) ? 'var(--cor-btn-verde)' : 'none';
+            dots += `<rect x="${x}" y="${y}" width="42" height="42" rx="8" fill="white" stroke="#ccc" stroke-width="2"/>`;
+            if(cor !== 'none') dots += `<circle cx="${x+21}" cy="${y+21}" r="16" fill="${cor}" />`;
+        }
+        return `<svg viewBox="0 0 255 105" class="moldura-svg" style="height:150px;">${dots}</svg>`;
+    }
+
+    function inputNum(n) {
+		const input = document.getElementById(`in${estado.foco}`);
+		if(!input) return;
+		
+		if(input.textContent === '?') input.textContent = '';
+		
+		// Permite digitar o "10"
+		if(input.textContent.length < 2) {
+			input.textContent += n;
+		}
+		
+		// Validação inteligente
+		const v1Text = document.getElementById('in1')?.textContent || '';
+		const v2Text = document.getElementById('in2')?.textContent || '';
+		const v1 = parseInt(v1Text);
+		const v2 = parseInt(v2Text);
+
+		if(estado.nível === 3) {
+			if(estado.foco === 1) {
+				// Verifica se o valor na caixa verde (in1) corresponde às bolas verdes (p1)
+				if(v1 === estado.p1) { trocarFoco(2); }
+				else if(v1Text.length >= estado.p1.toString().length) { erro(); }
+			} else {
+				// Verifica se o valor na caixa laranja (in2) corresponde às laranjas (p2)
+				if(v2 === estado.p2) { acerto(); }
+				else if(v2Text.length >= estado.p2.toString().length) { erro(); }
+			}
+		} else {
+			// Níveis 1 e 2 (apenas uma caixa)
+			if(v1 === estado.p2) { acerto(); }
+			else if(v1Text.length >= estado.p2.toString().length) { erro(); }
+		}
+	}
+
+    function validarAoDigitar() {
+		const v1Text = document.getElementById('in1')?.textContent || '';
+		const v2Text = document.getElementById('in2')?.textContent || '';
+		
+		const v1 = parseInt(v1Text);
+		const v2 = parseInt(v2Text);
+
+		if(estado.nível === 3) {
+			// Lógica específica para o Jogo 3 (dois campos)
+			if(estado.foco === 1) {
+				// Se o primeiro número estiver correto, passa para o próximo campo
+				if(v1 === estado.p1) { 
+					trocarFoco(2); 
+				} 
+				// Se o utilizador digitou algo com o mesmo número de dígitos da resposta mas está errado
+				else if(v1Text.length >= estado.p1.toString().length && v1 !== estado.p1) {
+					erro();
+				}
+			} else if(estado.foco === 2) {
+				// No segundo campo, valida a resposta final
+				if(v2 === estado.p2) { 
+					acerto(); 
+				} else if(v2Text.length >= estado.p2.toString().length) {
+					erro();
+				}
+			}
+		} else {
+			// Lógica para os Jogos 1 e 2 (apenas um campo)
+			const corr = estado.p2;
+			if(v1 === corr) {
+				acerto();
+			} else if(v1Text.length >= corr.toString().length) {
+				erro();
+			}
+		}
+	}
+
+    function trocarFoco(n) {
+        estado.foco = n;
+        document.querySelectorAll('.input-box').forEach(el => el.classList.remove('active'));
+        const target = document.getElementById(`in${n}`);
+        if(target) target.classList.add('active');
+        beep(440, 0.1);
+    }
+
+    function acerto() {
+        beep(880, 0.2);
+        if(estado.roundsDica > 0) estado.roundsDica--;
+        setTimeout(() => { estado.ronda++; proximaRonda(); }, 600);
+    }
+
+    function erro() {
+        estado.erros++; 
+        document.getElementById('val-erros').textContent = estado.erros;
+        beep(220, 0.3);
+        const el = document.getElementById(`in${estado.foco}`);
+        el.style.color = 'var(--cor-erro)';
+        setTimeout(() => { el.style.color = ''; el.textContent = '?'; }, 400);
+    }
+
+    function atualizarPlacar() {
+        const percentagem = (estado.ronda / estado.maxRondas * 100);
+        document.getElementById('progress-fill').style.width = percentagem + '%';
+        document.getElementById('val-progresso').textContent = estado.ronda;
+        const btnDica = document.getElementById('btn-dica');
+        if(estado.roundsDica === 0) { 
+            btnDica.classList.remove('esgotada'); 
+            btnDica.innerHTML = SVG_BULB + ' Dica'; 
+        } else { 
+            btnDica.classList.add('esgotada'); 
+            btnDica.innerHTML = `⏳ ${estado.roundsDica}`; 
+        }
+    }
+
+    function usarDica() {
+        if(estado.roundsDica > 0) return;
+        const el = document.getElementById(`in${estado.foco}`);
+        el.classList.add('glow-hint');
+        const ans = (estado.foco === 1 ? estado.p1 : estado.p2);
+        el.textContent = ans;
+        estado.roundsDica = 5;
+        atualizarPlacar();
+        setTimeout(() => { el.classList.remove('glow-hint'); el.textContent = '?'; }, 1500);
+    }
+
+    function finalizar() {
+        mostrarEcra('ecra-fim');
+        document.getElementById('final-erros').textContent = estado.erros;
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        tocarSomVitoria(audioCtx);
+        dispararConfetis();
+    }
+
+    function mostrarEcra(id) { 
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); 
+        document.getElementById(id).style.display = 'flex'; 
+    }
+    
+    function voltarAoMenu() { mostrarEcra('ecra-selecao'); }
+
+    function beep(f, d) {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = f; g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+        o.start(); o.stop(audioCtx.currentTime + d);
+    }
+    
+    function tocarSomVitoria(ctx) {
+        const agora = ctx.currentTime;
+        const frequencias = [523.25, 659.25, 783.99, 1046.50];
+        frequencias.forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.frequency.value = freq;
+            const tempoInicio = agora + i * 0.1;
+            const tempoFim = tempoInicio + 0.4;
+            g.gain.setValueAtTime(0.1, tempoInicio);
+            g.gain.exponentialRampToValueAtTime(0.01, tempoFim);
+            o.start(tempoInicio); o.stop(tempoFim);
+        });
+    }
+
+    function dispararConfetis() {
+        const c = document.getElementById('confetti-container');
+        if(!c) return;
+        const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+        for (let i=0;i<60;i++){
+            const d=document.createElement('div');
+            d.className='confetti';
+            d.style.left=Math.random()*100+'%';
+            d.style.backgroundColor=cores[Math.floor(Math.random()*cores.length)];
+            d.style.animationDuration=(Math.random()*2+2)+'s';
+            c.appendChild(d);
+            setTimeout(()=>d.remove(),4000);
+        }
+    }
+
+    window.addEventListener('keydown', (e) => { 
+        if (e.key >= '0' && e.key <= '9') inputNum(e.key); 
+        else if (e.key === 'Backspace') apagarNum();
+    });
+</script>
+</body>
+</html>

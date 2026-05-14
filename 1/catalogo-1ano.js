@@ -56,6 +56,8 @@ const todosOsJogos =[
 	{ nome: "O Monstro da Balança", icone: "icones/monstro_balanca.png", link: "mat/monstro-balanca", cat: "mat" },
 	{ nome: "Viagem dos Números", icone: "icones/viagem_numeros.png", link: "mat/viagem-numeros", cat: "mat" },
 	{ nome: "Cálculo por Decomposição", icone: "icones/calculo_decomposicao.png", link: "mat/calculo-decomposicao", cat: "mat" },
+	{ nome: "Os Amigos do 10", icone: "icones/amigos_10.png", link: "mat/amigos-10", cat: "mat" },
+	{ nome: "Grelha do 100", icone: "icones/grelha_100.png", link: "mat/grelha-100", cat: "mat" },
     
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em") 
