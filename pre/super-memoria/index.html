@@ -587,15 +587,59 @@
        VOZES HUMANAS (LEITOR MP3)
        ========================================= */
     let audioAtual = null;
+	let audioDesbloqueado = false;
+
+function desbloquearAudio() {
+    if (audioDesbloqueado) return;
+
+    // desbloqueia WebAudio
+    inicializarAudio();
+
+    // desbloqueia HTMLAudio
+    const audioTeste = new Audio();
+    audioTeste.volume = 0;
+
+    audioTeste.play()
+        .then(() => {
+            audioTeste.pause();
+            audioDesbloqueado = true;
+            console.log("Áudio desbloqueado");
+        })
+        .catch(err => {
+            console.log("Falha ao desbloquear áudio:", err);
+        });
+}
+
+document.addEventListener('click', desbloquearAudio, { once: true });
+document.addEventListener('touchstart', desbloquearAudio, { once: true });
 
     function tocarVoz(nomeFicheiro) {
-        if (audioAtual) {
-            audioAtual.pause();
-            audioAtual.currentTime = 0;
-        }
-        audioAtual = new Audio(`sons/${nomeFicheiro}.mp3`);
-        audioAtual.play().catch(erro => console.log("Áudio não encontrado: sons/" + nomeFicheiro + ".mp3"));
+
+    if (!audioDesbloqueado) {
+        console.log("Áudio ainda bloqueado pelo browser");
+        return;
     }
+
+    if (audioAtual) {
+        audioAtual.pause();
+        audioAtual.currentTime = 0;
+    }
+
+    const caminho = `./sons/${nomeFicheiro}.mp3`;
+
+    audioAtual = new Audio(caminho);
+
+    audioAtual.preload = "auto";
+
+    audioAtual.play()
+        .then(() => {
+            console.log("A reproduzir:", caminho);
+        })
+        .catch(erro => {
+            console.error("Erro ao reproduzir:", caminho);
+            console.error(erro);
+        });
+}
 
     window.replayAudio = function(event, nomeFicheiro) {
         event.stopPropagation();
