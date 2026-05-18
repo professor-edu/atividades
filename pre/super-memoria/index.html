@@ -587,59 +587,23 @@
        VOZES HUMANAS (LEITOR MP3)
        ========================================= */
     let audioAtual = null;
-	let audioDesbloqueado = false;
-
-function desbloquearAudio() {
-    if (audioDesbloqueado) return;
-
-    // desbloqueia WebAudio
-    inicializarAudio();
-
-    // desbloqueia HTMLAudio
-    const audioTeste = new Audio();
-    audioTeste.volume = 0;
-
-    audioTeste.play()
-        .then(() => {
-            audioTeste.pause();
-            audioDesbloqueado = true;
-            console.log("Áudio desbloqueado");
-        })
-        .catch(err => {
-            console.log("Falha ao desbloquear áudio:", err);
-        });
-}
-
-document.addEventListener('click', desbloquearAudio, { once: true });
-document.addEventListener('touchstart', desbloquearAudio, { once: true });
 
     function tocarVoz(nomeFicheiro) {
+		if (audioAtual) {
+			audioAtual.pause();
+			audioAtual.currentTime = 0;
+		}
 
-    if (!audioDesbloqueado) {
-        console.log("Áudio ainda bloqueado pelo browser");
-        return;
-    }
+		const caminho = `sons/${nomeFicheiro}.mp3`;
 
-    if (audioAtual) {
-        audioAtual.pause();
-        audioAtual.currentTime = 0;
-    }
+		audioAtual = new Audio(caminho);
+		audioAtual.preload = "auto";
+		audioAtual.load(); // ✅ essencial para Windows 10
 
-    const caminho = `./sons/${nomeFicheiro}.mp3`;
-
-    audioAtual = new Audio(caminho);
-
-    audioAtual.preload = "auto";
-
-    audioAtual.play()
-        .then(() => {
-            console.log("A reproduzir:", caminho);
-        })
-        .catch(erro => {
-            console.error("Erro ao reproduzir:", caminho);
-            console.error(erro);
-        });
-}
+		audioAtual.play().catch(erro => {
+			console.log("Erro ao reproduzir:", caminho, erro);
+		});
+	}
 
     window.replayAudio = function(event, nomeFicheiro) {
         event.stopPropagation();
@@ -661,15 +625,30 @@ document.addEventListener('touchstart', desbloquearAudio, { once: true });
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
     
-    function inicializarAudio() {
-        if (!AudioContext) return; // Proteção extra!
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
+	// ✅ Desbloquear áudio no primeiro clique (Windows 10, mobile, etc.)
+	document.addEventListener('click', () => {
+		if (AudioContext) {
+			if (!audioCtx) {
+				audioCtx = new AudioContext();
+			}
+			if (audioCtx.state === 'suspended') {
+				audioCtx.resume();
+			}
+		}
+	}, { once: true });
+
+	
+	function inicializarAudio() {
+		if (!AudioContext) return;
+
+		if (!audioCtx) {
+			audioCtx = new AudioContext();
+		}
+
+		if (audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+	}
 
     function tocarSom(tipo) {
         if (!AudioContext) return; // Proteção extra!
