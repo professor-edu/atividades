@@ -681,50 +681,71 @@
     /* =========================================
        AUDIO E CONFETIS (NATIVOS DO BROWSER)
        ========================================= */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
     
     function tocarSom(tipo) {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const agora = audioCtx.currentTime;
 
-        if (tipo === 'flip') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, agora);
-            osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
-            gain.gain.setValueAtTime(0.05, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
-            osc.start(agora);
-            osc.stop(agora + 0.1);
-        }
-        else if (tipo === 'acerto') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, agora);
-            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
-            gain.gain.setValueAtTime(0.1, agora);
-            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
-            osc.start(agora);
-            osc.stop(agora + 0.3);
-        } 
-        else if (tipo === 'vitoria') {
-            const notas =[523.25, 659.25, 783.99, 1046.50];
-            notas.forEach((freq, i) => {
-                const o = audioCtx.createOscillator();
-                const g = audioCtx.createGain();
-                o.connect(g);
-                g.connect(audioCtx.destination);
-                o.type = 'sine';
-                o.frequency.value = freq;
-                g.gain.setValueAtTime(0.1, agora + i * 0.15);
-                g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
-                o.start(agora + i * 0.15);
-                o.stop(agora + i * 0.15 + 0.3);
-            });
-        }
-    }
+		if (!AudioContextClass) return;
+
+		// ✅ cria só quando necessário
+		if (!audioCtx) {
+			audioCtx = new AudioContextClass();
+		}
+
+		// ✅ garante que está ativo
+		if (audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		}
+		else if (tipo === 'acerto') {
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(600, agora);
+			osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.1);
+			gain.gain.setValueAtTime(0.1, agora);
+			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+			osc.start(agora);
+			osc.stop(agora + 0.3);
+		}
+		else if (tipo === 'vitoria') {
+			const notas = [523.25, 659.25, 783.99, 1046.50];
+
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+
+				o.connect(g);
+				g.connect(audioCtx.destination);
+
+				o.type = 'sine';
+				o.frequency.value = freq;
+
+				g.gain.setValueAtTime(0.1, agora + i * 0.15);
+				g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+
+				o.start(agora + i * 0.15);
+				o.stop(agora + i * 0.15 + 0.3);
+			});
+		}
+	}
+
 
     function dispararConfetis() {
         const container = document.getElementById('confetti-container');
@@ -747,6 +768,14 @@
     
     // Inicia no Ecrã de Seleção (Instruções)
     window.onload = () => mostrarEcra('ecra-selecao');
+	
+	// ✅ desbloqueia áudio no primeiro clique
+	document.addEventListener('click', () => {
+		if (audioCtx && audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+	}, { once: true });
+
 </script>
 </body>
 </html>
