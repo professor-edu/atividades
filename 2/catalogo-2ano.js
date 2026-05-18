@@ -48,6 +48,7 @@ const todosOsJogos =[
 	{ nome: "Revisão de Sequências", icone: "icones/sequencias_revisoes.png", link: "mat/sequencias-revisoes/", cat: "mat" },
    	{ nome: "Simetria", icone: "icones/simetria.png", link: "mat/simetria/", cat: "mat" },
 	{ nome: "Gráficos", icone: "icones/graficos.png", link: "mat/graficos/", cat: "mat" },
+	{ nome: "Figuras e Sólidos", icone: "icones/figuras_solidos.png", link: "mat/figuras-solidos/", cat: "mat" },
 	
 	
     

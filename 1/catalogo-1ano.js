@@ -58,6 +58,7 @@ const todosOsJogos =[
 	{ nome: "Cálculo por Decomposição", icone: "icones/calculo_decomposicao.png", link: "mat/calculo-decomposicao", cat: "mat" },
 	{ nome: "Os Amigos do 10", icone: "icones/amigos_10.png", link: "mat/amigos-10", cat: "mat" },
 	{ nome: "Grelha do 100", icone: "icones/grelha_100.png", link: "mat/grelha-100", cat: "mat" },
+	{ nome: "Sólidos e Figuras", icone: "icones/solidos_figuras.png", link: "mat/solidos-figuras", cat: "mat" },
     
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em") 
