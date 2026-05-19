@@ -394,7 +394,7 @@
             <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
             <div class="end-stats">
                 Escreveste <strong id="final-certas" style="color:#2ed573">0</strong> palavras certas.<br>
-                Tiveste <strong id="final-erradas" style="color:#ff4757">0</strong> tentativas erradas.
+                Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> tentativas erradas.
             </div>
             <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto; margin-bottom: 10px;">JOGAR DE NOVO 🔄</button>
         </div>
@@ -568,30 +568,35 @@
         return '../' + imgPath;
     }
 
-    function carregarPalavra() {
-        isVerificando = false;
-        removerDestaquesDica();
-        atualizarDicasUI();
+		function carregarPalavra() {
+		isVerificando = false;
+		removerDestaquesDica();
+		atualizarDicasUI();
 
-        const palavraObj = palavrasDoJogo[palavraAtualIndex];
-        
-        elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
-        
-        // Garante que mostramos o botão de som e escondemos a imagem (Flip Card Reset)
-        elMediaContainer.classList.remove('revelado');
-        elBtnOuvir.classList.remove('playing');
-        
-        // Pré-carrega a imagem
-        elImage.src = getImagePath(palavraObj.imagem);
-        elImage.onerror = () => { elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>IMG</text></svg>`; };
+		const palavraObj = palavrasDoJogo[palavraAtualIndex];
+		if (!palavraObj) return; // Proteção extra caso o jogo acabe
+		
+		elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
+		
+		// 1. Mandar a carta virar de volta (Inicia a animação CSS)
+		elMediaContainer.classList.remove('revelado');
+		elBtnOuvir.classList.remove('playing');
+		
+		// 2. SÓ ATUALIZA A IMAGEM DEPOIS DA ANIMAÇÃO TERMINAR (ex: 400 milissegundos)
+		// Durante a rotação, a criança continuará a ver a imagem antiga a esconder-se.
+		setTimeout(() => {
+			elImage.src = getImagePath(palavraObj.imagem);
+			elImage.onerror = () => { 
+				elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>IMG</text></svg>`; 
+			};
+		}, 400); // 💡 Se a transição CSS demorar mais ou menos tempo, ajusta este valor (400 = 0.4s)
 
-        elInput.value = '';
-        elInput.classList.remove('error-shake', 'success-bounce');
-        elInput.disabled = false;
-        
-        setTimeout(() => elInput.focus(), 100); 
-    }
-
+		elInput.value = '';
+		elInput.classList.remove('error-shake', 'success-bounce');
+		elInput.disabled = false;
+		
+		setTimeout(() => elInput.focus(), 100); 
+	}
     function ouvirPalavraAtual() {
         if (isVerificando) return;
         
@@ -721,41 +726,92 @@
     /* =========================================
        SISTEMA DE SOM E CONFETIS
        ========================================= */
-    let audioCtx = null;
-    function iniciarAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-    document.body.addEventListener('click', iniciarAudio, { once: true });
-    document.body.addEventListener('touchstart', iniciarAudio, { once: true });
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
 
-    function tocarSom(tipo) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        const agora = audioCtx.currentTime;
+	// ✅ garante que o áudio está pronto
+	function initAudio() {
+		if (!AudioContextClass) return;
 
-        if (tipo === 'acerto') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
-            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
-            osc.start(agora); osc.stop(agora + 0.3);
-        } 
-        else if (tipo === 'erro') {
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
-            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
-            osc.start(agora); osc.stop(agora + 0.3);
-        }
-        else if (tipo === 'vitoria') {
-            const notas =[440, 554.37, 659.25, 880, 1046.50]; 
-            notas.forEach((freq, i) => {
-                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-                o.connect(g); g.connect(audioCtx.destination);
-                o.type = 'triangle'; o.frequency.value = freq;
-                g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.6);
-                o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.6);
-            });
-        }
-    }
+		if (!audioCtx) {
+			audioCtx = new AudioContextClass();
+		}
+
+		if (audioCtx.state === 'suspended') {
+			audioCtx.resume();
+		}
+	}
+
+	// ✅ desbloqueia no primeiro clique (CRUCIAL)
+	document.addEventListener('click', initAudio, { once: true });
+
+
+	// ✅ função principal para sons
+	function tocarSom(tipo) {
+
+		initAudio(); // garante sempre
+
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		}
+
+		else if (tipo === 'acerto') {
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(600, agora);
+			osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+			gain.gain.setValueAtTime(0.1, agora);
+			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+			osc.start(agora);
+			osc.stop(agora + 0.3);
+		}
+
+		else if (tipo === 'erro') {
+			osc.type = 'triangle';
+			osc.frequency.setValueAtTime(250, agora);
+			osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+			gain.gain.setValueAtTime(0.15, agora);
+			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+			osc.start(agora);
+			osc.stop(agora + 0.3);
+		}
+
+		else if (tipo === 'vitoria') {
+			const notas = [523.25, 659.25, 783.99, 1046.50];
+
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+
+				o.connect(g);
+				g.connect(audioCtx.destination);
+
+				o.type = 'sine';
+				o.frequency.value = freq;
+
+				g.gain.setValueAtTime(0.1, agora + i * 0.15);
+				g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
+
+				o.start(agora + i * 0.15);
+				o.stop(agora + i * 0.15 + 0.3);
+			});
+		}
+	}
 
     const canvasConfetti = document.getElementById('confetti-canvas');
     const ctxConfetti = canvasConfetti.getContext('2d');
