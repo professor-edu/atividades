@@ -36,6 +36,7 @@ const todosOsJogos =[
     { nome: "Puzzle das Sílabas", icone: "icones/puzzle_silabas.png", link: "pt/puzzle-silabas", cat: "pt" },
     { nome: "Vogais", icone: "icones/vogais.png", link: "pt/vogais", cat: "pt" },
     { nome: "Cruzadas de Animais", icone: "icones/cruzadas_animais.png", link: "pt/cruzadas-animais", cat: "pt" },
+	{ nome: "Roda a Frase", icone: "icones/roda_frase.png", link: "pt/roda-frase", cat: "pt" },
     
     // ------------------------------------
     // MATEMÁTICA (cat: "mat") 

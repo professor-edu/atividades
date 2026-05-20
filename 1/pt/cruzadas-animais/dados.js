@@ -15,7 +15,7 @@ const palavras =[
   { palavra: "crocodilo", imagem: "img/crocodilo.png", num: 4, divisao: "CRO-CO-DI-LO" },
   { palavra: "abelha", imagem: "img/abelha.png", num: 3, divisao: "A-BE-LHA" },
   { palavra: "baleia", imagem: "img/baleia.png", num: 3, divisao: "BA-LEI-A" },
-  { palavra: "burro", imagem: "img/burro.png", num: 2, divisao: "BUR-RO" },
+  { palavra: "burro", imagem: "img/burro.png", num: 2, divisao: "BU-RRO" },
   { palavra: "cabra", imagem: "img/cabra.png", num: 2, divisao: "CA-BRA" },
   { palavra: "cão", imagem: "img/cao.png", num: 1, divisao: "CÃO" },
   { palavra: "cavalo", imagem: "img/cavalo.png", num: 3, divisao: "CA-VA-LO" },
