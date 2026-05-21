@@ -82,7 +82,7 @@
         footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
         footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
         
-        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-start; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
         #ecra-selecao { display: flex; justify-content: center;}
         
         .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
@@ -139,7 +139,7 @@
         /* =========================================
            ÁREA DE JOGO E IMAGENS DINÂMICAS
            ========================================= */
-        .area-jogo-custom { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 15px; overflow-y: auto; gap: 15px; position: relative; overflow-x: hidden;}
+        .area-jogo-custom { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 15px; overflow-y: auto; gap: 15px; position: relative; overflow-x: hidden;}
 
         /* IMAGEM POLIDA (Mín. 200px com animação hover) */
         .img-display { 
@@ -264,6 +264,232 @@
 	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
 	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
 	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+	
+	/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+		
+		
+	/* Novas regras para organizar o título e subtítulo dentro do botão */
+        .texto-btn-nivel {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .titulo-btn {
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+        .subtitulo-btn {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }	
+
+/* Animação para o piscar suave */
+        @keyframes pulse-light {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        /* Badge de Dica no Cantinho (Mobile/Pequenos Ecrãs) */
+        .badge-dica-cantinho {
+            position: absolute;
+            top: -10px; /* Ajuste para o posicionamento exato da imagem */
+            left: -10px; /* Ajuste para o posicionamento exato da imagem */
+            width: 50px; /* Tamanho do círculo */
+            height: 50px; /* Tamanho do círculo */
+            background-color: var(--cor-2ano); /* Cor de fundo do círculo */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 20; /* Garante que fique acima de outros elementos */
+            transition: transform 0.2s ease;
+            border: 3px solid white; /* Borda branca para destacar */
+            display: none; /* Por padrão, escondido e só aparece em mobile */
+        }
+        @media (hover: hover) {
+            .badge-dica-cantinho:hover {
+                transform: scale(1.1);
+            }
+        }
+        .icon-dica-cantinho {
+            width: 60%; /* Tamanho do SVG dentro do círculo */
+            height: 60%;
+            fill: white; /* Cor da lâmpada SVG */
+            animation: pulse-light 2s infinite ease-in-out; /* Animação de piscar */
+        }
+
+        /* Estilos do Modal de Dica (Pop-up) */
+        .dica-modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1000; /* Acima de tudo */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* Fundo semi-transparente */
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Padding para garantir que o conteúdo não toque nas bordas */
+            box-sizing: border-box;
+        }
+
+        .dica-modal.active {
+            display: flex; /* Exibir quando ativo */
+        }
+
+        .dica-modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 95%; /* Ocupa 95% da largura do ecrã */
+            width: 500px; /* Largura máxima para desktop */
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-out;
+            box-sizing: border-box;
+        }
+
+        .dica-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+        .dica-modal-close:hover,
+        .dica-modal-close:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos para o conteúdo da dica dentro do modal/badge desktop */
+        .badge-rr-ss-conteudo, .badge-rr-ss-desktop .badge-rr-ss-content {
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: var(--text-main);
+            flex: 1; /* Permite que o conteúdo ocupe o espaço restante */
+        }
+
+        /* Estilo para o ícone da lâmpada DENTRO do badge desktop */
+        .badge-rr-ss-icon-desktop {
+            width: 70px; /* Tamanho do círculo para o ícone da lâmpada */
+            height: 70px;
+            border-radius: 50%;
+            background-color: #fffde7; /* Cor de fundo amarela clara */
+            border: 3px solid #fbc531; /* Borda amarela */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Impede que o ícone encolha */
+            margin-right: 15px; /* Espaço entre o ícone e o texto */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .icon-dica-desktop {
+            width: 70%; /* Tamanho do SVG dentro do círculo */
+            height: 70%;
+            fill: #ffb300; /* Cor da lâmpada SVG (amarelo mais forte) */
+            object-fit: contain;
+        }
+
+        .badge-rr-ss-desktop .badge-rr-ss-content p, .badge-rr-ss-conteudo p {
+            margin: 5px 0;
+        }
+
+        .badge-rr-ss-title {
+            font-weight: 900;
+            color: var(--azul-escuro);
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .badge-rr-ss-remember {
+            display: block;
+            margin-top: 10px;
+            font-style: italic;
+            color: #b18500; /* Cor para a frase de lembrar */
+            font-weight: 500;
+        }
+
+        /* BADGE INFORMATIVO RR/SS (versão Desktop - SEMPRE VISÍVEL) */
+        .badge-rr-ss-desktop {
+            background-color: #fff9c4;
+            border: 2px solid #fbc531;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 20px auto;
+            max-width: 80%; 
+            width: 100%; /* Ajuste para ser mais flexível, mas respeitar max-width */
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-start; /* Alinha o ícone e o texto no topo */
+            gap: 0; /* Remove o gap para controlar o espaçamento com margin-right no ícone */
+            box-sizing: border-box; /* Garante que padding não exceda 95% */
+            position: relative; /* Necessário para posicionamento absoluto dentro dele, se for o caso */
+        }
+
+        /* Media Queries para alternar entre os badges */
+
+        /* Em ecrãs pequenos (max-width: 768px ou mobile portrait) */
+        @media (max-width: 768px), (orientation: portrait) {
+            .badge-rr-ss-desktop {
+                display: none; /* Esconde o badge desktop em mobile/ecrãs pequenos */
+            }
+            .badge-dica-cantinho {
+                display: flex; /* Mostra o ícone no canto em mobile/ecrãs pequenos */
+            }
+        }
+
+        /* Em ecrãs grandes (min-width: 769px e landscape para tablets) */
+        @media (min-width: 769px) {
+            .badge-dica-cantinho {
+                display: none; /* Esconde o ícone no canto em desktop */
+            }
+            .dica-modal {
+                display: none !important; /* Garante que o modal esteja escondido em desktop */
+            }
+            .badge-rr-ss-desktop {
+                display: flex; /* Mostra o badge desktop */
+            }
+        }
+		
+		
+
+	
 </style>
 </head>
 <body>
@@ -292,7 +518,7 @@
         </div>
         
         <h1>Divisão Silábica <img src="../img-titulos/divisao-silabica.svg" class="icon-svg-titulo" alt=""></h1>
-        <div class="subtitulo" id="subtitulo-jogo">Escolhe outro jogo!</div>
+        <div class="subtitulo" id="subtitulo-jogo">Escolhe um dos desafios abaixo!</div>
     </div>
 </header>
 
@@ -301,27 +527,61 @@
         <div id="confetti-container" class="confetti-container"></div>
         <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
 
+        <!-- ÍCONE DE DICA NO CANTO (APARECE EM ECRÃS PEQUENOS/MOBILE) -->
+        <div id="badge-dica-cantinho" class="badge-dica-cantinho" onclick="toggleDicaModal()">
+            <img src="info.svg" alt="Dica" class="icon-dica-cantinho">
+        </div>
+
+        <!-- MODAL DE DICA (APARECE EM ECRÃS PEQUENOS/MOBILE QUANDO CLICADO) -->
+        <div id="dica-modal" class="dica-modal">
+            <div class="dica-modal-content">
+                <button class="dica-modal-close" onclick="toggleDicaModal()">✕</button>
+                <div class="badge-rr-ss-conteudo"> <!-- Conteúdo do modal -->
+                    <span class="badge-rr-ss-title">Dica de Jogo: O Segredo do RR e SS</span>
+                    <p><strong>A Falar (Divisão Silábica):</strong> Eles são grandes amigos e ficam juntos na mesma sílaba. Ex: ca-rro.</p>
+                    <p><strong>A Escrever (Fim da linha):</strong> Eles tornam-se gémeos que brigam e têm de se separar. Ex: car-ro.</p>
+                </div>
+            </div>
+        </div>
+
         <!-- ECRÃ DE SELEÇÃO -->
         <div id="ecra-selecao" class="ecra" style="display: flex;">
-            <h2 class="titulo-menu">Escolhe um Jogo:</h2>
             
+            
+            <!-- BADGE INFORMATIVO RR/SS (APARECE DIRETAMENTE EM ECRÃS GRANDES) -->
+            <div class="badge-rr-ss-desktop">
+                <div class="badge-rr-ss-icon-desktop">
+                    <img src="info.svg" alt="Dica" class="icon-dica-desktop">
+                </div>
+                <div class="badge-rr-ss-content">
+                    <span class="badge-rr-ss-title">Dica de Jogo: O Segredo do RR e SS</span>
+                    <p><strong>A Falar (Divisão Silábica):</strong> Eles são grandes amigos e ficam juntos na mesma sílaba.</br>Exemplo: <strong>ca-rro</strong></p>
+                    <p><strong>A Escrever (Fim da linha):</strong> Eles tornam-se gémeos que brigam e têm de se separar.</br>Exemplo: <strong>car-ro</strong></p>
+                </div>
+            </div>
+            <!-- FIM DO BADGE INFORMATIVO DESKTOP -->
             <div class="grelha-opcoes">
-                <button class="btn-nivel-menu" onclick="iniciarJogo(1)">
-                    <span class="nivel-icon" style="background:#e3f2fd;">🚂</span>
-                    <span class="nivel-text"><span class="nivel-titulo">O Comboio</span><span class="nivel-desc">Ordena as sílabas soltas</span></span>
-                </button>
-                <button class="btn-nivel-menu" onclick="iniciarJogo(2)">
-                    <span class="nivel-icon" style="background:#ffebee;">✂️</span>
-                    <span class="nivel-text"><span class="nivel-titulo">Ninja das Palavras</span><span class="nivel-desc">Corta nos locais certos</span></span>
-                </button>
-                <button class="btn-nivel-menu" onclick="iniciarJogo(3)">
-                    <span class="nivel-icon" style="background:#f3e5f5;">🏭</span>
-                    <span class="nivel-text"><span class="nivel-titulo">Fábrica de Palavras</span><span class="nivel-desc">Número de sílabas</span></span>
-                </button>
+              		
+				<button class="btn-nivel-menu" onclick="iniciarJogo(1)">
+						<img src="../img-titulos/divisao_silabica_comboio.svg" class="icon-btn-nivel" alt="">
+						<span class="nivel-text"><span class="nivel-titulo">O Comboio</span><span class="nivel-desc">Ordena as sílabas soltas</span></span>
+				</button>
+				
+				<button class="btn-nivel-menu" onclick="iniciarJogo(2)">
+						<img src="../img-titulos/divisao_silabica_tesoura.svg" class="icon-btn-nivel" alt="">
+						<span class="nivel-text"><span class="nivel-titulo">Ninja das Palavras</span><span class="nivel-desc">Corta nos locais certos</span></span>
+				</button>
+				
+				<button class="btn-nivel-menu" onclick="iniciarJogo(3)">
+						<img src="../img-titulos/divisao_silabica_fabrica.svg" class="icon-btn-nivel" alt="">
+						<span class="nivel-text"><span class="nivel-titulo">Fábrica das Palavras</span><span class="nivel-desc">Número de Sílabas</span></span>
+				</button>
+				
                 <button class="btn-nivel-menu" onclick="iniciarJogo(4)">
-                    <span class="nivel-icon" style="background:#e8f5e9;">🐸</span>
-                    <span class="nivel-text"><span class="nivel-titulo">Sapinho Saltitão</span><span class="nivel-desc">Conta e ordena na lagoa</span></span>
-                </button>
+						<img src="../img-titulos/divisao_silabica_sapo.svg" class="icon-btn-nivel" alt="">
+						<span class="nivel-text"><span class="nivel-titulo">Sapinho Saltitão</span><span class="nivel-desc">Conta e ordena na lagoa</span></span>
+				</button>
+
             </div>
         </div>
 
@@ -350,6 +610,9 @@
         </div>
     </div>
 </main>
+
+
+
 
 <footer>
     <p><span id="ano-atual"> </span><img src="../../../SVG/2_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
@@ -455,14 +718,23 @@
         document.getElementById('progress-fill').style.width = `${((rondaAtual - 1) / 10) * 100}%`;
     }
 
-    function iniciarJogo(id) {
-        jogoAtualID = id; rondaAtual = 1; errosTotais = 0;
-        document.getElementById('confetti-container').innerHTML = "";
-        const titulos =["", "O Comboio das Sílabas", "Ninja das Palavras", "Fábrica de Palavras", "Sapinho Saltitão"];
-        document.getElementById('subtitulo-jogo').textContent = titulos[id];
-        listaRonda = selecionarPalavrasDiversificadas(id);
-        atualizarPlacarUI(); mostrarEcra('ecra-jogo'); prepararRonda();
-    }
+	const TITULO_PADRAO = "Escolhe um dos desafios abaixo!"; // Escreve aqui o teu texto original
+    const NOMES_DOS_JOGOS = ["", "O Comboio das Sílabas", "Ninja das Palavras", "Fábrica de Palavras", "Sapinho Saltitão"];
+
+	function iniciarJogo(id) {
+		jogoAtualID = id; 
+		rondaAtual = 1; 
+		errosTotais = 0;
+		
+		// Limpa confetes e define o título do jogo atual
+		document.getElementById('confetti-container').innerHTML = "";
+		document.getElementById('subtitulo-jogo').textContent = NOMES_DOS_JOGOS[id];
+		
+		listaRonda = selecionarPalavrasDiversificadas(id);
+		atualizarPlacarUI(); 
+		mostrarEcra('ecra-jogo'); 
+		prepararRonda();
+	}
 
     function prepararRonda() {
         const area = document.getElementById('area-jogo'); area.innerHTML = ''; 
@@ -539,7 +811,27 @@
         document.getElementById('progress-fill').style.width = `100%`; document.getElementById('final-erros').textContent = errosTotais;
         mostrarEcra('ecra-fim'); tocarSom('vitoria'); lancarConfetis();
     }
-    function voltarAoMenu() { document.getElementById('confetti-container').innerHTML = ""; mostrarEcra('ecra-selecao'); }
+    
+	function voltarAoMenu() { 
+		// AO VOLTAR, REPOMOS O TÍTULO ORIGINAL DO MENU
+		document.getElementById('subtitulo-jogo').textContent = TITULO_PADRAO;
+		
+		document.getElementById('confetti-container').innerHTML = ""; 
+		mostrarEcra('ecra-selecao'); 
+	}
+
+    // Função para alternar a exibição do modal de dica
+    function toggleDicaModal() {
+        const dicaModal = document.getElementById('dica-modal');
+        if (dicaModal.classList.contains('active')) {
+            dicaModal.classList.remove('active');
+            document.body.style.overflow = ''; // Restaura o scroll do body
+        } else {
+            dicaModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Impede o scroll do body quando o modal está aberto
+        }
+    }
+
 
     // =========================================
     // DICA GLOBAL
