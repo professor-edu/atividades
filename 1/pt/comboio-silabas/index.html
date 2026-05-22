@@ -312,14 +312,20 @@
         }
         .scenery::-webkit-scrollbar { display: none; } /* Esconde scrollbar Chrome/Safari */
 
+		/* =========================================
+           O COMBOIO EM JOGO (ESTRUTURA RESTAURADA E FLUIDA)
+           ========================================= */
+        
+        /* 1. O COMBOIO CENTRADO */
         .comboio-wrapper {
             display: flex; flex-direction: row; align-items: flex-end; justify-content: center;
-            margin: 0 auto; padding: 0 20px; flex-shrink: 0;
-            transform: translateX(-150vw); /* Posição Inicial Fora */
+            margin: 0 auto; padding: 0 10px;
+            transform: translateX(-150vw); 
             will-change: transform;
+            width: 100%; 
         }
-
-        /* Animações de Entrada e Saída do Comboio */
+		
+		/* Animações de Entrada e Saída do Comboio (ESTAVAM EM FALTA!) */
         @keyframes trainDriveIn {
             0% { transform: translateX(-150vw); }
             100% { transform: translateX(0); }
@@ -333,53 +339,85 @@
             transition: transform 1.5s cubic-bezier(0.5, 0, 0.75, 0);
         }
 
-        /* Contentor das Carruagens (Esquerda) */
         .carriages-container { 
-            display: flex; gap: 12px; align-items: flex-end; flex-shrink: 0; margin-right: 12px;
+            display: flex; 
+            gap: clamp(4px, 1.5vw, 12px); 
+            align-items: flex-end; 
+            margin-right: clamp(4px, 1.5vw, 12px);
+            justify-content: center; /* Mantém tudo centrado! */
         }
 
-        /* Carruagens com TAMANHO FIXO para nunca colapsar */
+        /* 2. CARRUAGENS FLUIDAS */
         .carriage-slot {
-            width: 70px; height: 70px; border: 4px dashed #a4b0be;
-            border-radius: 12px 12px 0 0; display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; font-weight: 900; color: var(--azul-escuro); text-transform: uppercase;
-            position: relative; transition: 0.3s; box-sizing: border-box; flex-shrink: 0; background: #f1f2f6;
+            width: clamp(45px, 12vw, 70px); 
+            height: clamp(50px, 12vw, 70px); 
+            border: clamp(2px, 1vw, 4px) dashed #a4b0be;
+            border-radius: 12px 12px 0 0; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.1rem, 4vw, 1.6rem); 
+            font-weight: 900; color: var(--azul-escuro); text-transform: uppercase;
+            position: relative; transition: 0.3s; box-sizing: border-box; 
+            background: #f1f2f6;
         }
-        
-        /* Rodas Carruagem (pointer-events:none previne bugs no Drop) */
-        .carriage-slot::before {
-            content: ''; position: absolute; bottom: -14px; left: 8px; width: 18px; height: 18px;
+
+        /* Rodas das Carruagens (Restauradas!) */
+        .carriage-slot::before, .carriage-wheel-2 {
+            content: ''; /* Essencial para aparecer */
+            position: absolute; /* Essencial para ficar debaixo da carruagem */
+            width: clamp(14px, 3vw, 18px); 
+            height: clamp(14px, 3vw, 18px);
             background: #2f3542; border-radius: 50%; border: 2px solid #747d8c; pointer-events: none;
+            bottom: calc(clamp(14px, 3vw, 18px) * -0.7);
         }
-        .carriage-wheel-2 {
-            position: absolute; bottom: -14px; right: 8px; width: 18px; height: 18px;
-            background: #2f3542; border-radius: 50%; border: 2px solid #747d8c; pointer-events: none;
-        }
-        
-        /* A ligação (Engate) à direita */
+        .carriage-slot::before { left: 10%; }
+        .carriage-wheel-2 { right: 10%; }
+
+        /* 3. O ENGATE DAS CARRUAGENS (Restaurado!) */
         .carriage-link {
-            position: absolute; right: -14px; bottom: 12px; width: 14px; height: 6px; background: #2f3542; pointer-events: none;
+            position: absolute; /* Sai de dentro do texto! */
+            background: #2f3542; /* Ganha cor novamente */
+            pointer-events: none;
+            right: clamp(-14px, -2vw, -10px); 
+            bottom: 10px; 
+            width: clamp(10px, 2vw, 14px); 
+            height: 5px;
+            z-index: 0;
         }
 
         .carriage-slot.drag-over { border-color: var(--azul-vibrante); background-color: #e3f2fd; transform: scale(1.05); }
         .carriage-slot.correct { border-style: solid; border-color: #2ed573; background: #eafff0; color: #219d53; animation: popIn 0.3s ease;}
         .carriage-slot.correct .carriage-link { background: #219d53; }
 
-        /* Locomotiva na Direita a puxar (Tamanho Fixo) */
+        /* 4. LOCOMOTIVA (Restaurada e Fluida!) */
         .locomotive {
-            width: 110px; height: 90px; background: #ff4757; border-radius: 20px 30px 0 0;
-            position: relative; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); border-bottom: 6px solid #2f3542;
-            flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-left: 2px;
+            width: clamp(70px, 18vw, 110px); 
+            height: clamp(60px, 15vw, 90px); 
+            background: #ff4757; border-radius: 20px 30px 0 0;
+            position: relative; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); 
+            border-bottom: clamp(3px, 1vw, 6px) solid #2f3542;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center; 
         }
         
-        .loco-cabin { position: absolute; left: 0; bottom: 0; width: 50px; height: 110px; background: #ff4757; border-radius: 15px 15px 0 0; border-bottom: 6px solid #2f3542; }
-        .loco-window { position: absolute; right: 8px; top: 15px; width: 28px; height: 35px; background: #e3f2fd; border-radius: 6px; border: 3px solid #2f3542; }
-        .chimney { position: absolute; right: 15px; top: -25px; width: 16px; height: 25px; background: #2f3542; border-radius: 5px 5px 0 0; }
+        .loco-cabin { 
+            position: absolute; left: 0; bottom: 0; background: #ff4757; border-radius: 15px 15px 0 0; /* Voltou! */
+            width: 45%; height: 120%; 
+            border-bottom: clamp(3px, 1vw, 6px) solid #2f3542; 
+        }
+        .loco-window { 
+            position: absolute; background: #e3f2fd; border-radius: 6px; border: clamp(2px, 0.5vw, 3px) solid #2f3542; /* Voltou! */
+            width: 55%; height: 35%; right: 15%; top: 15%; 
+        }
+        .chimney { 
+            position: absolute; background: #2f3542; border-radius: 5px 5px 0 0; /* Voltou! */
+            right: 15%; top: -25%; width: 15%; height: 25%; 
+        }
         
         /* Rodas Locomotiva */
-        .locomotive .wheel { position: absolute; bottom: -16px; background: #2f3542; border-radius: 50%; border: 3px solid #747d8c; pointer-events: none;}
-        .locomotive .wheel-1 { left: 5px; width: 26px; height: 26px; }
-        .locomotive .wheel-2 { right: 10px; width: 32px; height: 32px; bottom: -18px;} /* Roda da frente maior */
+        .locomotive .wheel { 
+            position: absolute; background: #2f3542; border-radius: 50%; border: clamp(2px, 0.5vw, 3px) solid #747d8c; pointer-events: none; /* Voltou! */
+        }
+        .locomotive .wheel-1 { left: 5%; width: clamp(20px, 5vw, 26px); height: clamp(20px, 5vw, 26px); bottom: -25%;}
+        .locomotive .wheel-2 { right: 10%; width: clamp(24px, 6vw, 32px); height: clamp(24px, 6vw, 32px); bottom: -30%;}
         
         /* Fumo Dinâmico */
         .smoke { position: absolute; top: -15px; right: -5px; font-size: 2rem; opacity: 0; pointer-events: none; }
@@ -475,6 +513,18 @@
 			margin-top: auto;
 		  }
 		}
+		
+		@media (max-width: 600px) {
+            .scenery {
+                height: 130px; /* Mais baixinho no telemóvel para não roubar espaço aos botões em baixo */
+                padding-bottom: 20px;
+            }
+            .syllable-card {
+                /* Sílabas para clicar ficam ligeiramente mais finas */
+                padding: 10px;
+                min-width: 55px; 
+            }
+        }
 
 		
     .icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
