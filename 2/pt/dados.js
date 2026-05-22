@@ -168,7 +168,7 @@ const dbPalavras = [
   { palavra: "doze", imagem: "../../img/doze.png", num: 2, divisao: "DO-ZE" },
   { palavra: "dragão", imagem: "../../img/dragao.png", num: 2, divisao: "DRA-GÃO" },
   { palavra: "dúvida", imagem: "../../img/duvida.png", num: 3, divisao: "DÚ-VI-DA" },
-  { palavra: "dúzia", imagem: "../../img/duzia.png", num: 2, divisao: "DÚ-ZIA" },
+  { palavra: "dúzia", imagem: "../../img/duzia.png", num: 3, divisao: "DÚ-ZI-A" },
   { palavra: "elefante", imagem: "../../img/elefante.png", num: 4, divisao: "E-LE-FAN-TE" },
   { palavra: "ema", imagem: "../../img/ema.png", num: 2, divisao: "E-MA" },
   { palavra: "empada", imagem: "../../img/empada.png", num: 3, divisao: "EM-PA-DA" },
