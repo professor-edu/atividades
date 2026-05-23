@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Sem Par 🧦</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+	
+	*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+        /* =====================================================================
+           CSS DO TEMPLATE BASE E ESTRUTURA GERAL
+           ===================================================================== */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+			--azul-vibrante: #0091ff; 
+			
+			/* CORES DOS CARTÕES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			
+			/* CORES DO CONTAINER DE JOGO + RGBA PARA ALTERAR A SHADOW */
+			--cor-c1: #ff6b6b; /* vermelho */
+			--cor-c1-sombra: rgba(255, 107, 107, 0.55);
+			
+			--cor-c2: #4dabf7; /* azul */
+			--cor-c2-sombra: rgba(77, 171, 247, 0.66);
+			
+			--cor-c3: #51cf66; /* verde */
+			--cor-c3-sombra: rgba(69, 176, 98, 0.52);
+			
+			--cor-c4: #fcc419; /* amarelo */
+			--cor-c4-sombra: rgba(251, 197, 49, 0.75);
+			
+			--cor-c5: #cc5de8; /* roxo */
+			--cor-c5-sombra: rgba(165, 94, 234, 0.65);
+			
+			--cor-c6: #ff922b; /* laranja */
+			--cor-c6-sombra: rgba(250, 152, 58, 0.85);
+			
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px var(--cor-c3-sombra); 
+            border-top: 8px solid var(--cor-c3); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+		
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+        
+		.btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+		
+		
+		* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		
+			
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        /* ECRÃS BASE (Garante centragem e esconde o que não está ativo) */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+        
+        /* BOTÕES GLOBAIS INTOCÁVEIS */
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+		
+		/* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+			
+        /* TÍTULOS E TEXTOS BASE */
+        .titulo-destaque { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+        .pergunta-destaque { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+        /* =========================================
+           O CAMINHO MÁGICO (RASTO DE TINTA E SVGs)
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 750px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        
+        /* O trilho por fazer (agora num cinza suave para dar contraste) */
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed #cbd5e1; z-index: 1; }
+        
+        /* O Rasto de Tinta Luminoso */
+        .caminho-rasto {
+            position: absolute;
+            bottom: -4px; /* Cobre exatamente a linha tracejada */
+            left: 0;
+            width: 0%; /* Começa a zero */
+            height: 4px;
+            background-color: var(--cor-c3);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--cor-c3-sombra); /* Brilho de néon mágico! */
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+        }
+
+        .caminho-avatar { 
+            position: absolute; left: 0%; bottom: -15px; 
+            transform: translateX(-50%) scaleX(-1); 
+            width: clamp(40px, 8vw, 50px); height: auto; object-fit: contain;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 4; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; right: -15px; bottom: -10px; 
+            width: clamp(45px, 9vw, 60px); height: auto; object-fit: contain;
+            z-index: 3; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+            
+            /* Animação para chamar a atenção da criança */
+            animation: pulsaAlvo 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulsaAlvo { 
+            0% { transform: scale(1) rotate(0deg); } 
+            100% { transform: scale(1.15) rotate(5deg); } 
+        }
+        
+        .caminho-avatar { 
+            position: absolute; 
+            left: 0%; 
+            bottom: -5px; /* Ajuste para a base da imagem tocar na linha */
+            transform: translateX(-50%) scaleX(-1); /* O scaleX vira a imagem horizontalmente */
+            
+            /* Substituição do font-size para dimensões dinâmicas de imagem */
+            width: clamp(40px, 8vw, 50px); 
+            height: auto;
+            object-fit: contain;
+            
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 3; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Sombra realista 3D */
+            pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; 
+            right: -15px; 
+            bottom: -5px; 
+            
+            /* Ligeiramente maior que o avatar para dar noção de destino */
+            width: clamp(45px, 9vw, 60px); 
+            height: auto;
+            object-fit: contain;
+            
+            z-index: 2; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+            pointer-events: none;
+        }
+
+        /* ANIMAÇÕES GLOBAIS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; }
+        
+        /* Canvas de Confetis Trancado na Caixa de Jogo */
+        #confetti-canvas { 
+            position: absolute; /* Mudou de fixed para absolute */
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 15; /* Fica acima dos jogos, mas abaixo das caixas de vitória/menu */
+            border-radius: 30px;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; border-radius: 20px;}
+        }
+		
+		/* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+		/* =========================================
+        OUTRAS CORREÇÕES PARA MOBILE
+        ========================================= */
+		
+		@media (max-width: 600px) {
+
+            #opcoes-resposta {
+                gap: 12px !important;
+            }
+
+            .btn-pre {
+                border-width: 4px;
+                box-shadow: 0 6px 0 var(--cor-borda);
+            }
+            .btn-pre.correct { box-shadow: 0 6px 0 #219d53; }
+            .btn-pre.wrong { box-shadow: 0 6px 0 #d0303f; }
+        }
+		
+		/* =====================================================================
+           CSS ESPECÍFICO DO ECRÃ INICIAL (MENU)E FIM
+        ===================================================================== */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed var(--cor-pre); border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05); color: var(--cor-pre); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }		
+		
+		.grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+		
+		.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+		
+		.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+
+		 /* =====================================================================
+       CSS DO JOGO "SEM PAR" (ALTAMENTE RESPONSIVO)
+       ===================================================================== */
+    
+	.instrucao-flex {
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        gap: clamp(10px, 2vw, 15px);
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 5px;
+    }
+
+    /* Otimização Responsiva do Texto da Instrução em ecrãs muito pequenos */
+    @media (max-width: 480px) {
+        .instrucao-flex {
+            gap: 8px;
+        }
+        /* Encurta ligeiramente o texto no telemóvel para evitar quebras de linha */
+        #instrucao-ronda {
+            font-size: 1.05rem !important;
+        }
+    }	
+	
+    /* Animação Inicial Tutorial (Par vs Solitário) */
+    .tutorial-sem-par {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    .tut-carta {
+        width: 45px;
+        height: 60px;
+        background: white;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    /* Animação: Dois sóis juntam-se numa caixa verde */
+    .tut-par-1 {
+        animation: juntaParEsq 3s infinite ease-in-out;
+    }
+    .tut-par-2 {
+        animation: juntaParDir 3s infinite ease-in-out;
+    }
+    /* Estrela solitária brilha em vermelho/laranja */
+    .tut-solitario {
+        border-color: var(--cor-btn-laranja);
+        animation: brilhaSolitario 1.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes juntaParEsq {
+        0%, 20% { transform: translateX(0); border-color: #cbd5e1; }
+        50%, 80% { transform: translateX(10px); border-color: var(--cor-pre); background: #e1f5f2; }
+        100% { transform: translateX(0); border-color: #cbd5e1; }
+    }
+    @keyframes juntaParDir {
+        0%, 20% { transform: translateX(0); border-color: #cbd5e1; }
+        50%, 80% { transform: translateX(-10px); border-color: var(--cor-pre); background: #e1f5f2; }
+        100% { transform: translateX(0); border-color: #cbd5e1; }
+    }
+    @keyframes brilhaSolitario {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 rgba(250, 152, 58, 0); }
+        100% { transform: scale(1.1); box-shadow: 0 0 12px var(--cor-btn-laranja); }
+    }
+
+    /* Grelha de Cartas do Jogo */
+    .grelha-sem-par {
+        display: grid;
+        gap: clamp(8px, 1.8vh, 12px);
+        width: 100%;
+        margin: auto 0; /* Centra verticalmente no espaço que sobra */
+        justify-content: center;
+        align-content: center;
+        box-sizing: border-box;
+    }
+
+    /* Grelha 3x3 (Fase 1) - Agora com escala vertical aumentada (62vh) */
+    .grelha-sem-par.fase-3x3 {
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+        max-width: clamp(280px, 62vh, 390px); 
+    }
+
+    /* Grelha 4x4 (Fase 2) - Agora com escala vertical aumentada (65vh) */
+    .grelha-sem-par.fase-4x4 {
+        grid-template-columns: repeat(4, 1fr);
+        width: 100%;
+        max-width: clamp(300px, 65vh, 430px);
+    }
+
+    /* A Carta do Jogo */
+    .carta-sem-par {
+        background: white;
+        border: 2px solid #cbd5e1; /* Borda mais fina para dar destaque ao interior */
+        border-radius: clamp(10px, 2.5vw, 15px);
+        aspect-ratio: 1;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        /* Sombra muito mais leve e subtil, sem o efeito 3D grosso que roubava espaço */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        
+        transition: transform 0.1s, border-color 0.2s, background-color 0.2s;
+        touch-action: manipulation;
+        user-select: none;
+    }
+
+    @media (hover: hover) {
+        .carta-sem-par:hover {
+            transform: scale(1.03);
+            border-color: var(--cor-c3);
+        }
+    }
+
+    .carta-sem-par:active {
+        transform: scale(0.97);
+    }
+
+    /* Mantém as cores de feedback elegantes e sem as sombras grossas antigas */
+    .carta-sem-par.par-revelado {
+        border-color: var(--cor-pre) !important;
+        background-color: #e1f5f2 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+    }
+
+    .carta-sem-par.achou-sem-par {
+        border-color: var(--cor-btn-verde) !important;
+        background-color: #ebfbee !important;
+        box-shadow: 0 4px 12px rgba(46, 213, 115, 0.2) !important;
+        transform: scale(1.04);
+        pointer-events: none;
+    }
+	
+	/* Limita e centra as imagens dos animais/objetos dentro da carta */
+	.carta-sem-par img {
+		width: 75%; /* Ajusta para 75% ou 80% do tamanho da carta */
+		height: 75%;
+		object-fit: contain; /* Garante que a imagem não se distorce */
+		pointer-events: none; /* Evita interferências no clique */
+		animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	}
+
+    /* Animação de Taça a Pulsar no Fim */
+    .taca-vitoria {
+        width: clamp(80px, 15vw, 130px);
+        margin-bottom: 15px;
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+        animation: 
+            popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
+            pulsaTaca 1.5s infinite alternate ease-in-out 0.6s;
+    }
+
+    @keyframes pulsaTaca {
+        0% { transform: scale(1) rotate(0deg); }
+        100% { transform: scale(1.1) rotate(3deg); }
+    }
+
+    /* =====================================================================
+       NOVO ECRÃ DE TRANSIÇÃO (MODAL DE ALERTA INTERNO)
+       ===================================================================== */
+    .modal-alerta {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(240, 247, 255, 0.98); /* Fundo suave a condizer */
+        border-radius: 30px;
+        z-index: 150;
+        display: none; /* Ativado via JS no início da Ronda 6 */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 25px;
+        box-sizing: border-box;
+        text-align: center;
+        animation: fadeIn 0.4s ease;
+    }
+
+    .modal-titulo {
+        font-size: clamp(1.6rem, 5vw, 2.2rem);
+        color: var(--azul-escuro);
+        font-weight: 900;
+        margin-bottom: 15px;
+    }
+
+    .modal-texto {
+        font-size: clamp(1rem, 3.5vw, 1.25rem);
+        color: var(--text-main);
+        line-height: 1.4;
+        margin-bottom: 25px;
+        max-width: 650px;
+    }
+
+    /* Botão de Som no Alerta (Pulsar Amarelo) */
+    .btn-som-alerta {
+        background: var(--cor-btn-amarelo);
+        border: none;
+        border-radius: 50%;
+        width: 55px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 0 #d9a300;
+        margin-bottom: 25px;
+        animation: pulsarBotaoSom 2s infinite ease-in-out;
+    }
+    .btn-som-alerta img {
+        width: 55%;
+        height: 55%;
+        filter: invert(1);
+    }
+
+    @keyframes pulsarBotaoSom {
+        0% { transform: scale(1); box-shadow: 0 4px 0 #d9a300, 0 0 0 0 rgba(251, 197, 49, 0.5); }
+        50% { transform: scale(1.08); box-shadow: 0 4px 0 #d9a300, 0 0 0 12px rgba(251, 197, 49, 0); }
+        100% { transform: scale(1); box-shadow: 0 4px 0 #d9a300, 0 0 0 0 rgba(251, 197, 49, 0); }
+    }
+
+    /* =====================================================================
+       CONTROLOS DA BASE (VOLTAR AO MENU)
+       ===================================================================== */
+    .controlos-base {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+        margin-top: 5px;
+        gap: 15px;
+    }
+
+    .btn-voltar-jogo {
+        background: var(--cor-pre);
+        color: white !important;
+        border: none;
+        padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
+        border-radius: 15px;
+        font-size: clamp(0.85rem, 2vw, 1.05rem);
+        font-weight: 900;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 0 4px 0 var(--cor-pre-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: clamp(5px, 1.5vw, 10px);
+        transition: transform 0.1s, filter 0.2s;
+        height: auto;
+        width: auto;
+    }
+
+    @media (hover: hover) {
+        .btn-voltar-jogo:hover {
+            filter: brightness(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--cor-pre-dark);
+        }
+    }
+
+    .btn-voltar-jogo:active {
+        transform: translateY(4px) !important;
+        box-shadow: none !important;
+    }
+
+    .btn-voltar-jogo img {
+        width: 1.15em;
+        height: 1.15em;
+        pointer-events: none;
+    }
+
+    /* Botão de Áudio Guia Geral (Pulsar Cor de Laranja) */
+    .btn-audio-guia {
+        background: #ffa502;
+        border: none;
+        border-radius: 50%;
+        width: clamp(35px, 8vw, 45px);
+        height: clamp(35px, 8vw, 45px);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 3px 0 #d97d2c;
+        animation: pulsarBotaoSom 2s infinite ease-in-out;
+    }
+    .btn-audio-guia img {
+        width: 60%;
+        height: 60%;
+        filter: invert(1);
+    }
+
+
+    </style>
+</head>
+<body>
+
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../"><img src="../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../"><img src="../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../1"><img src="../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../2"><img src="../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../3"><img src="../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../4"><img src="../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+
+		<h1>Sem Par<img src="../img-titulos/sem_par.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="header-subtitulo">Encontra o que NÃO tem par!</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- BARRA DE PROGRESSO (CAMINHO MÁGICO DINÂMICO) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-rasto" id="caminho-rasto"></div>
+            <!-- O Avatar e o Alvo mudam de acordo com o minijogo selecionado -->
+            <img src="" class="caminho-avatar" id="avatar-progresso" alt="Avatar"> 
+        </div>
+        <img src="" class="caminho-alvo" id="alvo-progresso" alt="Alvo"> 
+    </div>
+
+    <!-- CARTÃO DE JOGO -->
+    <div class="cartao-jogo-container">
+
+        <!-- ==========================
+             ECRÃ DE TRANSIÇÃO (FIM DA RONDA 5)
+             ========================= -->
+        <div class="modal-alerta" id="modal-transicao">
+            <h3 class="modal-titulo">Grande Desafio! <img src="../../SVG/estrela.svg" class="icon-acao" alt=""></h3>
+            <p class="modal-texto">
+				Agora, vai ficar mais difícil!!<br> 
+				Encontra as <strong>DUAS</strong> imagens que não têm par!
+            </p>
+            
+            <!-- Botão de som específico do alerta (Só inicia se for clicado) -->
+            <button class="btn-som-alerta" onclick="tocarVozAlerta()">
+                <img src="../../SVG/som.svg" alt="Ouvir Explicação">
+            </button>
+            
+            <button class="btn-acao primario" onclick="continuarParaFase2()">
+                CONTINUAR <img src="../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+            </button>
+        </div>
+
+        <!-- ==========================
+             ECRÃ DE SELEÇÃO DE TEMAS
+             ========================= -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+                        
+            <!-- ANIMAÇÃO DE TUTORIAL DO SEM PAR -->
+            <div class="animacao-tutorial">
+                <div class="tutorial-sem-par">
+                    <div class="tut-carta tut-par-1">☀️</div>
+                    <div class="tut-carta tut-par-2">☀️</div>
+                    <div class="tut-carta tut-solitario">⭐</div>
+                </div>
+            </div>
+			
+            <h2 class="titulo-destaque">Escolhe o teu tema!</h2>
+            
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(1)">
+                    <img src="../img-titulos/sem_par_menu_1.svg" class="icon-btn-nivel" alt="">
+                    Animais
+                </button>
+                <button class="btn-nivel-novo bg-laranja" onclick="iniciarJogo(2)">
+                    <img src="../img-titulos/sem_par_menu_2.svg" class="icon-btn-nivel" alt="">
+                    Alimentos
+                </button>
+                <button class="btn-nivel-novo bg-verde" onclick="iniciarJogo(3)">
+                    <img src="../img-titulos/sem_par_menu_3.svg" class="icon-btn-nivel" alt="">
+                    Objetos
+                </button>
+                <button class="btn-nivel-novo bg-roxo" onclick="iniciarJogo(4)">
+                    <img src="../img-titulos/sem_par_menu_4.svg" class="icon-btn-nivel" alt="">
+                    Mistura Mágica
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ==========================
+             ECRÃ DA ÁREA DE JOGO
+        ========================= -->
+		<div id="ecra-jogo" class="ecra">
+			
+			<!-- Barra de Instrução Superior Única (Alinhada à Esquerda) -->
+			<div class="pergunta-destaque" style="margin-top: 5px; width: 100%;">
+				<div class="instrucao-flex">
+					<!-- Botão Menu Retangular -->
+					<button class="btn-voltar-jogo" onclick="voltarAoMenu()">
+						<img src="../../SVG/voltar.svg" alt=""> TEMAS
+					</button>
+					
+					<!-- Botão de som a pulsar -->
+					<button class="btn-audio-guia" onclick="reproduzirAudioExplicativo()">
+						<img src="../../SVG/som.svg" alt="Ouvir">
+					</button>
+					
+					<span id="instrucao-ronda" style="font-size: 1.3rem; font-weight: 900; color: var(--azul-vibrante); text-align: left;">
+						Carrega no som para ouvir!
+					</span>
+				</div>
+			</div>
+
+			<!-- Grelha de Cartas (Agora muito maior!) -->
+			<div class="grelha-sem-par" id="tabuleiro-sem-par">
+				<!-- Gerado dinamicamente via JS -->
+			</div>
+
+		</div>
+
+        <!-- ==========================
+             ECRÃ DE FIM DE JOGO
+        ========================= -->
+        <div id="ecra-fim" class="ecra">
+            
+            <img src="../../SVG/taca.svg" alt="Taça de Vitória" class="taca-vitoria">
+            
+            <h2 class="end-title" id="end-title-text" style="margin-bottom: 15px;">Fantástico!</h2>
+            
+            <div class="end-stats" id="mensagem-fim" style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 35px; background: var(--bg-header); padding: 20px 30px; border-radius: 20px; border: 3px dashed var(--cor-pre); max-width: 500px;">
+                Fim da aventura!
+            </div>
+           
+            <div class="botoes-acao-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">
+                    JOGAR OUTRA VEZ <img src="../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao secundario" onclick="voltarAoMenu()">
+                    VOLTAR AO MENU <img src="../../SVG/home.svg" class="icon-acao" alt="">
+                </button>
+            </div>
+            
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+
+    </div> 
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../SVG/pre.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Atualiza o Ano do Footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    // Menu Hamburger
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    // Função universal para alternar ecrãs sem quebrar o layout
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        limparConfetis();
+        fecharModalTransicao();
+        document.getElementById('caminho-magico').style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        limparConfetis();
+        fecharModalTransicao();
+        iniciarJogo(jogoAtual);
+    }
+
+    // Função para atualizar o bonequinho na barra de progresso (Manda a percentagem de 0 a 100)
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        const rasto = document.getElementById('caminho-rasto');
+        if(avatar) avatar.style.left = `${percentagem}%`;
+        if(rasto) rasto.style.width = `${percentagem}%`;
+    }
+
+    // O Motor de MP3 Locais (Para Vozes e Narrações)
+    function tocarVoz(caminhoMp3) {
+        try {
+            const voz = new Audio(caminhoMp3);
+            const playPromise = voz.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(erro => console.warn("Browser bloqueou o MP3. Requer clique.", erro));
+            }
+        } catch (e) {
+            console.error("Erro ao tocar áudio.", e);
+        }
+    }
+
+    // Audio Context API (Sons de Acerto/Erro sintéticos e melodia)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    
+    function iniciarAudio() {
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    window.addEventListener('pointerdown', iniciarAudio);
+    window.addEventListener('keydown', iniciarAudio);
+
+    function tocarSom(tipo) {
+        iniciarAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator(); 
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime + 0.02;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.25, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(260, agora); osc.frequency.exponentialRampToValueAtTime(160, agora + 0.2);
+            gain.gain.setValueAtTime(0.25, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.2);
+            osc.start(agora); osc.stop(agora + 0.2);
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(450, agora); osc.frequency.exponentialRampToValueAtTime(900, agora + 0.1);
+            gain.gain.setValueAtTime(0.15, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.30, duracao: 0.15 }, 
+                { freq: 783.99, tempo: 0.45, duracao: 0.30 }, 
+                { freq: 1046.50, tempo: 0.75, duracao: 0.60 }
+            ];
+
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle';
+                o.frequency.value = nota.freq;
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.25, agora + nota.tempo + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    // Confetis Contidos no Cartão Responsivo
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+    
+    function redimensionarCanvas() { 
+        const container = document.querySelector('.cartao-jogo-container');
+        if(container && canvasConfetti) {
+            canvasConfetti.width = container.clientWidth; 
+            canvasConfetti.height = container.clientHeight; 
+        }
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+	
+    function limparConfetis() {
+        confetis = []; 
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+    
+    /* =====================================================================
+       🟢 DADOS DO JOGO "SEM PAR" 🟢
+       ===================================================================== */
+
+    const BANCO_IMAGENS_JOGOS = {
+        1: {
+            titulo: "Sem Par: Animais",
+            instrucoes: {
+                fase1: "Encontra o animal que não tem par!",
+                fase2: "Agora encontra os DOIS animais que não têm par!"
+            },
+            audioRondaFase1: "audio/instrucao_animais_f1.mp3",
+            audioRondaFase2: "audio/instrucao_animais_f2.mp3",
+            audioAlertaTransicao: "audio/alerta_transicao.mp3",
+            caminhoProgresso: { avatar: "sem_par_galo.svg", alvo: "sem_par_galinha.svg" }, // No final juntam-se as duas meias!
+            banco: ["porco", "vaca", "gato", "cao", "leao", "elefante", "girafa", "zebra", "coelho", "sapo", "baleia", "bode", "foca", "galinha", "pavao", "peixe", "rato", "cavalo", "tigre", "urso"]
+        },
+        2: {
+            titulo: "Sem Par: Alimentos",
+            instrucoes: {
+                fase1: "Encontra o alimento que não tem par!",
+                fase2: "Agora encontra os DOIS alimentos que não têm par!"
+            },
+            audioRondaFase1: "audio/instrucao_alimentos_f1.mp3",
+            audioRondaFase2: "audio/instrucao_alimentos_f2.mp3",
+            audioAlertaTransicao: "audio/alerta_transicao.mp3",
+            caminhoProgresso: { avatar: "sem_par_leite.svg", alvo: "sem_par_bolacha.svg" },
+            banco: ["abacaxi", "banana", "batata", "caju", "cenoura", "gelado", "gema", "leite", "limao", "maca", "melao", "morango", "ovo", "pao", "pessego", "queijo", "tomate", "uva"]
+        },
+        3: {
+            titulo: "Sem Par: Objetos",
+            instrucoes: {
+                fase1: "Encontra o objeto que não tem par!",
+                fase2: "Agora encontra os DOIS objetos que não têm par!"
+            },
+            audioRondaFase1: "audio/instrucao_objetos_f1.mp3",
+            audioRondaFase2: "audio/instrucao_objetos_f2.mp3",
+            audioAlertaTransicao: "audio/alerta_transicao.mp3",
+            caminhoProgresso: { avatar: "sem_par_chave.svg", alvo: "sem_par_cadeado.svg" },
+            banco: ["anel", "balde", "bata", "boneca", "bota", "botao", "cadeira", "caixa", "calculadora", "cama", "casaco", "chapeu", "chave", "coroa", "dado", "espada", "espelho", "ferro", "flauta", "funil", "guitarra", "laco", "leque", "livro", "lupa", "mala", "mola", "oculos", "piano", "pote", "quadro", "sino", "taca", "tesoura", "tigela", "vassoura", "vela", "violino"]
+        },
+        4: {
+            titulo: "Sem Par: Mistura Mágica",
+            instrucoes: {
+                fase1: "Encontra a imagem que não tem par!",
+                fase2: "Agora encontra as DUAS imagens que não têm par!"
+            },
+            audioRondaFase1: "audio/instrucao_mistura_f1.mp3",
+            audioRondaFase2: "audio/instrucao_mistura_f2.mp3",
+            audioAlertaTransicao: "audio/alerta_transicao.mp3",
+            caminhoProgresso: { avatar: "sem_par_rato.svg", alvo: "sem_par_computador.svg" },
+            banco: ["porco", "abacaxi", "cadeira", "aviao", "vaca", "banana", "bota", "comboio", "cao", "morango", "chave", "foguete", "leao", "queijo", "sino", "arvore", "peixe", "pao", "bola", "casa"]
+        }
+    };
+
+    let jogoAtual = 1;
+    let rondaAtual = 0;
+    const totalRondas = 10;
+    
+    let cartasNaGrelha = []; // Array dos objetos mostrados { id, nome, semPar }
+    let idsSemParEncontrados = []; // Guarda os IDs das cartas corretas já clicadas
+
+    window.onload = function() { mostrarEcra('ecra-selecao'); };
+
+    // Baralhar vetor (Algoritmo Fisher-Yates)
+    function baralharVetor(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Inicia o minijogo
+    function iniciarJogo(idJogo) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        
+        jogoAtual = idJogo;
+        rondaAtual = 0;
+        fecharModalTransicao();
+
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+
+        // Configura Caminho Mágico dinâmico no topo
+        document.getElementById('caminho-magico').style.display = 'block';
+        document.getElementById('avatar-progresso').src = `../img-titulos/${config.caminhoProgresso.avatar}`;
+        document.getElementById('alvo-progresso').src = `../img-titulos/${config.caminhoProgresso.alvo}`;
+        atualizarProgressoCaminho(0);
+
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    // Toca a instrução do minijogo (Fase 1 ou Fase 2) APENAS quando o utilizador clica!
+    function reproduzirAudioExplicativo() {
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+        const ficheiro = (rondaAtual < 5) ? config.audioRondaFase1 : config.audioRondaFase2;
+        tocarVoz(ficheiro);
+    }
+
+    // Toca a instrução de áudio do pop-up de transição (Só toca ao ser clicado)
+    function tocarVozAlerta() {
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+        tocarVoz(config.audioAlertaTransicao);
+    }
+
+    function fecharModalTransicao() {
+        document.getElementById('modal-transicao').style.display = 'none';
+    }
+
+    // Prepara a ronda atual
+    function prepararRonda() {
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+        idsSemParEncontrados = [];
+
+        // Altera texto da instrução dependendo da Fase em que se encontra
+        if (rondaAtual < 5) {
+            document.getElementById('instrucao-ronda').textContent = config.instrucoes.fase1;
+            gerarGrelhaFase1();
+        } else {
+            document.getElementById('instrucao-ronda').textContent = config.instrucoes.fase2;
+            gerarGrelhaFase2();
+        }
+    }
+
+    // Ronda 1 a 5: Grelha 3x3 (4 pares + 1 sem par)
+    function gerarGrelhaFase1() {
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+        
+        // Baralha banco de dados de imagens disponíveis
+        let imagensDisponiveis = baralharVetor([...config.banco]);
+
+        // Seleciona as imagens para esta ronda (5 únicas necessárias: 4 para os pares, 1 para o sem par)
+        let imagensSelecionadas = imagensDisponiveis.slice(0, 5);
+        let parImagens = imagensSelecionadas.slice(0, 4);
+        let semParImagem = imagensSelecionadas[4];
+
+        cartasNaGrelha = [];
+        
+        // 1. Cria as cartas emparelhadas (8 cartas)
+        let idUnico = 0;
+        parImagens.forEach(imgNome => {
+            cartasNaGrelha.push({ id: idUnico++, nome: imgNome, semPar: false });
+            cartasNaGrelha.push({ id: idUnico++, nome: imgNome, semPar: false });
+        });
+
+        // 2. Cria a carta solitária (1 carta)
+        cartasNaGrelha.push({ id: idUnico++, nome: semParImagem, semPar: true });
+
+        // Baralha a disposição final das 9 cartas
+        baralharVetor(cartasNaGrelha);
+
+        renderizarTabuleiroHTML('fase-3x3');
+    }
+
+    // Ronda 6 a 10: Grelha 4x4 (7 pares + 2 sem par)
+    function gerarGrelhaFase2() {
+        const config = BANCO_IMAGENS_JOGOS[jogoAtual];
+        let imagensDisponiveis = baralharVetor([...config.banco]);
+
+        // 9 imagens necessárias: 7 para os pares (14 cartas) + 2 para as duas sem par
+        let imagensSelecionadas = imagensDisponiveis.slice(0, 9);
+        let parImagens = imagensSelecionadas.slice(0, 7);
+        let semParImagens = imagensSelecionadas.slice(7, 9);
+
+        cartasNaGrelha = [];
+        let idUnico = 0;
+
+        // 1. Cria as cartas emparelhadas (14 cartas)
+        parImagens.forEach(imgNome => {
+            cartasNaGrelha.push({ id: idUnico++, nome: imgNome, semPar: false });
+            cartasNaGrelha.push({ id: idUnico++, nome: imgNome, semPar: false });
+        });
+
+        // 2. Cria as duas cartas solitárias (2 cartas)
+        semParImagens.forEach(imgNome => {
+            cartasNaGrelha.push({ id: idUnico++, nome: imgNome, semPar: true });
+        });
+
+        baralharVetor(cartasNaGrelha);
+
+        renderizarTabuleiroHTML('fase-4x4');
+    }
+
+    // Desenha as cartas no tabuleiro de jogo
+    function renderizarTabuleiroHTML(classeGrelha) {
+        const tabuleiro = document.getElementById('tabuleiro-sem-par');
+        
+        // Define a grelha correta (3x3 ou 4x4)
+        tabuleiro.className = `grelha-sem-par ${classeGrelha}`;
+        tabuleiro.innerHTML = '';
+
+        cartasNaGrelha.forEach(cartaDados => {
+            const card = document.createElement('div');
+            card.className = 'carta-sem-par';
+            card.id = `carta-${cartaDados.id}`;
+
+            const img = document.createElement('img');
+            img.src = `../img/${cartaDados.nome}.png`;
+            card.appendChild(img);
+
+            card.onclick = () => {
+                cliqueNaCarta(card, cartaDados);
+            };
+
+            tabuleiro.appendChild(card);
+        });
+    }
+
+    function cliqueNaCarta(cardElemento, cartaDados) {
+        // Tranca cliques temporariamente para feedback
+        document.querySelectorAll('.carta-sem-par').forEach(c => c.style.pointerEvents = 'none');
+
+        if (cartaDados.semPar) {
+            // ACERTOU! (Clicou no sem par)
+            tocarSom('acerto');
+            cardElemento.classList.add('achou-sem-par');
+            
+            idsSemParEncontrados.push(cartaDados.id);
+
+            // Verifica se a ronda terminou
+            const totalSemParEsperados = (rondaAtual < 5) ? 1 : 2;
+
+            if (idsSemParEncontrados.length >= totalSemParEsperados) {
+                concluiuRondaComSucesso();
+            } else {
+                // Destranca os restantes botões para a criança encontrar o segundo sem par (Fase 2)
+                document.querySelectorAll('.carta-sem-par:not(.achou-sem-par)').forEach(c => c.style.pointerEvents = 'auto');
+            }
+
+        } else {
+            // ERROU! (Clicou numa carta que tem par)
+            tocarSom('erro');
+            cardElemento.classList.add('error-shake');
+
+            // Encontra e ilumina a carta gémea deste par para dar feedback educativo!
+            const gemeaDados = cartasNaGrelha.find(c => c.nome === cartaDados.nome && c.id !== cartaDados.id);
+            if (gemeaDados) {
+                const gemeaElemento = document.getElementById(`carta-${gemeaDados.id}`);
+                
+                // Ilumina ambas com rebordo azul-turquesa
+                cardElemento.classList.add('par-revelado');
+                gemeaElemento.classList.add('par-revelado');
+
+                setTimeout(() => {
+                    cardElemento.classList.remove('par-revelado');
+                    gemeaElemento.classList.remove('par-revelado');
+                }, 1200);
+            }
+
+            // Destranca botões após meio segundo
+            setTimeout(() => {
+                cardElemento.classList.remove('error-shake');
+                document.querySelectorAll('.carta-sem-par:not(.achou-sem-par)').forEach(c => c.style.pointerEvents = 'auto');
+            }, 600);
+        }
+    }
+
+    function concluiuRondaComSucesso() {
+        rondaAtual++;
+
+        // Atualiza Caminho Mágico
+        let percentagem = (rondaAtual / totalRondas) * 100;
+        atualizarProgressoCaminho(percentagem);
+
+        setTimeout(() => {
+            if (rondaAtual === 5) {
+                // MOMENTO DO ECRÃ DE TRANSIÇÃO (Apresenta o novo desafio de 2 sem par!)
+                tocarSom('pop');
+                document.getElementById('modal-transicao').style.display = 'flex';
+            } else if (rondaAtual >= totalRondas) {
+                // FIM DO JOGO
+                tocarSom('vitoria');
+                dispararConfetis();
+
+                // Mensagens finais de acordo com o tema escolhido
+                let msgFim = "Chegaste ao fim do caminho mágico!<br>";
+                if (jogoAtual === 1) msgFim += "Tens um olho de lince para o reino animal! 🐮";
+                else if (jogoAtual === 2) msgFim += "Descobriste todos os alimentos gémeos! 🍏";
+                else if (jogoAtual === 3) msgFim += "Completaste todos os conjuntos de objetos! 🧸";
+                else msgFim += "Superaste a mistura mágica! Fantástico! 🏆";
+
+                document.getElementById('mensagem-fim').innerHTML = msgFim;
+                mostrarEcra('ecra-fim');
+            } else {
+                prepararRonda();
+            }
+        }, 1200);
+    }
+
+    // Chamado pelo clique no botão continuar do ecrã de transição
+    function continuarParaFase2() {
+        fecharModalTransicao();
+        prepararRonda();
+    }
+</script>
+</body>
+</html>

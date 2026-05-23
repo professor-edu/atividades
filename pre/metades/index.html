@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Metades 🌓</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+	
+	*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+        /* =====================================================================
+           CSS DO TEMPLATE BASE E ESTRUTURA GERAL
+           ===================================================================== */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+			--azul-vibrante: #0091ff; 
+			
+			/* CORES DOS CARTÕES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			
+			/* CORES DO CONTAINER DE JOGO + RGBA PARA ALTERAR A SHADOW */
+			--cor-c1: #ff6b6b; /* vermelho */
+			--cor-c1-sombra: rgba(255, 107, 107, 0.55);
+			
+			--cor-c2: #4dabf7; /* azul */
+			--cor-c2-sombra: rgba(77, 171, 247, 0.66);
+			
+			--cor-c3: #51cf66; /* verde */
+			--cor-c3-sombra: rgba(69, 176, 98, 0.52);
+			
+			--cor-c4: #fcc419; /* amarelo */
+			--cor-c4-sombra: rgba(251, 197, 49, 0.75);
+			
+			--cor-c5: #cc5de8; /* roxo */
+			--cor-c5-sombra: rgba(165, 94, 234, 0.65);
+			
+			--cor-c6: #ff922b; /* laranja */
+			--cor-c6-sombra: rgba(250, 152, 58, 0.85);
+			
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px var(--cor-c1-sombra); 
+            border-top: 8px solid var(--cor-c1); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+		
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+        
+		.btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+		
+		
+		* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		
+			
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        /* ECRÃS BASE (Garante centragem e esconde o que não está ativo) */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+        
+        /* BOTÕES GLOBAIS INTOCÁVEIS */
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+		
+		/* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+			
+        /* TÍTULOS E TEXTOS BASE */
+        .titulo-destaque { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+        .pergunta-destaque { font-size: 1.2rem; color: var(--azul-vibrante); margin-bottom: 15px; font-weight: 900; }
+
+        /* =========================================
+           O CAMINHO MÁGICO (RASTO DE TINTA E SVGs)
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 750px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        
+        /* O trilho por fazer (agora num cinza suave para dar contraste) */
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed #cbd5e1; z-index: 1; }
+        
+        /* O Rasto de Tinta Luminoso */
+        .caminho-rasto {
+            position: absolute;
+            bottom: -4px; /* Cobre exatamente a linha tracejada */
+            left: 0;
+            width: 0%; /* Começa a zero */
+            height: 4px;
+            background-color: var(--cor-c1);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--cor-c1-sombra); /* Brilho de néon mágico! */
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+        }
+
+        .caminho-avatar { 
+            position: absolute; left: 0%; bottom: -15px; 
+            transform: translateX(-50%) scaleX(-1); 
+            width: clamp(40px, 8vw, 50px); height: auto; object-fit: contain;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 4; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; right: -15px; bottom: -10px; 
+            width: clamp(45px, 9vw, 60px); height: auto; object-fit: contain;
+            z-index: 3; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+            
+            /* Animação para chamar a atenção da criança */
+            animation: pulsaAlvo 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulsaAlvo { 
+            0% { transform: scale(1) rotate(0deg); } 
+            100% { transform: scale(1.15) rotate(5deg); } 
+        }
+        
+        .caminho-avatar { 
+            position: absolute; 
+            left: 0%; 
+            bottom: -5px; /* Ajuste para a base da imagem tocar na linha */
+            transform: translateX(-50%) scaleX(-1); /* O scaleX vira a imagem horizontalmente */
+            
+            /* Substituição do font-size para dimensões dinâmicas de imagem */
+            width: clamp(40px, 8vw, 50px); 
+            height: auto;
+            object-fit: contain;
+            
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 3; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Sombra realista 3D */
+            pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; 
+            right: -15px; 
+            bottom: -5px; 
+            
+            /* Ligeiramente maior que o avatar para dar noção de destino */
+            width: clamp(45px, 9vw, 60px); 
+            height: auto;
+            object-fit: contain;
+            
+            z-index: 2; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+            pointer-events: none;
+        }
+
+        /* ANIMAÇÕES GLOBAIS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; }
+        
+        /* Canvas de Confetis Trancado na Caixa de Jogo */
+        #confetti-canvas { 
+            position: absolute; /* Mudou de fixed para absolute */
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 15; /* Fica acima dos jogos, mas abaixo das caixas de vitória/menu */
+            border-radius: 30px;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; border-radius: 20px;}
+        }
+		
+		/* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+		/* =========================================
+        OUTRAS CORREÇÕES PARA MOBILE
+        ========================================= */
+		
+		@media (max-width: 600px) {
+
+            #opcoes-resposta {
+                gap: 12px !important;
+            }
+
+            .btn-pre {
+                border-width: 4px;
+                box-shadow: 0 6px 0 var(--cor-borda);
+            }
+            .btn-pre.correct { box-shadow: 0 6px 0 #219d53; }
+            .btn-pre.wrong { box-shadow: 0 6px 0 #d0303f; }
+        }
+		
+		/* =====================================================================
+           CSS ESPECÍFICO DO ECRÃ INICIAL (MENU)E FIM
+        ===================================================================== */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed var(--cor-pre); border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05); color: var(--cor-pre); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }		
+		
+		.grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+		
+		.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+		
+		.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+        /* =====================================================================
+           CSS DO JOGO 1: BOTÕES DO PRÉ-ESCOLAR (100% RESPONSIVOS)
+           ===================================================================== */
+        
+        .btn-pre {
+            background: #e1f5f2; 
+            border: 5px solid var(--cor-pre); 
+            border-radius: 25px;
+            
+            /* A MAGIA FLUIDA ENTRA AQUI: */
+            font-size: clamp(1.1rem, 4vw, 1.6rem); /* Texto encolhe em ecrãs pequenos */
+            padding: clamp(12px, 3vw, 20px) clamp(20px, 4vw, 40px); /* Espaço interno elástico */
+            min-width: clamp(120px, 30vw, 180px); /* Largura mínima adaptável */
+            gap: clamp(8px, 2vw, 15px);
+            
+            font-weight: 900; 
+            color: var(--azul-escuro);
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 0 var(--cor-borda); 
+            text-transform: uppercase;
+            touch-action: manipulation;
+            
+            /* Prevenção de quebra em ecrãs minúsculos */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-wrap: break-word;
+            line-height: 1.2;
+        }
+
+        @media (hover: hover) { .btn-pre:hover { transform: translateY(-3px); box-shadow: 0 11px 0 var(--cor-borda); filter: brightness(1.05); } }
+        .btn-pre:active { transform: translateY(8px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Estados de Resposta (Mantidos intactos) */
+        .btn-pre.correct { background: #2ed573; color: white; border-color: #219d53; box-shadow: 0 8px 0 #219d53; }
+        .btn-pre.wrong { background: #ffefef; border-color: #ff4757; color: #ff4757; box-shadow: 0 8px 0 #d0303f; animation: shakeError 0.4s ease; }
+
+        /* Estados de Resposta */
+        .btn-pre.correct { 
+            background: #2ed573; color: white; 
+            border-color: #219d53; box-shadow: 0 8px 0 #219d53; 
+        }
+        .btn-pre.wrong { 
+            background: #ffefef; border-color: #ff4757; color: #ff4757; 
+            box-shadow: 0 8px 0 #d0303f; 
+            animation: shakeError 0.4s ease; 
+        }
+
+        @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+		
+		 /* =====================================================================
+           CSS ESPECÍFICO DO JOGO
+           ===================================================================== */
+		/* Animação do Tutorial no Menu Inicial */
+		.tutorial-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+		.tut-metade {
+			width: 60px;
+			height: 120px;
+			position: relative;
+			overflow: hidden;
+			border-radius: 10px;
+		}
+		.tut-esq {
+			border: 2px solid var(--cor-pre);
+			background: #e1f5f2;
+		}
+		.tut-esq::after {
+			content: '❓';
+			font-size: 2.5rem;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+		.tut-dir {
+			border: 2px dashed #cbd5e1;
+			background: white;
+			animation: encaixaMetade 3s infinite ease-in-out;
+		}
+		.tut-dir::after {
+			content: '🧩';
+			font-size: 2.5rem;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+		
+		@keyframes encaixaMetade {
+			0%, 20% { transform: translateX(50px); opacity: 0; }
+			50%, 80% { transform: translateX(0); opacity: 1; }
+			100% { transform: translateX(50px); opacity: 0; }
+		}
+
+		/* Área das Metades em Jogo */
+		.zona-metades {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 0; /* Coladas uma à outra */
+			margin: 20px auto;
+			min-height: clamp(160px, 35vh, 260px);
+		}
+
+		.caixa-metade {
+			width: clamp(110px, 25vw, 170px);
+			height: clamp(110px, 25vw, 170px);
+			position: relative;
+			overflow: hidden;
+			background: white;
+			transition: all 0.5s ease;
+		}
+
+		/* Lado Esquerdo - Silhueta */
+		.metade-esq {
+			border: 4px solid var(--cor-pre);
+			border-right: none;
+			border-radius: 25px 0 0 25px;
+			box-shadow: -5px 5px 10px rgba(0,0,0,0.05);
+		}
+		.metade-esq img {
+			width: 200%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			object-fit: contain;
+			filter: brightness(0); /* Força silhueta preta */
+			transition: filter 0.5s ease;
+		}
+
+		/* Lado Direito - Encaixe */
+		.metade-dir {
+			border: 4px dashed #cbd5e1;
+			border-left: 2px dashed #cbd5e1;
+			border-radius: 0 25px 25px 0;
+			background: #fdfdfd;
+			box-shadow: 5px 5px 10px rgba(0,0,0,0.05);
+		}
+		.metade-dir img {
+			width: 200%;
+			height: 100%;
+			position: absolute;
+			left: -100%; /* Mostra apenas a metade direita */
+			top: 0;
+			object-fit: contain;
+			display: none; /* Oculto até acertar */
+		}
+
+		/* Opções de Escolha (Metades Direitas) */
+		.opcao-card {
+			width: clamp(75px, 16vw, 115px);
+			height: clamp(75px, 16vw, 115px);
+			background: white;
+			border: 4px solid #cbd5e1;
+			border-radius: 20px;
+			position: relative;
+			overflow: hidden;
+			cursor: pointer;
+			box-shadow: 0 6px 0 #cbd5e1, 0 8px 15px rgba(0,0,0,0.05);
+			transition: transform 0.1s, box-shadow 0.1s;
+			touch-action: manipulation;
+		}
+		.opcao-card img {
+			width: 200%;
+			height: 100%;
+			position: absolute;
+			left: -100%; /* Corta e mostra só o lado direito */
+			top: 0;
+			object-fit: contain;
+			pointer-events: none;
+		}
+
+		/* Feedback de Erro */
+		.opcao-card.errado {
+			border-color: #ff4757;
+			box-shadow: 0 6px 0 #d0303f;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+
+		/* Botão de Áudio Guia (Com animação de pulsar) */
+		.btn-audio-guia {
+			background: #ffa502;
+			border: none;
+			border-radius: 50%;
+			width: clamp(35px, 8vw, 45px);
+			height: clamp(35px, 8vw, 45px);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			box-shadow: 0 3px 0 #d97d2c;
+			transition: transform 0.1s;
+			vertical-align: middle;
+			margin-right: clamp(8px, 2vw, 15px);
+			
+			/* Animação contínua para captar a atenção da criança */
+			animation: pulsarSom 2s infinite ease-in-out;
+		}
+
+		@media (hover: hover) {
+			.btn-audio-guia:hover {
+				filter: brightness(1.1);
+				transform: scale(1.05);
+			}
+		}
+
+		.btn-audio-guia:active {
+			transform: translateY(3px);
+			box-shadow: none;
+			animation: none; /* Tranca a animação enquanto clica */
+		}
+
+		.btn-audio-guia img {
+			width: 60%;
+			height: 60%;
+			filter: invert(1);
+		}
+
+		/* Instrução em Linha */
+		.instrucao-flex {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			gap: 10px;
+		}   
+		
+		/* Botão Retangular de Voltar aos Temas (Estilo Padrão) */
+		.btn-voltar-jogo {
+			background: var(--cor-pre);
+			color: white !important;
+			border: none;
+			padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
+			border-radius: 15px;
+			font-size: clamp(0.85rem, 2vw, 1.05rem);
+			font-weight: 900;
+			text-transform: uppercase;
+			cursor: pointer;
+			box-shadow: 0 4px 0 var(--cor-pre-dark);
+			display: inline-flex;
+			align-items: center;
+			gap: clamp(5px, 1.5vw, 10px);
+			transition: transform 0.1s, filter 0.2s;
+			height: auto;
+			width: auto;
+		}
+
+		@media (hover: hover) {
+			.btn-voltar-jogo:hover {
+				filter: brightness(1.05);
+				transform: translateY(-2px);
+				box-shadow: 0 6px 0 var(--cor-pre-dark);
+			}
+		}
+
+		.btn-voltar-jogo:active {
+			transform: translateY(4px) !important;
+			box-shadow: none !important;
+		}
+
+		.btn-voltar-jogo img {
+			width: 1.15em;
+			height: 1.15em;
+			pointer-events: none;
+		}
+
+		/* Definição da Animação Pulsar do Som */
+		@keyframes pulsarSom {
+			0% { transform: scale(1); box-shadow: 0 3px 0 #d97d2c, 0 0 0 0 rgba(255, 165, 2, 0.5); }
+			50% { transform: scale(1.08); box-shadow: 0 3px 0 #d97d2c, 0 0 0 10px rgba(255, 165, 2, 0); }
+			100% { transform: scale(1); box-shadow: 0 3px 0 #d97d2c, 0 0 0 0 rgba(255, 165, 2, 0); }
+		}
+		
+
+
+    </style>
+</head>
+<body>
+
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../"><img src="../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../"><img src="../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../1"><img src="../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../2"><img src="../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../3"><img src="../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../4"><img src="../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+
+		<h1>Metades<img src="../img-titulos/metades.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="header-subtitulo">Junta as metades!</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- BARRA DE PROGRESSO (CAMINHO MÁGICO SVG DINÂMICO) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-rasto" id="caminho-rasto"></div>
+            <img src="" class="caminho-avatar" id="avatar-progresso" alt="Avatar"> 
+        </div>
+        <img src="" class="caminho-alvo" id="alvo-progresso" alt="Alvo"> 
+    </div>
+
+    <!-- CARTÃO DE JOGO -->
+    <div class="cartao-jogo-container">
+
+        <!-- ==========================
+             ECRÃ DE SELEÇÃO DE TEMAS
+             ========================= -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+                        
+            <!-- ANIMAÇÃO DE TUTORIAL ATUALIZADA -->
+            <div class="animacao-tutorial">
+                <div class="tutorial-container">
+                    <div class="tut-metade tut-esq"></div>
+                    <div class="tut-metade tut-dir"></div>
+                </div>
+            </div>
+			
+            <h2 class="titulo-destaque">Escolhe o teu tema!</h2>
+            
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-vermelho" onclick="iniciarJogo(1)">
+                    <img src="../img-titulos/metades_menu_1.svg" class="icon-btn-nivel" alt="">
+                    Animais
+                </button>
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(2)">
+                    <img src="../img-titulos/metades_menu_2.svg" class="icon-btn-nivel" alt="">
+                    Objetos
+                </button>
+                <button class="btn-nivel-novo bg-laranja" onclick="iniciarJogo(3)">
+                    <img src="../img-titulos/metades_menu_3.svg" class="icon-btn-nivel" alt="">
+                    Transportes & Natureza
+                </button>
+                <button class="btn-nivel-novo bg-roxo" onclick="iniciarJogo(4)">
+                    <img src="../img-titulos/metades_menu_4.svg" class="icon-btn-nivel" alt="">
+                    Mistura Mágica
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ==========================
+             ECRÃ DA ÁREA DE JOGO
+             ========================= -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- Caixa de Instrução com Áudio Explicativo Incorporado -->
+			<div class="pergunta-destaque" style="margin-top: 10px; width: 100%;">
+            <div class="instrucao-flex">
+				<!-- Botão de voltar retangular com cantos arredondados e texto -->
+				<button class="btn-voltar-jogo" onclick="voltarAoMenu()">
+					<img src="../../SVG/voltar.svg" alt=""> TEMAS
+				</button>
+				
+				<!-- Botão de som a pulsar -->
+				<button class="btn-audio-guia" id="btn-play-guia" onclick="reproduzirAudioExplicativo()">
+					<img src="../img-titulos/metades_audio.svg" alt="Ouvir">
+				</button>
+				
+				<span id="instrucao-ronda">Carrega no som para ouvir!</span>
+			</div>
+
+            <!-- Contentor do jogo único e responsivo -->
+            <div id="area-jogo-metades" style="display: none; width: 100%; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: clamp(20px, 4vh, 40px); padding-bottom: 20px;">
+                
+                <!-- Par de Metades Centralizado -->
+                <div class="zona-metades">
+                    <!-- Esquerda (Silhueta) -->
+                    <div class="caixa-metade metade-esq">
+                        <img id="img-silhueta" src="" alt="Silhueta">
+                    </div>
+                    <!-- Direita (Espaço de Encaixe) -->
+                    <div class="caixa-metade metade-dir" id="caixa-encaixe">
+                        <img id="img-revelada" src="" alt="Revelada">
+                    </div>
+                </div>
+                
+                <!-- Contentor dos Botões com as Metades Direitas para escolha -->
+                <div id="opcoes-resposta" style="display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(10px, 2vw, 20px); width: 100%;">
+                    <!-- Gerados dinamicamente via JS -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ==========================
+             ECRÃ DE FIM DE JOGO
+             ========================= -->
+        <div id="ecra-fim" class="ecra">
+            
+            <img src="../../SVG/taca.svg" alt="Taça de Vitória" style="width: clamp(80px, 15vw, 130px); margin-bottom: 15px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            
+            <h2 class="end-title" id="end-title-text" style="margin-bottom: 15px;">Fantástico!</h2>
+            
+            <div class="end-stats" id="mensagem-fim" style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 35px; background: var(--bg-header); padding: 20px 30px; border-radius: 20px; border: 3px dashed var(--cor-pre); max-width: 500px;">
+                Chegaste ao fim do caminho mágico!
+            </div>
+           
+            <div class="botoes-acao-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">
+                    JOGAR OUTRA VEZ <img src="../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao secundario" onclick="voltarAoMenu()">
+                    VOLTAR AO MENU <img src="../../SVG/home.svg" class="icon-acao" alt="">
+                </button>
+            </div>
+            
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+
+    </div> 
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../SVG/pre.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Atualiza o Ano do Footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    // Menu Hamburger
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    // Função universal para alternar ecrãs sem quebrar o layout
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        limparConfetis();
+        document.getElementById('caminho-magico').style.display = 'none';
+        document.getElementById('area-jogo-metades').style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        limparConfetis();
+        iniciarJogo(jogoAtual);
+    }
+
+    // Função para atualizar o bonequinho na barra de progresso (Manda a percentagem de 0 a 100)
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        const rasto = document.getElementById('caminho-rasto');
+        if(avatar) avatar.style.left = `${percentagem}%`;
+        if(rasto) rasto.style.width = `${percentagem}%`;
+    }
+
+    // O Motor de MP3 Locais (Para Vozes e Narrações)
+    function tocarVoz(caminhoMp3) {
+        try {
+            const voz = new Audio(caminhoMp3);
+            const playPromise = voz.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(erro => console.warn("Browser bloqueou o MP3. Requer clique.", erro));
+            }
+        } catch (e) {
+            console.error("Erro ao tocar áudio.", e);
+        }
+    }
+
+    // Audio Context API (Garante sons sem ficheiros MP3 externos)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    
+    function iniciarAudio() {
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    window.addEventListener('pointerdown', iniciarAudio);
+    window.addEventListener('keydown', iniciarAudio);
+
+    function tocarSom(tipo) {
+        iniciarAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator(); 
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime + 0.02;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.3, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.15, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.30, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.45, duracao: 0.35 }, 
+                { freq: 783.99, tempo: 0.80, duracao: 0.35 }, 
+                { freq: 1046.50, tempo: 1.15, duracao: 0.80 }
+            ];
+
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle';
+                o.frequency.value = nota.freq;
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.3, agora + nota.tempo + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    // Confetis Contidos no Cartão Responsivo
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+    
+    function redimensionarCanvas() { 
+        const container = document.querySelector('.cartao-jogo-container');
+        if(container && canvasConfetti) {
+            canvasConfetti.width = container.clientWidth; 
+            canvasConfetti.height = container.clientHeight; 
+        }
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+	
+    function limparConfetis() {
+        confetis = []; 
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+    
+    /* =====================================================================
+       🟢 DADOS DOS MINIJOGOS E LÓGICA DAS METADES 🟢
+       ===================================================================== */
+
+    // Definição das configurações de cada minijogo
+    const CONFIG_JOGOS = {
+        1: {
+            titulo: "Metades dos Animais 🐮",
+            instrucao: "Observa a metade do animal e encontra a outra parte!",
+            audioExplicativo: "audio/explicativo_animais.mp3",
+            caminho: { avatar: "metades_cao.svg", alvo: "metades_osso.svg" },
+            imagens: ["porco", "vaca", "gato", "cao", "leao", "elefante", "girafa", "zebra", "coelho", "sapo", "pato", "urso", "hipopotamo", "rato_1"],
+            decolagem: ["baleia", "bode", "borboleta", "cavalo", "foca", "galinha", "pavao", "peixe", "porco", "rato", "papagaio"] // Decoys para preencher as opções
+        },
+        2: {
+            titulo: "Metades dos Objetos 🧸",
+            instrucao: "Observa a metade do objeto e encontra a outra parte!",
+            audioExplicativo: "audio/explicativo_objetos.mp3",
+            caminho: { avatar: "metades_lapis.svg", alvo: "metades_quadro.svg" },
+            imagens: ["cadeira", "bota", "chave", "chapeu", "tesoura", "violino", "bola", "balde", "mala", "sino", "sapato", "livro"],
+            decolagem: ["anel", "bata", "boneca", "cama", "moeda", "vassoura", "guitarra", "vela", "coroa", "piano", "taca"]
+        },
+        3: {
+            titulo: "Transportes e Natureza 🚀",
+            instrucao: "Observa a metade e encontra a outra parte!",
+            audioExplicativo: "audio/explicativo_transportes.mp3",
+            caminho: { avatar: "metades_carro.svg", alvo: "metades_meta.svg" },
+            imagens: ["carro", "aviao", "comboio", "bicicleta", "camiao", "foguete", "arvore", "sol", "nuvem", "flor"],
+            decolagem: ["autocarro", "barco", "escavadora", "jipe", "mota", "navio", "roda", "chuva", "fogo", "fogueira"]
+        },
+        4: {
+            titulo: "Mistura Mágica 🧩",
+            instrucao: "Consegues completar todas as metades misturadas?",
+            audioExplicativo: "audio/explicativo_mistura.mp3",
+            caminho: { avatar: "metades_estrela.svg", alvo: "metades_taca.svg" },
+            // Uma mistura de imagens que não se repetem diretamente nas listas principais
+            imagens: ["abacaxi", "morango", "borboleta", "caracol", "casa", "guitarra", "peixe", "autocarro", "maca", "palhaco", "carro_1", ],
+            decolagem: ["zebra", "sapo", "sino", "chapeu", "foguete", "arvore", "tomate", "queijo", "uvas", "bota"]
+        }
+    };
+
+    let jogoAtual = 1;
+    let rondaAtual = 0;
+    const totalRondas = 10; // Exatamente 10 rondas por jogo!
+    let listaRondasAtivas = [];
+
+    window.onload = function() { mostrarEcra('ecra-selecao'); };
+
+    // Função de Baralhamento (Fisher-Yates) para garantir aleatoriedade
+    function baralhar(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Inicia o minijogo selecionado
+    function iniciarJogo(idJogo) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        
+        jogoAtual = idJogo;
+        rondaAtual = 0;
+
+        const config = CONFIG_JOGOS[jogoAtual];
+
+        // 1. Configurar caminho mágico
+        document.getElementById('caminho-magico').style.display = 'block';
+        document.getElementById('avatar-progresso').src = `../img-titulos/${config.caminho.avatar}`;
+        document.getElementById('alvo-progresso').src = `../img-titulos/${config.caminho.alvo}`;
+        atualizarProgressoCaminho(0);
+
+        // 2. Baralhar as imagens do jogo para garantir que nenhuma ronda se repete
+        listaRondasAtivas = baralhar([...config.imagens]);
+
+        // 3. Configurar Layout
+        document.getElementById('area-jogo-metades').style.display = 'flex';
+        mostrarEcra('ecra-jogo');
+
+        prepararRonda();
+    }
+
+    // Toca o áudio de suporte explicativo do jogo atual
+    function reproduzirAudioExplicativo() {
+        const config = CONFIG_JOGOS[jogoAtual];
+        tocarVoz(config.audioExplicativo);
+    }
+
+    function prepararRonda() {
+		const config = CONFIG_JOGOS[jogoAtual];
+        
+        // Atualiza texto da instrução
+        document.getElementById('instrucao-ronda').textContent = config.instrucao;
+
+        // Elemento correto da ronda atual
+        const itemCorreto = listaRondasAtivas[rondaAtual];
+
+        // Reset visual das metades centrais
+        const imgSilhueta = document.getElementById('img-silhueta');
+        const imgRevelada = document.getElementById('img-revelada');
+        const caixaEncaixe = document.getElementById('caixa-encaixe');
+
+        imgSilhueta.src = `../img/${itemCorreto}.png`;
+        imgSilhueta.style.filter = "brightness(0)"; // Reinicia silhueta preta
+        
+        imgRevelada.src = `../img/${itemCorreto}.png`;
+        imgRevelada.style.display = "none"; // Oculta a metade revelada
+        caixaEncaixe.style.borderColor = "#cbd5e1"; // Restaura borda tracejada cinza
+        caixaEncaixe.style.borderStyle = "dashed";
+
+        // Gerar as 5 opções de resposta (1 correta + 4 erradas)
+        const opcoesEl = document.getElementById('opcoes-resposta');
+        opcoesEl.innerHTML = '';
+
+        // Filtra os decoys para não incluir o item correto
+        let decoysFiltrados = config.decolagem.filter(d => d !== itemCorreto);
+        baralhar(decoysFiltrados);
+
+        // Seleciona 4 decoys e junta com o correto
+        let escolhas = [itemCorreto, ...decoysFiltrados.slice(0, 4)];
+        baralhar(escolhas); // Baralha as 5 opções de botões
+
+        // Cria os cards de opções
+        escolhas.forEach(opcao => {
+            const card = document.createElement('div');
+            card.className = 'opcao-card';
+            
+            const img = document.createElement('img');
+            img.src = `../img/${opcao}.png`;
+            card.appendChild(img);
+
+            card.onclick = () => {
+                // Tranca interações temporariamente
+                document.querySelectorAll('.opcao-card').forEach(c => c.style.pointerEvents = 'none');
+
+                if (opcao === itemCorreto) {
+                    acertouMetade(card, itemCorreto);
+                } else {
+                    errouMetade(card);
+                }
+            };
+
+            opcoesEl.appendChild(card);
+        });
+    }
+
+    function acertouMetade(cardCorreto, itemCorreto) {
+		tocarSom('acerto');
+        
+        const imgSilhueta = document.getElementById('img-silhueta');
+        const imgRevelada = document.getElementById('img-revelada');
+        const caixaEncaixe = document.getElementById('caixa-encaixe');
+
+        // 1. Mostra a metade direita encaixada
+        imgRevelada.style.display = "block";
+        caixaEncaixe.style.borderColor = "var(--cor-pre)";
+        caixaEncaixe.style.borderStyle = "solid";
+
+        // 2. Remove o filtro de silhueta suavemente da metade esquerda, revelando o animal completo colorido
+        imgSilhueta.style.filter = "brightness(1)";
+
+        // 3. Avança progresso
+        rondaAtual++;
+        let percentagem = (rondaAtual / totalRondas) * 100;
+        atualizarProgressoCaminho(percentagem);
+
+        // Espera 2 segundos para a criança contemplar o sucesso e avança automaticamente
+        setTimeout(() => {
+            if (rondaAtual >= totalRondas) {
+                // FIM DO MINIJOGO
+                tocarSom('vitoria');
+                dispararConfetis();
+                
+                // Configura mensagem final de acordo com o jogo terminado
+                let msgFim = "Chegaste ao fim do caminho mágico!<br>";
+				if (jogoAtual === 1) {
+					msgFim += "És um mestre do reino animal! <img src='../img-titulos/metades_menu_1.svg' class='icon-svg-menu' alt=''>";
+				} else if (jogoAtual === 2) {
+					msgFim += "Completaste todos os objetos! <img src='../img-titulos/metades_menu_2.svg' class='icon-svg-menu' alt=''>";
+				} else if (jogoAtual === 3) {
+					msgFim += "Excelente conhecimento do mundo e das máquinas! <img src='../img-titulos/metades_menu_3.svg' class='icon-svg-menu' alt=''>";
+				} else {
+					msgFim += "Superaste o maior desafio de misturas! Magnífico! <img src='../img-titulos/metades_menu_4.svg' class='icon-svg-menu' alt=''>";
+				}
+
+                document.getElementById('mensagem-fim').innerHTML = msgFim;
+                mostrarEcra('ecra-fim');
+            } else {
+                // Avança para a ronda seguinte
+                prepararRonda();
+            }
+        }, 2000);
+    }
+
+    function errouMetade(cardErrado) {
+        tocarSom('erro');
+        cardErrado.classList.add('error-shake');
+        cardErrado.classList.add('errado');
+
+        // Liberta novamente os restantes cards para continuar a tentar
+        setTimeout(() => {
+            cardErrado.classList.remove('error-shake');
+            document.querySelectorAll('.opcao-card:not(.errado)').forEach(c => c.style.pointerEvents = 'auto');
+        }, 500);
+    }
+</script>
+</body>
+</html>

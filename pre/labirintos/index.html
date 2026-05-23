@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Labirintos 🗺️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+	
+	*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+        /* =====================================================================
+           CSS DO TEMPLATE BASE E ESTRUTURA GERAL
+           ===================================================================== */
+        :root {
+            --bg-body: #f0f7ff;
+            --cor-pre: #4fd1c5;       
+            --cor-pre-dark: #38a89d;
+            --cor-borda: #48b5aa;    
+            --bg-header: #e1f5f2;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+			--azul-vibrante: #0091ff; 
+			
+			/* CORES DOS CARTÕES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			
+			/* CORES DO CONTAINER DE JOGO + RGBA PARA ALTERAR A SHADOW */
+			--cor-c1: #ff6b6b; /* vermelho */
+			--cor-c1-sombra: rgba(255, 107, 107, 0.55);
+			
+			--cor-c2: #4dabf7; /* azul */
+			--cor-c2-sombra: rgba(77, 171, 247, 0.66);
+			
+			--cor-c3: #51cf66; /* verde */
+			--cor-c3-sombra: rgba(69, 176, 98, 0.52);
+			
+			--cor-c4: #fcc419; /* amarelo */
+			--cor-c4-sombra: rgba(251, 197, 49, 0.75);
+			
+			--cor-c5: #cc5de8; /* roxo */
+			--cor-c5-sombra: rgba(165, 94, 234, 0.65);
+			
+			--cor-c6: #ff922b; /* laranja */
+			--cor-c6-sombra: rgba(250, 152, 58, 0.85);
+			
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        .hamburger:hover { background: #fff9c4; }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        .btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+        .btn-voltar:hover { transform: scale(1.05); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0;
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px var(--cor-c2-sombra); 
+            border-top: 8px solid var(--cor-c2); display: flex; flex-direction: column; 
+            align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+        }
+		
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+        
+		.btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+		
+		
+		* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		
+			
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+        footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+        footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+        
+        /* ECRÃS BASE (Garante centragem e esconde o que não está ativo) */
+        .ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+        
+        /* BOTÕES GLOBAIS INTOCÁVEIS */
+        .btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+        .btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        .btn-acao:hover { filter: brightness(1.05); }
+		
+		/* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+			
+        /* TÍTULOS E TEXTOS BASE */
+        .titulo-destaque { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+        .pergunta-destaque { font-size: 1.8rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+        /* =========================================
+           O CAMINHO MÁGICO (RASTO DE TINTA E SVGs)
+           ========================================= */
+        .caminho-magico { width: 100%; max-width: 750px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+        
+        /* O trilho por fazer (agora num cinza suave para dar contraste) */
+        .caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 50px; height: 0; border-bottom: 4px dashed #cbd5e1; z-index: 1; }
+        
+        /* O Rasto de Tinta Luminoso */
+        .caminho-rasto {
+            position: absolute;
+            bottom: -4px; /* Cobre exatamente a linha tracejada */
+            left: 0;
+            width: 0%; /* Começa a zero */
+            height: 4px;
+            background-color: var(--cor-c2);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--cor-c2-sombra); /* Brilho de néon mágico! */
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+        }
+
+        .caminho-avatar { 
+            position: absolute; left: 0%; bottom: -15px; 
+            transform: translateX(-50%) scaleX(-1); 
+            width: clamp(40px, 8vw, 60px); height: auto; object-fit: contain;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 4; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; right: -15px; bottom: -10px; 
+            width: clamp(45px, 9vw, 60px); height: auto; object-fit: contain;
+            z-index: 3; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); pointer-events: none;
+            
+            /* Animação para chamar a atenção da criança */
+            animation: pulsaAlvo 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulsaAlvo { 
+            0% { transform: scale(1) rotate(0deg); } 
+            100% { transform: scale(1.15) rotate(5deg); } 
+        }
+        
+        .caminho-avatar { 
+            position: absolute; 
+            left: 0%; 
+            bottom: -5px; /* Ajuste para a base da imagem tocar na linha */
+            transform: translateX(-50%) scaleX(-1); /* O scaleX vira a imagem horizontalmente */
+            
+            /* Substituição do font-size para dimensões dinâmicas de imagem */
+            width: clamp(40px, 8vw, 60px); 
+            height: auto;
+            object-fit: contain;
+            
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 3; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Sombra realista 3D */
+            pointer-events: none;
+        }
+        
+        .caminho-alvo { 
+            position: absolute; 
+            right: -15px; 
+            bottom: -5px; 
+            
+            /* Ligeiramente maior que o avatar para dar noção de destino */
+            width: clamp(45px, 9vw, 60px); 
+            height: auto;
+            object-fit: contain;
+            
+            z-index: 2; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+            pointer-events: none;
+        }
+
+        /* ANIMAÇÕES GLOBAIS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        .error-shake { animation: shakeError 0.4s ease; }
+        
+        /* Canvas de Confetis Trancado na Caixa de Jogo */
+        #confetti-canvas { 
+            position: absolute; /* Mudou de fixed para absolute */
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 15; /* Fica acima dos jogos, mas abaixo das caixas de vitória/menu */
+            border-radius: 30px;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; }
+            .cartao-jogo-container { padding: 15px; border-radius: 20px;}
+        }
+		
+		/* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+		/* =========================================
+        OUTRAS CORREÇÕES PARA MOBILE
+        ========================================= */
+		
+		@media (max-width: 600px) {
+
+            #opcoes-resposta {
+                gap: 12px !important;
+            }
+
+            .btn-pre {
+                border-width: 4px;
+                box-shadow: 0 6px 0 var(--cor-borda);
+            }
+            .btn-pre.correct { box-shadow: 0 6px 0 #219d53; }
+            .btn-pre.wrong { box-shadow: 0 6px 0 #d0303f; }
+        }
+		
+		/* =====================================================================
+           CSS ESPECÍFICO DO ECRÃ INICIAL (MENU)E FIM
+        ===================================================================== */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed var(--cor-pre); border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05); color: var(--cor-pre); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }		
+		
+		.grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+		
+		.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+		
+		.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+        /* =====================================================================
+       CSS DO JOGO DE LABIRINTOS
+       ===================================================================== */
+    
+		/* =====================================================================
+		NOVA ANIMAÇÃO DO MINI-LABIRINTO DO TUTORIAL
+		===================================================================== */
+		.animacao-tutorial {
+			width: 100%;
+			max-width: 400px;
+			height: 180px;
+			background: #f4faff;
+			border: 3px dashed var(--cor-pre);
+			border-radius: 20px;
+			margin: 0 auto 25px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05);
+			overflow: hidden;
+		}
+
+		/* O Tabuleiro do Labirinto */
+		.mini-labirinto {
+			position: relative;
+			width: 150px;
+			height: 115px;
+			background: white;
+			border: 3px solid var(--cor-pre);
+			border-radius: 15px;
+			display: grid;
+			grid-template-columns: repeat(4, 30px);
+			grid-template-rows: repeat(3, 30px);
+			gap: 5px;
+			padding: 5px;
+			box-sizing: border-box;
+			box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+		}
+
+		/* Paredes Físicas Tridimensionais */
+		.bloco-parede {
+			background: #cbd5e1;
+			border-radius: 6px;
+			box-shadow: 0 2px 0 #94a3b8;
+		}
+
+		/* O Alvo (Queijo a pulsar) */
+		.mini-alvo {
+			grid-row: 3;
+			grid-column: 4;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.3rem;
+			animation: pulsaAlvoMini 1s infinite alternate ease-in-out;
+		}
+
+		@keyframes pulsaAlvoMini {
+			0% { transform: scale(0.85); }
+			100% { transform: scale(1.1); }
+		}
+
+		/* Personagem Luminosa Animada */
+		.mini-jogador {
+			position: absolute;
+			width: 20px;
+			height: 20px;
+			background: var(--cor-btn-laranja);
+			border: 2.5px solid white;
+			border-radius: 50%;
+			box-shadow: 0 0 10px var(--cor-btn-laranja);
+			box-sizing: border-box;
+			
+			/* Executa o trajeto definido nas coordenadas de píxeis */
+			animation: animarCaminhoLab 4.5s infinite ease-in-out;
+		}
+
+		/* Coordenadas de Trajeto (Desvia-se de todas as paredes cinzentas) */
+		@keyframes animarCaminhoLab {
+			0%, 15% { left: 10px; top: 10px; }       /* Casa Inicial (Linha 1, Col 1) */
+			30% { left: 45px; top: 10px; }            /* Move para a Direita (Linha 1, Col 2) */
+			45% { left: 45px; top: 45px; }            /* Desce (Linha 2, Col 2) */
+			60% { left: 80px; top: 45px; }            /* Move para a Direita (Linha 2, Col 3) */
+			75% { left: 80px; top: 80px; }            /* Desce (Linha 3, Col 3) */
+			90%, 97% { left: 115px; top: 80px; }      /* Chega ao Queijo (Linha 3, Col 4) */
+			100% { left: 10px; top: 10px; }           /* Reinicia */
+		}
+
+		/* Grelha do Labirinto */
+		.labirinto-grelha {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			grid-template-rows: repeat(7, 1fr);
+			gap: 3px;
+			width: 100%;
+			max-width: clamp(280px, 75vh, 420px); /* Ajuste perfeito para evitar scroll vertical */
+			aspect-ratio: 1;
+			background: #e2e8f0;
+			border: 6px solid var(--cor-c2);
+			border-radius: 20px;
+			padding: 5px;
+			box-shadow: 0 0 26px var(--cor-c2-sombra);
+			margin: 10px auto;
+			box-sizing: border-box;
+		}
+
+		/* Células da Grelha */
+		.celula {
+			background: white;
+			border-radius: 6px;
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			transition: background-color 0.2s;
+		}
+
+		/* Elementos dentro das células */
+		.celula img {
+			width: 85%;
+			height: 85%;
+			object-fit: contain;
+		}
+
+		/* Obstáculos do Labirinto */
+		.celula.bloqueada {
+			background: #f1f5f9;
+		}
+		.celula.bloqueada img {
+			animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		/* Jogador (Avatar) */
+		.celula.jogador-casa {
+			background: #e1f5f2;
+		}
+		.img-jogador {
+			width: 85%;
+			height: 85%;
+			object-fit: contain;
+			transition: transform 0.15s ease;
+			z-index: 5;
+		}
+
+		/* Direção do Avatar (Default: Virado para a Esquerda. Rodado: Virado para a Direita) */
+		.img-jogador.olhar-direita {
+			transform: scaleX(-1);
+		}
+
+		/* Alvo do Labirinto (Queijo/Flor/Osso/Meta) */
+		.celula.alvo-casa {
+			background: #fff9db;
+		}
+		.img-alvo {
+			animation: pulsaAlvo 1s infinite alternate ease-in-out;
+		}
+
+		@keyframes pulsaAlvo {
+			0% { transform: scale(0.9); }
+			100% { transform: scale(1.1); }
+		}
+
+		/* Pista de Dica (Bolinhas Cor-de-Rosa) */
+		.dica-dot {
+			width: clamp(10px, 2.5vw, 15px);
+			height: clamp(10px, 2.5vw, 15px);
+			background: #ff4757;
+			border-radius: 50%;
+			opacity: 0.8;
+			animation: popIn 0.3s ease forwards;
+			z-index: 2;
+		}
+
+		
+		/* =====================================================================
+		ESTRUTURA COMPLETA DOS CONTROLOS (DESIGN + POSICIONAMENTO)
+		===================================================================== */
+
+		/* 1. O Contentor Geral (Grid) */
+		.controlos-container {
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
+			grid-template-areas: "menu teclado dica";
+			align-items: center;
+			justify-items: center;
+			width: 100%;
+			max-width: 500px;
+			margin: 10px auto 0;
+			gap: 15px;
+			box-sizing: border-box;
+		}
+
+		/* 2. Botão Voltar/Menu (Com o Design e Posicionamento Unidos) */
+		.btn-voltar-jogo {
+			grid-area: menu;
+			justify-self: start; /* Posiciona à esquerda no computador */
+			
+			/* Atributos de Design que já tinha */
+			background: var(--cor-pre);
+			color: white !important;
+			border: none;
+			padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
+			border-radius: 15px;
+			font-size: clamp(0.85rem, 2vw, 1.05rem);
+			font-weight: 900;
+			text-transform: uppercase;
+			cursor: pointer;
+			box-shadow: 0 4px 0 var(--cor-pre-dark);
+			display: inline-flex;
+			align-items: center;
+			gap: clamp(5px, 1.5vw, 10px);
+			transition: transform 0.1s, filter 0.2s;
+			height: auto;
+			width: auto;
+		}
+
+		.btn-voltar-jogo:hover {
+			filter: brightness(1.05);
+			transform: translateY(-2px);
+			box-shadow: 0 6px 0 var(--cor-pre-dark);
+		}
+
+		.btn-voltar-jogo:active {
+			transform: translateY(4px) !important;
+			box-shadow: none !important;
+		}
+
+		.btn-voltar-jogo img {
+			width: 1.15em;
+			height: 1.15em;
+			pointer-events: none;
+		}
+
+		/* 3. Teclado Virtual */
+		.teclado-virtual {
+			grid-area: teclado;
+		}
+
+		/* 4. Botão de Dica (Com o Design e Posicionamento Unidos) */
+		.btn-dica {
+			grid-area: dica;
+			justify-self: end; /* Posiciona à direita no computador */
+			
+			/* Atributos de Design */
+			background: var(--cor-pre);
+			color: white !important;
+			border: none;
+			padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 20px);
+			border-radius: 15px;
+			font-size: clamp(0.85rem, 2vw, 1.05rem);
+			font-weight: 900;
+			cursor: pointer;
+			box-shadow: 0 4px 0 var(--cor-pre-dark);
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			transition: transform 0.1s;
+			height: auto;
+			width: auto;
+		}
+
+		.btn-dica:hover {
+			filter: brightness(1.05);
+			transform: translateY(-2px);
+			box-shadow: 0 6px 0 var(--cor-pre-dark);
+		}
+
+		.btn-dica:active {
+			transform: translateY(4px) !important;
+			box-shadow: none !important;
+		}
+
+		.btn-dica img {
+			width: 1.25em;
+			height: 1.25em;
+
+		}
+
+		/* 5. Adaptação Responsiva (Para ecrãs móveis verticais menos de 500px) */
+		@media (max-width: 500px) {
+			.controlos-container {
+				grid-template-columns: 1fr 1fr;
+				grid-template-areas: 
+					"teclado teclado"
+					"menu dica";
+				gap: 12px;
+			}
+
+			.teclado-virtual {
+				grid-area: teclado;
+			}
+
+			/* Expande os botões para preencher o espaço lateral no telemóvel */
+			.btn-voltar-jogo {
+				grid-area: menu;
+				justify-self: stretch;
+				display: inline-flex;
+				justify-content: center;
+				text-align: center;
+			}
+
+			.btn-dica {
+				grid-area: dica;
+				justify-self: stretch;
+				display: inline-flex;
+				justify-content: center;
+				text-align: center;
+			}
+		}
+		
+		
+		
+		/* Teclado Virtual Direcional */
+		.teclado-virtual {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+			flex-shrink: 0;
+		}
+		.linha-setas {
+			display: flex;
+			gap: 4px;
+		}
+		.btn-seta {
+			background: white;
+			border: 3px solid var(--cor-pre);
+			border-radius: 12px;
+			width: clamp(40px, 9vw, 50px);
+			height: clamp(40px, 9vw, 50px);
+			font-size: 1.3rem;
+			font-weight: bold;
+			color: var(--azul-escuro);
+			cursor: pointer;
+			box-shadow: 0 4px 0 var(--cor-pre-dark);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			user-select: none;
+			touch-action: manipulation;
+			transition: transform 0.1s, box-shadow 0.1s;
+		}
+		.btn-seta:active {
+			transform: translateY(4px);
+			box-shadow: none;
+		}
+		
+		/* Animação Contínua para a Taça de Vitória */
+		.taca-vitoria {
+			width: clamp(80px, 15vw, 130px);
+			margin-bottom: 15px;
+			filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+			
+			/* Encadeia as duas animações: 
+			   1. popIn (corre uma vez por 0.6s)
+			   2. pulsaTaca (inicia após os 0.6s de atraso, em loop infinito) */
+			animation: 
+				popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
+				pulsaTaca 1.5s infinite alternate ease-in-out 0.6s;
+		}
+
+		@keyframes pulsaTaca {
+			0% { transform: scale(1) rotate(0deg); }
+			100% { transform: scale(1.1) rotate(3deg); } /* Pulsação com uma ligeira rotação festiva */
+		}
+
+		
+		
+
+
+</style>
+</head>
+<body>
+
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../"><img src="../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../"><img src="../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../1"><img src="../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../2"><img src="../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../3"><img src="../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../4"><img src="../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+
+		<h1>Labirintos <img src="../img-titulos/labirintos.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="header-subtitulo">Consegues descobrir o caminho?</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- BARRA DE PROGRESSO (CAMINHO MÁGICO DINÂMICO) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-rasto" id="caminho-rasto"></div>
+            <img src="" class="caminho-avatar" id="avatar-progresso" alt="Avatar"> 
+        </div>
+        <img src="" class="caminho-alvo" id="alvo-progresso" alt="Alvo"> 
+    </div>
+
+    <!-- CARTÃO DE JOGO -->
+    <div class="cartao-jogo-container">
+
+        <!-- ==========================
+             ECRÃ DE SELEÇÃO DE TEMAS
+             ========================= -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+                        
+            <!-- ANIMAÇÃO DE TUTORIAL -->
+            <div class="animacao-tutorial">
+				<div class="mini-labirinto">
+					<!-- Barreiras/Paredes do mini-labirinto (Padrão S) -->
+					<div class="bloco-parede" style="grid-row: 1; grid-column: 3;"></div>
+					<div class="bloco-parede" style="grid-row: 1; grid-column: 4;"></div>
+					<div class="bloco-parede" style="grid-row: 2; grid-column: 1;"></div>
+					<div class="bloco-parede" style="grid-row: 2; grid-column: 4;"></div>
+					<div class="bloco-parede" style="grid-row: 3; grid-column: 1;"></div>
+					<div class="bloco-parede" style="grid-row: 3; grid-column: 2;"></div>
+					
+					<!-- O Alvo no final da rota -->
+					<div class="mini-alvo">🧀</div>
+					
+					<!-- O Viajante animado que percorre os caminhos -->
+					<div class="mini-jogador"></div>
+				</div>
+			</div>
+			
+            <h2 class="titulo-destaque">Escolhe o teu labirinto!</h2>
+            
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(1)">
+                    <img src="../img-titulos/labirintos_menu_1.svg" class="icon-btn-nivel" alt="">
+                    Labirinto do Rato
+                </button>
+                <button class="btn-nivel-novo bg-verde" onclick="iniciarJogo(2)">
+                    <img src="../img-titulos/labirintos_menu_2.svg" class="icon-btn-nivel" alt="">
+                    Labirinto da Abelha
+                </button>
+                <button class="btn-nivel-novo bg-laranja" onclick="iniciarJogo(3)">
+                    <img src="../img-titulos/labirintos_menu_3.svg" class="icon-btn-nivel" alt="">
+                    Labirinto do Cão
+                </button>
+                <button class="btn-nivel-novo bg-vermelho" onclick="iniciarJogo(4)">
+                    <img src="../img-titulos/labirintos_menu_4.svg" class="icon-btn-nivel" alt="">
+                    Corrida do Carro
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ==========================
+             ECRÃ DA ÁREA DE JOGO
+             ========================= -->
+        <div id="ecra-jogo" class="ecra">
+
+            <!-- Grelha do Labirinto -->
+            <div class="labirinto-grelha" id="tabuleiro-labirinto">
+                <!-- Gerado dinamicamente via JS -->
+            </div>
+
+            <!-- Painel de Controlos Inferior -->
+            <div class="controlos-container">
+                
+                <!-- Botão Menu (Conforme Instruções) -->
+                <button class="btn-voltar-jogo" onclick="voltarAoMenu()">
+                    <img src="../../SVG/voltar.svg" alt=""> MENU
+                </button>
+
+                <!-- Teclado Virtual em Cruz -->
+                <div class="teclado-virtual">
+                    <button class="btn-seta" onclick="moverJogador(-1, 0)">▲</button>
+                    <div class="linha-setas">
+                        <button class="btn-seta" onclick="moverJogador(0, -1)">◀</button>
+                        <button class="btn-seta" onclick="moverJogador(1, 0)">▼</button>
+                        <button class="btn-seta" onclick="moverJogador(0, 1)">▶</button>
+                    </div>
+                </div>
+
+                <!-- Botão de Dica -->
+                <button class="btn-dica" id="btn-dica" onclick="mostrarDica()">
+                    <img src="../img-titulos/labirintos_lampada.svg" alt=""> DICA
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- ==========================
+             ECRÃ DE FIM DE JOGO
+             ========================= -->
+        <div id="ecra-fim" class="ecra">
+            
+            <!-- Imagem da Taça com a animação combinada de Pop + Pulsar -->
+			<img src="../../SVG/taca.svg" alt="Taça de Vitória" class="taca-vitoria">
+            
+            <h2 class="end-title" id="end-title-text" style="margin-bottom: 15px;">Fantástico!</h2>
+            
+            <div class="end-stats" id="mensagem-fim" style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 35px; background: var(--bg-header); padding: 20px 30px; border-radius: 20px; border: 3px dashed var(--cor-pre); max-width: 500px;">
+                Fim do caminho!
+            </div>
+           
+            <div class="botoes-acao-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">
+                    JOGAR OUTRA VEZ <img src="../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao secundario" onclick="voltarAoMenu()">
+                    VOLTAR AO MENU <img src="../../SVG/home.svg" class="icon-acao" alt="">
+                </button>
+            </div>
+            
+        </div>
+
+        <canvas id="confetti-canvas"></canvas>
+
+    </div> 
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../SVG/pre.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Atualiza o Ano do Footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    // Menu Hamburger
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    // Função universal para alternar ecrãs sem quebrar o layout
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        limparConfetis();
+        document.getElementById('caminho-magico').style.display = 'none';
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarJogo() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        limparConfetis();
+        iniciarJogo(jogoAtual);
+    }
+
+    // Função para atualizar o bonequinho na barra de progresso (Manda a percentagem de 0 a 100)
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        const rasto = document.getElementById('caminho-rasto');
+        if(avatar) avatar.style.left = `${percentagem}%`;
+        if(rasto) rasto.style.width = `${percentagem}%`;
+    }
+
+    // Audio Context API (Sons Básicos)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    
+    function iniciarAudio() {
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    window.addEventListener('pointerdown', iniciarAudio);
+    window.addEventListener('keydown', iniciarAudio);
+
+    function tocarSom(tipo) {
+        iniciarAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator(); 
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime + 0.02;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.15);
+            gain.gain.setValueAtTime(0.2, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(220, agora); osc.frequency.exponentialRampToValueAtTime(120, agora + 0.15);
+            gain.gain.setValueAtTime(0.2, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.15);
+            osc.start(agora); osc.stop(agora + 0.15);
+        } else if (tipo === 'passo') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(450, agora); osc.frequency.exponentialRampToValueAtTime(600, agora + 0.05);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.05);
+            osc.start(agora); osc.stop(agora + 0.05);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 783.99, tempo: 0.30, duracao: 0.15 }, 
+                { freq: 1046.50, tempo: 0.45, duracao: 0.50 }
+            ];
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.value = nota.freq;
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.2, agora + nota.tempo + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    // Confetis Contidos no Cartão Responsivo
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+    
+    function redimensionarCanvas() { 
+        const container = document.querySelector('.cartao-jogo-container');
+        if(container && canvasConfetti) {
+            canvasConfetti.width = container.clientWidth; 
+            canvasConfetti.height = container.clientHeight; 
+        }
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+	
+    function limparConfetis() {
+        confetis = []; 
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+    
+    /* =====================================================================
+       🟢 ENGINE DO JOGO DE LABIRINTOS GRELHA (7x7) 🟢
+       ===================================================================== */
+
+    const CONFIG_LABIRINTOS = {
+        1: {
+            titulo: "Labirinto do Rato",
+            instrucao: "Ajuda o ratinho a encontrar o delicioso queijo!",
+            avatar: "rato_1.png",
+            alvo: "queijo.png",
+            obstaculo: "caixa.png", // Imagens de barreiras
+            caminhoProgresso: { avatar: "rato_1.png", alvo: "queijo.png" }
+        },
+        2: {
+            titulo: "Labirinto da Abelha",
+            instrucao: "Ajuda a abelhinha a encontrar a flor colorida!",
+            avatar: "abelha.png",
+            alvo: "flor.png",
+            obstaculo: "arvore.png",
+            caminhoProgresso: { avatar: "abelha.png", alvo: "flor.png" }
+        },
+        3: {
+            titulo: "Labirinto do Cão",
+            instrucao: "Ajuda o cachorrinho a ir buscar o seu osso!",
+            avatar: "cao.png",
+            alvo: "osso_1.png",
+            obstaculo: "bota.png",
+            caminhoProgresso: { avatar: "cao.png", alvo: "osso_1.png" }
+        },
+        4: {
+            titulo: "Corrida do Carro",
+            instrucao: "Faz o carro acelerar até à bandeira de meta!",
+            avatar: "carro_1.png",
+            alvo: "bandeira_1.png",
+            obstaculo: "roda_1.png",
+            caminhoProgresso: { avatar: "carro_1.png", alvo: "bandeira_1.png" }
+        }
+    };
+
+    const TAMANHO_GRELHA = 7; // Sempre 7x7!
+    let jogoAtual = 1;
+    let rondaAtual = 0;
+    const totalRondas = 10; // Exatamente 10 rondas por minijogo
+    
+    let jogadorPos = { r: 0, c: 0 };
+    let alvoPos = { r: 6, c: 6 }; // Sempre no canto oposto para maximizar o desafio
+    let grelhaDados = []; // Matriz 7x7 (0 = livre, 1 = obstáculo)
+    let olharDireita = false; // Deteta orientação horizontal para inverter imagem
+
+    // Geração do labirinto resolvível usando BFS para verificação
+    function gerarLabirinto() {
+        const config = CONFIG_LABIRINTOS[jogoAtual];
+        
+        // Define o número progressivo de barreiras de acordo com a ronda
+        // Começa com 5 obstáculos na ronda 1 e escala até 14 na ronda 10
+        const numObstaculos = 4 + rondaAtual;
+
+        let resolvivel = false;
+        let tentativasSeguranca = 0;
+
+        while (!resolvivel && tentativasSeguranca < 300) {
+            // Inicializa grelha limpa
+            grelhaDados = Array(TAMANHO_GRELHA).fill().map(() => Array(TAMANHO_GRELHA).fill(0));
+            
+            let colocados = 0;
+            let tentativasParciais = 0;
+
+            while (colocados < numObstaculos && tentativasParciais < 150) {
+                let r = Math.floor(Math.random() * TAMANHO_GRELHA);
+                let c = Math.floor(Math.random() * TAMANHO_GRELHA);
+
+                // Nunca coloca obstáculos na casa inicial do jogador ou no alvo final
+                if ((r === 0 && c === 0) || (r === alvoPos.r && c === alvoPos.c)) {
+                    tentativasParciais++;
+                    continue;
+                }
+
+                if (grelhaDados[r][c] === 0) {
+                    grelhaDados[r][c] = 1; // Coloca barreira provisória
+                    
+                    // Valida se o labirinto ainda é resolúvel
+                    if (validarCaminhoBFS(0, 0, alvoPos.r, alvoPos.c)) {
+                        colocados++;
+                    } else {
+                        grelhaDados[r][c] = 0; // Rollback
+                    }
+                }
+                tentativasParciais++;
+            }
+
+            // O labirinto está gerado com sucesso se houver um caminho válido
+            if (validarCaminhoBFS(0, 0, alvoPos.r, alvoPos.c)) {
+                resolvivel = true;
+            }
+            tentativasSeguranca++;
+        }
+
+        desenharGrelhaNoHTML();
+    }
+
+    // Algoritmo Breadth-First Search (BFS) para verificação e busca de caminhos mais curtos
+    function encontrarCaminhoCurto(startR, startC, endR, endC) {
+        let fila = [[ [startR, startC] ]];
+        let visitados = new Set();
+        visitados.add(`${startR},${startC}`);
+
+        while (fila.length > 0) {
+            let caminho = fila.shift();
+            let atual = caminho[caminho.length - 1];
+            let [r, c] = atual;
+
+            if (r === endR && c === endC) {
+                return caminho; // Retorna o array de coordenadas do caminho mais curto
+            }
+
+            const direcoes = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // Cima, Baixo, Esquerda, Direita
+            for (let [dr, dc] of direcoes) {
+                let nr = r + dr;
+                let nc = c + dc;
+
+                if (nr >= 0 && nr < TAMANHO_GRELHA && nc >= 0 && nc < TAMANHO_GRELHA) {
+                    if (grelhaDados[nr][nc] === 0 && !visitados.has(`${nr},${nc}`)) {
+                        visitados.add(`${nr},${nc}`);
+                        fila.push([...caminho, [nr, nc]]);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Função de validação booleana rápida se há caminho livre
+    function validarCaminhoBFS(startR, startC, endR, endC) {
+        return encontrarCaminhoCurto(startR, startC, endR, endC) !== null;
+    }
+
+    // Desenha fisicamente as células na grelha HTML
+    function desenharGrelhaNoHTML() {
+        const config = CONFIG_LABIRINTOS[jogoAtual];
+        const tabuleiro = document.getElementById('tabuleiro-labirinto');
+        tabuleiro.innerHTML = '';
+
+        for (let r = 0; r < TAMANHO_GRELHA; r++) {
+            for (let c = 0; c < TAMANHO_GRELHA; c++) {
+                const celula = document.createElement('div');
+                celula.className = 'celula';
+                celula.id = `cel-${r}-${c}`;
+
+                if (grelhaDados[r][c] === 1) {
+                    // É um obstáculo
+                    celula.className = 'celula bloqueada';
+                    const imgObs = document.createElement('img');
+                    imgObs.src = `../img/${config.obstaculo}`;
+                    celula.appendChild(imgObs);
+                } else if (r === jogadorPos.r && c === jogadorPos.c) {
+                    // É a casa atual do Jogador
+                    celula.className = 'celula jogador-casa';
+                    const imgJog = document.createElement('img');
+                    imgJog.src = `../img/${config.avatar}`;
+                    imgJog.className = 'img-jogador';
+                    imgJog.id = 'img-jogador-avatar';
+                    if (olharDireita) imgJog.classList.add('olhar-direita');
+                    celula.appendChild(imgJog);
+                } else if (r === alvoPos.r && c === alvoPos.c) {
+                    // É a casa final do Alvo
+                    celula.className = 'celula alvo-casa';
+                    const imgAlv = document.createElement('img');
+                    imgAlv.src = `../img/${config.alvo}`;
+                    imgAlv.className = 'img-alvo';
+                    celula.appendChild(imgAlv);
+                }
+
+                tabuleiro.appendChild(celula);
+            }
+        }
+    }
+
+    // Inicia o minijogo selecionado
+    function iniciarJogo(idJogo) {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        
+        jogoAtual = idJogo;
+        rondaAtual = 0;
+        olharDireita = false;
+
+        const config = CONFIG_LABIRINTOS[jogoAtual];
+
+        // Configura instrução principal do cabeçalho
+        document.getElementById('header-subtitulo').textContent = config.instrucao;
+
+        // Configura Caminho Mágico dinâmico de progresso no topo
+        document.getElementById('caminho-magico').style.display = 'block';
+        document.getElementById('avatar-progresso').src = `../img/${config.caminhoProgresso.avatar}`;
+        document.getElementById('alvo-progresso').src = `../img/${config.caminhoProgresso.alvo}`;
+        atualizarProgressoCaminho(0);
+
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        const config = CONFIG_LABIRINTOS[jogoAtual];
+        
+        
+        // Reinicia jogador na casa inicial (0, 0)
+        jogadorPos = { r: 0, c: 0 };
+        olharDireita = false;
+
+        gerarLabirinto();
+    }
+
+    // Função de movimento do jogador (Chamada por cliques virtuais ou teclado)
+    function moverJogador(dr, dc) {
+        let nr = jogadorPos.r + dr;
+        let nc = jogadorPos.c + dc;
+
+        // Verifica limites da grelha
+        if (nr >= 0 && nr < TAMANHO_GRELHA && nc >= 0 && nc < TAMANHO_GRELHA) {
+            // Verifica se a casa não é um obstáculo
+            if (grelhaDados[nr][nc] !== 1) {
+                
+                // Trata a orientação horizontal para espelhar imagem do avatar se necessário
+                if (dc > 0) olharDireita = true;   // Movimento para a Direita -> Espelha
+                if (dc < 0) olharDireita = false;  // Movimento para a Esquerda -> Padrão
+
+                // Remove rastos de dicas ativos
+                removerDicasAntigas();
+
+                // Move logicamente o jogador
+                jogadorPos = { r: nr, c: nc };
+                tocarSom('passo');
+
+                // Atualiza o tabuleiro
+                desenharGrelhaNoHTML();
+
+                // Verifica condição de vitória de ronda
+                if (jogadorPos.r === alvoPos.r && jogadorPos.c === alvoPos.c) {
+                    concluiuRonda();
+                }
+            } else {
+                tocarSom('erro');
+                const celBloqueada = document.getElementById(`cel-${nr}-${nc}`);
+                if (celBloqueada) {
+                    celBloqueada.classList.add('error-shake');
+                    setTimeout(() => celBloqueada.classList.remove('error-shake'), 400);
+                }
+            }
+        }
+    }
+
+    // Ouvinte do Teclado Físico
+    window.addEventListener('keydown', function(event) {
+        const ecraJogo = document.getElementById('ecra-jogo');
+        if (ecraJogo && ecraJogo.style.display === 'flex') {
+            if (event.key === 'ArrowUp') { event.preventDefault(); moverJogador(-1, 0); }
+            if (event.key === 'ArrowDown') { event.preventDefault(); moverJogador(1, 0); }
+            if (event.key === 'ArrowLeft') { event.preventDefault(); moverJogador(0, -1); }
+            if (event.key === 'ArrowRight') { event.preventDefault(); moverJogador(0, 1); }
+        }
+    });
+
+    // Mostra pista do caminho correto por breves instantes (Bolinhas cor-de-rosa)
+    function mostrarDica() {
+        // Encontra o caminho mais curto a partir de onde o jogador está atualmente
+        let caminho = encontrarCaminhoCurto(jogadorPos.r, jogadorPos.c, alvoPos.r, alvoPos.c);
+        if (!caminho || caminho.length <= 2) return; // Se já estiver perto ou sem caminho
+
+        removerDicasAntigas();
+
+        // Salta o primeiro (onde está o jogador) e o último (alvo)
+        for (let i = 1; i < caminho.length - 1; i++) {
+            let [r, c] = caminho[i];
+            const celula = document.getElementById(`cel-${r}-${c}`);
+            if (celula) {
+                const dot = document.createElement('div');
+                dot.className = 'dica-dot';
+                celula.appendChild(dot);
+            }
+        }
+
+        // Tranca o botão dica para evitar spam e desvanece as dicas passados 1.5 segundos
+        document.getElementById('btn-dica').style.pointerEvents = 'none';
+        setTimeout(() => {
+            removerDicasAntigas();
+            document.getElementById('btn-dica').style.pointerEvents = 'auto';
+        }, 1500);
+    }
+
+    function removerDicasAntigas() {
+        document.querySelectorAll('.dica-dot').forEach(el => el.remove());
+    }
+
+    function concluiuRonda() {
+        tocarSom('acerto');
+        rondaAtual++;
+
+        // Atualiza a barra do caminho mágico
+        let percentagem = (rondaAtual / totalRondas) * 100;
+        atualizarProgressoCaminho(percentagem);
+
+        // Bloqueia movimentos temporariamente para celebrar a vitória da ronda
+        grelhaDados = Array(TAMANHO_GRELHA).fill().map(() => Array(TAMANHO_GRELHA).fill(0));
+
+        setTimeout(() => {
+            if (rondaAtual >= totalRondas) {
+                // FIM DO MINIJOGO
+                tocarSom('vitoria');
+                dispararConfetis();
+
+                // Altera mensagens de acordo com o jogo terminado
+                let msgFim = "Chegaste ao fim do caminho mágico!<br><br>";
+                if (jogoAtual === 1) msgFim += "O Ratinho devorou o queijo delicioso! <img src='../img-titulos/labirintos_menu_1.svg' class='icon-svg-menu' alt=''>";
+                else if (jogoAtual === 2) msgFim += "A Abelhinha recolheu o pólen da flor! <img src='../img-titulos/labirintos_menu_2.svg' class='icon-svg-menu' alt=''>";
+                else if (jogoAtual === 3) msgFim += "O Cachorrinho roeu o osso feliz! <img src='../img-titulos/labirintos_menu_3.svg' class='icon-svg-menu' alt=''>";
+                else msgFim += "O Carro cruzou a linha de meta a toda a velocidade! <img src='../img-titulos/labirintos_menu_4.svg' class='icon-svg-menu' alt=''>";
+
+                document.getElementById('mensagem-fim').innerHTML = msgFim;
+                mostrarEcra('ecra-fim');
+            } else {
+                prepararRonda();
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>
