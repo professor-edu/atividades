@@ -916,7 +916,7 @@
 
 		/* Bloco de Imagem/Palavra (Minijogo 4) */
 		.bloco-imagem-palavra {
-			width: 130px; 
+			width: 140px; 
 			height: auto; 
 			min-height: 130px; /* Aumentado ligeiramente para dar mais espaço */
 			padding: 10px;
@@ -935,13 +935,14 @@
 		}
 		
 		.bloco-imagem-palavra span {
-			font-size: clamp(0.75rem, 2vw, 0.95rem); /* Diminui a letra dinamicamente em ecrãs pequenos */
+			font-size: clamp(0.65rem, 1.8vw, 0.95rem); /* Diminui a letra dinamicamente em ecrãs pequenos */
 			line-height: 1.1;
 			font-weight: 900;
 			width: 100%;
 			word-wrap: break-word; /* Se mesmo assim for muito grande, divide a palavra de forma segura */
 			text-align: center;
 			display: block;
+			white-space: nowrap;
 		}
 		
 		/* Caixas ampliadas para imagens no Minijogo 4 */
@@ -1292,6 +1293,15 @@
 		}
 		return array;
 	}
+	
+	// Separa a primeira letra e pinta-a com a cor vermelha do template (--cor-pt)
+	function formatarPalavraComDestaque(palavra) {
+		if (!palavra) return '';
+		const inicial = palavra.charAt(0);
+		const resto = palavra.slice(1);
+		// Usamos <strong> com display inline explícito para que o navegador nunca quebre a linha
+		return `<strong style="color: var(--cor-pt); font-weight: 900; display: inline;">${inicial}</strong>${resto}`;
+	}
 
 	function gerarCorAleatoria() {
 		if (coresUsadas.size === CORES_LETRAS.length) {
@@ -1535,7 +1545,7 @@
 				bloco.dataset.valor = item.palavra;
 				bloco.innerHTML = `
 					<img src="../${item.imagem}" alt="${item.palavra}" onerror="this.src='../../../SVG/estrela.svg';">
-					<span>${item.palavra}</span>
+					<span>${formatarPalavraComDestaque(item.palavra)}</span>
 				`;
 				bloco.onclick = () => selecionarBlocoOrdem(bloco);
 				ligarArrastavel(bloco);
@@ -1697,7 +1707,7 @@
 			const palavraData = poolPalavras.find(p => p.palavra === valorSelecionado);
 			elementoColocado.innerHTML = `
 				<img src="../${palavraData.imagem}" alt="${palavraData.palavra}" style="max-width: 90%; height: auto; max-height: 55px; object-fit: contain;" onerror="this.src='../../../SVG/estrela.svg';">
-				<span style="font-size: 0.85em; font-weight: 700; color: var(--azul-escuro);">${valorSelecionado}</span>
+				<span style="font-size: 0.85em; font-weight: 700; color: var(--azul-escuro);">${formatarPalavraComDestaque(valorSelecionado)}</span>
 			`;
 		} else { 
 			elementoColocado.textContent = valorSelecionado;
