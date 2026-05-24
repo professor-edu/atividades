@@ -878,25 +878,29 @@
 		.espacos-palavra-container {
 			display: flex;
 			justify-content: center;
-			gap: 12px;
+			gap: 8px; /* Reduzido ligeiramente de 12px para 8px para poupar espaço */
 			width: 100%;
-			margin-bottom: 10px !important; /* Margem reduzida para aproximar da roda */
-			flex-wrap: wrap;
+			margin-top: -20px !important;
+			margin-bottom: 10px !important;
+			flex-wrap: nowrap !important; /* SEGURANÇA MÁXIMA: Proibe quebrar a linha */
 			min-height: 50px;
+			overflow: hidden; /* Garante que nada transborda */
 		}
 
 		.slot-letra {
-			width: 45px;
+			width: clamp(18px, 8vw, 45px) !important;
 			height: 48px;
-			border-bottom: 4px solid #b0bec5; /* Linha padrão por preencher */
+			border-bottom: 4px solid #b0bec5;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: clamp(1.8rem, 4vw, 2.3rem);
+			/* O tamanho da letra também encolhe dinamicamente em ecrãs estreitos */
+			font-size: clamp(1.1rem, 5.5vw, 2.3rem) !important;
 			font-weight: 900;
 			color: var(--azul-escuro);
 			transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			text-transform: uppercase;
+			flex-shrink: 1; /* Permite que o slot encolha se houver aperto de espaço */
 		}
 
 		/* Quando uma letra preenche o espaço */
@@ -911,32 +915,15 @@
 
 		.roda-ligar-container {
 			position: relative;
-			width: 320px;
-			height: 320px;
-			margin: 0 auto !important; /* Removidas margens verticais para subir o jogo */
+			width: 100%;
+			max-width: 310px; /* Limite elegante para PC e Tablets */
+			aspect-ratio: 1 / 1; /* Força um quadrado perfeito absoluto */
+			height: auto;
+			margin: 5px auto;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			touch-action: none; 
-		}
-
-		@media (max-width: 480px) {
-			.roda-ligar-container {
-				width: 240px;
-				height: 240px;
-				margin: 5px auto;
-			}
-			
-			.imagem-central-moldura {
-				width: 100px !important;
-				height: 100px !important;
-			}
-			
-			.no-letra {
-				width: 44px !important;
-				height: 44px !important;
-				font-size: 1.4rem !important;
-			}
 		}
 
 		/* Moldura Circular com a Imagem Central */
@@ -965,13 +952,6 @@
 			user-select: none;
 		}
 
-		@media (max-width: 480px) {
-			.imagem-central-moldura {
-				width: 115px;
-				height: 115px;
-			}
-		}
-
 		/* Nós das Letras Flutuantes */
 		.no-letra {
 			position: absolute;
@@ -993,18 +973,35 @@
 			touch-action: none;
 			text-transform: uppercase;
 		}
-
+		
 		@media (max-width: 480px) {
+			/* Liberta 26px de espaço horizontal útil para a roda não bater na borda */
+			.area-jogo-custom {
+				padding: 12px !important; 
+			}
+
 			.roda-ligar-container {
-				width: 270px;
-				height: 270px;
+				max-width: 240px; /* Limite de segurança confortável para telemóveis muito estreitos */
+				margin: 5px auto;
 			}
 			
+			/* Encolhe a moldura de forma proporcional */
 			.imagem-central-moldura {
-				width: 85px !important;
+				width: 85px !important; 
 				height: 85px !important;
+				border-width: 3px;
+				box-shadow: 0 6px 15px rgba(0,0,0,0.1), 0 0 0 4px rgba(19, 158, 163, 0.12);
 			}
 			
+			.no-letra {
+				width: 42px !important;
+				height: 42px !important;
+				font-size: 1.3rem !important;
+			}
+		}
+		
+		@media (max-width: 480px) {
+
 			.no-letra {
 				width: 42px !important;
 				height: 42px !important;
@@ -1471,6 +1468,7 @@
     let foiArrastado = false;
 	let startX = 0; // Posição X inicial do clique
     let startY = 0; // Posição Y inicial do clique
+	let ultimoNoFocado = null; // Evita validações repetidas no mesmo nó em mobile
     let corRondaAtual = ""; 
     
 	let rondasSorteadas = []; 
@@ -1685,8 +1683,8 @@
         
         desenhoAtivo = true;
         foiArrastado = false; 
+        ultimoNoFocado = index; // Regista o nó de início
 
-        // Regista a coordenada exata de início (Rato ou Touch)
         const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
         const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
         startX = clientX;
@@ -1776,15 +1774,24 @@
         const touch = e.touches[0];
         const dist = Math.hypot(touch.clientX - startX, touch.clientY - startY);
         
-        // Só ativa o modo de arrastamento táctil se arrastar mais de 15 píxeis
         if (dist > 15) {
             foiArrastado = true;
 
+            // Deteta o elemento sob o dedo de forma segura (mesmo tocando nas bordas ou texto)
             const elementoSobDedo = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (elementoSobDedo && elementoSobDedo.classList.contains('no-letra')) {
-                const index = parseInt(elementoSobDedo.dataset.index);
-                processarSelecaoNo(index);
+            const noLetra = elementoSobDedo ? elementoSobDedo.closest('.no-letra') : null;
+            
+            if (noLetra) {
+                const index = parseInt(noLetra.dataset.index);
+                
+                // SEGURANÇA ANTIFLOOD: Só processa se entrou num nó DIFERENTE do anterior
+                if (index !== ultimoNoFocado) {
+                    ultimoNoFocado = index;
+                    processarSelecaoNo(index);
+                }
             } else {
+                // Se o dedo saiu de cima de qualquer letra, liberta o foco para poder reentrar
+                ultimoNoFocado = null;
                 desenharLinhas(touch.clientX, touch.clientY);
             }
         }
@@ -1851,6 +1858,7 @@
     function terminarConexao() {
         if (!desenhoAtivo) return;
         desenhoAtivo = false;
+        ultimoNoFocado = null; // Reseta o foco de segurança ao soltar
         
         if (foiArrastado && caminhoLigacao.length < palavraAtual.length) {
             resetConexaoErro();
