@@ -63,5 +63,6 @@ const todosOsJogos =[
 	{ nome: "Sopa de Letras", icone: "icones/sopa_letras_meios_comunicacao.png", link: "em/sopa-letras/", cat: "em" },
 	{ nome: "Máquina do Tempo", icone: "icones/maquina_tempo.png", link: "em/maquina-tempo/", cat: "em" },
 	{ nome: "Flutua ou Afunda?", icone: "icones/flutua_afunda.png", link: "em/flutua-afunda/", cat: "em" },
-	{ nome: "Os 5 Sentidos", icone: "icones/5_sentidos.png", link: "em/5-sentidos/", cat: "em" }
+	{ nome: "Os 5 Sentidos", icone: "icones/5_sentidos.png", link: "em/5-sentidos/", cat: "em" },
+	{ nome: "A Família", icone: "icones/familia.png", link: "em/familia/", cat: "em" }
 ];
