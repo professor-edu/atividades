@@ -25,6 +25,7 @@ const todosOsJogos =[
 	{ nome: "Cruzadas de Animais", icone: "icones/cruzadas_animais.png", link: "pt/cruzadas-animais/", cat: "pt" },
 	{ nome: "Sopa de Letras", icone: "icones/sopa_letras.png", link: "pt/sopa-letras/", cat: "pt" },
 	{ nome: "Divisão Silábica", icone: "icones/divisao_silabica.png", link: "pt/divisao-silabica/", cat: "pt" },
+	{ nome: "Palavras por Minuto", icone: "icones/palavras_minuto.png", link: "pt/palavras-minuto/", cat: "pt" },
 	
 	
     // ------------------------------------

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2º Ano - Palavras por Minuto 🚀</title>
+    <title>2º Ano - Palavras por Minuto ⌨️</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -154,8 +154,8 @@
 		/* =========================================
            FOOTER
         ========================================= */
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano); margin-top: auto; flex-shrink: 0;}
-        footer p { font-size: 0.8rem; color: var(--cor-2ano); margin: 0; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-2ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-2ano-dark); margin: 0; }
         
         /* =========================================
            ECRÃS E MENUS
@@ -344,8 +344,8 @@
 
         .badge-erros svg {
             margin: 0 !important; 
-            width: 0.85em !important;
-            height: 0.85em !important;
+            width: 1.2em !important;
+            height: 1.2em !important;
             display: block;
         }
 
@@ -399,6 +399,49 @@
                 gap: 4px;
                 white-space: nowrap; /* Garante que o texto não se parte a meio */
                 flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+			
+			.imagem-palavra-preview {
+                display: none !important;
+            }
+
+            /* Obriga a caixa tracejada a crescer até ao fundo do teclado! */
+            .area-jogo-custom {
+                flex: 1 0 auto !important; /* Permite crescer, proíbe encolher abaixo do conteúdo */
+                min-height: min-content !important; /* Força a abraçar o teclado na totalidade */
+                overflow: visible !important; /* Tira o efeito "guilhotina" */
+                padding: 15px !important; /* Reduz um pouco a margem para poupar espaço */
+                gap: 15px !important;
+            }
+
+            /* Pequeno respiro entre o carrossel e o teclado */
+            .teclado-container {
+                padding: 4px 2px !important; /* Quase encostado à borda */
+                gap: 4px !important; /* Espaço vertical entre linhas */
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+			
+			.teclado-linha {
+                gap: 2px !important; /* Teclas quase coladas, como num iPhone */
+                width: 100% !important;
+            }
+            
+            /* 3. As teclas ficam altas e "magrinhas" */
+            .tecla-teclado {
+                padding: 0 !important; /* O flex trata do tamanho sozinho */
+                height: 40px !important; /* Altura suficiente para o dedo não falhar */
+                border-width: 1.5px !important; /* Borda mais fina gasta menos espaço */
+                border-radius: 4px !important;
+                font-size: clamp(0.7rem, 4vw, 1rem) !important;
+                box-shadow: 0 2px 0 #cbd5e1 !important;
+            }
+            
+            /* 4. O Enter e o Apagar têm de ceder espaço na linha */
+            .tecla-teclado.tecla-util, .tecla-teclado.tecla-enter {
+                flex: 0 0 13% !important; /* Reduzimos a largura deles para as letras respirarem */
+                font-size: 0.55rem !important; /* Letra pequenina para caber na tecla espremida */
+                letter-spacing: -0.5px;
             }
         }
 	
@@ -608,6 +651,22 @@
 
         .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
         
+		
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 15px;
+			text-align: center;
+			width: 100%;
+		}
+
+		/* Estilo Mobile: Empilha os elementos quando a tela for menor que 768px */
+		@media (max-width: 768px) {
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+		
 
         /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
         .btn-acao { 
@@ -697,78 +756,157 @@
            CSS ESPECÍFICO DO JOGO e ANIMAÇÃO
            ========================================= */
 
+		:root {
+    /* Caso não tenha no seu projeto, defini a cor exata do botão azul da imagem */
+    --cor-btn-azul: #3b82f6; 
+    --cor-btn-azul-escuro: #1d4ed8;
+}
+
+.animacao-tutorial {
+    position: relative;
+    overflow: hidden; 
+    background: radial-gradient(circle, #ffffff 40%, #f0f7ff 100%); 
+    border: 3px dashed var(--cor-btn-azul); 
+    border-radius: 20px;
+    margin: 0 auto 20px; 
+    width: 100%; 
+    max-width: 400px; 
+    height: 180px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(0, 145, 255, 0.06);
+}
+
+/* --- Estilização Base das Teclas --- */
+.base-tecla {
+    fill: #cbd5e1;
+}
+.capa-tecla {
+    fill: #ffffff;
+    stroke: #e2e8f0;
+    stroke-width: 1.5;
+}
+.texto-tecla {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    fill: #475569;
+}
+
+/* --- Linhas de Velocidade (Background) --- */
+.linha-velocidade {
+    stroke: #e0f2fe;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.7;
+    animation: moverLinha 0.8s linear infinite;
+}
+.lv-1 { animation-duration: 0.6s; }
+.lv-2 { animation-duration: 0.9s; animation-delay: 0.2s; }
+.lv-3 { animation-duration: 0.7s; animation-delay: 0.4s; }
+
+@keyframes moverLinha {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(450px); }
+}
+
+/* --- Gerenciamento da Digitação Rápida (Timings) --- */
+/* Duração total do ciclo: 1.4s. Cada tecla atrasa 0.18s para parecer uma digitação fluida */
+.tecla-a .topo-tecla  { animation: afundar 1.4s infinite 0s cubic-bezier(0.4, 0, 0.2, 1); }
+.tecla-a .capa-tecla  { animation: ligarAzul 1.4s infinite 0s; }
+.tecla-a .texto-tecla { animation: clarearTexto 1.4s infinite 0s; }
+.tecla-a .base-tecla  { animation: escurecerSombra 1.4s infinite 0s; }
+
+.tecla-l .topo-tecla  { animation: afundar 1.4s infinite 0.18s cubic-bezier(0.4, 0, 0.2, 1); }
+.tecla-l .capa-tecla  { animation: ligarAzul 1.4s infinite 0.18s; }
+.tecla-l .texto-tecla { animation: clarearTexto 1.4s infinite 0.18s; }
+.tecla-l .base-tecla  { animation: escurecerSombra 1.4s infinite 0.18s; }
+
+.tecla-f .topo-tecla  { animation: afundar 1.4s infinite 0.36s cubic-bezier(0.4, 0, 0.2, 1); }
+.tecla-f .capa-tecla  { animation: ligarAzul 1.4s infinite 0.36s; }
+.tecla-f .texto-tecla { animation: clarearTexto 1.4s infinite 0.36s; }
+.tecla-f .base-tecla  { animation: escurecerSombra 1.4s infinite 0.36s; }
+
+.tecla-c .topo-tecla  { animation: afundar 1.4s infinite 0.54s cubic-bezier(0.4, 0, 0.2, 1); }
+.tecla-c .capa-tecla  { animation: ligarAzul 1.4s infinite 0.54s; }
+.tecla-c .texto-tecla { animation: clarearTexto 1.4s infinite 0.54s; }
+.tecla-c .base-tecla  { animation: escurecerSombra 1.4s infinite 0.54s; }
+
+
+/* --- Keyframes das Teclas --- */
+@keyframes afundar {
+    0%, 30%, 100% { transform: translateY(0); }
+    12% { transform: translateY(4px); } /* Desce simulando o clique */
+}
+
+@keyframes ligarAzul {
+    0%, 30%, 100% { fill: #ffffff; stroke: #e2e8f0; }
+    12%, 20% { fill: var(--cor-btn-azul); stroke: var(--cor-btn-azul-escuro); }
+}
+
+@keyframes clarearTexto {
+    0%, 30%, 100% { fill: #475569; }
+    12%, 20% { fill: #ffffff; }
+}
+
+@keyframes escurecerSombra {
+    0%, 30%, 100% { fill: #cbd5e1; }
+    12%, 20% { fill: var(--cor-btn-azul-escuro); }
+}
+		
 		/* =========================================
-		   ANIMAÇÃO INICIAL: A TECLA COMPRESSA (Menu Inicial)
+		   A BOLHA DE IMAGEM FLUTUANTE (Estática e Segura)
 		   ========================================= */
-		.animacao-tutorial {
-			position: relative;
-			overflow: hidden; 
-			background: radial-gradient(circle, #ffffff 40%, #f0f7ff 100%); 
-			border: 3px dashed var(--cor-btn-azul); 
-			border-radius: 20px;
-			margin: 0 auto 20px; 
-			width: 100%; 
-			max-width: 400px; 
-			height: 180px; 
+		.imagem-palavra-preview {
+			width: clamp(65px, 12vh, 95px);
+			height: clamp(65px, 12vh, 95px);
+			border-radius: 50%;
+			background-color: white;
+			border: 3.5px solid var(--cor-btn-azul);
+			box-shadow: 0 6px 15px rgba(0, 145, 255, 0.15), 0 0 0 4px rgba(0, 145, 255, 0.1);
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			box-shadow: inset 0 0 20px rgba(0, 145, 255, 0.08);
+			z-index: 10;
+			overflow: hidden;
+			margin: 10px auto 10px; /* Margem controlada sem sobrepor as palavras */
+			transition: transform 0.2s;
+			animation: flutuarBolha 3s ease-in-out infinite alternate;
 		}
 
-		/* Grupo da Tecla 3D que afunda no menu */
-		.tecla-3d-tutorial {
-			transform-origin: 200px 90px;
-			animation: afundarTeclaMenu 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+		.imagem-palavra-preview img {
+			max-width: 80%;
+			max-height: 80%;
+			object-fit: contain;
+			pointer-events: none;
+			user-select: none;
 		}
 
-		@keyframes afundarTeclaMenu {
-			0%, 100% { 
-				transform: translateY(0); 
-				filter: drop-shadow(0 6px 0 #cbd5e1) drop-shadow(0 8px 12px rgba(0,0,0,0.1));
-			}
-			45%, 55% { 
-				transform: translateY(4px); 
-				filter: drop-shadow(0 2px 0 #cbd5e1) drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-			}
-		}
-
-		/* Brilho neon de clique de sucesso que dispara ao segundo 1.5 */
-		.brilho-clique-menu {
-			stroke: var(--cor-btn-azul);
-			stroke-dasharray: 100;
-			stroke-dashoffset: 100;
-			animation: centelhaSucessoMenu 3s ease-in-out infinite;
-			opacity: 0;
-		}
-
-		@keyframes centelhaSucessoMenu {
-			0%, 45% { stroke-dashoffset: 100; opacity: 0; }
-			50% { opacity: 1; }
-			55%, 80% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 8px var(--cor-btn-azul)); }
-			90%, 100% { opacity: 0; }
+		@keyframes flutuarBolha {
+			0% { transform: translateY(0); }
+			100% { transform: translateY(-5px); }
 		}
 
 		/* =========================================
-		   CARROSSEL HORIZONTAL DE PALAVRAS (A FILA DESLIZANTE)
+		   CARROSSEL HORIZONTAL DE PALAVRAS (FILA CENTRADA)
 		   ========================================= */
 		.carousel-palavras-container {
+			position: relative; 
 			display: flex;
 			align-items: center;
-			justify-content: flex-start;
+			justify-content: center; 
 			width: 100%;
-			height: 80px;
+			max-width: 800px; /* Alinhado estritamente com o teclado */
+			height: clamp(75px, 15vh, 120px); 
 			background-color: white;
 			border-radius: 20px;
 			border: 3px solid #dee2e6;
 			padding: 10px 25px;
-			overflow: hidden; /* Corta as palavras na esquerda e na direita */
-			position: relative;
-			gap: 25px;
+			overflow: hidden; /* Corta palavras nas extremidades */
 			margin-bottom: 15px;
 		}
 
-		/* Máscaras de desvanecimento nas bordas para dar efeito de carrossel infinito */
 		.carousel-palavras-container::before,
 		.carousel-palavras-container::after {
 			content: "";
@@ -788,27 +926,25 @@
 			background: linear-gradient(to left, white, transparent);
 		}
 
-		/* Grupo de palavras que se desloca horizontalmente */
 		.carousel-palavras-fila {
 			display: flex;
 			align-items: center;
+			justify-content: center; 
 			gap: 30px;
-			transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 			width: 100%;
 		}
 
-		/* Palavras na Fila de Antecipação */
 		.palavra-carrossel {
-			font-size: 1.3rem;
+			font-size: 1.2rem;
 			font-weight: 700;
 			color: #94a3b8;
-			opacity: 0.4;
+			opacity: 0.35;
 			white-space: nowrap;
 			transition: all 0.3s ease;
 			text-transform: lowercase;
 		}
 
-		/* A Palavra Ativa (Foco Total) */
+		/* Palavra Ativa (Spotlight Centrado) */
 		.palavra-carrossel.palavra-ativa {
 			font-size: 2.1rem;
 			font-weight: 900;
@@ -816,23 +952,20 @@
 			opacity: 1;
 			transform: scale(1.05);
 			background-color: #f0f7ff;
-			padding: 4px 16px;
+			padding: 4px 18px;
 			border-radius: 12px;
 		}
 
-		/* Letras dentro da palavra ativa */
 		.letra-carrossel {
 			position: relative;
 			color: var(--azul-escuro);
 			transition: color 0.1s ease;
 		}
 
-		/* Letras digitadas corretamente */
 		.letra-carrossel.letra-correta {
 			color: var(--cor-sucesso) !important;
 		}
 
-		/* Cursor vermelho piscante abaixo da letra atual */
 		.letra-carrossel.letra-cursor::after {
 			content: "";
 			position: absolute;
@@ -851,16 +984,16 @@
 		}
 
 		/* =========================================
-		   O TECLADO VIRTUAL QWERTY RESPONSIVO
+		   O TECLADO VIRTUAL QWERTY AMPLIADO
 		   ========================================= */
 		.teclado-container {
 			display: flex;
 			flex-direction: column;
-			gap: 6px;
+			gap: 10px;
 			width: 100%;
-			max-width: 800px;
+			max-width: 800px; 
 			margin: 5px auto 0;
-			padding: 10px;
+			padding: 12px;
 			background-color: #f1f5f9;
 			border-radius: 20px;
 			border: 3px solid #cbd5e1;
@@ -871,15 +1004,14 @@
 		.teclado-linha {
 			display: flex;
 			justify-content: center;
-			gap: 4px;
+			gap: 5px;
 			width: 100%;
 		}
 
-		/* As Teclas Gerais */
 		.tecla-teclado {
-			flex: 1 1 0%; /* Reparte a largura do ecrã de forma igual entre todas as teclas */
-			max-width: 50px;
-			height: clamp(26px, 7.5vw, 48px); /* Encolhe de forma proporcional em mobile vertical */
+			flex: 1 1 0%; 
+			max-width: 52px;
+			height: clamp(32px, 8.5vw, 50px); /* Teclas aumentadas para preencher o contentor */
 			background-color: white;
 			border: 2.5px solid #dee2e6;
 			border-radius: 8px;
@@ -887,7 +1019,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: clamp(0.7rem, 2.2vw, 1.1rem); /* Encolhe a fonte de forma responsiva */
+			font-size: clamp(0.85rem, 2.3vw, 1.15rem); 
 			font-weight: 800;
 			color: var(--text-main);
 			cursor: pointer;
@@ -901,29 +1033,31 @@
 			box-shadow: 0 1px 0 #cbd5e1;
 		}
 
-		/* --- FORMATO DAS TECLAS UTILITÁRIAS --- */
+		/* Teclas Utilitárias Largas e Proeminentes */
 		.tecla-teclado.tecla-util {
-			flex-grow: 1.5; /* Ligeiramente mais largas (Backspace, Shift, Caps Lock) */
-			background-color: #e2e8f0;
-			color: #475569;
-			font-size: clamp(0.55rem, 1.8vw, 0.95rem);
-		}
-
-		/* Barra de Espaço Grande */
-		.tecla-teclado.tecla-espaco {
-			flex-grow: 6.5; /* Muito larga */
-			background-color: white;
+			flex: 0 0 16% !important; 
+			max-width: none !important;
+			background-color: #cbd5e1;
+			color: #1e293b;
+			font-size: clamp(0.6rem, 1.8vw, 0.9rem);
 		}
 
 		/* Tecla ENTER de grande destaque */
 		.tecla-teclado.tecla-enter {
-			flex-grow: 1.8;
-			background-color: #e2e8f0;
+			flex: 0 0 16% !important; 
+			max-width: none !important;
+			background-color: #cbd5e1;
 			color: #1e293b;
-			font-size: clamp(0.55rem, 1.8vw, 0.95rem);
+			font-size: clamp(0.6rem, 1.8vw, 0.9rem);
 		}
 
-		/* --- TECLA ILUMINADA (Próximo Caractere / Enter) --- */
+		/* Barra de Espaço Comprida Realista */
+		.tecla-teclado.tecla-espaco {
+			flex: 0 0 55% !important; 
+			max-width: none !important;
+			background-color: white;
+		}
+
 		.tecla-teclado.tecla-iluminada {
 			background-color: var(--cor-btn-azul) !important;
 			color: white !important;
@@ -942,11 +1076,15 @@
 			100% { filter: brightness(1.15) drop-shadow(0 0 8px rgba(0, 145, 255, 0.4)); }
 		}
 
-		/* --- MOBILE VERTICAL TIGHTENING --- */
+		/* --- TELEMÓVEL COMPACTO VERTICAL --- */
 		@media (max-width: 480px) {
 			.carousel-palavras-container {
-				height: 60px;
 				padding: 5px 15px;
+			}
+			
+			.imagem-palavra-preview {
+				width: 50px;
+				border-width: 2.5px;
 			}
 			
 			.palavra-carrossel.palavra-ativa {
@@ -955,24 +1093,31 @@
 			}
 			
 			.teclado-container {
-				gap: 4px;
-				padding: 6px;
-			}
+                padding: 4px 2px !important; /* Quase encostado à borda */
+                gap: 4px !important; /* Espaço vertical entre linhas */
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
 			
 			.teclado-linha {
-				gap: 3px;
-			}
+                gap: 2px !important; /* Teclas quase coladas, como num iPhone */
+                width: 100% !important;
+            }
 			
 			.tecla-teclado {
-				border-width: 1.5px;
-				box-shadow: 0 3px 0 #cbd5e1;
-				border-radius: 6px;
-			}
+                padding: 0 !important; /* O flex trata do tamanho sozinho */
+                height: 40px !important; /* Altura suficiente para o dedo não falhar */
+                border-width: 1.5px !important; /* Borda mais fina gasta menos espaço */
+                border-radius: 4px !important;
+                font-size: clamp(0.7rem, 4vw, 1rem) !important;
+                box-shadow: 0 2px 0 #cbd5e1 !important;
+            }
 			
-			.tecla-teclado:active, .tecla-teclado.tecla-fisica-ativa {
-				transform: translateY(2px);
-				box-shadow: 0 1px 0 #cbd5e1;
-			}
+			.tecla-teclado.tecla-util, .tecla-teclado.tecla-enter {
+                flex: 0 0 13% !important; /* Reduzimos a largura deles para as letras respirarem */
+                font-size: 0.55rem !important; /* Letra pequenina para caber na tecla espremida */
+                letter-spacing: -0.5px;
+            }
 		}
 
 		   
@@ -1004,8 +1149,8 @@
             <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
         </div>
         
-        <h1>Palavras por Minuto<img src="../img-titulos/nome-jogo.svg" class="icon-svg-titulo" alt=""></h1>
-        <div class="subtitulo" id="subtitulo-header">Quantas consegues?</div>
+        <h1>Palavras por Minuto<img src="../img-titulos/palavras_minuto.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escreve o mais rápido que conseguires!</div>
     </div>
 </header>
 
@@ -1021,67 +1166,98 @@
            ========================================= -->
         <div id="ecra-selecao" class="ecra">
                        
-            <!-- ANIMAÇÃO INICIAL (Tecla do teclado 3D a clicar) -->
+            <!-- ANIMAÇÃO INICIAL (Tecla do teclado 3D a pulsar) -->
             <div class="animacao-tutorial">
-                <svg class="svg-tutorial-linhas" viewBox="0 0 400 180" style="width: 100%; height: 100%;">
-                    <!-- Centelha brilhante que dispara ao simular o clique -->
-                    <circle cx="200" cy="90" r="38" fill="none" stroke-width="4" class="brilho-clique-menu"/>
-                    <line x1="200" y1="52" x2="200" y2="30" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
-                    <line x1="200" y1="128" x2="200" y2="150" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
-                    <line x1="162" y1="90" x2="140" y2="90" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
-                    <line x1="238" y1="90" x2="260" y2="90" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
-                    
-                    <!-- Tecla A física que afunda -->
-                    <g class="tecla-3d-tutorial">
-                        <rect x="175" y="65" width="50" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
-                        <text x="200" y="98" font-family="'Roboto', sans-serif" font-weight="900" font-size="28" fill="var(--cor-btn-azul)" text-anchor="middle">A</text>
-                    </g>
-                </svg>
-            </div>
+    <svg class="svg-tutorial-linhas" viewBox="0 0 400 180" style="width: 100%; height: 100%;">
+        <line x1="-50" y1="40" x2="0" y2="40" class="linha-velocidade lv-1" />
+        <line x1="-50" y1="90" x2="0" y2="90" class="linha-velocidade lv-2" />
+        <line x1="-50" y1="140" x2="0" y2="140" class="linha-velocidade lv-3" />
 
-            <h2 class="titulo-menu">Treino de Palavras</br>Escreve o mais rápido que conseguires!</h2>
+        <g class="tecla-tutorial tecla-a">
+            <rect class="base-tecla" x="85" y="71" width="48" height="48" rx="10" />
+            <g class="topo-tecla">
+                <rect class="capa-tecla" x="85" y="65" width="48" height="48" rx="10" />
+                <text class="texto-tecla" x="109" y="96" text-anchor="middle">G</text>
+            </g>
+        </g>
+
+        <g class="tecla-tutorial tecla-l">
+            <rect class="base-tecla" x="148" y="71" width="48" height="48" rx="10" />
+            <g class="topo-tecla">
+                <rect class="capa-tecla" x="148" y="65" width="48" height="48" rx="10" />
+                <text class="texto-tecla" x="172" y="96" text-anchor="middle">A</text>
+            </g>
+        </g>
+
+        <g class="tecla-tutorial tecla-f">
+            <rect class="base-tecla" x="211" y="71" width="48" height="48" rx="10" />
+            <g class="topo-tecla">
+                <rect class="capa-tecla" x="211" y="65" width="48" height="48" rx="10" />
+                <text class="texto-tecla" x="235" y="96" text-anchor="middle">T</text>
+            </g>
+        </g>
+
+        <g class="tecla-tutorial tecla-c">
+            <rect class="base-tecla" x="274" y="71" width="48" height="48" rx="10" />
+            <g class="topo-tecla">
+                <rect class="capa-tecla" x="274" y="65" width="48" height="48" rx="10" />
+                <text class="texto-tecla" x="298" y="96" text-anchor="middle">O</text>
+            </g>
+        </g>
+    </svg>
+</div>
+
+            <h2 class="titulo-menu">Quantas palavras consegues escrever?</h2>
             
             <div style="display: flex; justify-content: center; width: 100%;">
                 <button class="btn-nivel-novo bg-azul" onclick="iniciarJogoTeclado()" style="max-width: 320px;">
-                    <img src="../../../SVG/ano1.svg" class="icon-btn-nivel" alt="Começar" onerror="this.style.display='none'">
-                    Começar o Treino!
+                    <img src="../img-titulos/palavras_minuto_menu1.svg" class="icon-btn-nivel" alt="Começar" onerror="this.style.display='none'">
+                    Começar o Desafio!
                 </button>
             </div>
         </div>
 
         <!-- =========================================
-           ECRÃ DE JOGO
+           ECRÃ DE JOGO (Sem botão de Dica)
            ========================================= -->
         <div id="ecra-jogo" class="ecra">
             
-            <!-- Barra de Estado Adaptada ao Treino de Palavras -->
-            <div class="status-bar-jogo" style="border-color: var(--cor-btn-azul); background-color: var(--bg-header);">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu" style="border-color: var(--cor-btn-azul);"></button>
+            <!-- Barra de Estado do Template com Relógio SVG Integrado -->
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu" ></button>
                 <div class="badge-ronda" style="border-color: var(--cor-btn-azul); color: var(--azul-escuro);">
-                    Precisão: <span id="val-precisao" style="font-weight:900;">100%</span>
+				    Precisão: <span id="val-precisao" style="font-weight:900;">0%</span>
                 </div>
-                <div class="progress-bg">
-                    <div id="progress-fill" class="progress-fill" style="background-color: var(--cor-btn-azul); width: 100%;"></div>
-                </div>
-                <div class="badge-erros" style="border-color: var(--cor-btn-azul); color: var(--azul-escuro);"> 
-                    Tempo: <span id="val-tempo" style="font-weight:900;">60s</span>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+			    <div class="badge-erros" style="border-color: var(--cor-btn-azul); color: var(--azul-escuro); display: flex; align-items: center; gap: 5px;"> 
+                    <!-- Ícone de Relógio SVG -->
+                    <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; flex-shrink:0;">
+                        <circle cx="12" cy="12" r="9"/>
+                        <polyline points="12 7 12 12 15 15"/>
+                    </svg>
+                    <span id="val-tempo" style="font-weight:900;">60s</span>
                 </div>
             </div>
 
             <!-- Zona de Jogo Customizada -->
-            <div class="area-jogo-custom" id="game-area" style="border-color: var(--cor-btn-azul); gap: 15px;">
+            <div class="area-jogo-custom" id="game-area">
                 
-                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS (A Fila de Espera) -->
+                <!-- A Bolha de Imagem Flutuante Centrada (Estática, fora do carrossel) -->
+                <div class="imagem-palavra-preview" id="imagem-central-preview">
+                    <img id="imagem-preview" src="" alt="Dica" onerror="this.style.opacity='0';">
+                </div>
+
+                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS -->
                 <div class="carousel-palavras-container">
                     <div class="carousel-palavras-fila" id="fila-palavras">
-                        <!-- As palavras serão injetadas de forma deslizante aqui pelo JS -->
+                        <!-- As palavras serão injetadas aqui pelo JS -->
                     </div>
                 </div>
 
                 <!-- O TECLADO VIRTUAL QWERTY COMPACTO -->
                 <div class="teclado-container" id="teclado-virtual">
                     
-                    <!-- Linha 1: 10 Teclas de Letras + Backspace -->
+                    <!-- Linha 1: Letras + Acento Agudo/Grave + Backspace -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado" data-key="q">q</button>
                         <button class="tecla-teclado" data-key="w">w</button>
@@ -1093,10 +1269,11 @@
                         <button class="tecla-teclado" data-key="i">i</button>
                         <button class="tecla-teclado" data-key="o">o</button>
                         <button class="tecla-teclado" data-key="p">p</button>
-                        <button class="tecla-teclado tecla-util" data-key="backspace">← Apagar</button>
+                        <button class="tecla-teclado" data-key="´">´ \`</button>
+                        <button class="tecla-teclado tecla-util" data-key="backspace">⌫ APAGAR</button>
                     </div>
                     
-                    <!-- Linha 2: 10 Teclas de Letras + ENTER -->
+                    <!-- Linha 2: Letras + Acento Til/Circunflexo + ENTER -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado" data-key="a">a</button>
                         <button class="tecla-teclado" data-key="s">s</button>
@@ -1108,10 +1285,11 @@
                         <button class="tecla-teclado" data-key="k">k</button>
                         <button class="tecla-teclado" data-key="l">l</button>
                         <button class="tecla-teclado" data-key="ç">ç</button>
-                        <button class="tecla-teclado tecla-enter" data-key="enter">Enter ↵</button>
+                        <button class="tecla-teclado" data-key="~">~ ^</button>
+                        <button class="tecla-teclado tecla-enter" data-key="enter">↵ ENTER</button>
                     </div>
                     
-                    <!-- Linha 3: 7 Teclas de Letras + Sinais Básicos -->
+                    <!-- Linha 3: Letras + Sinais Básicos -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado" data-key="z">z</button>
                         <button class="tecla-teclado" data-key="x">x</button>
@@ -1125,7 +1303,7 @@
                         <button class="tecla-teclado" data-key="-">-</button>
                     </div>
                     
-                    <!-- Linha 4: Barra de Espaço -->
+                    <!-- Linha 4: Barra de Espaço Comprida Realista -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado tecla-espaco" data-key=" " aria-label="Espaço"></button>
                     </div>
@@ -1135,29 +1313,40 @@
         </div>
 
         <!-- =========================================
-           ECRÃ DE FIM (Com os resultados detalhados)
+           ECRÃ DE FIM (Com os resultados organizados em Grelha Sólida)
            ========================================= -->
         <div id="ecra-fim" class="ecra">
-            <h2 class="end-title" id="end-title-text" style="color: var(--azul-escuro);">Treino Concluído!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <!-- Título final com Ícone de Comemoração SVG nativo -->
+            <h2 class="end-title" id="end-title-text">Treino Concluído!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
             
-            <div class="end-stats" id="end-stats-box" style="border-color: var(--cor-btn-azul); background-color: var(--bg-header); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; width: 100%;">
+            <!-- Grelha Rígida de 3 Colunas: Impede desalinhamentos e sobreposições de texto -->
+            <div class="end-stats">
                 <div>
-                    <strong id="final-precisao" style="color: var(--cor-btn-azul); font-size: 2.3rem;">100%</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Precisão</p>
+                    <p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Precisão</p>
+					<strong id="final-precisao" style="color: var(--cor-btn-azul); font-size: 2.3rem; display: block; font-weight: 900;">0%</strong>
+                    
                 </div>
                 <div>
-                    <strong id="final-pbm" style="color: var(--cor-btn-azul); font-size: 2.3rem;">0</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Palavras por minuto</p>
+                    <strong id="final-pbm" style="color: var(--cor-btn-azul); font-size: 2.3rem; display: block; font-weight: 900;">0</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Palavras por Minuto</p>
                 </div>
                 <div>
-                    <strong id="final-tempo" style="color: var(--cor-btn-azul); font-size: 2.3rem;">00:00</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Tempo gasto</p>
+                    <strong id="final-tempo" style="color: var(--cor-btn-azul); font-size: 2.3rem; display: block; font-weight: 900;">01:00</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Tempo Gasto</p>
                 </div>
             </div>
            
             <div class="botoes-acao-container">
-                <button class="btn-acao primario" onclick="reiniciarJogoAtual()" style="background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #0070c5;">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
-                <button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao primario" onclick="reiniciarJogoAtual()" style="background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #0070c5; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <!-- Ícone de Repetir SVG nativo -->
+                    JOGAR DE NOVO
+					<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="currentColor" style="flex-shrink:0;"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()" style="background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <!-- Ícone de Home SVG nativo -->
+                    <svg viewBox="0 0 24 24" width="1.5em" height="1.5em" fill="currentColor" style="flex-shrink:0;"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    VOLTAR AO MENU
+                </button>
             </div>
         </div>
         
@@ -1204,19 +1393,26 @@
 
     /* ==========================================
        LISTA DE SALVAGUARDA (Fallback do Teclado)
-       Ativa-se automaticamente se o dados.js não for carregado
        ========================================== */
     const fallbackPalavras = [
-        { palavra: "tesouro" }, { palavra: "polpa" }, { palavra: "dedo" }, { palavra: "anzol" }, 
-        { palavra: "feliz" }, { palavra: "domingo" }, { palavra: "hortelã" }, { palavra: "símbolo" },
-        { palavra: "aula" }, { palavra: "cuidar" }, { palavra: "matilde" }, { palavra: "flor" }, 
-        { palavra: "piolho" }, { palavra: "aviões" }, { palavra: "chuveiro" }, { palavra: "clube" }, 
-        { palavra: "empada" }, { palavra: "magia" }, { palavra: "rojões" }, { palavra: "rola" }, 
-        { palavra: "pão" }, { palavra: "pinto" }
+        { palavra: "tesouro", imagem: "img/tesouro.png" }, 
+        { palavra: "polpa", imagem: "img/polpa.png" }, 
+        { palavra: "dedo", imagem: "img/dedo.png" }, 
+        { palavra: "anzol", imagem: "img/anzol.png" }, 
+        { palavra: "feliz", imagem: "img/feliz.png" }, 
+        { palavra: "domingo", imagem: "img/domingo.png" }, 
+        { palavra: "hortelã", imagem: "img/hortela.png" }, 
+        { palavra: "símbolo", imagem: "img/simbolo.png" },
+        { palavra: "aula", imagem: "img/aula.png" }, 
+        { palavra: "cuidar", imagem: "img/cuidar.png" }, 
+        { palavra: "matilde", imagem: "img/menino.png" }, 
+        { palavra: "flor", imagem: "img/flor.png" }, 
+        { palavra: "piolho", imagem: "img/piolho.png" }, 
+        { palavra: "aviões", imagem: "img/aviao.png" }, 
+        { palavra: "chuveiro", imagem: "img/chuveiro.png" }, 
+        { palavra: "clube", imagem: "img/clube.png" }, 
+        { palavra: "empada", imagem: "img/empada.png" }
     ];
-
-    // Carrega a base de dados global externa de dados.js; caso contrário, usa o fallback de emergência
-    const poolPalavras = (typeof palavras !== 'undefined') ? palavras : fallbackPalavras;
 
 	/* ==========================================
        ESTADO GLOBAL DO JOGO: PALAVRAS POR MINUTO
@@ -1227,10 +1423,29 @@
     let letraIndice = 0;    
     let tempoRestante = 60; 
     let intervaloCronometro = null;
-    let jogoAtivo = false;
+    let juegoAtivoTeclado = false; 
+    let aguardandoLetraBase = false; 
+
+    let startX = 0;
+    let startY = 0;
 
     let loteAtivoPalavras = []; 
     const LIMIAR_LOTES = 80;   
+
+    // Mapeamento de acentos portugueses de 2 etapas para o teclado do PC (Mapeado de forma 100% correta)
+    const MAPA_ACENTOS = {
+        'á': { acento: '´', letra: 'a' },
+        'à': { acento: '´', letra: 'a' }, // Agudo/Grave partilham a mesma tecla de acento no PC
+        'â': { acento: '~', letra: 'a' }, // Til/Circunflexo partilham a mesma tecla de acento no PC
+        'ã': { acento: '~', letra: 'a' },
+        'é': { acento: '´', letra: 'e' },
+        'ê': { acento: '~', letra: 'e' }, 
+        'í': { acento: '´', letra: 'i' },
+        'ó': { acento: '´', letra: 'o' },
+        'ô': { acento: '~', letra: 'o' }, 
+        'õ': { acento: '~', letra: 'o' },
+        'ú': { acento: '´', letra: 'u' }
+    };
 
 	/* ==========================================
        FUNÇÕES AUXILIARES GLOBAIS
@@ -1256,7 +1471,7 @@
 	}
 
 	/* ==========================================
-       ARRANQUE SEGURO (Binds do Cabeçalho)
+       ARRANQUE UNIFICADO PARA O TEMPLATE ORIGINAL (Seguro)
        ========================================== */
 	document.addEventListener("DOMContentLoaded", () => {
 		const ano = document.getElementById('ano-atual');
@@ -1269,7 +1484,13 @@
 		if (badgeRonda) badgeRonda.innerHTML = SVG_STAR;
 
 		const btnDica = document.getElementById('btn-dica');
-		if (btnDica) btnDica.innerHTML = SVG_BULB + ' Dica';
+		if (btnDica) {
+            btnDica.disabled = true;
+            btnDica.classList.add('esgotada');
+            btnDica.style.opacity = "0.5";
+            btnDica.style.pointerEvents = "none";
+            btnDica.innerHTML = "⏳ Dica";
+        }
 
 		const iconeErro = document.getElementById('icone-erro-svg');
 		if (iconeErro) iconeErro.innerHTML = SVG_ERRO;
@@ -1289,15 +1510,14 @@
 	}
 
 	function voltarAoMenu() {
-        // Trava o jogo e limpa os processos se o aluno clicar em voltar a meio da partida
-        jogoAtivo = false;
+        juegoAtivoTeclado = false;
         clearInterval(intervaloCronometro);
         window.removeEventListener('keydown', processarTeclaFisica);
 
         const confetti = document.getElementById('confetti-container');
         if (confetti) confetti.innerHTML = '';
 
-		document.getElementById('subtitulo-header').textContent = "Testa quantas palavras por minuto consegues escrever.";
+		document.getElementById('subtitulo-header').textContent = "Escreve o mais rápido que conseguires!";
 		mostrarEcra('ecra-selecao');
 	}
 
@@ -1305,8 +1525,15 @@
         iniciarJogoTeclado();
     }
 
+    // Resolve de forma segura o caminho das imagens da subpasta
+    function resolverCaminhoImagem(caminho) {
+        if (!caminho) return "";
+        if (caminho.startsWith("../")) return caminho;
+        return "../" + caminho;
+    }
+
 	/* ==========================================
-       INICIALIZAÇÃO DO JOGO (INJEÇÃO DINÂMICA COMPLETA)
+       INICIALIZAÇÃO DO JOGO (COM SEMÁFORO 3, 2, 1)
        ========================================== */
     function iniciarJogoTeclado() {
         errosCometidos = 0;
@@ -1314,33 +1541,31 @@
         palavraIndice = 0;
         letraIndice = 0;
         tempoRestante = 60;
-        jogoAtivo = true;
-        
-        const confetti = document.getElementById('confetti-container');
-        if (confetti) confetti.innerHTML = '';
-        
-        // 1. Desativa o botão de dica original na barra de estado do template e usa-o como relógio
-        const btnDica = document.getElementById('btn-dica');
-        if (btnDica) {
-            btnDica.disabled = true;
-            btnDica.classList.add('esgotada');
-            btnDica.style.opacity = "0.7";
-            btnDica.style.pointerEvents = "none";
-            btnDica.innerHTML = `⏳ ${tempoRestante}s`;
-        }
+        juegoAtivoTeclado = false; // Trancado durante a contagem
+        aguardandoLetraBase = false;
+        document.getElementById('confetti-container').innerHTML = '';
 
-        // 2. INJEÇÃO DINÂMICA: Desenha o carrossel e o teclado QWERTY na "area-jogo-custom" limpa do template
+        // 1. Vincula o pool de palavras dinamicamente no arranque para evitar erros de ordem de carregamento de scripts
+        const poolActual = (typeof dbPalavras !== 'undefined' && dbPalavras.length > 0) ? dbPalavras : fallbackPalavras;
+
+        // 2. INJEÇÃO DINÂMICA DO TECLADO E CARROSSEL
         const area = document.getElementById('game-area');
         if (area) {
             area.innerHTML = `
-                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS (A Fila de Espera) -->
+                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS COM A BOLHA DE IMAGEM -->
                 <div class="carousel-palavras-container">
+                    
+                    <!-- A Bolha de Imagem Flutuante Centrada (Estática, fora do carrossel) -->
+                    <div class="imagem-palavra-preview" id="imagem-central-preview">
+                        <img id="imagem-preview" src="" alt="Dica" onerror="this.style.opacity='0';">
+                    </div>
+
                     <div class="carousel-palavras-fila" id="fila-palavras"></div>
                 </div>
 
                 <!-- O TECLADO VIRTUAL QWERTY COMPACTO -->
                 <div class="teclado-container" id="teclado-virtual">
-                    <!-- Linha 1: Letras + Backspace -->
+                    <!-- Linha 1: Letras + Acento Agudo/Grave + Backspace -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado" data-key="q">q</button>
                         <button class="tecla-teclado" data-key="w">w</button>
@@ -1352,10 +1577,11 @@
                         <button class="tecla-teclado" data-key="i">i</button>
                         <button class="tecla-teclado" data-key="o">o</button>
                         <button class="tecla-teclado" data-key="p">p</button>
-                        <button class="tecla-teclado tecla-util" data-key="backspace">← Apagar</button>
+                        <button class="tecla-teclado" data-key="´">´ \`</button>
+                        <button class="tecla-teclado tecla-util" data-key="backspace">⌫ APAGAR</button>
                     </div>
                     
-                    <!-- Linha 2: Letras + ENTER -->
+                    <!-- Linha 2: Letras + Acento Til/Circunflexo + ENTER -->
                     <div class="teclado-linha">
                         <button class="tecla-teclado" data-key="a">a</button>
                         <button class="tecla-teclado" data-key="s">s</button>
@@ -1367,7 +1593,8 @@
                         <button class="tecla-teclado" data-key="k">k</button>
                         <button class="tecla-teclado" data-key="l">l</button>
                         <button class="tecla-teclado" data-key="ç">ç</button>
-                        <button class="tecla-teclado tecla-enter" data-key="enter">Enter ↵</button>
+                        <button class="tecla-teclado" data-key="~">~ ^</button>
+                        <button class="tecla-teclado tecla-enter" data-key="enter">↵ ENTER</button>
                     </div>
                     
                     <!-- Linha 3: Letras + Sinais Básicos -->
@@ -1391,7 +1618,7 @@
                 </div>
             `;
 
-            // Vincula instantaneamente os cliques de ecrã do teclado virtual injetado
+            // Vincula os cliques de ecrã do teclado virtual
             document.querySelectorAll('.tecla-teclado').forEach(btn => {
                 btn.onclick = (e) => {
                     e.stopPropagation();
@@ -1401,37 +1628,56 @@
         }
 
         // 3. Sorteia as 80 palavras do lote unificado
-        loteAtivoPalavras = baralharArray(poolPalavras).slice(0, LIMIAR_LOTES);
-
-        // 4. Iniciar o cronómetro de 60 segundos
-        clearInterval(intervaloCronometro);
-        intervaloCronometro = setInterval(atualizarCronometro, 1000);
+        loteAtivoPalavras = baralharArray(poolActual).slice(0, LIMIAR_LOTES);
 
         atualizarPlacarTeclado();
         mostrarEcra('ecra-jogo');
 
-        // 5. Desenhar o carrossel de palavras
+        // 4. Desenhar o carrossel de palavras de forma inicial
         montarCarrosselPalavras();
+
+        // 5. CRIAR E EXIBIR O CRONÓMETRO DE PREPARAÇÃO "3, 2, 1" (Semáforo)
+        let contagem = 3;
+        const overlay = document.createElement('div');
+        overlay.id = "countdown-overlay";
+        overlay.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.85); display:flex; align-items:center; justify-content:center; font-size:5rem; font-weight:900; color:var(--cor-btn-azul); z-index:100; border-radius:20px; transition:all 0.3s;";
+        overlay.textContent = contagem;
+        area.appendChild(overlay);
         
-        // 6. Ativar os ouvintes de teclado físico do PC
-        window.addEventListener('keydown', processarTeclaFisica);
+        tocarSom('flip');
+
+        const timerContagem = setInterval(() => {
+            contagem--;
+            if (contagem > 0) {
+                overlay.textContent = contagem;
+                tocarSom('flip');
+            } else if (contagem === 0) {
+                overlay.textContent = "VAI!";
+                overlay.style.color = "var(--cor-sucesso)";
+                tocarSom('acerto');
+            } else {
+                clearInterval(timerContagem);
+                overlay.remove();
+                
+                // Desbloqueia e inicia o jogo real de 60 segundos!
+                juegoAtivoTeclado = true;
+                clearInterval(intervaloCronometro);
+                intervaloCronometro = setInterval(atualizarCronometro, 1000);
+                window.addEventListener('keydown', processarTeclaFisica);
+            }
+        }, 1000);
     }
 
     // Função que gere a contagem decrescente do tempo
     function atualizarCronometro() {
-        if (!jogoAtivo) return;
+        if (!juegoAtivoTeclado) return;
 
         tempoRestante--;
         
-        // Atualiza a contagem no botão de Dica desativado de forma segura
-        const btnDica = document.getElementById('btn-dica');
-        if (btnDica) btnDica.innerHTML = `⏳ ${tempoRestante}s`;
-        
-        // Mostra o tempo também na pílula da direita do status bar
         const valTempo = document.getElementById('val-tempo');
         if (valTempo) valTempo.textContent = `${tempoRestante}s`;
 
-        // Drena a barra de progresso proporcionalmente de 100% a 0%
+        // Drena a barra de progresso de 100% a 0%
         const fill = document.getElementById('progress-fill');
         if (fill) fill.style.width = ((tempoRestante / 60) * 100) + '%';
 
@@ -1449,60 +1695,76 @@
         
         fila.innerHTML = '';
         
-        // Mantém sempre uma fila de 5 palavras no ecrã (a começar no palavraIndice atual)
         const totalPalavras = loteAtivoPalavras.length;
-        const limite = Math.min(palavraIndice + 5, totalPalavras);
         
-        for (let i = palavraIndice; i < limite; i++) {
-            const palavra = loteAtivoPalavras[i].palavra.toLowerCase();
+        // 1. CARREGAR A BOLHA DE IMAGEM DO DUARTE ( preview da imagem central)
+        const activeRonda = loteAtivoPalavras[palavraIndice];
+        const previewImg = document.getElementById('imagem-preview');
+        const previewContainer = document.getElementById('imagem-central-preview');
+        
+        if (activeRonda && activeRonda.imagem && previewImg && previewContainer) {
+            previewImg.src = resolverCaminhoImagem(activeRonda.imagem);
+            previewContainer.style.opacity = "1";
+        } else if (previewContainer) {
+            previewContainer.style.opacity = "0"; 
+        }
+
+        // 2. MONTAGEM DO CARROSSEL HORIZONTAL CENTRADO (Fila de 5 Slots)
+        for (let offset = -2; offset <= 2; offset++) {
+            const currentIdx = palavraIndice + offset;
             const wordSpan = document.createElement('span');
-            
-            if (i === palavraIndice) {
-                // Palavra Ativa (Spotlight da esquerda)
-                wordSpan.className = 'palavra-carrossel palavra-ativa';
+            wordSpan.className = 'palavra-carrossel';
+
+            if (currentIdx >= 0 && currentIdx < totalPalavras) {
+                // Normaliza o texto em NFC (Composto) para evitar erros de leitura com acentuação
+                const palavra = loteAtivoPalavras[currentIdx].palavra.toLowerCase().normalize("NFC");
                 
-                // Transforma cada letra num elemento independente para podermos pintar individualmente
-                for (let j = 0; j < palavra.length; j++) {
-                    const letraSpan = document.createElement('span');
-                    letraSpan.className = 'letra-carrossel';
-                    letraSpan.textContent = palavra.charAt(j);
+                if (offset === 0) {
+                    // Palavra Ativa (Spotlight perfeitamente centrado)
+                    wordSpan.className = 'palavra-carrossel palavra-ativa';
                     
-                    // Letras escritas corretamente ganham cor verde
-                    if (j < letraIndice) {
-                        letraSpan.classList.add('letra-correta');
+                    for (let j = 0; j < palavra.length; j++) {
+                        const letraSpan = document.createElement('span');
+                        letraSpan.className = 'letra-carrossel';
+                        letraSpan.textContent = palavra.charAt(j);
+                        
+                        if (j < letraIndice) {
+                            letraSpan.classList.add('letra-correta');
+                        }
+                        if (j === letraIndice) {
+                            letraSpan.classList.add('letra-cursor');
+                        }
+                        wordSpan.appendChild(letraSpan);
                     }
-                    // Letra atual a ser digitada ganha o cursor vermelho por baixo
-                    if (j === letraIndice) {
-                        letraSpan.classList.add('letra-cursor');
-                    }
-                    wordSpan.appendChild(letraSpan);
+                } else {
+                    // Palavras em Fila de Espera (Faded Grey)
+                    wordSpan.textContent = palavra;
                 }
             } else {
-                // Palavras em fila de espera à direita (Faded Grey)
-                wordSpan.className = 'palavra-carrossel';
-                wordSpan.textContent = palavra;
+                wordSpan.style.opacity = "0";
+                wordSpan.textContent = "------";
             }
             fila.appendChild(wordSpan);
         }
         
-        // Acende a tecla que o aluno deve pressionar a seguir no teclado virtual
+        // Acende a tecla seguinte no teclado virtual
         iluminarProximaTeclaVirtual();
     }
 
     // Avança para a próxima palavra na fila (Efeito de Deslizamento)
     function avancarPalavraCarrossel() {
         palavraIndice++;
-        letraIndice = 0; // Reinicia o cursor da letra para o início da nova palavra
+        letraIndice = 0; 
+        aguardandoLetraBase = false; 
 
-        // Se o lote de 80 palavras terminar antes dos 60 segundos, reinicia a lista
         if (palavraIndice >= loteAtivoPalavras.length) {
             palavraIndice = 0;
-            loteAtivoPalavras = baralharArray(poolPalavras).slice(0, LIMIAR_LOTES);
+            // Procura exatamente por "dbPalavras" aqui também!
+            const poolActual = (typeof dbPalavras !== 'undefined' && dbPalavras.length > 0) ? dbPalavras : fallbackPalavras;
+            loteAtivoPalavras = baralharArray(poolActual).slice(0, LIMIAR_LOTES);
         }
 
         tocarSom('acerto');
-        
-        // Redesenha a fila com o deslocamento horizontal
         montarCarrosselPalavras();
     }
 	
@@ -1510,23 +1772,37 @@
        ILUMINAÇÃO DE TECLAS E CAPTURA DE TOQUES
        ========================================== */
 
-    // Limpa iluminações anteriores e acende a tecla que o aluno deve clicar
+    // Determina qual a próxima tecla virtual a iluminar (Suporta sequências de acentuação do PC)
     function iluminarProximaTeclaVirtual() {
-        // Remove a iluminação de todas as teclas virtuais
         document.querySelectorAll('.tecla-teclado').forEach(t => t.classList.remove('tecla-iluminada'));
 
         const r = loteAtivoPalavras[palavraIndice];
         if (!r) return;
 
-        const palavra = r.palavra.toLowerCase();
+        const palavra = r.palavra.toLowerCase().normalize("NFC");
 
         if (letraIndice < palavra.length) {
-            // Se ainda faltam letras, ilumina a próxima letra da palavra
             const proximaLetra = palavra.charAt(letraIndice);
-            const tecla = document.querySelector(`.tecla-teclado[data-key="${proximaLetra}"]`);
-            if (tecla) tecla.classList.add('tecla-iluminada');
+            
+            // Verifica se a letra atual precisa de acentuação física (Ex: "í" ou "ã")
+            if (MAPA_ACENTOS[proximaLetra] && !isMobile()) {
+                const mapeamento = MAPA_ACENTOS[proximaLetra];
+                if (!aguardandoLetraBase) {
+                    // Etapa 1: Ilumina a tecla do acento físico correspondente (Ex: "´" ou "~")
+                    const teclaAcento = document.querySelector(`.tecla-teclado[data-key="${mapeamento.acento}"]`);
+                    if (teclaAcento) teclaAcento.classList.add('tecla-iluminada');
+                } else {
+                    // Etapa 2: Ilumina a letra base correspondente (Ex: "i" ou "a")
+                    const teclaLetra = document.querySelector(`.tecla-teclado[data-key="${mapeamento.letra}"]`);
+                    if (teclaLetra) teclaLetra.classList.add('tecla-iluminada');
+                }
+            } else {
+                // Mobile ou Letra normal: Ilumina a letra de forma direta
+                const tecla = document.querySelector(`.tecla-teclado[data-key="${proximaLetra}"]`);
+                if (tecla) tecla.classList.add('tecla-iluminada');
+            }
         } else {
-            // Se a palavra já está toda verde/correta, ilumina a tecla Enter
+            // Palavra totalmente correta: Ilumina o Enter para submissão
             const teclaEnter = document.querySelector('.tecla-teclado[data-key="enter"]');
             if (teclaEnter) teclaEnter.classList.add('tecla-iluminada');
         }
@@ -1534,14 +1810,14 @@
 
     // Processador Unificado: Trata cliques no ecrã E digitação física do PC
     function processarEntradaCaracter(key) {
-        if (!jogoAtivo) return;
+        if (!juegoAtivoTeclado) return;
 
         const r = loteAtivoPalavras[palavraIndice];
         if (!r) return;
 
-        const palavra = r.palavra.toLowerCase();
+        const palavra = r.palavra.toLowerCase().normalize("NFC");
 
-        // Faz a tecla virtual piscar no ecrã para dar feedback tátil
+        // Faz a tecla virtual piscar no ecrã
         const teclaVirtual = document.querySelector(`.tecla-teclado[data-key="${key}"]`);
         if (teclaVirtual) {
             teclaVirtual.classList.add('tecla-fisica-ativa');
@@ -1549,7 +1825,7 @@
         }
 
         // 1. IGNORA TECLAS DE SISTEMA (Ex: Shift, Alt, Control)
-        if (key.length > 1 && key !== 'enter' && key !== 'backspace') {
+        if (key.length > 1 && key !== 'enter' && key !== 'backspace' && key !== 'dead') {
             return; 
         }
 
@@ -1557,21 +1833,50 @@
 
         if (letraIndice < palavra.length) {
             const letraEsperada = palavra.charAt(letraIndice);
-            if (key === letraEsperada) {
-                // ACERTO: Avança o cursor na palavra ativa
-                letraIndice++;
-                tocarSom('flip');
-                montarCarrosselPalavras();
+
+            // ASSISTENTE DE ACENTUAÇÃO FÍSICA EM 2 ETAPAS (PC)
+            if (MAPA_ACENTOS[letraEsperada] && !isMobile()) {
+                const mapeamento = MAPA_ACENTOS[letraEsperada];
+
+                if (!aguardandoLetraBase) {
+                    // Deteta se pressionou o acento físico correto (ou a tecla morta "Dead")
+                    if (key === mapeamento.acento || key === 'dead') {
+                        aguardandoLetraBase = true;
+                        tocarSom('flip');
+                        iluminarProximaTeclaVirtual();
+                    } else {
+                        errosCometidos++;
+                        tocarSom('erro');
+                    }
+                } else {
+                    // Deteta se completou a letra base ou o caractere composto final (Ex: pressionou "i" obtendo "í")
+                    if (key === mapeamento.letra || key === letraEsperada) {
+                        letraIndice++;
+                        aguardandoLetraBase = false;
+                        tocarSom('flip');
+                        montarCarrosselPalavras();
+                    } else {
+                        errosCometidos++;
+                        tocarSom('erro');
+                    }
+                }
             } else {
-                // ERRO
-                errosCometidos++;
-                tocarSom('erro');
+                // Mobile ou Letra normal: Validação direta
+                const simplificada = isMobile() && MAPA_ACENTOS[letraEsperada] ? MAPA_ACENTOS[letraEsperada].letra : letraEsperada;
+
+                if (key === letraEsperada || key === simplificada) {
+                    letraIndice++;
+                    tocarSom('flip');
+                    montarCarrosselPalavras();
+                } else {
+                    errosCometidos++;
+                    tocarSom('erro');
+                }
             }
         } else if (key === 'enter') {
-            // Se a palavra já está concluída e pressionou Enter, avança no carrossel
+            // Avança no carrossel quando o Enter é pressionado e a palavra está completa
             avancarPalavraCarrossel();
         } else {
-            // Pressionou outra tecla qualquer em vez do Enter
             errosCometidos++;
             tocarSom('erro');
         }
@@ -1585,24 +1890,24 @@
         processarEntradaCaracter(key);
     }
 
+    // Helper para detetar se o utilizador está em tablet ou telemóvel
+    function isMobile() {
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+
     /* ==========================================
        ATUALIZAÇÃO DE PLACAR E FINALIZAÇÃO DO JOGO
        ========================================== */
     function atualizarPlacarTeclado() {
-        // Cálculo de Precisão baseado na nossa fórmula matemática
-        let precisao = 100;
+        // Cálculo de Precisão
+        let precisao = 0; // Começa a 0% se não houver toques para evitar divisão por zero
         if (toquesTotais > 0) {
             precisao = Math.max(0, Math.round((1 - (errosCometidos / toquesTotais)) * 100));
         }
 
-        // Atualiza os elementos originais do seu status bar
         const valPrecisao = document.getElementById('val-precisao');
         if (valPrecisao) {
             valPrecisao.textContent = `${precisao}%`;
-        } else {
-            // Se o ID personalizado val-precisao não existir, usa o original val-erros para mostrar os erros
-            const valErros = document.getElementById('val-erros');
-            if (valErros) valErros.textContent = errosCometidos;
         }
 
         // Mostra o número de palavras concluídas no val-progresso do seu template original
@@ -1611,7 +1916,6 @@
             valProgresso.textContent = palavraIndice;
         }
         
-        // Define o val-total estático como "PBM" para o aluno ler: (Palavras concluídas) / PBM
         const valTotal = document.getElementById('val-total');
         if (valTotal) {
             valTotal.textContent = "PBM";
@@ -1619,36 +1923,47 @@
     }
 
     function finalizarJogoTeclado() {
-        jogoAtivo = false;
-        clearInterval(intervaloCronometro);
+        jogoAtivo = false;
+        juegoAtivoTeclado = false;
+        clearInterval(intervaloCronometro);
 
-        // Desliga os ouvintes físicos de digitação para congelar o jogo
-        window.removeEventListener('keydown', processarTeclaFisica);
+        window.removeEventListener('keydown', processarTeclaFisica);
 
-        // Calcula a precisão final
-        let precisaoFinal = 100;
-        if (toquesTotais > 0) {
-            precisaoFinal = Math.max(0, Math.round((1 - (errosCometidos / toquesTotais)) * 100));
-        }
+        let precisaoFinal = 0;
+        if (toquesTotais > 0) {
+            precisaoFinal = Math.max(0, Math.round((1 - (errosCometidos / toquesTotais)) * 100));
+        }
 
-        // Desenha os resultados diretamente no card original .end-stats do seu template final
-        const caixaResultados = document.querySelector('#ecra-fim .end-stats');
-        if (caixaResultados) {
-            caixaResultados.innerHTML = `
-                Treino Concluído!<br><br>
-                Precisão: <strong style="color: var(--cor-sucesso); font-size: 2rem;">${precisaoFinal}%</strong><br>
-                Palavras por Minuto: <strong style="color: var(--cor-1ano); font-size: 2rem;">${palavraIndice}</strong><br>
-                Tempo Gasto: <strong style="color: var(--azul-escuro); font-size: 2rem;">01:00</strong>
-            `;
-        }
+		// 👇 NOVO: Cálculo da Pontuação (Palavras concluídas * Precisão)
+		const pontuacaoFinal = Math.round(palavraIndice * precisaoFinal);
 
-        // Remove iluminação ativa das teclas
-        document.querySelectorAll('.tecla-teclado').forEach(t => t.classList.remove('tecla-iluminada'));
+        // Desenha os resultados diretamente no card original .end-stats do seu template final (Sem quebras)
+        const caixaResultados = document.querySelector('#ecra-fim .end-stats');
+			if (caixaResultados) {
+				caixaResultados.innerHTML = `
+					<div class="stats-grid">
+						<div>
+							<p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Precisão</p>
+							<strong style="color: var(--cor-btn-azul); font-size: 2.3rem; display:block; font-weight:900;">${precisaoFinal}%</strong>
+						</div>
+						<div>
+							<p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Palavras</p>
+							<strong style="color: var(--cor-btn-azul); font-size: 2.3rem; display:block; font-weight:900;">${palavraIndice}</strong>
+						</div>
+						<div>
+							<p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Pontuação</p>
+							<strong style="color: #eab308; font-size: 2.3rem; display:block; font-weight:900;">${pontuacaoFinal}</strong>
+						</div>
+					</div>
+				`;
+			}
 
-        mostrarEcra('ecra-fim');
-        tocarSom('vitoria');
-        dispararConfetis();
-    }
+        document.querySelectorAll('.tecla-teclado').forEach(t => t.classList.remove('tecla-iluminada'));
+
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        dispararConfetis();
+    }
 
 	/* ==========================================
 	   SISTEMA DE SOM DEFINITIVO (Híbrido)
@@ -1731,7 +2046,7 @@
 			const playPromise = voz.play();
 			if (playPromise !== undefined) {
 				playPromise.catch(erro => {
-					console.warn("Reprodução bloqueada pelo browser.", erro);
+					console.warn("Reprodução bloqueada.", erro);
 				});
 			}
 		} catch (e) {
