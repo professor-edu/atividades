@@ -7,7 +7,8 @@
     
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
+    <!-- Importação do ficheiro de dados externo -->
+    <script src="../dados.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -1011,104 +1012,155 @@
 <main>
     <div class="cartao-jogo-container" id="cartao-jogo">
         
-        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <!-- Contentor de Confetis e Toast Mensagens -->
         <div id="confetti-container" class="confetti-container"></div>
+        <div id="toast-msg" class="toast-msg"></div>
 
-
-        <!-- ECRÃ DE SELEÇÃO -->
+        <!-- =========================================
+           ECRÃ DE SELEÇÃO (MENU INICIAL)
+           ========================================= -->
         <div id="ecra-selecao" class="ecra">
-            
-            <!-- ANIMAÇÃO RESERVADA -->
+                       
+            <!-- ANIMAÇÃO INICIAL (Tecla do teclado 3D a clicar) -->
             <div class="animacao-tutorial">
-                [ Espaço para Animação / Tutorial ]
+                <svg class="svg-tutorial-linhas" viewBox="0 0 400 180" style="width: 100%; height: 100%;">
+                    <!-- Centelha brilhante que dispara ao simular o clique -->
+                    <circle cx="200" cy="90" r="38" fill="none" stroke-width="4" class="brilho-clique-menu"/>
+                    <line x1="200" y1="52" x2="200" y2="30" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
+                    <line x1="200" y1="128" x2="200" y2="150" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
+                    <line x1="162" y1="90" x2="140" y2="90" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
+                    <line x1="238" y1="90" x2="260" y2="90" stroke-width="4" stroke-linecap="round" class="brilho-clique-menu"/>
+                    
+                    <!-- Tecla A física que afunda -->
+                    <g class="tecla-3d-tutorial">
+                        <rect x="175" y="65" width="50" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+                        <text x="200" y="98" font-family="'Roboto', sans-serif" font-weight="900" font-size="28" fill="var(--cor-btn-azul)" text-anchor="middle">A</text>
+                    </g>
+                </svg>
             </div>
-			<h2 class="titulo-menu">Escolhe o teu desafio:</h2>
-            
-            <!-- GRELHA 2x2 COM AS CORES DO ROOT -->
-				<div class="grid-niveis">
-				
-					<button class="btn-nivel-novo bg-vermelho" onclick="iniciarJogo(5, 'Nível 1: Descobre as Imagens!')">
-						<img src="../img-titulos/MENU_1.svg" class="icon-btn-nivel" alt="">
-						Minijogo 1
-					</button>
-			
-					<button class="btn-nivel-novo bg-verde" onclick="iniciarJogo(5, 'Nível 2: Liga os Pares!')">
-						<img src="../img-titulos/MENU_2.svg" class="icon-btn-nivel" alt="">
-						Minijogo 2
-					</button>
-					
-					<button class="btn-nivel-novo bg-amarelo" onclick="iniciarJogo(5, 'Nível 3: ????')">
-						<img src="../img-titulos/MENU_3.svg" class="icon-btn-nivel" alt="">
-						Minijogo 3
-					</button>
-					
-					<button class="btn-nivel-novo bg-roxo" onclick="iniciarJogo(5, 'Nível 4: !!!!!!')">
-						<img src="../img-titulos/MENU_4.svg" class="icon-btn-nivel" alt="">
-						Minijogo 4
-					</button>
 
-				</div>
+            <h2 class="titulo-menu">Treino de Palavras</br>Escreve o mais rápido que conseguires!</h2>
+            
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogoTeclado()" style="max-width: 320px;">
+                    <img src="../../../SVG/ano1.svg" class="icon-btn-nivel" alt="Começar" onerror="this.style.display='none'">
+                    Começar o Treino!
+                </button>
+            </div>
         </div>
 
-        <!-- ECRÃ DE JOGO -->
+        <!-- =========================================
+           ECRÃ DE JOGO
+           ========================================= -->
         <div id="ecra-jogo" class="ecra">
             
-            <div class="status-bar-jogo">
-				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
-				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
-				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">??</span></div>
-                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
-				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
-            </div>
-
-            <!-- Zona de Jogo: Teste de Botões Vibrantes -->
-            <div class="area-jogo-custom" id="game-area">
-                <div class="pergunta-texto">Teste aos Botões Vibrantes!</div>
-                <p style="font-size:1.1rem; color:var(--text-main); font-weight:normal; max-width:500px; margin-bottom:30px;">
-                    Clica nos botões abaixo para veres o impacto das cores fortes no acerto e no erro.
-                </p>
-                <div class="opcoes-container" id="opcoes-container">
-                    <button class="btn-opcao" onclick="simularAcerto(this)"><img src="../../../SVG/certo.svg" class="icon-certo" alt=""> Acerto</button>
-					<button class="btn-opcao" onclick="simularErro(this)"><img src="../../../SVG/errado.svg" class="icon-errado" alt=""> Erro</button>
+            <!-- Barra de Estado Adaptada ao Treino de Palavras -->
+            <div class="status-bar-jogo" style="border-color: var(--cor-btn-azul); background-color: var(--bg-header);">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu" style="border-color: var(--cor-btn-azul);"></button>
+                <div class="badge-ronda" style="border-color: var(--cor-btn-azul); color: var(--azul-escuro);">
+                    Precisão: <span id="val-precisao" style="font-weight:900;">100%</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill" style="background-color: var(--cor-btn-azul); width: 100%;"></div>
+                </div>
+                <div class="badge-erros" style="border-color: var(--cor-btn-azul); color: var(--azul-escuro);"> 
+                    Tempo: <span id="val-tempo" style="font-weight:900;">60s</span>
                 </div>
             </div>
-            
-        </div>
 
-        <!-- ECRÃ DE TRANSIÇÃO (Placeholder opcional) -->
-        <div id="ecra-transicao" class="ecra">
-			<h2 class="end-title" id="transicao-title-text">Nível Completo!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
-            <div class="end-stats">
-                <p>Estás a ir muito bem!</p>
+            <!-- Zona de Jogo Customizada -->
+            <div class="area-jogo-custom" id="game-area" style="border-color: var(--cor-btn-azul); gap: 15px;">
+                
+                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS (A Fila de Espera) -->
+                <div class="carousel-palavras-container">
+                    <div class="carousel-palavras-fila" id="fila-palavras">
+                        <!-- As palavras serão injetadas de forma deslizante aqui pelo JS -->
+                    </div>
+                </div>
+
+                <!-- O TECLADO VIRTUAL QWERTY COMPACTO -->
+                <div class="teclado-container" id="teclado-virtual">
+                    
+                    <!-- Linha 1: 10 Teclas de Letras + Backspace -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="q">q</button>
+                        <button class="tecla-teclado" data-key="w">w</button>
+                        <button class="tecla-teclado" data-key="e">e</button>
+                        <button class="tecla-teclado" data-key="r">r</button>
+                        <button class="tecla-teclado" data-key="t">t</button>
+                        <button class="tecla-teclado" data-key="y">y</button>
+                        <button class="tecla-teclado" data-key="u">u</button>
+                        <button class="tecla-teclado" data-key="i">i</button>
+                        <button class="tecla-teclado" data-key="o">o</button>
+                        <button class="tecla-teclado" data-key="p">p</button>
+                        <button class="tecla-teclado tecla-util" data-key="backspace">← Apagar</button>
+                    </div>
+                    
+                    <!-- Linha 2: 10 Teclas de Letras + ENTER -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="a">a</button>
+                        <button class="tecla-teclado" data-key="s">s</button>
+                        <button class="tecla-teclado" data-key="d">d</button>
+                        <button class="tecla-teclado" data-key="f">f</button>
+                        <button class="tecla-teclado" data-key="g">g</button>
+                        <button class="tecla-teclado" data-key="h">h</button>
+                        <button class="tecla-teclado" data-key="j">j</button>
+                        <button class="tecla-teclado" data-key="k">k</button>
+                        <button class="tecla-teclado" data-key="l">l</button>
+                        <button class="tecla-teclado" data-key="ç">ç</button>
+                        <button class="tecla-teclado tecla-enter" data-key="enter">Enter ↵</button>
+                    </div>
+                    
+                    <!-- Linha 3: 7 Teclas de Letras + Sinais Básicos -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="z">z</button>
+                        <button class="tecla-teclado" data-key="x">x</button>
+                        <button class="tecla-teclado" data-key="c">c</button>
+                        <button class="tecla-teclado" data-key="v">v</button>
+                        <button class="tecla-teclado" data-key="b">b</button>
+                        <button class="tecla-teclado" data-key="n">n</button>
+                        <button class="tecla-teclado" data-key="m">m</button>
+                        <button class="tecla-teclado" data-key=",">,</button>
+                        <button class="tecla-teclado" data-key=".">.</button>
+                        <button class="tecla-teclado" data-key="-">-</button>
+                    </div>
+                    
+                    <!-- Linha 4: Barra de Espaço -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado tecla-espaco" data-key=" " aria-label="Espaço"></button>
+                    </div>
+
+                </div>
             </div>
-           
-			<div class="botoes-acao-container">
-				<button class="btn-acao primario">
-					PRÓXIMO NÍVEL 
-					<img src="../../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
-				</button>
-				<button class="btn-acao terciario" onclick="voltarAoMenu()">
-					<img src="../../../SVG/home.svg" class="icon-acao" alt=""> 
-					VOLTAR AO MENU
-				</button>
-			</div>
         </div>
 
-        <!-- ECRÃ DE FIM -->
+        <!-- =========================================
+           ECRÃ DE FIM (Com os resultados detalhados)
+           ========================================= -->
         <div id="ecra-fim" class="ecra">
-            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
-            <div class="end-stats">
-                Completaste os testes!<br><br>
-                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            <h2 class="end-title" id="end-title-text" style="color: var(--azul-escuro);">Treino Concluído!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            
+            <div class="end-stats" id="end-stats-box" style="border-color: var(--cor-btn-azul); background-color: var(--bg-header); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; width: 100%;">
+                <div>
+                    <strong id="final-precisao" style="color: var(--cor-btn-azul); font-size: 2.3rem;">100%</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Precisão</p>
+                </div>
+                <div>
+                    <strong id="final-pbm" style="color: var(--cor-btn-azul); font-size: 2.3rem;">0</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Palavras por minuto</p>
+                </div>
+                <div>
+                    <strong id="final-tempo" style="color: var(--cor-btn-azul); font-size: 2.3rem;">00:00</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Tempo gasto</p>
+                </div>
             </div>
            
-			
-			<div class="botoes-acao-container">
-				<button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
-				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
-			</div>
-			
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogoAtual()" style="background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #0070c5;">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
         </div>
+        
     </div>
 </main>
 <div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
@@ -1129,9 +1181,9 @@
 </footer>
 
 <script>
-/* ==========================================
-   SVGs GLOBAIS
-   ========================================== */
+    /* ==========================================
+       SVGs GLOBAIS
+       ========================================== */
 	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
 	<path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
 	<rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
@@ -1150,48 +1202,39 @@
 	<path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
 	</svg>`;
 
-/* ==========================================
-   ESTADO DO JOGO
-   ========================================== */
-	let erradas = 0;
-	let desafioAtual = 0;
-	let totalDesafiosNivel = 5;
-	let rondasParaDica = 0;
-	let selecaoLigar = null;
-	let selecoesLigar = {};
-	let arrastoAtivo = null;
-	let selecoesArrastar = {};
-	let totalArrastar = 0;
-	let totalParesCorretos = 0;
-	const COOLDOWN_DICA = 5;
-	let rondasSorteadas =[]; // Vai guardar a seleção aleatória do jogo atual
-	
-	// Variável do cronómetro anti-frustração
-	let timerImpaciencia = null;
+    /* ==========================================
+       LISTA DE SALVAGUARDA (Fallback do Teclado)
+       Ativa-se automaticamente se o dados.js não for carregado
+       ========================================== */
+    const fallbackPalavras = [
+        { palavra: "tesouro" }, { palavra: "polpa" }, { palavra: "dedo" }, { palavra: "anzol" }, 
+        { palavra: "feliz" }, { palavra: "domingo" }, { palavra: "hortelã" }, { palavra: "símbolo" },
+        { palavra: "aula" }, { palavra: "cuidar" }, { palavra: "matilde" }, { palavra: "flor" }, 
+        { palavra: "piolho" }, { palavra: "aviões" }, { palavra: "chuveiro" }, { palavra: "clube" }, 
+        { palavra: "empada" }, { palavra: "magia" }, { palavra: "rojões" }, { palavra: "rola" }, 
+        { palavra: "pão" }, { palavra: "pinto" }
+    ];
 
-	function resetTimerImpaciencia() {
-		clearTimeout(timerImpaciencia); // Pára o relógio antigo
-		const btnDica = document.getElementById('btn-dica');
-		if(btnDica) btnDica.classList.remove('dica-impaciente');
+    // Carrega a base de dados global externa de dados.js; caso contrário, usa o fallback de emergência
+    const poolPalavras = (typeof palavras !== 'undefined') ? palavras : fallbackPalavras;
 
-		// Começa a contar 15 segundos (15000 milissegundos)
-		timerImpaciencia = setTimeout(() => {
-			// Se os 15s passarem e a dica estiver disponível, começa a piscar!
-			if (rondasParaDica <= 0 && btnDica) {
-				btnDica.classList.add('dica-impaciente');
-			}
-		}, 15000);
-	}
+	/* ==========================================
+       ESTADO GLOBAL DO JOGO: PALAVRAS POR MINUTO
+       ========================================== */
+    let errosCometidos = 0; 
+    let toquesTotais = 0;   
+    let palavraIndice = 0;  
+    let letraIndice = 0;    
+    let tempoRestante = 60; 
+    let intervaloCronometro = null;
+    let jogoAtivo = false;
 
-	function pararTimerImpaciencia() {
-		clearTimeout(timerImpaciencia);
-		const btnDica = document.getElementById('btn-dica');
-		if(btnDica) btnDica.classList.remove('dica-impaciente');
-	}
-	
-	
+    let loteAtivoPalavras = []; 
+    const LIMIAR_LOTES = 80;   
 
-	// Função mágica para baralhar arrays
+	/* ==========================================
+       FUNÇÕES AUXILIARES GLOBAIS
+       ========================================= */
 	function baralharArray(arr) {
 		let array = [...arr];
 		for (let i = array.length - 1; i > 0; i--) {
@@ -1201,112 +1244,6 @@
 		return array;
 	}
 
-	const RONDAS = [
-		
-		{
-			tipo: 'clicar-imagem',
-			pergunta: 'Clica na imagem que representa a palavra “sol”',
-			correta: 'sol',
-			imagens: [
-				{ id: 'lua', src: '../../../SVG/lua.svg', alt: 'Lua' },
-				{ id: 'sol', src: '../../../SVG/sol.svg', alt: 'Sol' },
-				{ id: 'estrela', src: '../../../SVG/estrela.svg', alt: 'Estrela' }
-			],
-			dica: {
-				tipo: 'highlight',
-				texto: 'Procura a imagem que aparece no céu durante o dia.',
-				imagem: '../../../SVG/sol.svg'
-			}
-		},
-		{
-			tipo: 'arrastar',
-			pergunta: 'Arrasta a palavra para a imagem correta',
-			itens: ['Sol', 'Lua'],
-			alvos: ['☀️', '🌙'],
-			pares: {
-				Sol: '☀️',
-				Lua: '🌙'
-			},
-			dica: 'highlight'
-		},
-		{
-			tipo: 'multipla',
-			pergunta: 'Qual é a primeira letra do alfabeto?',
-			opcoes: ['B', 'A', 'C'],
-			correta: 'A',
-			dica: 'highlight'
-		},
-		{
-			tipo: 'clicar-imagem',
-			pergunta: 'Clica na imagem que representa a palavra “sol”',
-			correta: 'sol',
-			imagens: [
-				{ id: 'lua', src: '../../../SVG/lua.svg', alt: 'Lua' },
-				{ id: 'sol', src: '../../../SVG/sol.svg', alt: 'Sol' },
-				{ id: 'estrela', src: '../../../SVG/estrela.svg', alt: 'Estrela' }
-			],
-			dica: 'highlight'
-		},
-		{
-			tipo: 'multipla',
-			pergunta: 'Qual palavra começa por CA?',
-			opcoes: ['mesa', 'casa', 'bola'],
-			correta: 'casa',
-			dica: '50-50'
-		},
-		{
-			tipo: 'multipla',
-			pergunta: 'Quantas sílabas tem “banana”?',
-			opcoes: ['2', '3', '4'],
-			correta: '3',
-			dica: 'highlight'
-		},
-		{
-			tipo: 'ligar',
-			pergunta: 'Liga a palavra à imagem correta',
-			esquerda: ['Sol', 'Lua'],
-			direita: ['🌙', '☀️'],
-			pares: {
-				'Sol': '☀️',
-				'Lua': '🌙'
-			},
-			dica: 'highlight'
-		},
-		{
-			tipo: 'clicar',
-			pergunta: 'Clica na sílaba inicial da palavra “mesa”',
-			zonas: ['me', 'sa', 'la'],
-			correta: 'me',
-			dica: 'highlight'
-		}
-	];
-
-	/* ==========================================
-   ARRANQUE
-   ========================================== */
-	document.addEventListener("DOMContentLoaded", () => {
-		const ano = document.getElementById('ano-atual');
-		if (ano) ano.textContent = new Date().getFullYear();
-
-		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
-		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
-		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
-		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
-	});
-
-	/* ==========================================
-   NAVEGAÇÃO
-   ========================================== */
-	function toggleMenu() {
-		document.getElementById('sidebar').classList.toggle('active');
-		document.getElementById('overlay').classList.toggle('active');
-	}
-
-	function mostrarEcra(id) {
-		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
-		document.getElementById(id).style.display = 'flex';
-	}
-	
 	function showToast(msg, isError = false) {
 		const toast = document.getElementById('toast-msg');
 		if (!toast) return;
@@ -1319,581 +1256,413 @@
 	}
 
 	/* ==========================================
-   JOGO
-   ========================================== */
-	
-	function iniciarJogo(numQuestoes = 5, tituloNivel = "") {
-		erradas = 0;
-		desafioAtual = 0;
-		rondasParaDica = 0;
-		totalDesafiosNivel = numQuestoes;
+       ARRANQUE SEGURO (Binds do Cabeçalho)
+       ========================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
 
-        // LIGAÇÃO DO FIO: Muda o subtítulo se ele for enviado no clique
-        if (tituloNivel !== "") {
-            document.getElementById('subtitulo-header').textContent = tituloNivel;
-        }
+		const btnHome = document.getElementById('btn-home-svg');
+		if (btnHome) btnHome.innerHTML = SVG_HOME;
 
-		// O FATOR SURPRESA: Baralha a BD toda e "corta" apenas o número de questões pedidas!
-		rondasSorteadas = baralharArray(RONDAS).slice(0, numQuestoes);
+		const badgeRonda = document.getElementById('badge-ronda-svg');
+		if (badgeRonda) badgeRonda.innerHTML = SVG_STAR;
 
-		document.getElementById('confetti-container').innerHTML = '';
-		atualizarPlacar();
-		atualizarBotaoDica();
-		mostrarEcra('ecra-jogo');
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.innerHTML = SVG_BULB + ' Dica';
 
-		carregarRonda(); 
-	}
-	
-	function atualizarPlacar() {
-		const p = Math.min(desafioAtual , totalDesafiosNivel);
-		document.getElementById('val-erros').textContent = erradas;
-		document.getElementById('val-progresso').textContent = p;
-		document.getElementById('val-total').textContent = totalDesafiosNivel;
-		
-		const percentagem = (desafioAtual / totalDesafiosNivel) * 100;
-		document.getElementById('progress-fill').style.width = percentagem + '%';
+		const iconeErro = document.getElementById('icone-erro-svg');
+		if (iconeErro) iconeErro.innerHTML = SVG_ERRO;
+	});
+
+	/* ==========================================
+       NAVEGAÇÃO E TRANSIÇÕES DE ECRÃ
+       ========================================== */
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
 	}
 
-	function atualizarBotaoDica() {
-		const btn = document.getElementById('btn-dica');
-		if (rondasParaDica <= 0) {
-			btn.classList.remove('esgotada');
-			btn.disabled = false;
-			btn.innerHTML = SVG_BULB + ' Dica';
-		} else {
-			btn.classList.add('esgotada');
-			btn.disabled = true;
-			btn.innerHTML = `⏳ ${rondasParaDica}`;
-		}
-	}
-
-	function usarDica() {
-		pararTimerImpaciencia();
-		
-		if (rondasParaDica > 0) return;
-
-		const ronda = rondasSorteadas[desafioAtual];
-		tocarSom('flip');
-
-		let htmlDica = '';
-
-		// Texto da dica
-		if (ronda.dica && ronda.dica.texto) {
-			htmlDica += `<p>${ronda.dica.texto}</p>`;
-		}
-
-		// Imagem da dica
-		if (ronda.dica && ronda.dica.imagem) {
-			htmlDica += `
-				<img 
-					src="${ronda.dica.imagem}" 
-					alt="" 
-					style="max-width:150px; margin-top:15px;"
-				>
-			`;
-		}
-
-		function aplicarDica5050(ronda) {
-			let escondidas = 0;
-
-			document.querySelectorAll('.btn-opcao').forEach(btn => {
-				let isCorrect = false;
-
-				// 1. Verifica se o botão tem a resposta certa em TEXTO
-				if (btn.textContent.trim() === ronda.correta) {
-					isCorrect = true;
-				}
-
-				// 2. Verifica se o botão tem a resposta certa em IMAGEM
-				const img = btn.querySelector('img');
-				if (img && img.alt.toLowerCase() === ronda.correta.toLowerCase()) {
-					isCorrect = true;
-				}
-
-				// Se a resposta NÃO for a correta, escondemos a opção (até atingir o limite de 1)
-				if (!isCorrect && escondidas < 1) {
-					btn.style.opacity = '0.3';
-					btn.style.pointerEvents = 'none';
-					escondidas++;
-				}
-			});
-		}
-
-
-		abrirModalDica(htmlDica);
-
-		// Aplicar efeito visual se for highlight
-		if (ronda.dica && ronda.dica.tipo === 'highlight') {
-			aplicarHighlightRespostaCorreta(ronda);
-		}
-
-		if (ronda.dica && ronda.dica.tipo === '50-50') {
-			aplicarDica5050(ronda);
-		}
-
-		rondasParaDica = COOLDOWN_DICA;
-		atualizarBotaoDica();
-	}
-
-	function abrirModalDica(conteudoHTML) {
-		const modal = document.getElementById('modal-ajuda');
-		const conteudo = document.getElementById('modal-dica-conteudo');
-
-		conteudo.innerHTML = conteudoHTML;
-		modal.classList.add('active');
-	}
-
-	function fecharModalDica() {
-		const modal = document.getElementById('modal-ajuda');
-		modal.classList.remove('active');
-	}
-	
-	document.getElementById('modal-ajuda').addEventListener('click', function(e) {
-        if (e.target === this) {
-            fecharModalDica();
-        }
-    });
-
-
-	function carregarRonda() {
-		document
-		  .querySelectorAll('.highlight-correto')
-		  .forEach(el => el.classList.remove('highlight-correto'));
-		const ronda = rondasSorteadas[desafioAtual];
-		
-		if (!ronda) {
-			console.error("Erro: Ronda não encontrada no índice", desafioAtual);
-			finalizarJogo();
-			return;
-		}
-		
-		const area = document.getElementById('game-area');
-		
-		if (!area) {
-			console.error("Erro: Elemento 'game-area' não encontrado no HTML!");
-			return;
-		}
-		
-		area.innerHTML = '';
-
-		const pergunta = document.createElement('div');
-		pergunta.className = 'pergunta-texto';
-		pergunta.textContent = ronda.pergunta;
-		area.appendChild(pergunta);
-
-		// --- MULTIPLA ---
-		if (ronda.tipo === 'multipla') {
-			const opcoes = document.createElement('div');
-			opcoes.className = 'opcoes-container';
-
-			ronda.opcoes.forEach(opcao => {
-				const btn = document.createElement('button');
-				btn.className = 'btn-opcao';
-				btn.textContent = opcao;
-				btn.onclick = () => opcao === ronda.correta ? simularAcerto(btn) : simularErro(btn);
-				opcoes.appendChild(btn);
-			});
-
-			area.appendChild(opcoes);
-		}
-
-		// --- CLICAR ---
-		if (ronda.tipo === 'clicar') {
-			const opcoes = document.createElement('div');
-			opcoes.className = 'opcoes-container';
-
-			ronda.zonas.forEach(zona => {
-				const btn = document.createElement('button');
-				btn.className = 'btn-opcao';
-				btn.textContent = zona;
-				btn.onclick = () => zona === ronda.correta ? simularAcerto(btn) : simularErro(btn);
-				opcoes.appendChild(btn);
-			});
-
-			area.appendChild(opcoes);
-		}
-
-		// --- LIGAR ---
-		if (ronda.tipo === 'ligar') {
-			selecoesLigar = {};
-			totalParesCorretos = Object.keys(ronda.pares).length;
-
-			const container = document.createElement('div');
-			container.style.display = 'flex';
-			container.style.gap = '40px';
-
-			['esquerda', 'direita'].forEach(lado => {
-				const col = document.createElement('div');
-				col.style.display = 'flex';
-				col.style.flexDirection = 'column';
-				col.style.gap = '10px';
-
-				ronda[lado].forEach(item => {
-					const btn = document.createElement('button');
-					btn.className = 'btn-opcao';
-					btn.textContent = item;
-					btn.onclick = () => selecionarLigar(item, lado === 'esquerda' ? 'esq' : 'dir', btn);
-					col.appendChild(btn);
-				});
-
-				container.appendChild(col);
-			});
-
-			area.appendChild(container);
-		}
-		
-		// TIPO: CLICAR IMAGEM (PALAVRA → IMAGEM)
-		if (ronda.tipo === 'clicar-imagem') {
-
-			const opcoes = document.createElement('div');
-			opcoes.className = 'opcoes-container';
-
-			ronda.imagens.forEach(img => {
-				const btn = document.createElement('button');
-				btn.className = 'btn-opcao';
-
-				const imagem = document.createElement('img');
-				imagem.src = img.src;
-				imagem.alt = img.alt;
-				imagem.style.width = '120px';
-				imagem.style.height = 'auto';
-				imagem.style.pointerEvents = 'none';
-
-				btn.appendChild(imagem);
-
-				btn.addEventListener('click', () => {
-					if (img.id === ronda.correta) {
-						simularAcerto(btn);
-					} else {
-						simularErro(btn);
-					}
-				});
-
-				opcoes.appendChild(btn);
-			});
-
-			area.appendChild(opcoes);
-		}
-
-		// --- ARRASTAR (Convertido para Dinâmica de 2 Toques) ---
-		if (ronda.tipo === 'arrastar') {
-			selecoesArrastar = {};
-			arrastoAtivo = null; 
-			totalArrastar = Object.keys(ronda.pares).length;
-
-			const zona = document.createElement('div');
-			zona.style.display = 'flex';
-			zona.style.justifyContent = 'center';
-			zona.style.gap = '20px';
-			zona.style.width = '100%';
-			zona.style.flexWrap = 'wrap';
-
-			const itens = document.createElement('div');
-			itens.style.display = 'flex';
-			itens.style.flexDirection = 'column';
-			itens.style.gap = '10px';
-
-			ronda.itens.forEach(valor => {
-				const bloco = document.createElement('button'); 
-				bloco.className = 'bloco-arrastar';
-				bloco.textContent = valor;
-
-				// 1º TOQUE: Selecionar a palavra
-				bloco.onclick = () => {
-					if (bloco.disabled) return;
-					
-					tocarSom('flip');
-					
-					document.querySelectorAll('.bloco-arrastar').forEach(b => b.classList.remove('selecionado'));
-					
-					bloco.classList.add('selecionado');
-					arrastoAtivo = bloco;
-
-					// 💡 MAGIA UX AQUI: Ilumina as caixas que ainda estão vazias!
-					document.querySelectorAll('.alvo-arrastar').forEach(caixa => {
-						if (!caixa.querySelector('strong')) { // Se não tem texto lá dentro...
-							caixa.classList.add('pronto-receber');
-						}
-					});
-				};
-
-				itens.appendChild(bloco);
-			});
-
-			const alvos = document.createElement('div');
-			alvos.style.display = 'flex';
-			alvos.style.flexDirection = 'column';
-			alvos.style.gap = '10px';
-
-			ronda.alvos.forEach(alvo => {
-				const caixa = document.createElement('div');
-				caixa.className = 'alvo-arrastar';
-				caixa.innerHTML = `<span style="font-size: 2rem;">${alvo}</span>`; 
-				caixa.style.cursor = 'pointer';
-				caixa.style.display = 'flex';
-				caixa.style.flexDirection = 'column';
-				caixa.style.alignItems = 'center';
-				caixa.style.gap = '5px';
-
-				// 2º TOQUE: Escolher o destino
-				caixa.onclick = () => {
-					if (!arrastoAtivo) {
-						showToast("Clica primeiro numa palavra!", false);
-						return;
-					}
-
-					tocarSom('flip');
-					
-					const valorSelecionado = arrastoAtivo.textContent;
-					selecoesArrastar[valorSelecionado] = alvo;
-
-					caixa.innerHTML = `
-						<span style="font-size: 2rem;">${alvo}</span>
-						<strong style="color: var(--azul-vibrante); background: white; padding: 2px 10px; border-radius: 10px;">${valorSelecionado}</strong>
-					`;
-
-					arrastoAtivo.classList.remove('selecionado');
-					arrastoAtivo.style.opacity = '0.3';
-					arrastoAtivo.disabled = true;
-					arrastoAtivo = null;
-
-					// 💡 MAGIA UX AQUI: Apaga a luz de todos os alvos porque a peça já aterrou!
-					document.querySelectorAll('.alvo-arrastar').forEach(c => c.classList.remove('pronto-receber'));
-
-					if (Object.keys(selecoesArrastar).length === totalArrastar) {
-						setTimeout(validarArrastar, 300); 
-					}
-				};
-
-				alvos.appendChild(caixa);
-			});
-
-			zona.appendChild(itens);
-			zona.appendChild(alvos);
-			area.appendChild(zona);
-		}
-		
-		resetTimerImpaciencia();
-	}
-
-	function selecionarLigar(valor, lado, botao) {
-		const ronda = rondasSorteadas[desafioAtual];
-
-		// Primeiro clique (Ainda não escolheu nada)
-		if (!selecaoLigar) {
-			selecaoLigar = { valor, lado, botao };
-			botao.classList.add('selecionado');
-			return;
-		}
-
-		// TROCA DE IDEIAS: Se clicar numa palavra diferente, mas do MESMO LADO
-		if (selecaoLigar.lado === lado) {
-			selecaoLigar.botao.classList.remove('selecionado'); // Limpa a seleção do botão anterior
-			selecaoLigar = { valor, lado, botao };              // Atualiza a memória com o novo botão
-			botao.classList.add('selecionado');                 // Ilumina o novo botão
-			tocarSom('flip');
-			return;
-		}
-
-		// Se clicou num lado diferente, formou um par!
-		const esquerda = selecaoLigar.lado === 'esq' ? selecaoLigar.valor : valor;
-		const direita = selecaoLigar.lado === 'dir' ? selecaoLigar.valor : valor;
-
-		// Guarda a ligação feita
-		selecoesLigar[esquerda] = direita;
-
-		// Limpa seleção visual amarela
-		document.querySelectorAll('.selecionado').forEach(b => b.classList.remove('selecionado'));
-
-		// Desativa OS DOIS botões ligados (para não clicarem mais neles)
-		botao.disabled = true;
-		botao.style.opacity = '0.6';
-		selecaoLigar.botao.disabled = true;
-		selecaoLigar.botao.style.opacity = '0.6';
-
-		// Limpa a memória para o próximo par
-		selecaoLigar = null;
-
-		// Verifica se já ligou todos os pares
-		if (Object.keys(selecoesLigar).length === totalParesCorretos) {
-			validarLigacoes();
-		}
-	}
-
-	function validarLigacoes() {
-		const ronda = rondasSorteadas[desafioAtual];
-		let tudoCerto = true;
-
-		for (let esquerda in ronda.pares) {
-			if (selecoesLigar[esquerda] !== ronda.pares[esquerda]) {
-				tudoCerto = false;
-			}
-		}
-
-		if (tudoCerto) {
-			simularAcerto(document.querySelector('.btn-opcao'));
-		} else {
-			simularErro(document.querySelector('.btn-opcao'));
-            
-            // RESET MÁGICO APÓS ERRO (Dá 800ms para a criança ver)
-            setTimeout(() => {
-                selecoesLigar = {};
-                selecaoLigar = null;
-                
-                // Volta a ativar todos os botões do ecrã de ligar
-                document.getElementById('game-area').querySelectorAll('.btn-opcao').forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.classList.remove('selecionado');
-                });
-            }, 800);
-		}
-	}
-
-	function simularAcerto(btn) {
-		pararTimerImpaciencia();
-		
-		// Desativa todos os botões para evitar cliques duplos
-		document.querySelectorAll('.btn-opcao, .bloco-arrastar').forEach(b => {
-			b.classList.add('btn-disabled');
-			b.style.pointerEvents = 'none';
-		});
-
-		btn.classList.add('sucesso-vibrante');
-		tocarSom('acerto');
-
-		setTimeout(() => {
-			btn.classList.remove('sucesso-vibrante');
-			
-			// Reativa os botões para a próxima ronda
-			document.querySelectorAll('.btn-opcao, .bloco-arrastar').forEach(b => {
-				b.classList.remove('btn-disabled');
-				b.style.pointerEvents = 'auto';
-			});
-
-			desafioAtual++;
-			
-			// Cooldown da dica
-			if (rondasParaDica > 0) rondasParaDica--;
-			
-			atualizarPlacar();
-			atualizarBotaoDica();
-
-			if (desafioAtual < totalDesafiosNivel) {
-				carregarRonda();
-			} else {
-				finalizarJogo();
-			}
-
-		}, 1000);
-	}
-
-
-	function aplicarHighlightRespostaCorreta(ronda) {
-		// Texto / clicar / múltipla
-		document.querySelectorAll('.btn-opcao').forEach(btn => {
-			if (btn.textContent.trim() === ronda.correta) {
-				btn.classList.add('highlight-correto');
-			}
-
-			const img = btn.querySelector('img');
-			if (img && img.alt.toLowerCase() === ronda.correta) {
-				btn.classList.add('highlight-correto');
-			}
-		});
-
-		// Ligar / arrastar (lado correto)
-		if (ronda.tipo === 'ligar' || ronda.tipo === 'arrastar') {
-			document.querySelectorAll('.btn-opcao, .alvo-arrastar').forEach(el => {
-				if (Object.values(ronda.pares).includes(el.textContent.trim())) {
-					el.classList.add('highlight-correto');
-				}
-			});
-		}
-	}
-
-
-	function validarArrastar() {
-        const ronda = rondasSorteadas[desafioAtual];
-        let tudoCerto = true;
-
-        for (let item in ronda.pares) {
-            if (selecoesArrastar[item] !== ronda.pares[item]) {
-                tudoCerto = false;
-            }
-        }
-
-        if (tudoCerto) {
-            simularAcerto(document.querySelector('.bloco-arrastar'));
-        } else {
-            simularErro(document.querySelector('.bloco-arrastar'));
-            
-            // RESET MÁGICO APÓS ERRO
-            setTimeout(() => {
-                selecoesArrastar = {};
-                arrastoAtivo = null;
-
-                // 1. Volta a ativar os blocos das palavras
-                document.querySelectorAll('.bloco-arrastar').forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.classList.remove('selecionado');
-                });
-
-                // 2. Limpa o texto das caixas de destino
-                const caixasAlvo = document.querySelectorAll('.alvo-arrastar');
-                ronda.alvos.forEach((alvo, index) => {
-                    caixasAlvo[index].innerHTML = `<span style="font-size: 2rem;">${alvo}</span>`;
-                });
-            }, 800);
-        }
-    }
-
-	function simularErro(btn) {
-		btn.classList.add('erro-vibrante');
-		tocarSom('erro');
-		erradas++;
-		atualizarPlacar();
-		setTimeout(() => btn.classList.remove('erro-vibrante'), 400);
-		resetTimerImpaciencia();
-	}
-
-	function finalizarJogo() {
-		document.getElementById('progress-fill').style.width = '100%';
-		setTimeout(() => {
-			mostrarEcra('ecra-fim');
-			document.getElementById('final-erros').textContent = erradas;
-			tocarSom('vitoria');
-			dispararConfetis();
-		}, 500);
-	}
-
-
-	function reiniciarJogo() {
-		iniciarJogo(totalDesafiosNivel);
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		document.getElementById(id).style.display = 'flex';
 	}
 
 	function voltarAoMenu() {
-    // Quando volta ao menu, repõe a frase original
-		document.getElementById('subtitulo-header').textContent = "Escolhe um minijogo para começar!";
+        // Trava o jogo e limpa os processos se o aluno clicar em voltar a meio da partida
+        jogoAtivo = false;
+        clearInterval(intervaloCronometro);
+        window.removeEventListener('keydown', processarTeclaFisica);
+
+        const confetti = document.getElementById('confetti-container');
+        if (confetti) confetti.innerHTML = '';
+
+		document.getElementById('subtitulo-header').textContent = "Testa quantas palavras por minuto consegues escrever.";
 		mostrarEcra('ecra-selecao');
 	}
 
-	/* ==========================================
-	   O SISTEMA DE SOM DEFINITIVO (Híbrido)
-	   ========================================== */
+    function reiniciarJogoAtual() {
+        iniciarJogoTeclado();
+    }
 
+	/* ==========================================
+       INICIALIZAÇÃO DO JOGO (INJEÇÃO DINÂMICA COMPLETA)
+       ========================================== */
+    function iniciarJogoTeclado() {
+        errosCometidos = 0;
+        toquesTotais = 0;
+        palavraIndice = 0;
+        letraIndice = 0;
+        tempoRestante = 60;
+        jogoAtivo = true;
+        
+        const confetti = document.getElementById('confetti-container');
+        if (confetti) confetti.innerHTML = '';
+        
+        // 1. Desativa o botão de dica original na barra de estado do template e usa-o como relógio
+        const btnDica = document.getElementById('btn-dica');
+        if (btnDica) {
+            btnDica.disabled = true;
+            btnDica.classList.add('esgotada');
+            btnDica.style.opacity = "0.7";
+            btnDica.style.pointerEvents = "none";
+            btnDica.innerHTML = `⏳ ${tempoRestante}s`;
+        }
+
+        // 2. INJEÇÃO DINÂMICA: Desenha o carrossel e o teclado QWERTY na "area-jogo-custom" limpa do template
+        const area = document.getElementById('game-area');
+        if (area) {
+            area.innerHTML = `
+                <!-- O CARROSSEL HORIZONTAL DE PALAVRAS (A Fila de Espera) -->
+                <div class="carousel-palavras-container">
+                    <div class="carousel-palavras-fila" id="fila-palavras"></div>
+                </div>
+
+                <!-- O TECLADO VIRTUAL QWERTY COMPACTO -->
+                <div class="teclado-container" id="teclado-virtual">
+                    <!-- Linha 1: Letras + Backspace -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="q">q</button>
+                        <button class="tecla-teclado" data-key="w">w</button>
+                        <button class="tecla-teclado" data-key="e">e</button>
+                        <button class="tecla-teclado" data-key="r">r</button>
+                        <button class="tecla-teclado" data-key="t">t</button>
+                        <button class="tecla-teclado" data-key="y">y</button>
+                        <button class="tecla-teclado" data-key="u">u</button>
+                        <button class="tecla-teclado" data-key="i">i</button>
+                        <button class="tecla-teclado" data-key="o">o</button>
+                        <button class="tecla-teclado" data-key="p">p</button>
+                        <button class="tecla-teclado tecla-util" data-key="backspace">← Apagar</button>
+                    </div>
+                    
+                    <!-- Linha 2: Letras + ENTER -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="a">a</button>
+                        <button class="tecla-teclado" data-key="s">s</button>
+                        <button class="tecla-teclado" data-key="d">d</button>
+                        <button class="tecla-teclado" data-key="f">f</button>
+                        <button class="tecla-teclado" data-key="g">g</button>
+                        <button class="tecla-teclado" data-key="h">h</button>
+                        <button class="tecla-teclado" data-key="j">j</button>
+                        <button class="tecla-teclado" data-key="k">k</button>
+                        <button class="tecla-teclado" data-key="l">l</button>
+                        <button class="tecla-teclado" data-key="ç">ç</button>
+                        <button class="tecla-teclado tecla-enter" data-key="enter">Enter ↵</button>
+                    </div>
+                    
+                    <!-- Linha 3: Letras + Sinais Básicos -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado" data-key="z">z</button>
+                        <button class="tecla-teclado" data-key="x">x</button>
+                        <button class="tecla-teclado" data-key="c">c</button>
+                        <button class="tecla-teclado" data-key="v">v</button>
+                        <button class="tecla-teclado" data-key="b">b</button>
+                        <button class="tecla-teclado" data-key="n">n</button>
+                        <button class="tecla-teclado" data-key="m">m</button>
+                        <button class="tecla-teclado" data-key=",">,</button>
+                        <button class="tecla-teclado" data-key=".">.</button>
+                        <button class="tecla-teclado" data-key="-">-</button>
+                    </div>
+                    
+                    <!-- Linha 4: Barra de Espaço -->
+                    <div class="teclado-linha">
+                        <button class="tecla-teclado tecla-espaco" data-key=" " aria-label="Espaço"></button>
+                    </div>
+                </div>
+            `;
+
+            // Vincula instantaneamente os cliques de ecrã do teclado virtual injetado
+            document.querySelectorAll('.tecla-teclado').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    processarEntradaCaracter(btn.dataset.key);
+                };
+            });
+        }
+
+        // 3. Sorteia as 80 palavras do lote unificado
+        loteAtivoPalavras = baralharArray(poolPalavras).slice(0, LIMIAR_LOTES);
+
+        // 4. Iniciar o cronómetro de 60 segundos
+        clearInterval(intervaloCronometro);
+        intervaloCronometro = setInterval(atualizarCronometro, 1000);
+
+        atualizarPlacarTeclado();
+        mostrarEcra('ecra-jogo');
+
+        // 5. Desenhar o carrossel de palavras
+        montarCarrosselPalavras();
+        
+        // 6. Ativar os ouvintes de teclado físico do PC
+        window.addEventListener('keydown', processarTeclaFisica);
+    }
+
+    // Função que gere a contagem decrescente do tempo
+    function atualizarCronometro() {
+        if (!jogoAtivo) return;
+
+        tempoRestante--;
+        
+        // Atualiza a contagem no botão de Dica desativado de forma segura
+        const btnDica = document.getElementById('btn-dica');
+        if (btnDica) btnDica.innerHTML = `⏳ ${tempoRestante}s`;
+        
+        // Mostra o tempo também na pílula da direita do status bar
+        const valTempo = document.getElementById('val-tempo');
+        if (valTempo) valTempo.textContent = `${tempoRestante}s`;
+
+        // Drena a barra de progresso proporcionalmente de 100% a 0%
+        const fill = document.getElementById('progress-fill');
+        if (fill) fill.style.width = ((tempoRestante / 60) * 100) + '%';
+
+        if (tempoRestante <= 0) {
+            finalizarJogoTeclado();
+        }
+    }
+	
+	/* ==========================================
+       GESTÃO DO CARROSSEL DESLIZANTE DE PALAVRAS
+       ========================================== */
+    function montarCarrosselPalavras() {
+        const fila = document.getElementById('fila-palavras');
+        if (!fila) return;
+        
+        fila.innerHTML = '';
+        
+        // Mantém sempre uma fila de 5 palavras no ecrã (a começar no palavraIndice atual)
+        const totalPalavras = loteAtivoPalavras.length;
+        const limite = Math.min(palavraIndice + 5, totalPalavras);
+        
+        for (let i = palavraIndice; i < limite; i++) {
+            const palavra = loteAtivoPalavras[i].palavra.toLowerCase();
+            const wordSpan = document.createElement('span');
+            
+            if (i === palavraIndice) {
+                // Palavra Ativa (Spotlight da esquerda)
+                wordSpan.className = 'palavra-carrossel palavra-ativa';
+                
+                // Transforma cada letra num elemento independente para podermos pintar individualmente
+                for (let j = 0; j < palavra.length; j++) {
+                    const letraSpan = document.createElement('span');
+                    letraSpan.className = 'letra-carrossel';
+                    letraSpan.textContent = palavra.charAt(j);
+                    
+                    // Letras escritas corretamente ganham cor verde
+                    if (j < letraIndice) {
+                        letraSpan.classList.add('letra-correta');
+                    }
+                    // Letra atual a ser digitada ganha o cursor vermelho por baixo
+                    if (j === letraIndice) {
+                        letraSpan.classList.add('letra-cursor');
+                    }
+                    wordSpan.appendChild(letraSpan);
+                }
+            } else {
+                // Palavras em fila de espera à direita (Faded Grey)
+                wordSpan.className = 'palavra-carrossel';
+                wordSpan.textContent = palavra;
+            }
+            fila.appendChild(wordSpan);
+        }
+        
+        // Acende a tecla que o aluno deve pressionar a seguir no teclado virtual
+        iluminarProximaTeclaVirtual();
+    }
+
+    // Avança para a próxima palavra na fila (Efeito de Deslizamento)
+    function avancarPalavraCarrossel() {
+        palavraIndice++;
+        letraIndice = 0; // Reinicia o cursor da letra para o início da nova palavra
+
+        // Se o lote de 80 palavras terminar antes dos 60 segundos, reinicia a lista
+        if (palavraIndice >= loteAtivoPalavras.length) {
+            palavraIndice = 0;
+            loteAtivoPalavras = baralharArray(poolPalavras).slice(0, LIMIAR_LOTES);
+        }
+
+        tocarSom('acerto');
+        
+        // Redesenha a fila com o deslocamento horizontal
+        montarCarrosselPalavras();
+    }
+	
+	/* ==========================================
+       ILUMINAÇÃO DE TECLAS E CAPTURA DE TOQUES
+       ========================================== */
+
+    // Limpa iluminações anteriores e acende a tecla que o aluno deve clicar
+    function iluminarProximaTeclaVirtual() {
+        // Remove a iluminação de todas as teclas virtuais
+        document.querySelectorAll('.tecla-teclado').forEach(t => t.classList.remove('tecla-iluminada'));
+
+        const r = loteAtivoPalavras[palavraIndice];
+        if (!r) return;
+
+        const palavra = r.palavra.toLowerCase();
+
+        if (letraIndice < palavra.length) {
+            // Se ainda faltam letras, ilumina a próxima letra da palavra
+            const proximaLetra = palavra.charAt(letraIndice);
+            const tecla = document.querySelector(`.tecla-teclado[data-key="${proximaLetra}"]`);
+            if (tecla) tecla.classList.add('tecla-iluminada');
+        } else {
+            // Se a palavra já está toda verde/correta, ilumina a tecla Enter
+            const teclaEnter = document.querySelector('.tecla-teclado[data-key="enter"]');
+            if (teclaEnter) teclaEnter.classList.add('tecla-iluminada');
+        }
+    }
+
+    // Processador Unificado: Trata cliques no ecrã E digitação física do PC
+    function processarEntradaCaracter(key) {
+        if (!jogoAtivo) return;
+
+        const r = loteAtivoPalavras[palavraIndice];
+        if (!r) return;
+
+        const palavra = r.palavra.toLowerCase();
+
+        // Faz a tecla virtual piscar no ecrã para dar feedback tátil
+        const teclaVirtual = document.querySelector(`.tecla-teclado[data-key="${key}"]`);
+        if (teclaVirtual) {
+            teclaVirtual.classList.add('tecla-fisica-ativa');
+            setTimeout(() => teclaVirtual.classList.remove('tecla-fisica-ativa'), 80);
+        }
+
+        // 1. IGNORA TECLAS DE SISTEMA (Ex: Shift, Alt, Control)
+        if (key.length > 1 && key !== 'enter' && key !== 'backspace') {
+            return; 
+        }
+
+        toquesTotais++; // Regista o toque para cálculo de precisão
+
+        if (letraIndice < palavra.length) {
+            const letraEsperada = palavra.charAt(letraIndice);
+            if (key === letraEsperada) {
+                // ACERTO: Avança o cursor na palavra ativa
+                letraIndice++;
+                tocarSom('flip');
+                montarCarrosselPalavras();
+            } else {
+                // ERRO
+                errosCometidos++;
+                tocarSom('erro');
+            }
+        } else if (key === 'enter') {
+            // Se a palavra já está concluída e pressionou Enter, avança no carrossel
+            avancarPalavraCarrossel();
+        } else {
+            // Pressionou outra tecla qualquer em vez do Enter
+            errosCometidos++;
+            tocarSom('erro');
+        }
+
+        atualizarPlacarTeclado();
+    }
+
+    // Tradutor para os eventos do teclado físico do computador
+    function processarTeclaFisica(e) {
+        const key = e.key.toLowerCase();
+        processarEntradaCaracter(key);
+    }
+
+    /* ==========================================
+       ATUALIZAÇÃO DE PLACAR E FINALIZAÇÃO DO JOGO
+       ========================================== */
+    function atualizarPlacarTeclado() {
+        // Cálculo de Precisão baseado na nossa fórmula matemática
+        let precisao = 100;
+        if (toquesTotais > 0) {
+            precisao = Math.max(0, Math.round((1 - (errosCometidos / toquesTotais)) * 100));
+        }
+
+        // Atualiza os elementos originais do seu status bar
+        const valPrecisao = document.getElementById('val-precisao');
+        if (valPrecisao) {
+            valPrecisao.textContent = `${precisao}%`;
+        } else {
+            // Se o ID personalizado val-precisao não existir, usa o original val-erros para mostrar os erros
+            const valErros = document.getElementById('val-erros');
+            if (valErros) valErros.textContent = errosCometidos;
+        }
+
+        // Mostra o número de palavras concluídas no val-progresso do seu template original
+        const valProgresso = document.getElementById('val-progresso');
+        if (valProgresso) {
+            valProgresso.textContent = palavraIndice;
+        }
+        
+        // Define o val-total estático como "PBM" para o aluno ler: (Palavras concluídas) / PBM
+        const valTotal = document.getElementById('val-total');
+        if (valTotal) {
+            valTotal.textContent = "PBM";
+        }
+    }
+
+    function finalizarJogoTeclado() {
+        jogoAtivo = false;
+        clearInterval(intervaloCronometro);
+
+        // Desliga os ouvintes físicos de digitação para congelar o jogo
+        window.removeEventListener('keydown', processarTeclaFisica);
+
+        // Calcula a precisão final
+        let precisaoFinal = 100;
+        if (toquesTotais > 0) {
+            precisaoFinal = Math.max(0, Math.round((1 - (errosCometidos / toquesTotais)) * 100));
+        }
+
+        // Desenha os resultados diretamente no card original .end-stats do seu template final
+        const caixaResultados = document.querySelector('#ecra-fim .end-stats');
+        if (caixaResultados) {
+            caixaResultados.innerHTML = `
+                Treino Concluído!<br><br>
+                Precisão: <strong style="color: var(--cor-sucesso); font-size: 2rem;">${precisaoFinal}%</strong><br>
+                Palavras por Minuto: <strong style="color: var(--cor-1ano); font-size: 2rem;">${palavraIndice}</strong><br>
+                Tempo Gasto: <strong style="color: var(--azul-escuro); font-size: 2rem;">01:00</strong>
+            `;
+        }
+
+        // Remove iluminação ativa das teclas
+        document.querySelectorAll('.tecla-teclado').forEach(t => t.classList.remove('tecla-iluminada'));
+
+        mostrarEcra('ecra-fim');
+        tocarSom('vitoria');
+        dispararConfetis();
+    }
+
+	/* ==========================================
+	   SISTEMA DE SOM DEFINITIVO (Híbrido)
+	   ========================================== */
 	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 	let audioCtx = null;
 
-	// 1. DESBLOQUEIO DE ÁUDIO ELETRÓNICO (Beeps e Boops)
 	function initAudio() {
 		if (!AudioContextClass) return;
 		if (!audioCtx) audioCtx = new AudioContextClass();
 		if (audioCtx.state === 'suspended') audioCtx.resume();
 	}
 	document.addEventListener('click', initAudio, { once: true });
-	document.addEventListener('touchstart', initAudio, { once: true }); // Garante o desbloqueio em tablets!
+	document.addEventListener('touchstart', initAudio, { once: true });
 
 	function tocarSom(tipo) {
 		initAudio();
@@ -1905,125 +1674,91 @@
 		gain.connect(audioCtx.destination);
 		const agora = audioCtx.currentTime;
 
-		// ... (o teu código de flip, acerto, erro e vitoria fica igualzinho aqui!)
 		if (tipo === 'flip') {
-				osc.frequency.setValueAtTime(400, agora);
-				osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
-				gain.gain.setValueAtTime(0.05, agora);
-				osc.start(agora);
-				osc.stop(agora + 0.1);
-			} else if (tipo === 'acerto') {
-        // Duplo "Ding" feliz (Notas Sol e Dó agudo)
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		} else if (tipo === 'acerto') {
 			const notas = [783.99, 1046.50]; 
-			
 			notas.forEach((freq, i) => {
 				const o = audioCtx.createOscillator();
 				const g = audioCtx.createGain();
 				o.connect(g); g.connect(audioCtx.destination);
-				
-				o.type = 'sine'; // Onda suave e cristalina
+				o.type = 'sine'; 
 				o.frequency.value = freq;
-				
-				// Um pequeno fade-in para não "estalar" e um fade-out suave
 				g.gain.setValueAtTime(0, agora + i * 0.12);
 				g.gain.linearRampToValueAtTime(0.1, agora + i * 0.12 + 0.02);
 				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
-				
 				o.start(agora + i * 0.12);
 				o.stop(agora + i * 0.12 + 0.3);
-				});
+			});
+		} else if (tipo === 'erro') {
+			osc.type = 'triangle';
+			osc.frequency.setValueAtTime(250, agora);
+			osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+			gain.gain.setValueAtTime(0.1, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.4);
+		} else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.80 } 
+			];
 
-			
-			} else if (tipo === 'erro') {
-				osc.type = 'triangle';
-				osc.frequency.setValueAtTime(250, agora);
-				osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
-				gain.gain.setValueAtTime(0.1, agora);
-				osc.start(agora);
-				osc.stop(agora + 0.4);
-			} else if (tipo === 'vitoria') {
-        // Melodia de Fanfarra: Dó, Mi, Sol, Mi, Dó Agudo (mais longo)
-        const melodia = [
-            { freq: 523.25, tempo: 0.00, duracao: 0.15 }, // Dó (Curto)
-            { freq: 659.25, tempo: 0.15, duracao: 0.15 }, // Mi (Curto)
-            { freq: 783.99, tempo: 0.30, duracao: 0.20 }, // Sol (Um pouco mais longo)
-            { freq: 659.25, tempo: 0.50, duracao: 0.15 }, // Mi (Descida rápida)
-            { freq: 1046.50, tempo: 0.65, duracao: 0.80 } // Dó Agudo (TCHAAANNN! Longo)
-        ];
-
-        melodia.forEach(nota => {
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            o.connect(g); g.connect(audioCtx.destination);
-            
-            // Onda "triangle" dá um som mais cheio e retro, tipo GameBoy!
-            o.type = 'triangle'; 
-            o.frequency.value = nota.freq;
-
-            g.gain.setValueAtTime(0, agora + nota.tempo);
-            g.gain.linearRampToValueAtTime(0.1, agora + nota.tempo + 0.02);
-            g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
-
-            o.start(agora + nota.tempo);
-            o.stop(agora + nota.tempo + nota.duracao);
-        });
-			}
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.1, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
 	}
 
-	// 2. O NOVO MOTOR DE MP3 LOCAIS (Para Vozes e Narrações)
-	// Exemplo de uso: tocarVoz('audio/muito_bem.mp3');
 	function tocarVoz(caminhoMp3) {
 		try {
 			const voz = new Audio(caminhoMp3);
-			
-			// Garante que o som toca sem erros em browsers antigos
 			const playPromise = voz.play();
-			
 			if (playPromise !== undefined) {
 				playPromise.catch(erro => {
-					console.warn("O browser bloqueou o MP3. A criança precisa de clicar primeiro no ecrã.", erro);
+					console.warn("Reprodução bloqueada pelo browser.", erro);
 				});
 			}
 		} catch (e) {
-			console.error("Browser demasiado antigo para HTML5 Audio.", e);
+			console.error("Erro ao carregar o áudio.", e);
 		}
 	}
 
 	/* ==========================================
-     CONFETIS
+       CONFETIS
     ========================================== */
 	function dispararConfetis() {
 		const c = document.getElementById('confetti-container');
 		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
-		
-		// Aumentámos de 60 para 150 confetis!
 		for (let i = 0; i < 150; i++) {
 			const d = document.createElement('div');
 			d.className = 'confetti';
-			
-			// Posição horizontal aleatória
 			d.style.left = Math.random() * 100 + '%';
-			
-			// Cor aleatória
 			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
-			
-			// Tamanhos aleatórios (dá efeito de profundidade 3D)
-			const escala = Math.random() * 0.8 + 0.4; // Varia entre 40% e 120% do tamanho base
-			
-			// Duração da queda e atraso para criar uma "chuva" contínua em vez de um bloco
-			const duracao = Math.random() * 2 + 2.5; // Entre 2.5s e 4.5s a cair
-			const atraso = Math.random() * 1.5; // Começam a cair em momentos diferentes (até 1.5s de atraso)
-			
-			d.style.animationDuration = duracao + 's';
-			d.style.animationDelay = atraso + 's';
-			d.style.transform = `scale(${escala})`;
+			const escala = Math.random() * 0.8 + 0.4; 
+			const duracao = Math.random() * 2 + 2.5; 
+			const atraso = Math.random() * 1.5; 
 			
 			c.appendChild(d);
-			
-			// Limpa o confeti depois de ele terminar a animação para não pesar na memória
 			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
 		}
 	}
 </script>
+
 </body>
 </html>
