@@ -270,7 +270,7 @@ const dbPalavras = [
   { palavra: "janela", imagem: "../../img/janela.png", num: 3, divisao: "JA-NE-LA" },
   { palavra: "jarra", imagem: "../../img/jarra.png", num: 2, divisao: "JA-RRA" },
   { palavra: "javali", imagem: "../../img/javali.png", num: 3, divisao: "JA-VA-LI" },
-  { palavra: "jibóia", imagem: "../../img/jiboia.png", num: 3, divisao: "JI-BÓI-A" },
+  { palavra: "jiboia", imagem: "../../img/jiboia.png", num: 3, divisao: "JI-BOI-A" },
   { palavra: "jipe", imagem: "../../img/jipe.png", num: 2, divisao: "JI-PE" },
   { palavra: "joaninha", imagem: "../../img/joaninha.png", num: 4, divisao: "JO-A-NI-NHA" },
   { palavra: "joelho", imagem: "../../img/joelho.png", num: 3, divisao: "JO-E-LHO" },

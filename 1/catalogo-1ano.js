@@ -39,6 +39,7 @@ const todosOsJogos =[
 	{ nome: "Roda a Frase", icone: "icones/roda_frase.png", link: "pt/roda-frase", cat: "pt" },
 	{ nome: "Ordem Alfabética", icone: "icones/ordem_alfabetica.png", link: "pt/ordem-alfabetica", cat: "pt" },
 	{ nome: "Ligar Letras", icone: "icones/ligar_letras.png", link: "pt/ligar-letras", cat: "pt" },
+	{ nome: "Monstro das Imagens", icone: "icones/monstro_imagens.png", link: "pt/monstro-imagens", cat: "pt" },
     
     // ------------------------------------
     // MATEMÁTICA (cat: "mat") 
