@@ -51,6 +51,7 @@ const todosOsJogos =[
    	{ nome: "Simetria", icone: "icones/simetria.png", link: "mat/simetria/", cat: "mat" },
 	{ nome: "Gráficos", icone: "icones/graficos.png", link: "mat/graficos/", cat: "mat" },
 	{ nome: "Figuras e Sólidos", icone: "icones/figuras_solidos.png", link: "mat/figuras-solidos/", cat: "mat" },
+	{ nome: "Super Quiz", icone: "icones/quiz_matematica.png", link: "mat/quiz/", cat: "mat" },
 	
 	
     
