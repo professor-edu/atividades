@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - Continentes e Oceanos 🌍</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="mundo_dados.js"></script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #E3C40D;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px); background-size: 25px 25px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+        
+        header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-3ano-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        .btn-voltar:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar li a:hover { background: var(--cor-3ano); transform: translateX(8px); color: white !important;}
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px #45b06285; 
+            border-top: 8px solid var(--cor-em); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 35px; font-weight: 900;}
+        
+        .grelha-opcoes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 700px; }
+        @media (max-width: 500px) { .grelha-opcoes { grid-template-columns: 1fr; } } 
+
+        .btn-nivel-menu { background-color: white; border: 4px solid #ced6e0; border-radius: 20px; padding: 15px; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #ced6e0; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; touch-action: manipulation; }
+        @media (hover: hover) { .btn-nivel-menu:hover { transform: translateY(-4px); border-color: var(--cor-em); box-shadow: 0 6px 0 var(--cor-em); } }
+        .btn-nivel-menu:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+        
+        .nivel-icon img { width: 45px; height: 45px; object-fit: contain;}
+        .nivel-icon { font-size: 2.5rem; background: #fff0f0; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 auto;}
+        
+        .nivel-text { text-align: center; }
+        .nivel-titulo { font-size: 1.2rem; font-weight: 900; display: block; color: var(--azul-escuro);}
+
+        .status-bar-jogo { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #eaf1eb; padding: 8px 12px; border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 10px; box-sizing: border-box; flex-shrink: 0;}
+        .btn-voltar-menu { background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+        .btn-voltar-menu:hover { border-color: var(--azul-escuro); transform: scale(1.05); }
+        
+        .btn-dica { background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+        .btn-dica:hover:not(.esgotada) { border-color: #b18500; transform: scale(1.05); }
+        .btn-dica.esgotada { opacity: 0.5; filter: grayscale(100%); cursor: not-allowed; }
+
+        .badge-ronda, .badge-erros { background: white; font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+        .badge-ronda { border: 2px solid #219d53; color: #219d53; }
+        .badge-erros { background: white; border: 2px solid var(--cor-pt); color: var(--cor-mat); font-weight: 800; font-size: 1rem; padding: 6px 12px; border-radius: 15px; white-space: nowrap; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+        .progress-bg { background-color: #e2e8f0; border-radius: 20px; height: 35px; flex: 1; overflow: hidden; box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); border: 2px solid white; margin: 0 10px; }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s; background-color: var(--cor-3ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+        
+        @media (max-width: 600px) {
+            .status-bar-jogo { flex-wrap: wrap; justify-content: center; }
+            .btn-voltar-menu, .btn-dica { padding: 4px 8px; font-size: 0.8rem;}
+            .badge-ronda, .badge-erros { font-size: 0.9rem; padding: 4px 8px; }
+            .progress-bg { order: 4; min-width: 100%; margin-top: 5px; }
+        }
+
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .error-shake { animation: shakeError 0.4s ease; border: 2px solid #ff4757 !important; background-color: #ffefef !important; color: #ff4757 !important; }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+           ÁREA DE JOGO E BOTÕES
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-em); border-radius: 20px; padding: 25px; gap: 15px;
+            position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+        }
+
+        .pergunta-titulo { font-size: clamp(1.2rem, 3vh, 1.5rem); font-weight: 900; color: var(--azul-escuro); text-align: center; margin: 0 0 0px 0;}
+
+        .grid-respostas { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; max-width: 650px; }
+        
+        .btn-resposta {
+            background: white; border: 3px solid #ced6e0; border-radius: 15px;
+            padding: 12px 15px; font-size: clamp(0.95rem, 2vh, 1.1rem); font-weight: bold; color: var(--text-main);
+            cursor: pointer; box-shadow: 0 5px 0 #ced6e0; transition: all 0.2s; 
+            display: flex; justify-content: center; align-items: center; text-align: center;
+            flex: 0 1 calc(50% - 15px); min-width: 130px; max-width: 250px;
+        }
+        @media (hover: hover) { .btn-resposta:hover:not(:disabled) { transform: translateY(-4px); background-color: #f1f8ff; border-color: var(--azul-vibrante); box-shadow: 0 7px 0 var(--azul-vibrante); } }
+        .btn-resposta:active:not(:disabled) { transform: translateY(5px) !important; box-shadow: 0 0px 0 transparent !important; }
+        
+        .btn-resposta.erro { border-color: #ff4757 !important; color: #ff4757 !important; box-shadow: 0 5px 0 #ff4757 !important; }
+        .btn-resposta.certo { background-color: #e8f5e9 !important; border-color: var(--cor-em) !important; color: #1e7e34 !important; box-shadow: 0 5px 0 var(--cor-em) !important; transform: scale(1.05); }
+
+        .grid-terra-agua { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; width: 100%;}
+        .btn-ta { 
+			flex-direction: row; /* Coloca a imagem e o texto lado a lado */
+			padding: 12px 25px;  /* Reduz o padding vertical para compactar a altura */
+			font-size: 1.3rem; 
+			min-width: 160px;
+			gap: 12px; /* Espaço entre a imagem e a palavra */
+		}
+
+		.btn-ta img { 
+			width: 40px;  /* Ligeiramente mais pequeno para otimizar a altura */
+			height: 40px; 
+			margin-bottom: 0; /* Removemos a margem inferior antiga */
+			object-fit: contain;
+		}
+
+        .imagem-destaque {
+            width: clamp(150px, 35vh, 250px); height: clamp(150px, 35vh, 250px);
+            background: white; border: 4px solid var(--cor-mat); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center; font-size: clamp(3rem, 10vh, 6rem);
+            box-shadow: 0 6px 0 var(--cor-mat); flex-shrink: 0;
+        }
+        .imagem-destaque img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+        .map-wrapper {
+            position: relative; display: inline-block; max-height: 40vh; max-width: 100%;
+            border-radius: 15px; border: 4px solid var(--cor-mat); box-shadow: 0 6px 0 var(--cor-mat); background: #e3f2fd;
+        }
+        .map-wrapper img { max-height: 40vh; width: auto; max-width: 100%; display: block; border-radius: 10px; }
+        .map-pin {
+            position: absolute; font-size: clamp(1.5rem, 5vw, 2.5rem);
+            transform: translate(-50%, -100%); animation: bouncePin 0.8s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); pointer-events: none; z-index: 5;
+        }
+        @keyframes bouncePin { from { transform: translate(-50%, -100%); } to { transform: translate(-50%, -130%); } }
+
+        /* =========================================
+           SISTEMA DE ARRASTAR E LARGAR (NOVO)
+           ========================================= */
+        .drag-game-layout { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 800px; gap: 20px;}
+        
+        .map-drop-container {
+            position: relative; width: 100%; border-radius: 15px;
+            border: 4px solid #d4d7d9; 
+            background: #d8f1ff; overflow: hidden; flex-shrink: 0;
+        }
+        .map-drop-container img { width: 100%; display: block; object-fit: contain; pointer-events: none; }
+        
+        /* Caixas de Largada (Tracejado Azul Claro) */
+        .drop-zone {
+            position: absolute; transform: translate(-50%, -50%);
+            width: clamp(80px, 15%, 120px); 
+            height: clamp(25px, 6%, 40px); 
+            background: rgba(255, 255, 255, 0.85); 
+            border: 2px dashed #2da1fc; /* Tracejado Azul */
+            border-radius: 50px; 
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        
+        .drop-zone.drag-over {
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px dashed #ff9f43; 
+            transform: translate(-50%, -50%) scale(1.1); 
+            box-shadow: 0 0 15px rgba(255, 159, 67, 0.6);
+            z-index: 20;
+        }
+
+        .drop-zone.preenchida {
+            background: rgba(81, 207, 102, 0.95); border: 2px solid #219d53;
+            box-shadow: 0 0 15px rgba(81, 207, 102, 0.6);
+        }
+
+        .drag-pool {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%;
+            padding: 15px; background: white; border-radius: 20px; border: 2px dashed #ced6e0; min-height: 50px;
+        }
+        
+        /* AS NOVAS PÍLULAS (ESTILO IMAGEM) */
+        .drag-item {
+            background-color: #2da1fc; /* Azul igual ao da imagem */
+            color: white; 
+            padding: 10px 22px; /* Margens de pílula clássica */
+            font-size: clamp(0.85rem, 2.5vw, 1.1rem); 
+            font-weight: bold; 
+            border-radius: 50px; /* Formato Pílula */
+            cursor: grab; touch-action: none; 
+            box-shadow: 0 4px 0 #187cd6; /* Sombra inferior azul escura */
+            border: 1px solid #187cd6; /* Contorno subtil */
+            transition: transform 0.1s, box-shadow 0.1s; 
+            user-select: none;
+            z-index: 100; text-align: center; white-space: nowrap;
+        }
+        .drag-item:active { 
+            cursor: grabbing; 
+            transform: translateY(3px) !important;
+            box-shadow: 0 1px 0 #187cd6 !important;
+        }
+
+        .drop-zone .drag-item {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            box-shadow: none !important; border: none !important; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            background: transparent; color: #1e7e34; font-size: clamp(0.7rem, 2.2vw, 1rem); padding: 0; text-shadow: 1px 1px 0px white;
+        }
+
+        #transicao-ecra { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; text-align: center; animation: fadeIn 0.5s; }
+
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; }
+        .icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+        }
+		
+		.btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+		
+		@media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+		
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+        
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall linear forwards; pointer-events: none;}
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
+		
+		/* =========================================
+           CAIXA DE CURIOSIDADE E BOTÃO SEGUINTE
+           ========================================= */
+        .caixa-curiosidade {
+            background: #fff9c4; border: 3px solid #fbc531; color: #b18500;
+            padding: 15px 25px; border-radius: 20px; font-size: 1rem;
+            margin-top: 20px; width: 100%; max-width: 850px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: fadeIn 0.4s ease;
+            line-height: 1.4; text-align: left;
+        }
+        
+        .btn-seguinte {
+            background: var(--cor-em); color: white; border: none;
+            padding: 12px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 15px;
+            margin-top: 15px; cursor: pointer; box-shadow: 0 5px 0 #1e7e34;
+            transition: transform 0.2s, box-shadow 0.2s; animation: fadeIn 0.5s ease;
+        }
+        @media (hover: hover) { .btn-seguinte:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #1e7e34; } }
+        .btn-seguinte:active { transform: translateY(5px); box-shadow: 0 0 0 transparent; }
+		
+		/* =========================================
+		CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+		========================================= */
+		@media (max-height: 600px) {
+			body {
+				height: auto !important;
+				overflow-y: auto !important;
+			}
+			main {
+				justify-content: flex-start !important; /* Evita que o topo do cartão desapareça */
+				padding-top: 15px;
+				padding-bottom: 15px;
+				overflow-y: visible !important;
+			}
+			.cartao-jogo-container {
+				margin: auto 0; /* Centra perfeitamente se houver espaço, ou deixa fazer scroll se não houver */
+			}
+		} 
+		
+		/* =========================================
+		CORREÇÃO PARA PAINEIS E ECRÃS GRANDES ????
+		========================================= */
+		
+		@media (hover: none) and (pointer: coarse) {
+
+		  body {
+			height: auto !important;
+			overflow-y: auto !important;
+		  }
+
+		  main {
+			justify-content: flex-start !important;
+			overflow-y: visible !important;
+		  }
+
+		  footer {
+			margin-top: auto;
+		  }
+		}		
+		
+		
+
+    .icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+	
+	
+	/* =========================================
+		NOVO CSS
+	========================================= */
+	
+		.animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+		
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none;
+		}
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+			box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+
+        
+		.btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+		
+				
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+		
+		/* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+		
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+		
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+		
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+		
+		.icon-btn-nivel {
+			width: 55px;
+			height: 55px;
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+			pointer-events: none;
+		}
+		
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}
+		
+		.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+		
+		/* ==========================================================================
+   ANIMAÇÃO INICIAL PREMIUM: PORTAL DOS NAVEGADORES (400px)
+   ========================================================================== */
+
+.animacao-tutorial {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 180px;
+    /* Gradiente profundo azul-meia-noite e violeta espacial */
+    background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
+    border: 3px dashed var(--cor-btn-azul);
+    border-radius: 20px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(97, 160, 255, 0.15), 0 8px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* 1. Rosa-dos-Ventos Dourada (Roda muito lentamente em background) */
+.rosa-ventos {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' stroke='%23fbc531' stroke-width='1.2' fill='none' opacity='0.3'><circle cx='50' cy='50' r='45'/><path d='M50 5 L50 95 M5 L50 95 L5 50 M95 50 L50 5 L95 50 M50 5 L53 35 L50 45 L47 35 Z M50 95 L53 65 L50 55 L47 65 Z M5 50 L35 47 L45 50 L35 53 Z M95 50 L65 47 L55 50 L65 53 Z'/></svg>");
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: rodarRosaVentos 45s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* 2. Estrelas de Navegação Cintilantes */
+.estrela-navegacao {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.estrela-navegacao.s1 { top: 20%; left: 15%; animation: piscarEstrelaNavegacao 1.5s infinite ease-in-out; }
+.estrela-navegacao.s2 { top: 30%; right: 20%; animation: piscarEstrelaNavegacao 2s infinite ease-in-out; animation-delay: 0.5s; }
+.estrela-navegacao.s3 { bottom: 25%; left: 30%; animation: piscarEstrelaNavegacao 1.8s infinite ease-in-out; animation-delay: 1s; }
+.estrela-navegacao.s4 { bottom: 15%; right: 15%; animation: piscarEstrelaNavegacao 2.2s infinite ease-in-out; animation-delay: 1.5s; }
+
+/* 3. O Globo Terrestre com Oceanos (Azul-Vibrante) */
+.globo-oceano {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background-color: #0091ff; /* Oceanos */
+    border: 3.5px solid var(--azul-escuro);
+    border-radius: 50%;
+    overflow: hidden; /* Tranca os continentes deslizantes dentro do círculo */
+    box-shadow: 
+        inset -8px -8px 16px rgba(0, 0, 0, 0.25), 
+        0 6px 15px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    animation: pulsarGloboNavegador 4s infinite ease-in-out;
+}
+
+/* Faixa deslizante infinita com os continentes em tom de pergaminho/ouro antigo */
+.globo-continentes-mapa {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23FBC531'><path d='M10 25 Q15 15 25 25 T40 18 T60 30 T80 20 T100 25 L100 65 Q90 75 80 55 T60 70 T40 50 T20 65 T0 55 Z' opacity='0.9'/></svg>");
+    background-repeat: repeat-x;
+    background-size: 50% 100%;
+    animation: rodarContinentesNavegador 10s linear infinite;
+}
+
+
+
+/* ==========================================================================
+   KEYFRAMES DE SUPORTE
+   ========================================================================== */
+
+/* Rotação lenta e elegante da Rosa-dos-Ventos */
+@keyframes rodarRosaVentos {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Deslizamento infinito dos continentes */
+@keyframes rodarContinentesNavegador {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* Pulsação do Globo */
+@keyframes pulsarGloboNavegador {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
+
+
+/* Brilho das estrelas */
+@keyframes piscarEstrelaNavegacao {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+	
+</style>
+
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+			<a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        <h1>Continentes e Oceanos <img src="../img-titulos/continentes_oceanos.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo">Descobre o nosso planeta!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg">Mensagem entra aqui!</div>
+
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+			<!-- ANIMMAÇÃO INICIAL -->
+             <!-- PORTAL DOS NAVEGADORES (COMPACTO E ULTRA-PREMIUM) -->
+            <div class="animacao-tutorial">
+                <!-- Estrelas de navegação cintilantes ao fundo -->
+                <div class="estrela-navegacao s1"></div>
+                <div class="estrela-navegacao s2"></div>
+                <div class="estrela-navegacao s3"></div>
+                <div class="estrela-navegacao s4"></div>
+                
+                <!-- Rosa-dos-ventos dourada rotativa em background -->
+                <div class="rosa-ventos"></div>
+                
+                <!-- O Globo Terrestre com oceanos e continentes rotativos -->
+                <div class="globo-oceano">
+                    <div class="globo-continentes-mapa"></div>
+                </div>
+                
+
+            </div>
+		
+			<h2 class="titulo-menu">Escolhe o teu desafio:</h2>
+            <div class="subtitulo" style="margin-top:-15px; margin-bottom:25px; font-weight:bold; color:var(--azul-escuro); max-width:550px; text-align:center;">
+                Completa os desafios e demonstra o teu conhecimento sobre os continentes e oceanos!
+            </div>
+            
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-verde" onclick="iniciarJogo('arrasto')">
+				    <img src="../img-titulos/continentes_oceanos_menu_1.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">O Mapa-Múndi</span>
+                        <span class="btn-nivel-subtitulo">Arrasta e constrói o mapa!</span>
+                    </div>
+                </button>
+                
+				<button class="btn-nivel-novo bg-azul" onclick="iniciarJogo('terra_agua')">
+				    <img src="../img-titulos/continentes_oceanos_menu_2.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Terra ou Água?</span>
+                        <span class="btn-nivel-subtitulo">Continente vs Oceano</span>
+                    </div>
+                </button>
+				
+				<button class="btn-nivel-novo bg-roxo" onclick="iniciarJogo('viagem')">
+				    <img src="../img-titulos/continentes_oceanos_menu_3.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Viagem de Avião</span>
+                        <span class="btn-nivel-subtitulo">Aterrámos onde?</span>
+                    </div>
+                </button>
+                
+				<button class="btn-nivel-novo bg-laranja" onclick="iniciarJogo('animais')">
+				    <img src="../img-titulos/continentes_oceanos_menu_4.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Animais pelo Mundo</span>
+                        <span class="btn-nivel-subtitulo">Em que continente vivo?</span>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda" id="zona-progresso"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+				<div class="progress-bg" id="zona-barra"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"> <span id="icone-erro-svg"></span> <span id="val-erros">0</span></div>
+            </div>
+
+            <div class="area-jogo-custom" id="area-jogo"></div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                És um grande explorador do planeta!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:1.5rem;">0</strong> erros.
+            </div>
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+			</div>
+		</div>
+    </div>
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+	// ==========================================
+    // SVGs BARRA DE ESTADO
+    // ==========================================
+    const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+    const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+    const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.9em" height="0.9em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt, #ff4757)" stroke-width="3" stroke-linecap="round" /></svg>`;
+    
+    // Injeção visual na carga da página
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnHome = document.getElementById('btn-home-svg');
+        const badgeRonda = document.getElementById('badge-ronda-svg');
+        const btnAjuda = document.getElementById('btn-dica');
+        const iconeErro = document.getElementById('icone-erro-svg');
+        
+        if(btnHome) btnHome.innerHTML = SVG_HOME;
+        if(btnAjuda) btnAjuda.innerHTML = SVG_BULB + ' Dica';
+        if(iconeErro) iconeErro.innerHTML = SVG_ERRO;
+        if(badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+        
+    });
+
+
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); document.getElementById('hamburgerBtn').classList.toggle('open'); }
+    function mostrarEcra(id) { document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none'); document.getElementById(id).style.display = 'flex'; }
+
+    let toastTimeout;
+    function showToast(msg, isError = false, tempo = 2500) {
+        const toast = document.getElementById('toast-msg'); clearTimeout(toastTimeout);
+        toast.innerHTML = msg; toast.style.borderColor = isError ? "#ff4757" : "#fbc531"; toast.style.color = isError ? "#ff4757" : "#b18500"; toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+        toast.classList.add('active'); toastTimeout = setTimeout(() => toast.classList.remove('active'), tempo);
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function tocarSom(tipo) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const agora = audioCtx.currentTime;
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3); osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const notas =[523.25, 659.25, 783.99, 1046.50]; 
+            notas.forEach((freq, i) => { const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.connect(g); g.connect(audioCtx.destination); o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.1, agora + i * 0.15); g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3); o.start(agora + i * 0.15); o.stop(agora + i * 0.15 + 0.3); });
+        }
+    }
+
+    function lancarConfetis() {
+        const container = document.getElementById('confetti-container'); container.innerHTML = "";
+        const colors =['#e7d83f', '#0091ff', '#51cf66', '#ff6b6b', '#ff9f43'];
+        for (let i = 0; i < 60; i++) {
+            let conf = document.createElement('div'); conf.className = 'confetti';
+            conf.style.left = Math.floor(Math.random() * 90 + 5) + '%'; conf.style.top = '-10%'; conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's'; conf.style.animationDelay = (Math.random() * 1.5) + 's'; container.appendChild(conf);
+        }
+    }
+
+    let modoAtual = "";
+    let listaRonda =[];
+    let rondaIndex = 0; // Usado globalmente como "Acertos Globais"
+    let totalRondas = 10;
+    let errosTotais = 0;
+    let dicaUsada = false;
+
+    let faseArrasto = "continentes";
+    let acertosArrasto = 0;
+
+    function iniciarJogo(modo) {
+        modoAtual = modo;
+        errosTotais = 0;
+        rondaIndex = 0;
+        dicaUsada = false;
+        
+        document.getElementById('zona-progresso').style.display = 'block';
+        document.getElementById('zona-barra').style.display = 'block';
+
+        if (modo === 'arrasto') {
+            faseArrasto = "continentes";
+            acertosArrasto = 0;
+            totalRondas = 11; // 6 continentes + 5 oceanos
+            document.getElementById('btn-dica').style.display = 'none'; // A dica não faz sentido aqui
+        } else {
+            document.getElementById('btn-dica').style.display = 'flex';
+            document.getElementById('btn-dica').classList.remove('esgotada');
+            let pool = modo === 'animais' ?[...animaisMundo] :[...continentesEOceanos];
+            totalRondas = Math.min(10, pool.length);
+            listaRonda = pool.sort(() => 0.5 - Math.random()).slice(0, totalRondas);
+        }
+
+        atualizarPlacarUI();
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function atualizarPlacarUI() {
+        document.getElementById('val-erros').textContent = errosTotais;
+        let pText = rondaIndex + 1 > totalRondas ? totalRondas : (modoAtual==='arrasto' && rondaIndex === 0 ? 0 : rondaIndex + 1);
+        if(modoAtual === 'arrasto') pText = rondaIndex; // No arrasto mostra os acertos atuais
+        
+        document.getElementById('val-progresso').textContent = pText;
+        document.getElementById('val-total').textContent = totalRondas;
+
+        // CALIBRAR BARRA DE PROGRESSO RESPONSIVA
+        let progressoReferencia = rondaIndex;
+        if (modoAtual !== 'arrasto') {
+            // No modo quiz, soma 1 à ronda atual para preencher logo o primeiro passo (Ronda 1 = 10%)
+            progressoReferencia = Math.min(rondaIndex + 1, totalRondas);
+        }
+
+        const percentagem = (progressoReferencia / totalRondas) * 100;
+        document.getElementById('progress-fill').style.width = `${percentagem}%`;
+    }
+
+    function gerarOpcoesMultiplaEscolha(idCorreto, pool, maxOpcoes) {
+        let certo = pool.find(item => item.id === idCorreto);
+        let filtrados = pool.filter(item => item.id !== idCorreto).sort(() => 0.5 - Math.random());
+        return[certo, ...filtrados.slice(0, maxOpcoes - 1)].sort(() => 0.5 - Math.random());
+    }
+
+    function usarDica() {
+        if (dicaUsada || modoAtual === 'arrasto') return;
+        dicaUsada = true; document.getElementById('btn-dica').classList.add('esgotada');
+        const botoes = Array.from(document.querySelectorAll('.btn-resposta:not(.certo):not(.erro)'));
+        const errados = botoes.filter(b => b.dataset.correto !== 'true');
+        if (errados.length > 0) {
+            const btnApagar = errados[Math.floor(Math.random() * errados.length)];
+            btnApagar.style.opacity = '0.3'; btnApagar.style.pointerEvents = 'none'; tocarSom('acerto');
+        }
+    }
+
+    function prepararRonda() {
+        const area = document.getElementById('area-jogo');
+        area.innerHTML = ""; 
+
+        if (modoAtual === 'arrasto') {
+            
+            if (faseArrasto === "transicao") {
+                area.innerHTML = `
+                    <div id="transicao-ecra" style="display:flex;">
+                        <h2 style="font-size: 2.5rem; color: var(--azul-vibrante);">Fantástico! <img src="../img-titulos/continentes_oceanos.svg" alt="" class="icon-acao" onerror="this.style.display=''"></h2>
+                        <p style="font-size: 1.3rem; color: var(--text-main); font-weight:bold;">Já conheces a terra firme...<br>Será que sabes agora os <b>Oceanos</b>? <img src="../img-titulos/continentes_oceanos_oceanos.svg" alt="" class="icon-acao" onerror="this.style.display='🌊'"></p>
+                    </div>`;
+                setTimeout(() => { 
+                    faseArrasto = "oceanos"; 
+                    acertosArrasto = 0; 
+                    prepararRonda(); 
+                }, 3500);
+                return;
+            }
+
+            const dados = faseArrasto === "continentes" ? [...continentesDados] :[...oceanosDados];
+            const baralhados = [...dados].sort(() => 0.5 - Math.random());
+            
+            let htmlContent = `<div class="drag-game-layout">`;
+
+            
+            htmlContent += `<div class="map-drop-container">`;
+            htmlContent += `<img src="img/mapa_mundo.png" alt="Mapa Múndi">`;
+            dados.forEach(item => {
+                htmlContent += `<div class="drop-zone" data-id="${item.id}" style="left:${item.dropX}%; top:${item.dropY}%;"></div>`;
+            });
+            htmlContent += `</div>`;
+            
+            htmlContent += `<div class="drag-pool" id="drag-pool">`;
+            baralhados.forEach(item => {
+                htmlContent += `<div class="drag-item" data-id="${item.id}">${item.nome}</div>`;
+            });
+            htmlContent += `</div></div>`;
+            
+            area.innerHTML = htmlContent;
+            ativarDragAndDrop();
+        }
+
+		else if (modoAtual === 'terra_agua') {
+            const atual = listaRonda[rondaIndex];
+            area.innerHTML = `
+                <h3 class="pergunta-titulo">É um Continente ou um Oceano?</h3>
+                <div class="texto-gigante" style="font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 900; color: var(--azul-vibrante); background: white; padding: 20px 40px; border-radius: 25px; border: 4px solid var(--azul-vibrante); box-shadow: 0 8px 0 var(--azul-vibrante); margin: 20px 0;">${atual.nome}</div>
+                <div class="grid-terra-agua">
+                    <button class="btn-resposta btn-ta" data-correto="${atual.tipo === 'continente'}" onclick="verificarRespostaClassificacao('continente', this)">
+                        <img src="img/continente.svg" onerror="this.style.display='none'" alt=""> Continente
+                    </button>
+                    <button class="btn-resposta btn-ta" data-correto="${atual.tipo === 'oceano'}" onclick="verificarRespostaClassificacao('oceano', this)">
+                        <img src="img/oceano.svg" onerror="this.style.display='none'" alt=""> Oceano
+                    </button>
+                </div>
+                <!-- CAIXA DE CURIOSIDADE ESCONDIDA -->
+                <div id="caixa-curiosidade" class="caixa-curiosidade" style="display: none;">
+                    💡 <b>Sabias que...</b> <span>${atual.curiosidade}</span>
+                </div>
+                <button id="btn-seguinte" class="btn-seguinte" style="display: none;" onclick="avancarRonda()">Seguinte ➡️</button>
+            `;
+        }
+
+        else if (modoAtual === 'viagem') {
+            const atual = listaRonda[rondaIndex];
+            let coords = { x: atual.pinX, y: atual.pinY };
+            let opcoes = gerarOpcoesMultiplaEscolha(atual.id, continentesEOceanos, 4);
+            area.innerHTML = `
+
+                <div class="map-wrapper">
+                    <img src="img/mapa_mundi.png" alt="Mapa Viagem">
+                    <div class="map-pin" style="left: ${coords.x}%; top: ${coords.y}%;">📍</div>
+                </div>
+                <div class="grid-respostas">
+                    ${opcoes.map(o => `<button class="btn-resposta" data-correto="${o.id === atual.id}" onclick="verificarResposta('${o.id}', this)">${o.nome}</button>`).join('')}
+                </div>`;
+        }
+
+        else if (modoAtual === 'animais') {
+            const atual = listaRonda[rondaIndex];
+            let soContinentes = continentesEOceanos.filter(c => c.tipo === 'continente');
+            let opcoes = gerarOpcoesMultiplaEscolha(atual.continente, soContinentes, 4);
+            
+            area.innerHTML = `
+                <h3 class="pergunta-titulo">Em que continente vivo?</h3>
+                <div class="imagem-destaque">
+                    <img src="img/${atual.id}.png" alt="${atual.nome}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; font-size:1em;">${atual.emoji}</div>
+                </div>
+                <h4 style="margin:5px 0 15px 0; color:var(--text-main); font-size:1.2rem;">${atual.nome}</h4>
+                <div class="grid-respostas">
+                    ${opcoes.map(o => `<button class="btn-resposta" data-correto="${o.id === atual.continente}" onclick="verificarRespostaAnimal('${o.id}', this)">${o.nome}</button>`).join('')}
+                </div>`;
+        }
+    }
+
+    // =========================================
+    // MOTOR DE ARRASTAR E LARGAR (CORRIGIDO)
+    // =========================================
+    function ativarDragAndDrop() {
+        const itens = document.querySelectorAll('.drag-item');
+        let dragAtivo = null; let offsetX = 0; let offsetY = 0;
+        let startContainer = null; let startNextSibling = null;
+        let hasMoved = false; // NOVA PROTEÇÃO ANTI-CLIQUE
+
+        itens.forEach(item => {
+            item.addEventListener('pointerdown', function(e) {
+                if (e.target.classList.contains('locked')) return;
+                e.preventDefault();
+                dragAtivo = e.target;
+                hasMoved = false; 
+                
+                const rect = dragAtivo.getBoundingClientRect();
+                startContainer = dragAtivo.parentNode;
+                startNextSibling = dragAtivo.nextSibling;
+
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+
+                dragAtivo.style.width = rect.width + 'px';
+                dragAtivo.style.height = rect.height + 'px';
+                dragAtivo.style.position = 'fixed';
+                dragAtivo.style.zIndex = 1000;
+                dragAtivo.style.left = rect.left + 'px';
+                dragAtivo.style.top = rect.top + 'px';
+                
+                document.body.appendChild(dragAtivo);
+                tocarSom('acerto'); 
+
+                document.addEventListener('pointermove', moverElemento);
+                document.addEventListener('pointerup', largarElemento);
+            });
+        });
+
+        function moverElemento(e) {
+            if (!dragAtivo) return;
+            hasMoved = true; // Confirma que a criança mexeu a palavra
+            
+            dragAtivo.style.left = (e.clientX - offsetX) + 'px';
+            dragAtivo.style.top = (e.clientY - offsetY) + 'px';
+
+            const rect = dragAtivo.getBoundingClientRect();
+            const centroX = rect.left + rect.width / 2;
+            const centroY = rect.top + rect.height / 2;
+
+            dragAtivo.style.pointerEvents = 'none';
+            const elementoAbaixo = document.elementFromPoint(centroX, centroY);
+            dragAtivo.style.pointerEvents = 'auto';
+
+            document.querySelectorAll('.drop-zone').forEach(dz => dz.classList.remove('drag-over'));
+            
+            if (elementoAbaixo) {
+                const dropZone = elementoAbaixo.closest('.drop-zone');
+                if (dropZone && !dropZone.classList.contains('preenchida')) {
+                    dropZone.classList.add('drag-over'); 
+                }
+            }
+        }
+
+        function largarElemento(e) {
+            if (!dragAtivo) return;
+            
+            // SE A CRIANÇA APENAS DEU UM CLIQUE NORMAL, CANCELA TUDO SEM ERRO
+            if (!hasMoved) {
+                dragAtivo.style.position = 'static';
+                dragAtivo.style.width = 'auto'; dragAtivo.style.height = 'auto';
+                if(startNextSibling) startContainer.insertBefore(dragAtivo, startNextSibling);
+                else startContainer.appendChild(dragAtivo);
+                
+                document.removeEventListener('pointermove', moverElemento);
+                document.removeEventListener('pointerup', largarElemento);
+                dragAtivo = null;
+                return; // Sai da função imediatamente!
+            }
+
+            // SE FOI UM ARRASTO REAL:
+            const rect = dragAtivo.getBoundingClientRect();
+            const centroX = rect.left + rect.width / 2;
+            const centroY = rect.top + rect.height / 2;
+
+            dragAtivo.style.pointerEvents = 'none';
+            const elementoAbaixo = document.elementFromPoint(centroX, centroY);
+            dragAtivo.style.pointerEvents = 'auto'; 
+            
+            document.querySelectorAll('.drop-zone').forEach(dz => dz.classList.remove('drag-over'));
+            
+            const dropZone = elementoAbaixo ? elementoAbaixo.closest('.drop-zone') : null;
+            
+            if (dropZone && dropZone.dataset.id === dragAtivo.dataset.id && !dropZone.classList.contains('preenchida')) {
+                encaixarElemento(dragAtivo, dropZone);
+            } else {
+                tocarSom('erro'); errosTotais++; atualizarPlacarUI();
+                dragAtivo.classList.add('error-shake');
+                setTimeout(() => dragAtivo.classList.remove('error-shake'), 400);
+                
+                dragAtivo.style.position = 'static';
+                dragAtivo.style.width = 'auto'; dragAtivo.style.height = 'auto';
+                if(startNextSibling) startContainer.insertBefore(dragAtivo, startNextSibling);
+                else startContainer.appendChild(dragAtivo);
+            }
+            
+            document.removeEventListener('pointermove', moverElemento);
+            document.removeEventListener('pointerup', largarElemento);
+            dragAtivo = null;
+        }
+
+        function encaixarElemento(item, caixa) {
+            tocarSom('acerto');
+            item.style.position = 'absolute';
+            item.style.left = '50%'; item.style.top = '50%'; item.style.transform = 'translate(-50%, -50%)';
+            item.style.width = '100%'; item.style.height = '100%'; 
+            item.classList.add('locked');
+            caixa.appendChild(item); caixa.classList.add('preenchida');
+
+            acertosArrasto++;
+            rondaIndex++; // Aumenta a barra global
+            atualizarPlacarUI(); 
+            
+            const limiteFase = faseArrasto === "continentes" ? 6 : 5;
+            if (acertosArrasto >= limiteFase) {
+                setTimeout(() => {
+                    if (faseArrasto === "continentes") {
+                        faseArrasto = "transicao"; prepararRonda();
+                    } else {
+                        document.getElementById('final-erros').textContent = errosTotais;
+                        tocarSom('vitoria'); lancarConfetis(); mostrarEcra('ecra-fim');
+                    }
+                }, 1000);
+            }
+        }
+    }
+
+    function verificarResposta(resposta, btnElement) { if (listaRonda[rondaIndex].id === resposta) respostaCerta(btnElement); else respostaErrada(btnElement); }
+    function verificarRespostaClassificacao(resposta, btnElement) { if (listaRonda[rondaIndex].tipo === resposta) respostaCerta(btnElement); else respostaErrada(btnElement); }
+    function verificarRespostaAnimal(resposta, btnElement) { if (listaRonda[rondaIndex].continente === resposta) respostaCerta(btnElement); else respostaErrada(btnElement); }
+
+    function respostaCerta(btnElement) {
+        tocarSom('acerto'); 
+        document.querySelectorAll('.btn-resposta').forEach(b => b.setAttribute('disabled', 'true'));
+        btnElement.classList.add('certo'); 
+        
+        if (modoAtual === 'terra_agua') {
+            // Mostra a caixa e o botão, e PAUSA o jogo à espera do clique!
+            document.getElementById('caixa-curiosidade').style.display = 'block';
+            document.getElementById('btn-seguinte').style.display = 'inline-block';
+        } else {
+            // Nos outros jogos, avança logo passado 1 segundo
+            setTimeout(avancarRonda, 1000); 
+        }
+    }
+
+    function respostaErrada(btnElement) {
+        tocarSom('erro'); errosTotais++; atualizarPlacarUI();
+        btnElement.classList.add('erro', 'error-shake'); setTimeout(() => { btnElement.classList.remove('error-shake'); }, 400);
+    }
+
+    function avancarRonda() {
+        rondaIndex++;
+        if (rondaIndex >= totalRondas) {
+            document.getElementById('progress-fill').style.width = `100%`; document.getElementById('final-erros').textContent = errosTotais;
+            tocarSom('vitoria'); lancarConfetis(); mostrarEcra('ecra-fim');
+        } else { atualizarPlacarUI(); prepararRonda(); }
+    }
+
+    function voltarAoMenu() { document.getElementById('confetti-container').innerHTML = ""; mostrarEcra('ecra-selecao'); }
+    function reiniciarJogo() { document.getElementById('confetti-container').innerHTML = ""; iniciarJogo(modoAtual); }
+    window.onload = () => mostrarEcra('ecra-selecao');
+
+</script>
+</body>
+</html>

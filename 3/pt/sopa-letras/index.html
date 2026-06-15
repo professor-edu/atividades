@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - Sopa de Letras 🔠</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #E3C40D;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;
+			margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-3ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-3ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55); 
+            border-top: 8px solid var(--cor-pt); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 30px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-3ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 25px; gap: 25px;
+            position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+        }
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--cor-btn-fundo); border: 3px solid var(--cor-pt); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-pt); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-pt); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		*/O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			content: "✅";
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-pt); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-3ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+        
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+				/* =========================================
+		   NOVO DESIGN DOS BOTÕES DO MENU INICIAL (HORIZONTAL)
+		   ========================================= */
+
+		/* Transforma o botão numa estrutura horizontal alinhada à esquerda */
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+		/* Garante que a imagem do nível mantém as proporções e não encolhe */
+		.icon-btn-nivel-novo {
+			width: 55px;
+			height: 55px;
+			flex-shrink: 0;
+		}
+
+		/* Contentor de texto para empilhar Título e Subtítulo */
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none; /* Protege contra interferência de clique */
+		}
+
+		/* Estilo para a linha do Título (Superior) */
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+
+		/* Estilo para a linha do Subtítulo (Inferior) */
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+
+		/* Otimização para telemóveis mais pequenos */
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}
+
+
+
+		/* =========================================================
+		CSS: A SOPA DE LETRAS DO DR. BIP-BOP (10x10 GRIDS & DRAG)
+		========================================================= */
+
+		/* --- ANIMAÇÃO INICIAL: O MARCA-TEXTOS DO TUTORIAL --- */
+		.animacao-tutorial.sopa-theme {
+			background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+			border: 3px dashed #bcdcff;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.sopa-tut-wrapper {
+			position: relative;
+			width: 90%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+		}
+
+		/* Mini grelha 4x4 do tutorial */
+		.tut-grelha-leiras {
+			position: relative;
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 3px;
+			width: 110px;
+			height: 110px;
+			background: white;
+			border: 2.5px solid #ca8a04;
+			border-radius: 8px;
+			padding: 3px;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+		}
+
+		.tut-letra-box {
+			background: #f8fafc;
+			border: 1px solid #cbd5e1;
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.85rem;
+			font-weight: bold;
+			color: #334155;
+			font-family: monospace;
+			aspect-ratio: 1;
+		}
+
+		/* Letras que formam a palavra "SOPA" na primeira linha */
+		.tut-letra-box.correta {
+			animation: acendeLetrasSopa 6s infinite step-end;
+		}
+
+		@keyframes acendeLetrasSopa {
+			0%, 25% { background: #f8fafc; color: #334155; }
+			30%, 85% { background: #bbf7d0; color: #16a34a; border-color: #4ade80; } /* Acende a verde */
+			90%, 100% { background: #f8fafc; color: #334155; }
+		}
+
+		/* Caneta Marcadora Amarela que pinta as letras S-O-P-A de forma corrida */
+		.tut-marcador-linha {
+			position: absolute;
+			top: 3px;
+			left: 5px;
+			height: 22px;
+			background: rgba(253, 224, 71, 0.45); /* Amarelo marca-textos translúcido */
+			border-top: 1.5px solid #eab308;
+			border-bottom: 1.5px solid #eab308;
+			border-radius: 4px;
+			pointer-events: none;
+			z-index: 5;
+			width: 0;
+			opacity: 0;
+			animation: arrastarMarcador 6s infinite ease-in-out;
+		}
+
+		@keyframes arrastarMarcador {
+			0%, 10% { width: 0; opacity: 0; }
+			12% { opacity: 1; }
+			28% { width: 98px; opacity: 1; } /* Pinta os 4 blocos (S-O-P-A) */
+			70%, 85% { width: 98px; opacity: 0.1; } /* Fica baço ao terminar */
+			90%, 100% { width: 0; opacity: 0; }
+		}
+
+		/* Cartão do Pergaminho ao lado */
+		.tut-cartao-sopa {
+			width: 100px;
+			height: 60px;
+			background: white;
+			border: 2px solid #ca8a04;
+			border-radius: 6px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			font-weight: 900;
+			color: #451a03;
+			font-family: 'Georgia', serif;
+			position: relative;
+		}
+
+		.tut-cartao-sopa::before {
+			content: "SOPA 🥣";
+			animation: riscarTextoHolo 6s infinite step-end;
+		}
+
+		@keyframes riscarTextoHolo {
+			0%, 29% { content: "SOPA 🥣"; color: #854d0e; text-decoration: none; }
+			30%, 85% { content: "SOPA ✔"; color: #16a34a; text-decoration: line-through; } /* Riscado com sucesso */
+			86%, 100% { content: "SOPA 🥣"; color: #854d0e; text-decoration: none; }
+		}
+
+
+		/* --- ÁREA DE JOGO PRINCIPAL DA SOPA DE LETRAS --- */
+
+		/* 💻 LAYOUT SPLIT (Lado a Lado): Grelha à esquerda e imagens à direita no PC */
+		#ecra-jogo .area-jogo-custom {
+			display: flex !important;
+			flex-direction: row !important; /* Lado a lado */
+			align-items: center !important;
+			justify-content: center !important;
+			gap: 30px !important;
+			padding: 15px 25px !important;
+		}
+
+		/* A Grelha de Sopa de Letras 10x10 */
+		.sopa-grid-container {
+			display: grid;
+			grid-template-columns: repeat(10, 1fr);
+			gap: 3px;
+			width: 100%;
+			max-width: 520px; /* Alterado de 320px para 520px */
+			aspect-ratio: 1; 
+			background: #f1f5f9;
+			border: 3px solid #cbd5e1;
+			border-radius: 16px;
+			padding: 4px;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+			touch-action: none !important;
+			user-select: none !important;
+		}
+
+		/* Células individuais da grelha */
+		.sopa-celula {
+			background: white;
+			border: 1px solid #cbd5e1;
+			border-radius: 6px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: clamp(0.9rem, 3vw, 1.25rem);
+			font-weight: 900;
+			color: #1e293b;
+			font-family: monospace;
+			aspect-ratio: 1;
+			cursor: pointer;
+			transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+			user-select: none;
+			touch-action: none;
+		}
+
+		/* Estado de Arrastamento Ativo (O traço azul néon marca-textos) */
+		.sopa-celula.selecionada {
+			background-color: #bae6fd !important; /* Azul néon translúcido */
+			border-color: #38bdf8 !important;
+			color: #0369a1 !important;
+		}
+
+		/* Estado de Sucesso Permanente (Palavra encontrada!) */
+		.sopa-celula.encontrada {
+			background-color: #bbf7d0 !important; /* Verde-giz brilhante */
+			border-color: #22c55e !important;
+			color: #15803d !important;
+		}
+
+
+		/* --- PAINEL DAS PALAVRAS/IMAGENS DA DIREITA (ESTILO CARTÕES) --- */
+		.painel-palavras-imagens {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr); /* 2 colunas de cartões */
+			gap: 12px;
+			width: 100%;
+			max-width: 250px; /* Espaço estreito ideal na direita */
+		}
+
+		/* Cartão individual de cada palavra/imagem */
+		.palavra-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100px;
+			background: white;
+			border: 2.5px solid #cbd5e1;
+			border-radius: 14px;
+			padding: 6px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+			transition: all 0.2s ease-in-out;
+		}
+
+		/* Imagem PNG do ficheiro do utilizador */
+		.palavra-card-img {
+			width: 100%;
+			max-width: 48px;
+			height: 48px;
+			object-fit: contain;
+			margin-bottom: 4px;
+			transition: transform 0.2s;
+		}
+
+		.palavra-card-texto {
+			font-size: 0.8rem;
+			font-weight: 900;
+			color: #334155;
+			text-transform: uppercase;
+		}
+
+		/* Cartão em estado Resolvido/Encontrado */
+		.palavra-card.descoberta {
+			background-color: #f0fdf4 !important; /* Fundo verde pastel */
+			border-color: #22c55e !important;
+			opacity: 0.85;
+			transform: scale(0.95);
+		}
+
+		.palavra-card.descoberta .palavra-card-texto {
+			color: #15803d !important;
+			text-decoration: line-through; /* Riscado */
+		}
+
+		.palavra-card.descoberta .palavra-card-img {
+			filter: grayscale(100%);
+			opacity: 0.6;
+		}
+
+
+		/* --- 📱 AJUSTES RESPONSIVOS ULTRA-COMPACTOS PARA MOBILE (VERTICAL) --- */
+		@media (max-width: 768px) {
+			/* 1. Altera a direção de Row para Column (Empilha verticalmente) */
+			#ecra-jogo .area-jogo-custom {
+				flex-direction: column !important;
+				gap: 15px !important;
+				padding: 10px 15px !important;
+			}
+
+			/* 2. Encolhe ligeiramente a grelha de 10x10 para caber inteira sem scroll */
+			.sopa-grid-container {
+				max-width: 290px !important;
+			}
+			.sopa-celula {
+				font-size: 0.95rem !important;
+			}
+
+			/* 3. Reconfigura o Painel da Direita para a Base do Ecrã */
+			.painel-palavras-imagens {
+				grid-template-columns: repeat(3, 1fr) !important; /* 3 colunas de etiquetas */
+				max-width: 320px !important;
+				gap: 8px !important;
+			}
+
+			/* 4. Oculta completamente as imagens para poupar espaço precioso */
+			.palavra-card-img {
+				display: none !important;
+			}
+
+			/* 5. Transforma os cartões altos em pequenas etiquetas/badges horizontais */
+			.palavra-card {
+				height: 32px !important; /* Altura de etiqueta */
+				border-radius: 10px !important;
+				padding: 2px 8px !important;
+				box-shadow: none !important;
+			}
+			
+			.palavra-card-texto {
+				font-size: 0.72rem !important;
+			}
+		}
+		
+		.badge-tempo { 
+		background: white; 
+		border: 2px solid var(--cor-mat); 
+		color: var(--azul-escuro); 
+		font-weight: 800; 
+		font-size: 0.9rem; 
+		padding: 6px 12px; 
+		border-radius: 15px; 
+		white-space: nowrap; 
+		
+		/* Alinhamento Perfeito com Flexbox */
+		display: flex; 
+		align-items: center; 
+		justify-content: center; 
+		gap: 6px; 
+		flex-shrink: 0; /* Impede que seja esmagado no mobile */
+	}
+
+	/* Tamanho uniforme para o ícone do cronómetro */
+	.badge-tempo svg {
+		margin: 0 !important; 
+		width: 1.1em !important; 
+		height: 1.1em !important;
+		display: block;
+	}
+	
+	/* --- ESTILO DE PISCAR DA PRIMEIRA LETRA (DICA DA SOPA) --- */
+	.sopa-celula.flash-hint {
+		background-color: #fff9c4 !important; /* Amarelo giz suave */
+		border-color: #fbc531 !important;
+		color: #b18500 !important;
+		animation: pulseDicaSopa 0.4s infinite alternate !important;
+		z-index: 5;
+	}
+
+	@keyframes pulseDicaSopa {
+		0% { transform: scale(1); }
+		100% { transform: scale(1.15); box-shadow: 0 4px 10px rgba(251, 197, 49, 0.4); }
+	}
+		   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Sopa de Letras <img src="../img-titulos/sopa_letras.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Qual é o teu melhor tempo?</div>
+    </div>
+</header>
+
+<!-- =========================================================
+     BLOCO MAIN: A SOPA DE LETRAS DO DR. BIP-BOP
+     ========================================================= -->
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- Toast Message para avisos rápidos -->
+        <div id="toast-msg" class="toast-msg"></div>
+
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            
+            <!-- ANIMAÇÃO DO MARCA-TEXTOS EM TEMPO REAL -->
+            <div class="animacao-tutorial sopa-theme">
+                <div class="sopa-tut-wrapper">
+                    <!-- Mini grelha de letras -->
+                    <div class="tut-grelha-leiras">
+                        <!-- Linha 1 -->
+                        <div class="tut-letra-box correta">S</div>
+                        <div class="tut-letra-box correta">O</div>
+                        <div class="tut-letra-box correta">P</div>
+                        <div class="tut-letra-box correta">A</div>
+                        <!-- Linha 2 -->
+                        <div class="tut-letra-box">X</div>
+                        <div class="tut-letra-box">T</div>
+                        <div class="tut-letra-box">E</div>
+                        <div class="tut-letra-box">M</div>
+                        <!-- Linha 3 -->
+                        <div class="tut-letra-box">M</div>
+                        <div class="tut-letra-box">A</div>
+                        <div class="tut-letra-box">R</div>
+                        <div class="tut-letra-box">O</div>
+                        <!-- Linha 4 -->
+                        <div class="tut-letra-box">K</div>
+                        <div class="tut-letra-box">L</div>
+                        <div class="tut-letra-box">O</div>
+                        <div class="tut-letra-box">V</div>
+						
+						<div class="tut-marcador-linha"></div>
+                    </div>
+                    
+                    <!-- Linha marca-textos amarela -->
+                    
+
+                    <!-- Cartão de verificação ao lado -->
+                    <div class="tut-cartao-sopa"></div>
+                </div>
+            </div>
+
+			<h2 class="titulo-menu">Encontra as Palavras:</h2>
+            <div class="subtitulo" style="margin-bottom:25px; font-weight:bold; color:var(--azul-escuro); max-width:500px; text-align:center;">
+                Encontra todas as palavras escondidas no menor tempo!
+            </div>
+            
+            <!-- BOTÃO ÚNICO DE INÍCIO DE JOGO (PERFEITAMENTE INTEGRADO) -->
+			<div class="grid-niveis" style="grid-template-columns: 1fr; max-width: 360px; margin: 0 auto 20px auto;">
+				<button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(8)">
+					<img src="../img-titulos/sopa_letras_menu_1.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">▶ COMEÇAR O JOGO</span>
+                        <span class="btn-nivel-subtitulo">Sopa de 6 Palavras Aleatórias</span>
+                    </div>
+				</button>
+			</div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">0</span>/<span id="val-total">6</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+                <div class="badge-tempo"> <span id="icone-tempo-svg"></span><span id="val-tempo">00:00</span></div>
+            </div>
+
+            <!-- Zona de Jogo: Carregada dinamicamente pelo JavaScript (com o alinhamento de split responsivo ativo) -->
+            <div class="area-jogo-custom" id="game-area">
+                
+                <!-- A Grelha de Letras 10x10 (Esquerda) e as Palavras/Imagens (Direita) surgem aqui -->
+                
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ DE TRANSIÇÃO (Opcional se mantiver do anterior) -->
+        <div id="ecra-transicao" class="ecra">
+			<h2 class="end-title" id="transicao-title-text">Descoberta Perfeita!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                <p>Brilhante! Conseguiste encontrar todas as palavras escondidas!</p>
+            </div>
+           
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="voltarAoMenu()">
+					VOLTAR AO MENU 
+					<img src="../../../SVG/home.svg" class="icon-acao" alt="">
+				</button>
+			</div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">És um Mestre!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                Excelente trabalho!<br><br>
+                Tempo total de jogo: <strong id="final-tempo" style="color:var(--azul-vibrante)">00:00</strong> minutos.<br>
+                Tiveste apenas <strong id="final-erros" style="color:#ff4757">0</strong> falhas de arrastamento.
+            </div>
+           
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+			</div>
+			
+        </div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+/* ==========================================
+   ESTADO GLOBAL DO JOGO: SOPA DE LETRAS
+   ========================================== */
+	let erradas = 0;
+	let desafioAtual = 0; // Conta as palavras encontradas (máx 6)
+	let totalDesafiosNivel = 6;
+	let levelID = 1; 
+	let timerImpaciencia = null;
+	let palavrasSessao = []; // Guarda as 6 palavras sorteadas para o jogo atual
+	let gridLetras = [];     // Matriz 10x10 de caracteres
+	let letrasEncontradas = new Set(); // Guarda coordenadas de letras já solucionadas
+
+	// Variáveis do Cronómetro Crescente
+	let timerCronometro = null;
+	let dicaUsada = false;
+	let tempoSegundos = 0;
+	
+
+	// Variáveis do Motor de Arrastamento (Pointer Drag)
+	let isDragging = false;
+	let startCell = null; // { r, c }
+	let currentDragCells = []; // Coordenadas {r, c} atualmente selecionadas no arrasto
+
+	// SVGs das interfaces padrão do template
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right: 5px; vertical-align: middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt, #ff4757)" stroke-width="3" stroke-linecap="round" /></svg>`;
+	const SVG_CLOCK = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+
+	/* ==========================================
+	   FUNÇÕES UTILITÁRIAS GLOBAIS
+	   ========================================== */
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterNumeroAleatorio(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	
+	// Remove acentos e cedilhas apenas para uso interno da grelha (Novo)
+	function removerAcentos(str) {
+		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
+	}
+
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+		document.getElementById('hamburgerBtn').classList.toggle('open');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		document.getElementById(id).style.display = 'flex';
+	}
+
+	function showToast(msg, isError = false) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = msg;
+		toast.className = "toast-msg active";
+		toast.style.borderColor = isError ? "#ff4757" : "#fbc531";
+		toast.style.color = isError ? "#ff4757" : "#b18500";
+		toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+		setTimeout(() => toast.classList.remove('active'), 3000);
+	}
+
+	/* ==========================================
+	   BASE DE DADOS DE VOCABULÁRIO (40 PALAVRAS DO UTILIZADOR)
+	   ========================================== */
+	const BASE_VOCABULARIO = [
+		{ palavra: "ABACAXI", img: "abacaxi.png" },
+		{ palavra: "ABELHA", img: "abelha.png" },
+		{ palavra: "AGULHA", img: "agulha.png" },
+		{ palavra: "ANANÁS", img: "ananas.png" },
+		{ palavra: "ANDORINHA", img: "andorinha.png" },
+		{ palavra: "AVIÃO", img: "aviao.png" },
+		{ palavra: "BALEIA", img: "baleia.png" },
+		{ palavra: "BANANA", img: "banana.png" },
+		{ palavra: "BICICLETA", img: "bicicleta.png" },
+		{ palavra: "BOLO", img: "bolo.png" },
+		{ palavra: "BOMBOM", img: "bombom.png" },
+		{ palavra: "BORBOLETA", img: "borboleta.png" },
+		{ palavra: "BÚSSOLA", img: "bussola.png" },
+		{ palavra: "CABRA", img: "cabra.png" },
+		{ palavra: "CADERNO", img: "caderno.png" },
+		{ palavra: "CANGURU", img: "canguru.png" },
+		{ palavra: "CARANGUEJO", img: "caranguejo.png" },
+		{ palavra: "CASTOR", img: "castor.png" },
+		{ palavra: "CHAMINÉ", img: "chamine.png" },
+		{ palavra: "CHOCOLATE", img: "chocolate.png" },
+		{ palavra: "CORUJA", img: "coruja.png" },
+		{ palavra: "DINOSSAURO", img: "dinossauro.png" },
+		{ palavra: "DRAGÃO", img: "dragao.png" },
+		{ palavra: "ELEFANTE", img: "elefante.png" },
+		{ palavra: "ESCOLA", img: "escola.png" },
+		{ palavra: "ESPANTALHO", img: "espantalho.png" },
+		{ palavra: "ESTRELA", img: "estrela.png" },
+		{ palavra: "FOGUETÃO", img: "foguetao.png" },
+		{ palavra: "GIRAFA", img: "girafa.png" },
+		{ palavra: "GIRASSOL", img: "girassol.png" },
+		{ palavra: "GOLFINHO", img: "golfinho.png" },
+		{ palavra: "GUITARRA", img: "guitarra.png" },
+		{ palavra: "HAMBURGUER", img: "hamburguer.png" },
+		{ palavra: "HIPOPÓTAMO", img: "hipopotamo.png" },
+		{ palavra: "HOSPITAL", img: "hospital.png" },
+		{ palavra: "JACARÉ", img: "jacare.png" },
+		{ palavra: "JOANINHA", img: "joaninha.png" },
+		{ palavra: "LANTERNA", img: "lanterna.png" },
+		{ palavra: "LEÃO", img: "leao.png" },
+		{ palavra: "MORCEGO", img: "morcego.png" },
+		{ palavra: "PALHAÇO", img: "palhaco.png" },
+		{ palavra: "ROBÔ", img: "robo.png" },
+		{ palavra: "TARTARUGA", img: "tartaruga.png" },
+		{ palavra: "TELEVISÃO", img: "televisao.png" },
+		{ palavra: "TESOURA", img: "tesoura.png" },
+		{ palavra: "VASSOURA", img: "vassoura.png" },
+		{ palavra: "VENTOINHA", img: "ventoinha.png" },
+		{ palavra: "VIOLINO", img: "violino.png" },
+		{ palavra: "CARRO", img: "carro.png" },
+		{ palavra: "CASA", img: "casa.png" },
+		{ palavra: "CASACO", img: "casaco.png" },
+		{ palavra: "CEBOLA", img: "cebola.png" },
+		{ palavra: "CEGONHA", img: "cegonha.png" },
+		{ palavra: "CENOURA", img: "cenoura.png" },
+		{ palavra: "CEREJA", img: "cereja.png" },
+		{ palavra: "CHAVE", img: "chave.png" },
+		{ palavra: "CHIMPANZÉ", img: "chimpanze.png" },
+		{ palavra: "CHUPETA", img: "chupeta.png" },
+		{ palavra: "CHUVA", img: "chuva.png" },
+		{ palavra: "CICLISTA", img: "ciclista.png" },
+		{ palavra: "CINEMA", img: "cinema.png" },
+		{ palavra: "CINTO", img: "cinto.png" },
+		{ palavra: "CLUBE", img: "clube.png" },
+		{ palavra: "COALA", img: "coala.png" },
+		{ palavra: "COBRA", img: "cobra.png" },
+		{ palavra: "COELHO", img: "coelho.png" },
+		{ palavra: "COFRE", img: "cofre.png" },
+		{ palavra: "COLA", img: "cola.png" },
+		{ palavra: "COLHER", img: "colher.png" },
+		{ palavra: "COPO", img: "copo.png" },
+		{ palavra: "CORAÇÃO", img: "coracao.png" },
+		{ palavra: "COROA", img: "coroa.png" },
+		{ palavra: "CORVO", img: "corvo.png" },
+		{ palavra: "COZINHA", img: "cozinha.png" },
+		{ palavra: "CRAVO", img: "cravo.png" },
+		{ palavra: "CROCODILO", img: "crocodilo.png" },
+		{ palavra: "CRUZ", img: "cruz.png" },
+		{ palavra: "DENTE", img: "dente.png" },
+		{ palavra: "DESENHO", img: "desenho.png" },
+		{ palavra: "DIPLOMA", img: "diploma.png" },
+		{ palavra: "DOCE", img: "doce.png" },
+		{ palavra: "DOZE", img: "doze.png" },
+		{ palavra: "DÚZIA", img: "duzia.png" },
+		{ palavra: "ESPELHO", img: "espelho.png" },
+		{ palavra: "ESQUILO", img: "esquilo.png" },
+		{ palavra: "ESTOJO", img: "estojo.png" },
+		{ palavra: "FADA", img: "fada.png" },
+		{ palavra: "FERRO", img: "ferro.png" },
+		{ palavra: "FLORESTA", img: "floresta.png" },
+		{ palavra: "FOCA", img: "foca.png" },
+		{ palavra: "FOGÃO", img: "fogao.png" },
+		{ palavra: "FOGO", img: "fogo.png" },
+		{ palavra: "FOGUEIRA", img: "fogueira.png" },
+		{ palavra: "FORMIGA", img: "formiga.png" },
+		{ palavra: "FUTEBOL", img: "futebol.png" },
+		{ palavra: "ACORDEÃO", img: "acordeao.png" },
+		{ palavra: "AÇÚCAR", img: "acucar.png" },
+		{ palavra: "ADULTO", img: "adulto.png" },
+		{ palavra: "AGUARELAS", img: "aguarelas.png" },
+		{ palavra: "ÁGUIA", img: "aguia.png" },
+		{ palavra: "ALEMÃO", img: "alemao.png" },
+		{ palavra: "ALFACE", img: "alface.png" },
+		{ palavra: "ALGEMAS", img: "algemas.png" },
+		{ palavra: "ALUNO", img: "aluno.png" },
+		{ palavra: "AMERICANO", img: "americano.png" },
+		{ palavra: "AMORA", img: "amora.png" },
+		{ palavra: "ANIMAL", img: "animal.png" },
+		{ palavra: "ANZOL", img: "anzol.png" },
+		{ palavra: "AQUÁRIO", img: "aquario.png" },
+		{ palavra: "ARANHA", img: "aranha.png" },
+		{ palavra: "ARMÁRIO", img: "armario.png" },
+		{ palavra: "ARROZ", img: "arroz.png" },
+		{ palavra: "ÁRVORE", img: "arvore.png" },
+		{ palavra: "ATLAS", img: "atlas.png" },
+		{ palavra: "ATLETA", img: "atleta.png" },
+		{ palavra: "AVENTAL", img: "avental.png" },
+		{ palavra: "AVESTRUZ", img: "avestruz.png" },
+		{ palavra: "AZEITE", img: "azeite.png" },
+		{ palavra: "AZEITONA", img: "azeitona.png" },
+		{ palavra: "BALANÇA", img: "balanca.png" },
+		{ palavra: "BALÃO", img: "balao.png" },
+		{ palavra: "CAMALEÃO", img: "camaleao.png" },
+		{ palavra: "CAMARÃO", img: "camarao.png" },
+		{ palavra: "CAMELO", img: "camelo.png" },
+		{ palavra: "CAMISOLA", img: "camisola.png" },
+		{ palavra: "CAMPEÃO", img: "campeao.png" },
+		{ palavra: "CAMPO", img: "campo.png" },
+		{ palavra: "CANDEEIRO", img: "candeeiro.png" },
+		{ palavra: "CANETA", img: "caneta.png" },
+		{ palavra: "CANHÃO", img: "canhao.png" },
+		{ palavra: "CANTAR", img: "cantar.png" },
+		{ palavra: "CANTIL", img: "cantil.png" },
+		{ palavra: "CAPACETE", img: "capacete.png" },
+		{ palavra: "CAPITÃO", img: "capitao.png" },
+		{ palavra: "CAPUZ", img: "capuz.png" },
+		{ palavra: "CARACOL", img: "caracol.png" },
+		{ palavra: "CARNE", img: "carne.png" },
+		{ palavra: "CARNEIRO", img: "carneiro.png" },
+		{ palavra: "CARROSSEL", img: "carrossel.png" },
+		{ palavra: "CARTAZ", img: "cartaz.png" },
+		{ palavra: "CAVALO", img: "cavalo.png" },
+		{ palavra: "CHAFARIZ", img: "chafariz.png" },
+		{ palavra: "DINHEIRO", img: "dinheiro.png" },
+		{ palavra: "DÚVIDA", img: "duvida.png" },
+		{ palavra: "EMPADA", img: "empada.png" },
+		{ palavra: "ENXADA", img: "enxada.png" },
+		{ palavra: "ESCORPIÃO", img: "escorpiao.png" },
+		{ palavra: "ESTÁDIO", img: "estadio.png" },
+		{ palavra: "ESTÔMAGO", img: "estomago.png" },
+		{ palavra: "EXAUSTO", img: "exausto.png" },
+		{ palavra: "EXEMPLO", img: "exemplo.png" },
+		{ palavra: "FÁBRICA", img: "fabrica.png" },
+		{ palavra: "FECHADURA", img: "fechadura.png" },
+		{ palavra: "FERRUGEM", img: "ferrugem.png" },
+		{ palavra: "FLAMINGO", img: "flamingo.png" },
+		{ palavra: "FLAUTA", img: "flauta.png" },
+		{ palavra: "FLECHA", img: "flecha.png" },
+		{ palavra: "GAFANHOTO", img: "gafanhoto.png" },
+		{ palavra: "GALINHA", img: "galinha.png" },
+		{ palavra: "GARFO", img: "garfo.png" },
+		{ palavra: "GARRAFA", img: "garrafa.png" },
+		{ palavra: "GELADO", img: "gelado.png" },
+		{ palavra: "GIGANTE", img: "gigante.png" },
+		{ palavra: "HAMSTER", img: "hamster.png" },
+		{ palavra: "HARPA", img: "harpa.png" },
+		{ palavra: "HERÓI", img: "heroi.png" },
+		{ palavra: "HIENA", img: "hiena.png" },
+		{ palavra: "ÍNDIO", img: "indio.png" },
+		{ palavra: "INGLÊS", img: "ingles.png" },
+		{ palavra: "IRMÃO", img: "irmao.png" },
+		{ palavra: "JANELA", img: "janela.png" },
+		{ palavra: "JARRA", img: "jarra.png" },
+		{ palavra: "JAVALI", img: "javali.png" },
+		{ palavra: "JIBÓIA", img: "jiboia.png" },
+		{ palavra: "JOELHO", img: "joelho.png" },
+		{ palavra: "JORNAL", img: "jornal.png" },
+		{ palavra: "LÂMPADA", img: "lampada.png" },
+		{ palavra: "LÁPIS", img: "lapis.png" },
+		{ palavra: "LARANJA", img: "laranja.png" },
+		{ palavra: "MACACO", img: "macaco.png" },
+		{ palavra: "MARTELO", img: "martelo.png" },
+		{ palavra: "PIANO", img: "piano.png" },
+		{ palavra: "PROFESSOR", img: "professor.png" },
+		{ palavra: "ZEBRA", img: "zebra.png" },
+		{ palavra: "SAPATILHA", img: "sapatilha.png" }
+	];
+	
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); // Pára o relógio antigo
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+
+		
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+	}
+
+	/* ==========================================
+	   ALGORITMO GERADOR DE SOPA DE LETRAS (10x10)
+	   ========================================== */
+	function criarMatrizSopa(numQuestoes) {
+		let grid = Array(10).fill(null).map(() => Array(10).fill(""));
+		let colocadas = [];
+		let palavrasUsadas = [];
+
+		// Baralha toda a base de vocabulário
+		let poolSorteio = baralharArray(BASE_VOCABULARIO);
+
+		// Tenta colocar palavras até atingirmos exatamente o número pretendido (6)
+		for (let p = 0; p < poolSorteio.length; p++) {
+			if (colocadas.length >= numQuestoes) break;
+
+			let item = poolSorteio[p];
+			let text = removerAcentos(item.palavra);
+			let colocado = false;
+			let tentativas = 0;
+
+			while (!colocado && tentativas < 80) {
+				tentativas++;
+				let dir = obterNumeroAleatorio(0, 1);
+				let dX = dir === 0 ? 1 : 0;
+				let dY = dir === 0 ? 0 : 1;
+
+				let startX = obterNumeroAleatorio(0, 10 - 1 - (text.length - 1) * dX);
+				let startY = obterNumeroAleatorio(0, 10 - 1 - (text.length - 1) * dY);
+
+				let colisao = false;
+				for (let i = 0; i < text.length; i++) {
+					let cellChar = grid[startY + i * dY][startX + i * dX];
+					if (cellChar !== "" && cellChar !== text[i]) {
+						colisao = true;
+						break;
+					}
+				}
+
+				if (!colisao) {
+					let coordenadas = [];
+					for (let i = 0; i < text.length; i++) {
+						let finalY = startY + i * dY;
+						let finalX = startX + i * dX;
+						grid[finalY][finalX] = text[i];
+						coordenadas.push(`${finalY}-${finalX}`);
+					}
+					colocadas.push({
+						palavra: item.palavra,
+						coords: coordenadas,
+						encontrada: false
+					});
+					palavrasUsadas.push(item);
+					colocado = true;
+				}
+			}
+		}
+
+		// Preenche o resto da grelha com letras aleatórias
+		const letrasABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		for (let r = 0; r < 10; r++) {
+			for (let c = 0; c < 10; c++) {
+				if (grid[r][c] === "") {
+					grid[r][c] = letrasABC[obterNumeroAleatorio(0, letrasABC.length - 1)];
+				}
+			}
+		}
+
+		return { grid: grid, colocadas: colocadas, palavrasUsadas: palavrasUsadas };
+	}
+
+	/* ==========================================
+	   NAVEGAÇÃO E CONTROLADORES DE RONDAS
+	   ========================================== */
+	function iniciarJogo(numQuestoes = 8) {
+		erradas = 0;
+		desafioAtual = 0; 
+		rondasParaDica = 0;
+		totalDesafiosNivel = numQuestoes;
+		letrasEncontradas.clear();
+
+		// O motor agora gera até conseguir exatamente 6 palavras bem sucedidas (Novo)
+		let gerado = criarMatrizSopa(numQuestoes);
+		gridLetras = gerado.grid;
+		rondasSorteadas = gerado.colocadas; 
+		palavrasSessao = gerado.palavrasUsadas; // Assegura que só exibe as colocadas!
+
+		limparConfetis();
+		atualizarPlacar();
+		atualizarBotaoDica();
+		
+		tempoSegundos = 0;
+		document.getElementById('val-tempo').textContent = "00:00";
+		clearInterval(timerCronometro);
+		timerCronometro = setInterval(atualizarCronometro, 1000);
+
+		mostrarEcra('ecra-jogo');
+		carregarRonda();
+	}
+
+	function atualizarPlacar() {
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = desafioAtual;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+		
+		const percentagem = (desafioAtual / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (!dicaUsada) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `Esgotada`;
+		}
+	}
+
+	function atualizarCronometro() {
+		tempoSegundos++;
+		const minutos = Math.floor(tempoSegundos / 60).toString().padStart(2, '0');
+		const segundos = (tempoSegundos % 60).toString().padStart(2, '0');
+		document.getElementById('val-tempo').textContent = `${minutos}:${segundos}`;
+	}
+
+	/* ==========================================
+	   MONTAGEM DINÂMICA DA ÁREA DE JOGO (DOM)
+	   ========================================== */
+	function carregarRonda() {
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+
+		// 1. Cria a grelha de sopa de letras 10x10 no DOM
+		const containerGrelha = document.createElement('div');
+		containerGrelha.className = 'sopa-grid-container';
+
+		for (let r = 0; r < 10; r++) {
+			for (let c = 0; c < 10; c++) {
+				const celula = document.createElement('div');
+				celula.className = 'sopa-celula';
+				celula.dataset.row = r;
+				celula.dataset.col = c;
+				celula.textContent = gridLetras[r][c];
+
+				// Verifica se a célula já foi solucionada para manter a cor verde permanente
+				if (letrasEncontradas.has(`${r}-${c}`)) {
+					celula.classList.add('encontrada');
+				}
+
+				containerGrelha.appendChild(celula);
+			}
+		}
+		area.appendChild(containerGrelha);
+
+		// 2. Cria o Painel de Palavras/Imagens na Direita (Responsivo)
+		const painelLateral = document.createElement('div');
+		painelLateral.className = 'painel-palavras-imagens';
+
+		palavrasSessao.forEach(item => {
+			// Encontra o estado atual da palavra (se já foi encontrada ou não)
+			let dadosRonda = rondasSorteadas.find(q => q.palavra === item.palavra);
+			const isEncontrada = dadosRonda ? dadosRonda.encontrada : false;
+
+			const card = document.createElement('div');
+			card.className = `palavra-card ${isEncontrada ? 'descoberta' : ''}`;
+			card.id = `card-${item.palavra}`;
+
+			// Carrega dinamicamente a imagem do utilizador
+			card.innerHTML = `
+				<img src="../../img/${item.img}" class="palavra-card-img" alt="" onerror="this.style.display='none'">
+				<span class="palavra-card-texto">${item.palavra}</span>
+			`;
+			painelLateral.appendChild(card);
+		});
+		area.appendChild(painelLateral);
+
+		// Ativa os ouvintes de arrastamento tátil/rato na grelha
+		ativarMotorArrastamento();
+		resetTimerImpaciencia();
+	}
+
+	/* ==========================================
+	   MOTOR DE ARRASTAMENTO E SELEÇÃO TÁTIL (POINTER DRAG)
+	   ========================================== */
+	function ativarMotorArrastamento() {
+		const container = document.querySelector('.sopa-grid-container');
+		if (!container) return;
+
+		// Remove ouvintes antigos para evitar fugas de memória
+		container.onpointerdown = null;
+		window.onpointermove = null;
+		window.onpointerup = null;
+
+		container.onpointerdown = function(e) {
+			initAudio();
+			// Apenas inicia arrasto se clicar numa célula
+			const celula = document.elementFromPoint(e.clientX, e.clientY);
+			if (!celula || !celula.classList.contains('sopa-celula')) return;
+
+			let r = parseInt(celula.dataset.row);
+			let c = parseInt(celula.dataset.col);
+
+
+			isDragging = true;
+			startCell = { r, c };
+			currentDragCells = [{ r, c }];
+
+			celula.classList.add('selecionada');
+			tocarSom('flip');
+
+			e.preventDefault();
+		};
+
+		window.onpointermove = function(e) {
+			if (!isDragging || !startCell) return;
+
+			// 🛡️ ENGENHARIA MÓVEL EXTRA: Deteta o elemento de toque em tempo real sob o dedo
+			const elementoSobDedo = document.elementFromPoint(e.clientX, e.clientY);
+			if (!elementoSobDedo || !elementoSobDedo.classList.contains('sopa-celula')) return;
+
+			let r = parseInt(elementoSobDedo.dataset.row);
+			let c = parseInt(elementoSobDedo.dataset.col);
+
+
+			// 🛡️ BLOQUEIO DE TRAJETÓRIA LINEAR: Força o arrastamento em linha reta
+			let dR = r - startCell.r;
+			let dC = c - startCell.c;
+
+			if (Math.abs(dR) > Math.abs(dC)) {
+				c = startCell.c; // Tranca a coluna, arrasto vertical puro
+			} else {
+				r = startCell.r; // Tranca a linha, arrasto horizontal puro
+			}
+
+			// Reconstrói a lista de células selecionadas desde o início até à célula trancada
+			let novasCoordenadas = [];
+			let rStep = Math.sign(r - startCell.r) || 0;
+			let cStep = Math.sign(c - startCell.c) || 0;
+
+			let passos = Math.max(Math.abs(r - startCell.r), Math.abs(c - startCell.c));
+
+			for (let i = 0; i <= passos; i++) {
+				novasCoordenadas.push({
+					r: startCell.r + i * rStep,
+					c: startCell.c + i * cStep
+				});
+			}
+
+			// Limpa realces temporários antigos
+			document.querySelectorAll('.sopa-celula.selecionada').forEach(cel => {
+				cel.classList.remove('selecionada');
+			});
+
+			// Aplica o realce de marca-textos nas novas coordenadas
+			currentDragCells = novasCoordenadas;
+			currentDragCells.forEach(coord => {
+				const cel = document.querySelector(`.sopa-celula[data-row="${coord.r}"][data-col="${coord.c}"]`);
+				if (cel) cel.classList.add('selecionada');
+			});
+		};
+
+		window.onpointerup = function() {
+			if (!isDragging) return;
+			isDragging = false;
+
+			// Reconstrói a palavra arrastada (lendo as letras de cada coordenada)
+			let palavraArrastada = "";
+			let coordsFinais = [];
+
+			currentDragCells.forEach(coord => {
+				palavraArrastada += gridLetras[coord.r][coord.c];
+				coordsFinais.push(`${coord.r}-${coord.c}`);
+			});
+
+			// Palavra ao contrário (Suporta leitura de trás para a frente)
+			let palavraInversa = palavraArrastada.split('').reverse().join('');
+
+			// Valida se a palavra arrastada coincide com alguma das 6 que faltam
+			let palavraEncontradaObj = rondasSorteadas.find(q => 
+				!q.encontrada && (removerAcentos(q.palavra) === palavraArrastada || removerAcentos(q.palavra) === palavraInversa)
+			);
+
+			if (palavraEncontradaObj) {
+				// --- ACERTO ---
+				tocarSom('acerto');
+				palavraEncontradaObj.encontrada = true;
+				desafioAtual++;
+
+				// Regista as letras de forma permanente no ecrã para ficarem verdes
+				coordsFinais.forEach(coord => {
+					letrasEncontradas.add(coord);
+					const cel = document.querySelector(`.sopa-celula[data-row="${coord.split('-')[0]}"][data-col="${coord.split('-')[1]}"]`);
+					if (cel) {
+						cel.classList.remove('selecionada');
+						cel.classList.add('encontrada');
+					}
+				});
+
+				// Atualiza o cartão da direita para o estado riscado/concluído
+				const card = document.getElementById(`card-${palavraEncontradaObj.palavra}`);
+				if (card) {
+					card.classList.add('descoberta');
+				}
+
+				
+
+				atualizarPlacar();
+				atualizarBotaoDica();
+
+				if (desafioAtual >= totalDesafiosNivel) {
+					finalizarJogo();
+				} else {
+					// Pequeno atraso para atualizar a área de jogo móvel sem quebras
+					setTimeout(carregarRonda, 100);
+				}
+			} else {
+				// --- ERRO: Tentativa de arrastamento inválida ---
+				if (palavraArrastada.length > 1) {
+					tocarSom('erro');
+					erradas++;
+					atualizarPlacar();
+					showToast("Palavra incorreta! Tenta outra vez.", true);
+				}
+
+				// Limpa o realce temporário azul néon
+				document.querySelectorAll('.sopa-celula.selecionada').forEach(cel => {
+					cel.classList.remove('selecionada');
+				});
+			}
+
+			startCell = null;
+			currentDragCells = [];
+			resetTimerImpaciencia();
+		};
+	}
+
+	/* ==========================================
+	   ALGORITMO DE DICA ILUMINADA
+	   ========================================== */
+	function usarDica() {
+		pararTimerImpaciencia();
+		
+		if (dicaUsada) return;
+
+		// Encontra a primeira palavra que o utilizador ainda não decifrou
+		const proximaPalavra = rondasSorteadas.find(q => !q.encontrada);
+		if (!proximaPalavra) return;
+
+		tocarSom('flip');
+
+		// --- ILUMINAR APENAS A PRIMEIRA LETRA ---
+		const primeiraCoord = proximaPalavra.coords[0];
+		
+		if (primeiraCoord) {
+			let r = primeiraCoord.split('-')[0];
+			let c = primeiraCoord.split('-')[1];
+			
+			const cel = document.querySelector(`.sopa-celula[data-row="${r}"][data-col="${c}"]`);
+			if (cel) {
+				cel.classList.add('flash-hint');
+				setTimeout(() => cel.classList.remove('flash-hint'), 3500);
+			}
+		}
+
+		dicaUsada = true;
+		atualizarBotaoDica();
+	}
+
+	function abrirModalDica(conteudoHTML) {
+		const modal = document.getElementById('modal-ajuda');
+		const conteudo = document.getElementById('modal-dica-conteudo');
+		if (modal && conteudo) {
+			conteudo.innerHTML = conteudoHTML;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharModalDica() {
+		const modal = document.getElementById('modal-ajuda');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function finalizarJogo() {
+		document.getElementById('progress-fill').style.width = '100%';
+		pararTimerImpaciencia();
+		clearInterval(timerCronometro); // Pára o relógio
+
+		// Calcula o tempo final
+		const minutos = Math.floor(tempoSegundos / 60).toString().padStart(2, '0');
+		const segundos = (tempoSegundos % 60).toString().padStart(2, '0');
+		const tempoFinal = `${minutos}:${segundos}`;
+
+		document.getElementById('final-tempo').textContent = tempoFinal;
+		document.getElementById('final-erros').textContent = erradas;
+
+		setTimeout(() => {
+			mostrarEcra('ecra-fim');
+			tocarSom('vitoria');
+			dispararConfetis();
+		}, 500);
+	}
+
+	function reiniciarJogo() {
+		iniciarJogo(totalDesafiosNivel);
+	}
+
+	function voltarAoMenu() {
+		clearInterval(timerCronometro);
+		pararTimerImpaciencia();
+		limparConfetis();
+		mostrarEcra('ecra-selecao');
+	}
+
+	/* ==========================================
+	   SINTETIZADOR DE SOM RETRO ELETRÓNICO
+	   ========================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		if (!AudioContextClass) return;
+		if (!audioCtx) audioCtx = new AudioContextClass();
+		if (audioCtx.state === 'suspended') audioCtx.resume();
+	}
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true });
+
+	function tocarSom(tipo) {
+		initAudio();
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.frequency.setValueAtTime(600, agora);
+			osc.frequency.exponentialRampToValueAtTime(850, agora + 0.08);
+			gain.gain.setValueAtTime(0.04, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.08);
+		} 
+		else if (tipo === 'acerto') {
+			const notas = [523.25, 783.99, 1046.50]; 
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); 
+				g.connect(audioCtx.destination);
+				
+				o.type = 'sine';
+				o.frequency.value = freq;
+				
+				g.gain.setValueAtTime(0, agora + i * 0.08);
+				g.gain.linearRampToValueAtTime(0.06, agora + i * 0.08 + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.08 + 0.25);
+				
+				o.start(agora + i * 0.08);
+				o.stop(agora + i * 0.08 + 0.25);
+			});
+		} 
+		else if (tipo === 'erro') {
+			osc.type = 'sawtooth';
+			osc.frequency.setValueAtTime(150, agora);
+			osc.frequency.exponentialRampToValueAtTime(50, agora + 0.3);
+			gain.gain.setValueAtTime(0.08, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.35);
+		} 
+		else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+			];
+
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); 
+				g.connect(audioCtx.destination);
+				
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.06, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
+	}
+
+	/* ==========================================
+	   CONFETIS FESTIVOS
+	   ========================================== */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		
+		for (let i = 0; i < 150; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5; 
+			const atraso = Math.random() * 1.5; 
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = "scale(" + escala + ")";
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = ''; 
+		}
+	}
+
+	/* ==========================================
+	   DOM CONTENT LOADED (GARANTIA DE EXECUÇÃO)
+	   ========================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
+
+		const btnHome = document.getElementById('btn-home-svg');
+		const badgeRonda = document.getElementById('badge-ronda-svg');
+		const btnDica = document.getElementById('btn-dica');
+		const iconeErro = document.getElementById('icone-erro-svg');
+		const iconeTempo = document.getElementById('icone-tempo-svg');
+
+		if (btnHome) btnHome.innerHTML = SVG_HOME;
+		if (badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+		if (btnDica) btnDica.innerHTML = SVG_BULB + ' Dica';
+		if (iconeErro) iconeErro.innerHTML = SVG_ERRO;
+		if (iconeTempo) iconeTempo.innerHTML = SVG_CLOCK;
+	});
+</script>
+</body>
+</html>

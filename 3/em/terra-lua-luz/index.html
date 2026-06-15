@@ -1,0 +1,2885 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - Terra, Lua e Luz 🌍</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #E3C40D;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;
+			margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-3ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-3ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(69, 176, 98, 0.52); 
+            border-top: 8px solid var(--cor-em); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+
+
+        .btn-nivel-novo {
+            width: 100%; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+			padding: 10px 15px !important;
+			gap: 10px !important;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #eaf1eb; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-3ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.4rem); max-width: 650px; color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 30px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--cor-btn-fundo); border: 3px solid var(--cor-em); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-em); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-em); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		*/O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-3ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+				/* =========================================
+		   NOVO DESIGN DOS BOTÕES DO MENU INICIAL (HORIZONTAL)
+		   ========================================= */
+
+		/* Transforma o botão numa estrutura horizontal alinhada à esquerda */
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+		/* Garante que a imagem do nível mantém as proporções e não encolhe */
+		.icon-btn-nivel-novo {
+			width: 45px !important;
+			height: 45px !important;
+			flex-shrink: 0;
+		}
+
+		/* Contentor de texto para empilhar Título e Subtítulo */
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none; /* Protege contra interferência de clique */
+		}
+
+		/* Estilo para a linha do Título (Superior) */
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+
+		/* Estilo para a linha do Subtítulo (Inferior) */
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+
+		/* Otimização para telemóveis mais pequenos */
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}
+		
+		/* =========================================
+           REALCE DOS TÍTULOS
+        ========================================= */	
+		
+		/* Opção A: Efeito marcador de texto (fundo amarelo) */
+		.destaque-fundo {
+			background-color: #fff275; /* Amarelo fluorescente */
+			color: var(--azul-escuro); /* Texto em azul escuro para ler bem */
+			padding: 2px 6px;
+			border-radius: 6px;
+			font-weight: 900;
+		}
+
+		/* Opção B: Apenas texto vermelho e forte (sem fundo) */
+		.destaque-texto {
+			color: var(--cor-btn-vermelho); 
+			font-weight: 900;
+		}
+		
+		/* Opção C: Apenas texto verde e forte (sem fundo) */
+		.destaque-texto-verde {
+			color: var(--cor-em); /* Usa o vermelho vibrante do seu root */
+			font-weight: 900;
+		}
+		
+		/* --- AJUSTES DO EXERCÍCIO DE LIGAR PARES --- */
+
+/* Aumenta o espaçamento entre os botões de cada coluna */
+.coluna-ligar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px !important; /* Espaçamento confortável para o 3.º ano */
+}
+
+/* Estilo visual para um par que já foi ligado (ainda clicável) */
+.btn-opcao.ligado {
+    opacity: 0.6;
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(3px) !important; /* Mantém o aspeto de pressionado */
+    cursor: pointer;
+}
+
+
+	.btn-opcao-vibrante {
+		border: 3px solid white;
+		border-radius: 15px;
+		padding: 12px 20px;
+		font-size: clamp(1rem, 3vw, 1.2rem);
+		font-weight: 700;
+		color: white;
+		cursor: pointer;
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+		transition: transform 0.1s, filter 0.1s;
+		touch-action: manipulation;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.btn-opcao-vibrante:active {
+		transform: scale(0.95);
+		filter: brightness(0.9);
+	}
+	@media (hover: hover) {
+		.btn-opcao-vibrante:hover {
+			transform: translateY(-2px);
+			filter: brightness(1.05);
+		}
+	}
+
+	.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+	.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+	.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+	.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+	.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+	.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+	.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+	.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+
+	/* --- PERSONAGEM MASCOTE (A CORUJA GUIA) --- */
+	.coruja-guia-container {
+		position: absolute;
+		bottom: 10px;
+		right: 15px;
+		width: 100px; /* Definido por referência */
+		height: 165px; /* Definido por referência */
+		z-index: 10;
+		pointer-events: none;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		transition: transform 0.3s ease;
+	}
+
+	.coruja-guia-img {
+		width: 100%;
+		height: auto;
+		object-fit: contain;
+		transform-origin: bottom center;
+		animation: corujaRespirar 4s infinite ease-in-out;
+	}
+
+	@media (max-width: 600px) {
+		.coruja-guia-container {
+			width: 57px; /* Definido por referência */
+			height: 85px; /* Definido por referência */
+			right: 5px;
+			bottom: 5px;
+			opacity: 0.9;
+		}
+	}
+
+	.coruja-contente { animation: corujaFestejar 0.8s ease-out !important; }
+	.coruja-triste { animation: corujaTremer 0.5s ease-in-out !important; }
+
+/* ==========================================================================
+   CSS ESPECÍFICO DO JOGO: A TERRA, A LUA E A LUZ
+   ========================================================================== */
+
+/* --- AJUSTES DA ÁREA DE JOGO CUSTOM --- */
+.area-jogo-custom {
+    position: relative;
+    width: 100%;
+    flex: 1; /* Definido por referência */
+    min-height: 420px;
+    background-color: #fafdfb;
+    border: 2px dashed var(--cor-em); /* Definido por referência */
+    border-radius: 20px; /* Definido por referência */
+    padding: 25px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Definido por referência */
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .area-jogo-custom {
+        min-height: 380px;
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+/* --- ANIMAÇÃO TUTORIAL INICIAL: O SISTEMA EM ÓRBITA --- */
+.animacao-tutorial {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 180px;
+    background: linear-gradient(135deg, #020617 0%, #0f172a 100%); /* Céu espacial escuro */
+    border: 3px dashed var(--cor-btn-azul);
+    border-radius: 20px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(0, 145, 255, 0.2);
+    overflow: hidden;
+}
+
+/* Estrelas cintilantes de fundo */
+.estrela-espacial {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    opacity: 0.3;
+}
+
+.estrela-espacial.e1 { top: 20%; left: 15%; animation: piscarEstrela 1.5s infinite ease-in-out; }
+.estrela-espacial.e2 { top: 30%; right: 20%; animation: piscarEstrela 2s infinite ease-in-out; animation-delay: 0.5s; }
+.estrela-espacial.e3 { bottom: 25%; left: 30%; animation: piscarEstrela 1.8s infinite ease-in-out; animation-delay: 1s; }
+.estrela-espacial.e4 { bottom: 15%; right: 15%; animation: piscarEstrela 2.2s infinite ease-in-out; animation-delay: 1.5s; }
+
+/* O Sol Central Radiante (Estrela com luz própria) */
+.sol-tutorial {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    background-color: #fbc531;
+    border: 3px solid #f39c12;
+    border-radius: 50%;
+    box-shadow: 0 0 25px #fbc531, 0 0 45px rgba(251, 197, 49, 0.5);
+    z-index: 2;
+    animation: pulsarSol 3s infinite ease-in-out;
+}
+
+/* Órbitas invisíveis de suporte */
+.orbitador-terra {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rodarOrbita 10s linear infinite;
+    z-index: 3;
+}
+
+/* O Planeta Terra (Posicionado na lateral direita da órbita) */
+.terra-planeta {
+    position: absolute;
+    right: -10px; /* Posicionamento na linha da órbita */
+    width: 20px;
+    height: 20px;
+    background-color: #61a0ff;
+    border: 2px solid #0d47a1;
+    border-radius: 50%;
+    box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Órbita Lunar aninhada ao redor da Terra */
+.orbitador-lua {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    animation: rodarOrbita 2.5s linear infinite;
+}
+
+/* A pequena Lua (Posicionada na lateral da órbita da Terra) */
+.lua-satelite {
+    position: absolute;
+    right: -4px;
+    width: 8px;
+    height: 8px;
+    background-color: #cbd5e1;
+    border: 1.5px solid #475569;
+    border-radius: 50%;
+}
+
+
+
+/* --- CONTENTOR DE IMAGENS QUADRADO PERFEITO (1:1) --- */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    width: 160px; /* Quadrado em Mobile Vertical (160x160) */
+    height: 160px;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Garante que as imagens quadradas nunca deformam */
+    border-radius: 12px;
+}
+
+/* Transição de Hover suave de elevação física */
+.card-imagem-zoomable:hover {
+    animation-play-state: paused; /* Foca a atenção de clique */
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Otimizações Específicas para PC Largo (Computadores) */
+@media (min-width: 769px) {
+    /* Puxa o conteúdo da área de jogo ligeiramente mais para cima no PC */
+    .area-jogo-custom {
+        justify-content: flex-start !important;
+        padding-top: 40px !important; /* Espaço confortável no topo */
+    }
+
+    /* Tranca o contentor em 240x240 no PC e afasta-o dos elementos abaixo */
+    .card-imagem-zoomable {
+        width: 240px !important;
+        height: 240px !important;
+        padding: 10px;
+        margin-bottom: 20px !important;
+    }
+
+    /* Dá mais espaço vertical abaixo do texto da pergunta */
+    .pergunta-texto {
+        margin-bottom: 15px !important;
+    }
+}
+
+/* --- AJUSTE DE LARGURA DE LEITURA DA PERGUNTA --- */
+.pergunta-texto {
+    width: 100%;
+    max-width: 650px; /* Limita a largura para uma leitura confortável de 1.º Ciclo */
+    margin: 0 auto 20px auto;
+    box-sizing: border-box;
+}
+
+/* --- EMPILHAMENTO VERTICAL DE BOTÕES EM MOBILE --- */
+@media (max-width: 600px) {
+    .opcoes-container {
+        flex-direction: column !important; /* Força os botões a empilharem-se em coluna vertical */
+        align-items: center !important;
+        gap: 12px !important; /* Espaçamento compacto */
+        width: 100% !important;
+        max-width: 290px !important; /* Tranca a largura para botões simétricos */
+        margin: 0 auto !important;
+    }
+
+    .opcoes-container .btn-opcao-vibrante {
+        width: 100% !important; /* Faz o botão ocupar toda a largura do contentor */
+        font-size: 0.95rem !important;
+        padding: 10px 15px !important;
+        box-sizing: border-box;
+    }
+}
+
+/* --- AJUSTES DO EXERCÍCIO DE LIGAR PARES --- */
+.coluna-ligar-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coluna-ligar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px !important;
+}
+
+/* Redução condicional nos exercícios de ligar pares (PC Largo) */
+@media (min-width: 769px) {
+    .jogo-tipo-ligar .card-imagem-zoomable {
+        width: 160px !important;
+        height: 160px !important;
+        margin-bottom: 20px !important;
+    }
+}
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+    cursor: pointer;
+}
+
+@media (max-width: 650px) {
+    .coluna-ligar-container {
+        gap: 15px;
+        flex-direction: row;
+		align-items: center;
+    }
+    .coluna-ligar-container .btn-opcao-vibrante {
+        font-size: 0.85rem !important;
+        padding: 10px 12px !important;
+        min-width: 110px !important;
+    }
+}
+
+/* --- ESTILOS DO EXERCÍCIO DE LACUNAS --- */
+.texto-paragrafo-lacunas {
+    font-size: 1.2rem;
+    line-height: 2.5;
+    color: var(--text-main);
+    text-align: justify;
+    margin-bottom: 25px;
+    background: #ffffff;
+    padding: 20px 25px;
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+    width: 100%;
+    max-width: 750px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.slot-vazio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    height: 34px;
+    margin: 0 6px;
+    padding: 0 12px;
+    border: 2px dashed var(--azul-vibrante);
+    border-radius: 10px;
+    background-color: #f8fafc;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    box-sizing: border-box;
+}
+
+.slot-vazio.pronto-receber {
+    border-color: var(--cor-btn-amarelo);
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+.slot-vazio.preenchido {
+    border-style: solid;
+    border-color: var(--cor-em);
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.banco-opcoes {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 650px;
+    margin-bottom: 15px;
+}
+
+.palavra-banco {
+    padding: 8px 18px;
+    background: #ffffff;
+    border: 2px solid var(--azul-vibrante);
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--azul-escuro);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 0 var(--azul-vibrante);
+}
+
+.palavra-banco.selecionado {
+    outline: 3px solid var(--cor-btn-amarelo);
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .texto-paragrafo-lacunas {
+        font-size: 1.05rem;
+        line-height: 2.6;
+        padding: 15px;
+    }
+    .slot-vazio {
+        min-width: 85px;
+        height: 28px;
+        margin: 0 4px;
+    }
+    .palavra-banco {
+        font-size: 0.95rem;
+        padding: 6px 14px;
+    }
+}
+
+
+
+/* --- ESTILOS DO EXERCÍCIO DE ARRASTAR E LIGAR --- */
+.alvo-arrastar {
+    width: 100%;
+    max-width: 320px;
+    min-height: 85px;
+    background: #f1f5f9;
+    border: 3px dashed var(--borda-cartao);
+    border-radius: 18px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+@media (max-width: 480px) {
+    .alvo-arrastar {
+        min-height: 75px;
+        padding: 8px 12px;
+    }
+}
+
+/* --- GRELHA DO MENU INICIAL --- */
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+    .grid-niveis {
+        grid-template-columns: 1fr !important;
+        max-width: 310px;
+        gap: 12px;
+    }
+    .btn-nivel-novo {
+        padding: 10px 15px !important;
+        gap: 10px !important;
+    }
+    .icon-btn-nivel {
+        width: 45px !important;
+        height: 45px !important;
+    }
+}
+
+/* ==========================================================================
+   ANIMAÇÕES CSS (KEYFRAMES)
+   ========================================================================== */
+
+/* Brilho intermitente das estrelas espaciais */
+@keyframes piscarEstrela {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Pulsação do Sol */
+@keyframes pulsarSol {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 25px #fbc531, 0 0 45px rgba(251, 197, 49, 0.5); }
+    50% { transform: scale(1.06); box-shadow: 0 0 35px #fbc531, 0 0 60px rgba(251, 197, 49, 0.8); }
+}
+
+/* Rotação das Órbitas */
+@keyframes rodarOrbita {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Flutuação do cartão de imagem */
+@keyframes flutuarCartao {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Respiração Neutra da Coruja */
+@keyframes corujaRespirar {
+    0%, 100% { transform: scaleY(1) scaleX(1); }
+    50% { transform: scaleY(1.03) scaleX(0.98) translateY(-2px); }
+}
+
+/* Salto de Alegria da Coruja */
+@keyframes corujaFestejar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-20px) scaleY(1.1) scaleX(0.9); }
+    50% { transform: translateY(-20px) scaleY(0.95) scaleX(1.05) rotate(5deg); }
+    70% { transform: translateY(-10px) rotate(-5deg); }
+}
+
+/* Tremor de Deceção da Coruja */
+@keyframes corujaTremer {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20%, 60% { transform: translateX(-6px) rotate(-3deg); }
+    40%, 80% { transform: translateX(6px) rotate(3deg); }
+}
+
+/* Entradas de ecrã */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+
+
+
+		   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Terra, Lua e Luz<img src="../img-titulos/terra_lua_luz.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escolhe um minijogo para começar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- Alerta flutuante para avisos rápidos ao aluno -->
+        <div id="toast-msg" class="toast-msg"></div>
+
+        <!-- =========================================
+             ECRÃ DE SELEÇÃO / MENU INICIAL
+             ========================================= -->
+        <div id="ecra-selecao" class="ecra">
+            
+            <!-- PORTAL DE ENQUADRAMENTO CÓSMICO (O SISTEMA EM ÓRBITA) -->
+            <div class="animacao-tutorial">
+                <!-- Estrelas espaciais brilhantes ao fundo -->
+                <div class="estrela-espacial e1"></div>
+                <div class="estrela-espacial e2"></div>
+                <div class="estrela-espacial e3"></div>
+                <div class="estrela-espacial e4"></div>
+                
+                <!-- O Sol brilhante no centro -->
+                <div class="sol-tutorial"></div>
+                
+                <!-- Órbita e planeta Terra (com a Lua aninhada ao redor) -->
+                <div class="orbitador-terra">
+                    <div class="terra-planeta">
+                        <div class="orbitador-lua">
+                            <div class="lua-satelite"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="titulo-menu">Escolhe o teu desafio:</h2>
+            <div class="subtitulo" style="margin-top:-15px; margin-bottom:25px; font-weight:bold; color:var(--azul-escuro); max-width:550px; text-align:center;">
+                Explora o sistema solar, as fases da lua,<br>os mistérios da luz e a atração dos ímanes!
+            </div>
+            
+            <!-- GRELHA RESPONSIVA COM OS 4 MINIJOGOS COM EMOJIS -->
+            <div class="grid-niveis">
+                
+                <!-- Nível 1: Dança dos Astros -->
+                <button class="btn-nivel-novo bg-roxo" onclick="iniciarJogo(10, 'Dança dos Astros e Estações', 1)">
+                    <img src="../img-titulos/terra_lua_luz_menu_1.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Dança dos Astros</span>
+                        <span class="btn-nivel-subtitulo">Rotação, translação e estações</span>
+                    </div>
+                </button>
+        
+                <!-- Nível 2: Mistérios do Céu -->
+                <button class="btn-nivel-novo bg-vermelho" onclick="iniciarJogo(10, 'Mistérios da Lua e do Céu', 2)">
+                    <img src="../img-titulos/terra_lua_luz_menu_2.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Mistérios do Céu</span>
+                        <span class="btn-nivel-subtitulo">Astros e fases da lua</span>
+                    </div>
+                </button>
+                
+                <!-- Nível 3: Laboratório da Luz -->
+                <button class="btn-nivel-novo bg-turquesa" onclick="iniciarJogo(10, 'Laboratório da Luz e Ímanes', 3)">
+                    <img src="../img-titulos/terra_lua_luz_menu_3.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Laboratório da Luz</span>
+                        <span class="btn-nivel-subtitulo">Comportamento da luz e ímanes</span>
+                    </div>
+                </button>
+                
+                <!-- Nível 4: O Desafio do Cosmos (Quiz Misturado) -->
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(10, 'O Desafio do Cosmos', 4)">
+                    <img src="../img-titulos/terra_lua_luz_menu_4.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Desafio do Cosmos</span>
+                        <span class="btn-nivel-subtitulo">Super desafio de 10 rondas mistas</span>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE JOGO
+             ========================================= -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO COMPACTA E RESPONSIVA -->
+            <div class="status-bar-jogo" id="status-bar-container">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+                <div class="badge-ronda" id="badge-ronda-wrapper">
+                    <span id="badge-ronda-svg"></span>
+                    <span id="val-progresso">1</span>/<span id="val-total">10</span>
+                </div>
+                <div class="progress-bg" id="progress-bar-wrapper">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="badge-erros" id="badge-erros-wrapper">
+                    <span id="icone-erro-svg"></span>
+                    <span id="val-erros">0</span>
+                </div>
+            </div>
+
+            <!-- ÁREA DE JOGO LIVRE (CONJUNTO DE EXERCÍCIOS) -->
+            <div class="area-jogo-custom">
+                
+                <!-- Zona onde o script injeta a pergunta e as opções -->
+                <div id="game-area" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;"></div>
+                
+                <!-- A NOSSA CORUJA GUIA (FEEDBACK VISUAL) -->
+                <div class="coruja-guia-container" id="coruja-container">
+                    <img src="coruja_normal.png" class="coruja-guia-img" id="coruja-img" alt="Coruja Sabichona">
+                </div>
+
+            </div>
+            
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE TRANSIÇÃO (NÍVEL COMPLETO)
+             ========================================= -->
+        <div id="ecra-transicao" class="ecra">
+            <h2 class="end-title" id="transicao-title-text">Nível Completo!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                <p>Estás a ir muito bem!</p>
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="carregarRonda()">
+                    PRÓXIMO DESAFIO 
+                    <img src="../../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">
+                    <img src="../../../SVG/home.svg" class="icon-acao" alt=""> 
+                    VOLTAR AO MENU
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE FIM (MENSAGEM DE PARABÉNS E ERROS)
+             ========================================= -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                Completaste as descobertas sobre a Terra e o Cosmos!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+/* ==========================================================================
+   SVGs GLOBAIS DO TEMPLATE
+   ========================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+	<path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
+	<rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+	</svg> Menu`;
+
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;">
+	<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+	</svg>`;
+
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;">
+	<path d="M9 18h6"></path><path d="M10 22h4"></path>
+	<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+	</svg>`;
+
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;">
+	<path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
+	</svg>`;
+
+/* ==========================================================================
+   ESTADO GLOBAL DO JOGO
+   ========================================================================== */
+	let erradas = 0;
+	let desafioAtual = 0;
+	let totalDesafiosNivel = 10;
+	let levelAtivo = 1;
+	let rondasParaDica = 0;
+	let selecaoLigar = null;
+	let selecoesLigar = {};
+	let paresElementosLigar = [];
+	let arrastoAtivo = null;
+	let selecoesArrastar = {};
+	let totalArrastar = 0;
+	let totalParesCorretos = 0;
+	let lacunaAtiva = null;
+	let selecoesLacunas = {};
+	const COOLDOWN_DICA = 3;
+	let rondasSorteadas = [];
+	let timerImpaciencia = null;
+
+/* ==========================================================================
+   NÍVEL 1: DANÇA DOS ASTROS (ROTAÇÃO, TRANSLAÇÃO E ESTAÇÕES) - 25 QUESTÕES
+   ========================================================================== */
+	const RONDAS_ASTROS = [
+		{ tipo: 'multipla', pergunta: 'Como se chama o movimento em que a Terra gira sobre si própria ao longo de <span class="destaque-fundo">24 horas</span>?', opcoes: ['Movimento de Rotação', 'Movimento de Translação', 'Movimento de Órbita'], correta: 'Movimento de Rotação', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'O movimento de rotação da Terra sobre si própria dura 24 horas e dá origem aos:', opcoes: ['Anos e meses', 'Dias e noites', 'Quatro estações do ano'], correta: 'Dias e noites', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chama o movimento em que a Terra gira em torno do Sol ao longo de <span class="destaque-fundo">365 dias</span>?', opcoes: ['Movimento de Rotação', 'Movimento de Translação', 'Movimento Lunar'], correta: 'Movimento de Translação', imagem: 'img/terra_translacao.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'O movimento de translação ao redor do Sol e a inclinação do eixo da Terra dão origem a:', opcoes: ['Dias e noites', 'Fases da Lua', 'Estações do ano'], correta: 'Estações do ano', imagem: 'img/terra_translacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Quanto tempo demora a Terra a completar uma viagem completa (translação) ao redor do Sol?', opcoes: ['24 horas', '29 dias', '365 dias (1 ano)', '10 anos'], correta: '365 dias (1 ano)', imagem: 'img/sistema_solar.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'Como deves atuar para saber em que estação do ano te encontras em Portugal?', opcoes: ['Verificar as fases da Lua', 'Observar o calendário e o clima', 'Medir a rotação da Terra'], correta: 'Observar o calendário e o clima', imagem: 'img/sistema_solar.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'O eixo de rotação da Terra é inclinado, o que faz com que os raios solares atinjam o planeta com intensidades diferentes ao longo do ano.', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'As quatro estações do ano que ocorrem em Portugal devido à translação da Terra são:', opcoes: ['Dia, Noite, Sol e Lua', 'Primavera, Verão, Outono e Inverno', 'Janeiro, Fevereiro, Março e Abril'], correta: 'Primavera, Verão, Outono e Inverno', imagem: 'img/terra_translacao.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'A parte do planeta Terra que não está voltada para o Sol e não recebe luz encontra-se na fase de:', opcoes: ['Dia', 'Noite', 'Estio'], correta: 'Noite', imagem: 'img/terra.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'O movimento de rotação da Terra faz com que o Sol pareça nascer a <span class="destaque-texto-verde">Este</span> e pôr-se a <span class="destaque-texto-verde">Oeste</span>.', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } },
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre os movimentos da Terra:',
+			texto: 'O movimento de [0] da Terra dá origem aos dias e às noites. Enquanto é [1] na parte do planeta que recebe a luz do Sol, na outra parte que não recebe luz, é [2].',
+			respostas: ['rotação', 'dia', 'noite'],
+			distratores: ['translação', 'calor'],
+			dica: { tipo: 'modal', texto: 'Lembra-te: rotação sobre si própria cria dias e noites. A luz bate apenas numa metade do planeta de cada vez.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre o ano terrestre:',
+			texto: 'O movimento de [0] e a inclinação do eixo da Terra dão origem às [1]. Esta viagem ao redor do Sol demora exatamente [2] dias para ser concluída.',
+			respostas: ['translação', 'estações do ano', '365'],
+			distratores: ['rotação', '24'],
+			dica: { tipo: 'modal', texto: 'A viagem longa ao redor do Sol chama-se Translação e dura um ano inteiro de 365 dias.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as quatro estações:',
+			texto: 'A translação cria quatro períodos climáticos. A [0] traz o calor e dias longos, o [1] faz as folhas das árvores cair, o [2] traz o frio rigoroso e a primavera enche os campos de flores.',
+			respostas: ['verão', 'outono', 'inverno'],
+			distratores: ['rotação', 'sol'],
+			dica: { tipo: 'modal', texto: 'As estações seguem uma ordem contínua: Primavera, Verão, Outono e Inverno.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as rotações diárias:',
+			texto: 'Para que a Terra dê uma volta completa sobre o seu próprio [0] de rotação, são necessárias [1] horas, o que corresponde exatamente a um [2] completo.',
+			respostas: ['eixo', '24', 'dia'],
+			distratores: ['Sol', '365'],
+			dica: { tipo: 'modal', texto: 'Um dia tem 24 horas, que é o tempo que o planeta demora a rodar sobre o seu próprio eixo de rotação.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a luz e as estações:',
+			texto: 'Devido à inclinação da Terra, o hemisfério norte recebe mais luz direta no [0], tornando as temperaturas muito quentes. No [1], os raios chegam inclinados e fracos, provocando muito [2].',
+			respostas: ['verão', 'inverno', 'frio'],
+			distratores: ['outono', 'calor'],
+			dica: { tipo: 'modal', texto: 'A inclinação da Terra faz com que o calor mude ao longo do ano, criando o Verão e o Inverno.' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada movimento da Terra à sua respetiva consequência física:',
+			esquerda: ['Movimento de Rotação', 'Movimento de Translação', 'Eixo de Rotação Inclinado'],
+			direita: ['As estações do ano', 'Intensidade de luz diferente', 'Os dias e as noites'],
+			pares: { 'Movimento de Rotação': 'Os dias e as noites', 'Movimento de Translação': 'As estações do ano', 'Eixo de Rotação Inclinado': 'Intensidade de luz diferente' },
+			imagem: 'img/sistema_solar.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada movimento terrestre ao seu tempo exato de duração:',
+			esquerda: ['Uma volta sobre si própria', 'Uma volta ao redor do Sol', 'Meia volta sobre si própria'],
+			direita: ['365 dias (1 ano)', '12 horas', '24 horas (1 dia)'],
+			pares: { 'Uma volta sobre si própria': '24 horas (1 dia)', 'Uma volta ao redor do Sol': '365 dias (1 ano)', 'Meia volta sobre si própria': '12 horas' },
+			imagem: 'img/terra.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada estação do ano à sua característica típica de clima e natureza:',
+			esquerda: ['Primavera', 'Verão', 'Outono'],
+			direita: ['Queda de folhas e frutos maduros', 'Nascimento de flores e folhas verdes', 'Muito calor e dias mais longos'],
+			pares: { 'Primavera': 'Nascimento de flores e folhas verdes', 'Verão': 'Muito calor e dias mais longos', 'Outono': 'Queda de folhas e frutos maduros' },
+			imagem: 'img/sistema_solar.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada elemento ao seu papel na contagem do tempo:',
+			esquerda: ['24 horas', '365 dias', 'Eixo inclinado'],
+			direita: ['Duração de um ano', 'Variação térmica anual', 'Duração de um dia'],
+			pares: { '24 horas': 'Duração de um dia', '365 dias': 'Duração de um ano', 'Eixo inclinado': 'Variação térmica anual' },
+			imagem: 'img/terra.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga a posição da Terra em relação ao Sol à sua fase diária:',
+			esquerda: ['Hemisfério virado para o Sol', 'Hemisfério oposto ao Sol', 'Aparecimento matinal do Sol'],
+			direita: ['Nascer do dia', 'Fase de Dia', 'Fase de Noite'],
+			pares: { 'Hemisfério virado para o Sol': 'Fase de Dia', 'Hemisfério oposto ao Sol': 'Fase de Noite', 'Aparecimento matinal do Sol': 'Nascer do dia' },
+			imagem: 'img/terra_rotacao.png',
+			dica: { tipo: 'highlight' }
+		},
+		{ tipo: 'clicar', pergunta: 'Como se chama o movimento em que a Terra viaja ao redor do Sol gerando as estações?', zonas: ['Translação', 'Rotação', 'Gravitação'], correta: 'Translação', imagem: 'img/terra_translacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Qual é a duração exata que a Terra demora a dar uma volta sobre o seu próprio eixo de rotação?', zonas: ['12 horas', '24 horas', '365 dias'], correta: '24 horas', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Em que hemisfério da Terra se localiza o território de Portugal?', zonas: ['Hemisfério Norte', 'Hemisfério Sul', 'Hemisfério Leste'], correta: 'Hemisfério Norte', imagem: 'img/terra.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Que estação do ano traz temperaturas muito baixas, queda de neve em Portugal e noites mais longas?', zonas: ['Verão', 'Outono', 'Inverno'], correta: 'Inverno', imagem: 'img/sistema_solar.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Como se chama a linha imaginária que atravessa a Terra e sobre a qual ela realiza a rotação?', zonas: ['Linha do Equador', 'Eixo de Rotação', 'Órbita Elíptica'], correta: 'Eixo de Rotação', imagem: 'img/terra_rotacao.png', dica: { tipo: 'highlight' } }
+	];
+
+/* ==========================================================================
+   NÍVEL 2: MISTÉRIOS DO CÉU (ASTROS E FASES DA LUA) - 25 QUESTÕES
+   ========================================================================== */
+	const RONDAS_CEU = [
+		{ tipo: 'multipla', pergunta: 'A Terra, o Sol e a Lua são astros.<br>Qual deles tem luz própria, sendo classificado como uma <span class="destaque-fundo">estrela</span>?', opcoes: ['A Terra', 'A Lua', 'O Sol'], correta: 'O Sol', imagem: 'img/sol.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'A Terra é um planeta porque não tem luz própria e gira ao redor de uma estrela (o Sol).', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/terra.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chama o satélite natural do planeta Terra que gira ao seu redor?', opcoes: ['O Sol', 'A Lua', 'Marte'], correta: 'A Lua', imagem: 'img/lua_cheia.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'A Lua realiza um movimento de translação ao redor da Terra que se repete a cada:', opcoes: ['24 horas', '29 dias', '365 dias'], correta: '29 dias', imagem: 'img/lua_cheia.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chama a fase da Lua em que a sua face voltada para a Terra se encontra totalmente iluminada e brilhante?', opcoes: ['Lua Nova', 'Lua Cheia', 'Quarto Crescente', 'Quarto Minguante'], correta: 'Lua Cheia', imagem: 'img/lua_cheia.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chama a fase da Lua em que ela se encontra na sombra e não a conseguimos ver brilhante no céu?', opcoes: ['Lua Nova', 'Lua Cheia', 'Quarto Crescente', 'Quarto Minguante'], correta: 'Lua Nova', imagem: 'img/lua_nova.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'Na fase de <span class="destaque-fundo">Quarto Crescente</span>, a parte iluminada da Lua desenha que letra no céu do hemisfério norte?', opcoes: ['Letra C', 'Letra D', 'Letra O'], correta: 'Letra D', imagem: 'img/lua_crescente.png', dica: { tipo: 'modal', texto: 'Ratoeira do céu: no nosso hemisfério norte, a Lua mente! Quando parece um D, está a crescer (Crescente). Quando parece um C, está a diminuir (Minguante).' } },
+		{ tipo: 'multipla', pergunta: 'Na fase de <span class="destaque-fundo">Quarto Minguante</span>, a parte iluminada da Lua desenha que letra no céu do nosso hemisfério?', opcoes: ['Letra C', 'Letra D', 'Letra O'], correta: 'Letra C', imagem: 'img/lua_minguante.png', dica: { tipo: 'modal', texto: 'Ratoeira do céu: no nosso hemisfério norte, a Lua mente! Quando parece um D, está a crescer (Crescente). Quando parece um C, está a diminuir (Minguante).' } },
+		{ tipo: 'multipla', pergunta: 'As fases da Lua dependem da posição da Lua e da Terra em relação ao Sol.', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/sistema_solar.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'A Lua não tem luz própria.<br>Ela limita-se a refletir a luz produzida pelo Sol.', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/sistema_solar.png', dica: { tipo: 'highlight' } },
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre os astros do nosso céu:',
+			texto: 'No céu existem muitos astros. O [0] é uma estrela porque tem luz própria. A [1] é um planeta porque não tem luz própria e gira ao redor de uma estrela. A [2] é o satélite natural que gira ao redor do nosso planeta.',
+			respostas: ['Sol', 'Terra', 'Lua'],
+			distratores: ['Bússola', 'Sombra'],
+			dica: { tipo: 'modal', texto: 'Sol (Estrela) -> Terra (Planeta) -> Lua (Satélite natural que reflete a luz solar).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre o ciclo lunar:',
+			texto: 'O movimento de translação da Lua ao redor da Terra dura cerca de [0] dias. Conforme a posição da Lua e da Terra em relação ao [1], vemos diferentes formatos iluminados chamados [2] da Lua.',
+			respostas: ['29', 'Sol', 'fases'],
+			distratores: ['365', 'eixo'],
+			dica: { tipo: 'modal', texto: 'O ciclo lunar repete-se de 29 em 29 dias e as suas formas dependem do reflexo da luz do Sol.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as formas da Lua:',
+			texto: 'As quatro fases principais da Lua seguem uma ordem. Tudo começa na Lua [0], passa pelo Quarto [1], fica totalmente iluminada na Lua [2] e diminui no Quarto Minguante.',
+			respostas: ['Nova', 'Crescente', 'Cheia'],
+			distratores: ['Espacial', 'Fria'],
+			dica: { tipo: 'modal', texto: 'A ordem das fases: Lua Nova, Quarto Crescente, Lua Cheia e Quarto Minguante.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as definições estelares:',
+			texto: 'Uma estrela é um astro com luz [0], como o nosso Sol. Já um planeta é um astro sem luz própria que gira ao redor de uma [1]. Um satélite é um astro que gira ao redor de um [2].',
+			respostas: ['própria', 'estrela', 'planeta'],
+			distratores: ['refletida', 'Lua'],
+			dica: { tipo: 'modal', texto: 'Estrelas emitem luz. Planetas orbitam estrelas. Satélites orbitam planetas.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as aparências da Lua:',
+			texto: 'As fases da Lua mudam visualmente. No Quarto Crescente, ela parece desenhar a letra [0] no céu. No Quarto Minguante, parece desenhar a letra [1]. Na Lua Nova, ela está em [2] total.',
+			respostas: ['D', 'C', 'sombra'],
+			distratores: ['O', 'luz'],
+			dica: { tipo: 'modal', texto: 'Crescente -> Letra D (Cresce). Minguante -> Letra C (Míngua). Lua Nova -> Totalmente escura no céu.' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada astro à sua respetiva classificação científica:',
+			esquerda: ['O Sol brilhante', 'O Planeta Terra', 'A Lua prateada'],
+			direita: ['Planeta sem luz própria', 'Satélite natural', 'Estrela com luz própria'],
+			pares: { 'O Sol brilhante': 'Estrela com luz própria', 'O Planeta Terra': 'Planeta sem luz própria', 'A Lua prateada': 'Satélite natural' },
+			imagem: 'img/sistema_solar.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga a fase da Lua à sua respetiva aparência no céu do hemisfério norte:',
+			esquerda: ['Lua Cheia', 'Quarto Crescente', 'Quarto Minguante'],
+			direita: ['Desenha a letra C no céu', 'Totalmente iluminada e circular', 'Desenha a letra D no céu'],
+			pares: { 'Lua Cheia': 'Totalmente iluminada e circular', 'Quarto Crescente': 'Desenha a letra D no céu', 'Quarto Minguante': 'Desenha a letra C no céu' },
+			imagem: 'img/lua_cheia.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada astro à sua respetiva órbita de viagem espacial:',
+			esquerda: ['O planeta Terra', 'A Lua satélite', 'O Sol central'],
+			direita: ['Gira ao redor da Terra', 'Não gira ao redor de planetas', 'Gira ao redor do Sol'],
+			pares: { 'O planeta Terra': 'Gira ao redor do Sol', 'A Lua satélite': 'Gira ao redor da Terra', 'O Sol central': 'Não gira ao redor de planetas' },
+			imagem: 'img/sistema_solar.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada termo astronómico à sua respetiva definição:',
+			esquerda: ['Estrela', 'Planeta', 'Satélite'],
+			direita: ['Astro que gira ao redor de um planeta', 'Astro que gira ao redor de uma estrela', 'Astro que tem luz própria'],
+			pares: { 'Estrela': 'Astro que tem luz própria', 'Planeta': 'Astro que gira ao redor de uma estrela', 'Satélite': 'Astro que gira ao redor de um planeta' },
+			imagem: 'img/sol.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada fase lunar à sua quantidade de luz visível na Terra:',
+			esquerda: ['Lua Nova', 'Lua Cheia', 'Quartos Crescente e Minguante'],
+			direita: ['Metade da face iluminada', 'Totalmente escura', 'Totalmente iluminada'],
+			pares: { 'Lua Nova': 'Totalmente escura', 'Lua Cheia': 'Totalmente iluminada', 'Quartos Crescente e Minguante': 'Metade da face iluminada' },
+			imagem: 'img/lua_cheia.png',
+			dica: { tipo: 'highlight' }
+		},
+		{ tipo: 'clicar', pergunta: 'Qual destes astros do nosso céu é classificado como uma estrela com luz própria?', zonas: ['A Lua', 'O Sol', 'A Terra'], correta: 'O Sol', imagem: 'img/sistema_solar.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'De quantos em quantos dias se repete todo o ciclo das quatro fases da Lua?', zonas: ['24 dias', '29 dias', '365 dias'], correta: '29 dias', imagem: 'img/lua_cheia.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Como se chama a fase em que a Lua está entre a Terra e o Sol e não reflete brilho para nós?', zonas: ['Lua Nova', 'Lua Cheia', 'Quarto Crescente'], correta: 'Lua Nova', imagem: 'img/lua_nova.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Em que fase se encontra a Lua quando a sua forma se assemelha à letra C no nosso céu?', zonas: ['Quarto Crescente', 'Quarto Minguante', 'Lua Cheia'], correta: 'Quarto Minguante', imagem: 'img/lua_minguante.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Como se designa cientificamente a Terra devido à sua órbita ao redor do Sol e falta de luz própria?', zonas: ['Estrela', 'Planeta', 'Satélite'], correta: 'Planeta', imagem: 'img/terra.png', dica: { tipo: 'highlight' } }
+	];
+
+/* ==========================================================================
+   NÍVEL 3: LABORATÓRIO DA LUZ E ÍMANES - 25 QUESTÕES
+   ========================================================================== */
+	const RONDAS_LUZ = [
+		{ tipo: 'multipla', pergunta: 'Como se chamam os materiais, como o vidro limpo, que deixam atravessar toda a luz e permitem ver os objetos com nitidez?', opcoes: ['Materiais Translúcidos', 'Materiais Transparentes', 'Materiais Opacos'], correta: 'Materiais Transparentes', imagem: 'img/vidro_limpo.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chamam os materiais, como o papel vegetal, que deixam passar apenas parte da luz e não permitem ver com nitidez?', opcoes: ['Materiais Transparentes', 'Materiais Translúcidos', 'Materiais Opacos'], correta: 'Materiais Translúcidos', imagem: 'img/papel_vegetal.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Como se chamam os materiais, como a madeira ou o metal, que não deixam passar nenhuma luz e impedem a visão dos objetos?', opcoes: ['Materiais Transparentes', 'Materiais Translúcidos', 'Materiais Opacos'], correta: 'Materiais Opacos', imagem: 'img/madeira.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'A luz do Sol viaja em linha reta.<br>Quando bate num material opaco (como o teu corpo), forma-se do lado oposto:', opcoes: ['Um reflexo brilhante', 'Uma sombra escura', 'Um arco-íris colorido'], correta: 'Uma sombra escura', imagem: 'img/madeira.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Os ímanes têm dois polos magnéticos.<br>O que acontece quando aproximamos dois polos iguais?', opcoes: ['Atraem-se e colam-se', 'Repelem-se e afastam-se', 'Não acontece nada'], correta: 'Repelem-se e afastam-se', imagem: 'img/iman.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'O que acontece quando aproximamos dois polos diferentes de dois ímanes (Norte com Sul)?', opcoes: ['Atraem-se e colam-se (Atração)', 'Repelem-se e afastam-se (Repulsão)', 'Ficam estáticos'], correta: 'Atraem-se e colam-se (Atração)', imagem: 'img/iman.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'O vidro fosco de uma cabine de duche é um exemplo de que tipo de material?', opcoes: ['Transparente', 'Translúcido', 'Opaco'], correta: 'Translúcido', imagem: 'img/papel_vegetal.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'Uma porta de ferro ou de madeira maciça é um exemplo de que tipo de material para a luz?', opcoes: ['Opaco', 'Transparente', 'Translúcido'], correta: 'Opaco', imagem: 'img/madeira.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'multipla', pergunta: 'Os óculos de sol que usamos no verão usam lentes que filtram parte da luz.<br>Estas lentes são:', opcoes: ['Transparentes', 'Translúcidas', 'Opacas'], correta: 'Translúcidas', imagem: 'img/papel_vegetal.png', dica: { tipo: '50-50' } },
+		{ tipo: 'multipla', pergunta: 'A bússola é um instrumento de orientação muito antigo que usa uma agulha magnética que aponta para o norte.', opcoes: ['Verdadeiro', 'Falso'], correta: 'Verdadeiro', imagem: 'img/magnetismo.png', dica: { tipo: 'highlight' } },
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre o comportamento da luz nos materiais:',
+			texto: 'Os materiais reagem à luz de três formas. Os materiais [0] deixam passar toda a luz e vemos com nitidez. Os materiais [1] deixam passar apenas parte da luz. Os materiais [2] bloqueiam a luz por completo.',
+			respostas: ['transparentes', 'translúcidos', 'opacos'],
+			distratores: ['magnéticos', 'brilhantes'],
+			dica: { tipo: 'modal', texto: 'Transparentes (vidro limpo) -> Translúcidos (papel vegetal) -> Opacos (madeira/ferro).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as sombras na Terra:',
+			texto: 'A luz do Sol propaga-se em linha reta. Como a Terra é um corpo [0], ela bloqueia os raios de luz solar, projetando uma enorme [1] do lado oposto, o que dá origem à [2] no planeta.',
+			respostas: ['opaco', 'sombra', 'noite'],
+			distratores: ['transparente', 'estrela'],
+			dica: { tipo: 'modal', texto: 'A Terra, sendo opaca, bloqueia a luz do Sol e projeta a sombra que chamamos de Noite.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a força dos ímanes:',
+			texto: 'Os ímanes têm dois polos: Norte e Sul. Se tentares aproximar dois polos iguais, ocorre uma [0] e os ímanes afastam-se. Se aproximares dois polos diferentes, ocorre uma [1] e os ímanes [2].',
+			respostas: ['repulsão', 'atração', 'colam-se'],
+			distratores: ['amizade', 'partem-se'],
+			dica: { tipo: 'modal', texto: 'Polos iguais repelem-se (afastam-se). Polos diferentes atraem-se (colam-se).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre os vidros da tua casa:',
+			texto: 'As janelas têm diferentes vidros. O vidro limpo é [0] e deixa ver o jardim com clareza. O vidro fosco da casa de banho é [1] e protege a privacidade. A parede de tijolo é [2] e tapa toda a luz.',
+			respostas: ['transparente', 'translúcido', 'opaca'],
+			distratores: ['magnético', 'líquido'],
+			dica: { tipo: 'modal', texto: 'Vidro limpo deixa ver tudo. Vidro fosco deixa ver apenas vultos. Parede tapa tudo.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a agulha da bússola:',
+			texto: 'A bússola é um instrumento de orientação. A sua agulha é um pequeno [0] que roda livremente e é atraída pelo polo [1] do planeta Terra, apontando sempre para o [2].',
+			respostas: ['íman', 'magnético', 'Norte'],
+			distratores: ['vidro', 'quente'],
+			dica: { tipo: 'modal', texto: 'A agulha da bússola é magnética e orienta-se com o magnetismo natural do polo Norte da Terra.' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada material ao seu comportamento correto perante a luz:',
+			esquerda: ['Vidro limpo da janela', 'Papel vegetal de desenho', 'Tábua grossa de pinho'],
+			direita: ['Material Translúcido', 'Material Opaco', 'Material Transparente'],
+			pares: { 'Vidro limpo da janela': 'Material Transparente', 'Papel vegetal de desenho': 'Material Translúcido', 'Tábua grossa de pinho': 'Material Opaco' },
+			imagem: 'img/vidro_limpo.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga a aproximação dos polos dos ímanes ao seu resultado físico:',
+			esquerda: ['Polo Norte com Polo Norte', 'Polo Norte com Polo Sul', 'Polo Sul com Polo Sul'],
+			direita: ['Atração (colam-se)', 'Repulsão (afastam-se)', 'Repulsão (afastam-se)'],
+			pares: { 'Polo Norte com Polo Norte': 'Repulsão (afastam-se)', 'Polo Norte com Polo Sul': 'Atração (colam-se)', 'Polo Sul com Polo Sul': 'Repulsão (afastam-se)' },
+			imagem: 'img/magnetismo.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga o material à visibilidade que ele permite dos objetos por trás dele:',
+			esquerda: ['Vidro transparente', 'Vidro translúcido', 'Placa de metal opaca'],
+			direita: ['Vê-se sem nitidez (vultos)', 'Não se vê absolutamente nada', 'Vê-se com total nitidez'],
+			pares: { 'Vidro transparente': 'Vê-se com total nitidez', 'Vidro translúcido': 'Vê-se sem nitidez (vultos)', 'Placa de metal opaca': 'Não se vê absolutamente nada' },
+			imagem: 'img/madeira.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada instrumento ou material à sua propriedade física:',
+			esquerda: ['Lente de óculos de sol', 'Agulha da bússola', 'Vidro de aquário'],
+			direita: ['Propriedade Magnética', 'Comportamento Transparente', 'Comportamento Translúcido'],
+			pares: { 'Lente de óculos de sol': 'Comportamento Translúcido', 'Agulha da bússola': 'Propriedade Magnética', 'Vidro de aquário': 'Comportamento Transparente' },
+			imagem: 'img/iman.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga a ação luminosa ao seu resultado físico correspondente:',
+			esquerda: ['Luz passa por completo', 'Luz é totalmente bloqueada', 'Luz passa parcialmente'],
+			direita: ['Formação de sombra', 'Visão desfocada', 'Visão nítida e clara'],
+			pares: { 'Luz passa por completo': 'Visão nítida e clara', 'Luz é totalmente bloqueada': 'Formação de sombra', 'Luz passa parcialmente': 'Visão desfocada' },
+			imagem: 'img/vidro_limpo.png',
+			dica: { tipo: 'highlight' }
+		},
+		{ tipo: 'clicar', pergunta: 'Que tipo de material deves escolher se quiseres ver os peixes do teu aquário com total nitidez?', zonas: ['Opaco', 'Transparente', 'Translúcido'], correta: 'Transparente', imagem: 'img/vidro_limpo.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Como se chama o fenómeno físico que afasta dois polos iguais de dois ímanes quando se tentam juntar?', zonas: ['Repulsão', 'Atração', 'Gravitação'], correta: 'Repulsão', imagem: 'img/iman.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'O papel de seda colorido que deixa passar apenas alguma luz na construção de lanternas é:', zonas: ['Transparente', 'Opaco', 'Translúcido'], correta: 'Translúcido', imagem: 'img/papel_vegetal.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Que elemento escuro se projeta no chão quando bloqueias os raios de luz do Sol com o teu corpo?', zonas: ['Sombra', 'Arco-íris', 'Reflexo'], correta: 'Sombra', imagem: 'img/madeira.png', dica: { tipo: 'highlight' } },
+		{ tipo: 'clicar', pergunta: 'Para pendurar recados na porta do teu frigorífico de metal, deves usar a força magnética de um:', zonas: ['Vidro', 'Íman', 'Papel'], correta: 'Íman', imagem: 'img/iman.png', dica: { tipo: 'highlight' } }
+	];
+
+/* ==========================================================================
+   ARRANQUE DO JOGO (DOM CONTENT LOADED)
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
+
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+
+		alterarEstadoCoruja('normal');
+	});
+
+/* ==========================================================================
+   SISTEMA DE GESTÃO DA MASCOTE (CORUJA GUIA)
+   ========================================================================== */
+	function alterarEstadoCoruja(estado) {
+		const img = document.getElementById('coruja-img');
+		if (!img) return;
+
+		img.src = `coruja_${estado}.png`;
+		img.classList.remove('coruja-contente', 'coruja-triste');
+
+		void img.offsetWidth;
+
+		if (estado === 'contente') {
+			img.classList.add('coruja-contente');
+		} else if (estado === 'triste') {
+			img.classList.add('coruja-triste');
+		}
+	}
+
+/* ==========================================================================
+   TEMPORIZADOR ANTI-FRUSTRAÇÃO (DICA IMPACIENTE)
+   ========================================================================== */
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+
+		timerImpaciencia = setTimeout(() => {
+			if (rondasParaDica <= 0 && btnDica) {
+				btnDica.classList.add('dica-impaciente');
+			}
+		}, 15000);
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+	}
+
+/* ==========================================================================
+   MÉTODOS AUXILIARES: BARALHAR E CORES ALEATÓRIAS
+   ========================================================================== */
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-verde', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+/* ==========================================================================
+   NAVEGAÇÃO E MENUS
+   ========================================================================== */
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if (alvo) alvo.style.display = 'flex';
+	}
+	
+	function showToast(msg, isError = false) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = msg;
+		toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+		toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+		toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+		toast.classList.add('active');
+		setTimeout(() => toast.classList.remove('active'), 3000);
+	}
+
+/* ==========================================================================
+   GESTOR DE JOGO E FILTRAGEM DE MINIJOGOS
+   ========================================================================== */
+	function iniciarJogo(numQuestoes = 10, tituloNivel = "", numNivelActivo = 1) {
+		erradas = 0;
+		desafioAtual = 0;
+		rondasParaDica = 0;
+		totalDesafiosNivel = numQuestoes;
+		levelAtivo = numNivelActivo;
+
+		if (tituloNivel !== "") {
+			document.getElementById('subtitulo-header').textContent = tituloNivel;
+		}
+
+		/* Filtra e baralha dinamicamente conforme o nível */
+		if (levelAtivo === 1) {
+			rondasSorteadas = baralharArray(RONDAS_ASTROS).slice(0, numQuestoes);
+		} else if (levelAtivo === 2) {
+			rondasSorteadas = baralharArray(RONDAS_CEU).slice(0, numQuestoes);
+		} else if (levelAtivo === 3) {
+			rondasSorteadas = baralharArray(RONDAS_LUZ).slice(0, numQuestoes);
+		} else if (levelAtivo === 4) {
+			/* FUSÃO DINÂMICA: Junta os 3 bancos num bloco de 75 desafios */
+			const todasAsRondas = [...RONDAS_ASTROS, ...RONDAS_CEU, ...RONDAS_LUZ];
+			rondasSorteadas = baralharArray(todasAsRondas).slice(0, numQuestoes);
+		}
+
+		limparConfetis();
+		atualizarPlacar();
+		atualizarBotaoDica();
+		alterarEstadoCoruja('normal');
+		mostrarEcra('ecra-jogo');
+
+		carregarRonda(); 
+	}
+	
+	function atualizarPlacar() {
+		const p = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+		
+		const percentagem = (p / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+
+/* ==========================================================================
+   SISTEMA DE DICAS INTELIGENTES
+   ========================================================================== */
+	function usarDica() {
+		pararTimerImpaciencia();
+		
+		if (rondasParaDica > 0) return;
+
+		const ronda = rondasSorteadas[desafioAtual];
+		tocarSom('flip');
+
+		const configDica = ronda.dica;
+		if (!configDica) return;
+
+		if (configDica.tipo === 'modal') {
+			let htmlDica = `<p class="ajuda-texto">${configDica.texto}</p>`;
+			abrirModalDica(htmlDica);
+		}
+
+		if (configDica.tipo === '50-50') {
+			let escondidas = 0;
+			const maxEsconder = Math.floor(document.querySelectorAll('.btn-opcao-vibrante').length / 2);
+
+			document.querySelectorAll('.btn-opcao-vibrante').forEach(btn => {
+				let isCorrect = (btn.textContent.trim() === ronda.correta);
+				if (!isCorrect && escondidas < maxEsconder) {
+					btn.style.opacity = '0.3';
+					btn.style.pointerEvents = 'none';
+					btn.disabled = true;
+					escondidas++;
+				}
+			});
+			showToast("Removi algumas opções erradas!");
+		}
+
+		if (configDica.tipo === 'highlight') {
+			aplicarHighlightRespostaCorreta(ronda);
+			showToast("Olha com atenção para o ecrã!");
+		}
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+
+	function abrirModalDica(conteudoHTML) {
+		const modal = document.getElementById('modal-ajuda');
+		const conteudo = document.getElementById('modal-dica-conteudo');
+		if (modal && conteudo) {
+			conteudo.innerHTML = conteudoHTML;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharModalDica() {
+		const modal = document.getElementById('modal-ajuda');
+		if (modal) modal.classList.remove('active');
+	}
+
+/* ==========================================================================
+   CONSTRUÇÃO E MONTAGEM DOS DESAFIOS DINÂMICOS
+   ========================================================================== */
+	function carregarRonda() {
+		document.querySelectorAll('.highlight-correto').forEach(el => el.classList.remove('highlight-correto'));
+		
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+
+		// Limpa qualquer classe de tipo de jogo anterior para o ligar condicional
+		area.className = ''; 
+		
+		const ronda = rondasSorteadas[desafioAtual];
+		if (!ronda) {
+			finalizarJogo();
+			return;
+		}
+
+		if (ronda.tipo === 'ligar') {
+			area.classList.add('jogo-tipo-ligar');
+		}
+
+		// 1. INJETA IMAGEM DE APOIO QUADRADA (SEM LUPA E SEM CLIQUE)
+		if (ronda.imagem) {
+			const wrapper = document.createElement('div');
+			wrapper.className = 'card-imagem-zoomable';
+
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'imagem-evento-tempo';
+			img.alt = 'Imagem de apoio ecológica';
+			
+			img.onerror = () => { 
+				wrapper.remove(); 
+			};
+			
+			wrapper.appendChild(img);
+			area.appendChild(wrapper);
+		}
+
+		// 2. INJETA O TEXTO DA PERGUNTA COM SUPORTE HTML E LARGURA DE SEGURANÇA
+		if (ronda.pergunta) {
+			const pergunta = document.createElement('div');
+			pergunta.className = 'pergunta-texto';
+			pergunta.innerHTML = ronda.pergunta;
+			area.appendChild(pergunta);
+		}
+
+		/* --- CASO 1: ESCOLHA MÚLTIPLA VIBRANTE BARALHADA --- */
+		if (ronda.tipo === 'multipla') {
+			const opcoes = document.createElement('div');
+			opcoes.className = 'opcoes-container';
+
+			const opcoesBaralhadas = baralharArray(ronda.opcoes);
+			const coresSorteio = obterCoresAleatorias(opcoesBaralhadas.length);
+
+			opcoesBaralhadas.forEach((opcao, idx) => {
+				const btn = document.createElement('button');
+				btn.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				btn.textContent = opcao;
+				btn.onclick = () => opcao === ronda.correta ? simularAcerto(btn) : simularErro(btn);
+				opcoes.appendChild(btn);
+			});
+
+			area.appendChild(opcoes);
+		}
+
+		/* --- CASO 2: CLICAR OPÇÃO CURTA VIBRANTE BARALHADA --- */
+		if (ronda.tipo === 'clicar') {
+			const opcoes = document.createElement('div');
+			opcoes.className = 'opcoes-container';
+
+			const zonasBaralhadas = baralharArray(ronda.zonas);
+			const coresSorteio = obterCoresAleatorias(zonasBaralhadas.length);
+
+			zonasBaralhadas.forEach((zona, idx) => {
+				const btn = document.createElement('button');
+				btn.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				btn.textContent = zona;
+				btn.onclick = () => zona === ronda.correta ? simularAcerto(btn) : simularErro(btn);
+				opcoes.appendChild(btn);
+			});
+
+			area.appendChild(opcoes);
+		}
+
+		/* --- CASO 3: LIGAR COLUNAS (EMPARELHAMENTO) --- */
+		if (ronda.tipo === 'ligar') {
+			selecoesLigar = {};
+			paresElementosLigar = [];
+			totalParesCorretos = Object.keys(ronda.pares).length;
+
+			const container = document.createElement('div');
+			container.className = 'coluna-ligar-container';
+
+			const esquerdaEmbaralhada = baralharArray(ronda.esquerda);
+			const direitaEmbaralhada = baralharArray(ronda.direita);
+
+			const colEsq = document.createElement('div');
+			colEsq.className = 'coluna-ligar';
+
+			esquerdaEmbaralhada.forEach(item => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-opcao-vibrante bg-azul';
+				btn.textContent = item;
+				btn.onclick = () => selecionarLigar(item, 'esq', btn);
+				colEsq.appendChild(btn);
+			});
+
+			const colDir = document.createElement('div');
+			colDir.className = 'coluna-ligar';
+
+			direitaEmbaralhada.forEach(item => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-opcao-vibrante bg-turquesa';
+				btn.textContent = item;
+				btn.onclick = () => selecionarLigar(item, 'dir', btn);
+				colDir.appendChild(btn);
+			});
+
+			container.appendChild(colEsq);
+			container.appendChild(colDir);
+			area.appendChild(container);
+		}
+
+		/* --- CASO 4: ARRASTAR E LIGAR (SISTEMA DE DOIS TOQUES) --- */
+		if (ronda.tipo === 'arrastar') {
+			selecoesArrastar = {};
+			arrastoAtivo = null; 
+			totalArrastar = Object.keys(ronda.pares).length;
+
+			const zona = document.createElement('div');
+			zona.style.display = 'flex';
+			zona.style.justifyContent = 'center';
+			zona.style.gap = '20px';
+			zona.style.width = '100%';
+			zona.style.flexWrap = 'wrap';
+
+			const itens = document.createElement('div');
+			itens.style.display = 'flex';
+			itens.style.flexDirection = 'column';
+			itens.style.gap = '10px';
+
+			const itensEmbaralhados = baralharArray(ronda.itens);
+
+			itensEmbaralhados.forEach(valor => {
+				const bloco = document.createElement('button'); 
+				bloco.className = 'bloco-arrastar';
+				bloco.textContent = valor;
+				bloco.style.fontSize = '1.1rem';
+
+				bloco.onclick = () => {
+					if (bloco.disabled) return;
+					tocarSom('flip');
+					
+					document.querySelectorAll('.bloco-arrastar').forEach(b => b.classList.remove('selecionado'));
+					bloco.classList.add('selecionado');
+					arrastoAtivo = bloco;
+
+					document.querySelectorAll('.alvo-arrastar').forEach(caixa => {
+						if (!caixa.querySelector('strong')) {
+							caixa.classList.add('pronto-receber');
+						}
+					});
+				};
+
+				itens.appendChild(bloco);
+			});
+
+			const alvos = document.createElement('div');
+			alvos.style.display = 'flex';
+			alvos.style.flexDirection = 'column';
+			alvos.style.gap = '10px';
+
+			ronda.alvos.forEach(alvo => {
+				const caixa = document.createElement('div');
+				caixa.className = 'alvo-arrastar';
+				caixa.innerHTML = `<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>`;
+				caixa.style.display = 'flex';
+				caixa.style.flexDirection = 'column';
+				caixa.style.alignItems = 'center';
+				caixa.style.gap = '5px';
+
+				caixa.onclick = () => {
+					if (!arrastoAtivo) {
+						showToast("Seleciona primeiro uma palavra em cima!", false);
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.textContent;
+					selecoesArrastar[valorSelecionado] = alvo;
+
+					caixa.innerHTML = `
+						<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>
+						<strong style="color: var(--azul-vibrante); background: white; padding: 4px 10px; border-radius: 10px; font-size: 1.1rem;">${valorSelecionado}</strong>
+					`;
+
+					arrastoAtivo.classList.remove('selecionado');
+					arrastoAtivo.style.opacity = '0.3';
+					arrastoAtivo.disabled = true;
+					arrastoAtivo = null;
+
+					document.querySelectorAll('.alvo-arrastar').forEach(c => c.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesArrastar).length === totalArrastar) {
+						setTimeout(validarArrastar, 400); 
+					}
+				};
+
+				alvos.appendChild(caixa);
+			});
+
+			zona.appendChild(itens);
+			zona.appendChild(alvos);
+			area.appendChild(zona);
+		}
+
+		/* --- CASO 5: TEXTO COM LACUNAS (MÉTODO 1 TOQUE SEGURO) --- */
+		if (ronda.tipo === 'lacunas') {
+			selecoesLacunas = {};
+			lacunaAtiva = null;
+
+			const totalSlots = ronda.respostas.length;
+
+			const paragrafo = document.createElement('div');
+			paragrafo.className = 'texto-paragrafo-lacunas';
+
+			let textoEditado = ronda.texto;
+			for (let i = 0; i < totalSlots; i++) {
+				textoEditado = textoEditado.replace(`[${i}]`, `___SLOT_${i}___`);
+			}
+
+			const partesTexto = textoEditado.split('___');
+
+			partesTexto.forEach(parte => {
+				if (parte.startsWith('SLOT_')) {
+					const idx = parseInt(parte.split('_')[1], 10);
+					
+					const slot = document.createElement('span');
+					slot.className = 'slot-vazio';
+					slot.id = `slot-lacuna-${idx}`;
+					slot.textContent = '...';
+
+					slot.onclick = () => {
+						if (!lacunaAtiva) {
+							const palavraAtual = slot.querySelector('strong')?.textContent;
+							if (palavraAtual) {
+								tocarSom('flip');
+								slot.textContent = '...';
+								slot.classList.remove('preenchido');
+								delete selecoesLacunas[idx];
+								
+								document.querySelectorAll('.palavra-banco').forEach(b => {
+									if (b.textContent === palavraAtual) {
+										b.disabled = false;
+										b.style.opacity = '1';
+									}
+								});
+							} else {
+								showToast("Seleciona primeiro uma palavra em baixo!");
+							}
+							return;
+						}
+
+						tocarSom('flip');
+						const palavraTexto = lacunaAtiva.texto;
+
+						const palavraAnterior = slot.querySelector('strong')?.textContent;
+						if (palavraAnterior) {
+							document.querySelectorAll('.palavra-banco').forEach(b => {
+								if (b.textContent === palavraAnterior) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						}
+
+						slot.innerHTML = `<strong style="color:var(--azul-escuro); font-size:1.1rem;">${palavraTexto}</strong>`;
+						slot.classList.add('preenchido');
+						
+						selecoesLacunas[idx] = palavraTexto;
+
+						lacunaAtiva.elemento.classList.remove('selecionado');
+						lacunaAtiva.elemento.style.opacity = '0.3';
+						lacunaAtiva.elemento.disabled = true;
+						lacunaAtiva = null;
+
+						document.querySelectorAll('.slot-vazio').forEach(s => s.classList.remove('pronto-receber'));
+
+						if (Object.keys(selecoesLacunas).length === totalSlots) {
+							setTimeout(validarLacunas, 400);
+						}
+					};
+
+					paragrafo.appendChild(slot);
+				} else {
+					paragrafo.appendChild(document.createTextNode(parte));
+				}
+			});
+
+			area.appendChild(paragrafo);
+
+			const banco = document.createElement('div');
+			banco.className = 'banco-opcoes';
+
+			const distratoresSeguros = ronda.distratores || [];
+			const todasAsOpcoes = baralharArray([...ronda.respostas, ...distratoresSeguros]);
+
+			todasAsOpcoes.forEach(palavra => {
+				const btnPalavra = document.createElement('button');
+				btnPalavra.className = 'palavra-banco';
+				btnPalavra.textContent = palavra;
+
+				btnPalavra.onclick = () => {
+					if (btnPalavra.disabled) return;
+					tocarSom('flip');
+
+					document.querySelectorAll('.palavra-banco').forEach(b => b.classList.remove('selecionado'));
+					btnPalavra.classList.add('selecionado');
+
+					lacunaAtiva = { elemento: btnPalavra, texto: palavra };
+
+					document.querySelectorAll('.slot-vazio').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+
+				banco.appendChild(btnPalavra);
+			});
+
+			area.appendChild(banco);
+		}
+		
+		resetTimerImpaciencia();
+	}
+
+/* ==========================================================================
+   LÓGICA DE VALIDAÇÃO: EMPARELHAMENTOS E ARRASTAMENTO
+   ========================================================================== */
+	function selecionarLigar(valor, lado, botao) {
+		if (botao.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === botao || p.dirBtn === botao);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			
+			if (selecaoLigar) {
+				selecaoLigar.botao.classList.remove('selecionado');
+				selecaoLigar = null;
+			}
+			return;
+		}
+
+		if (selecaoLigar && selecaoLigar.botao === botao) {
+			botao.classList.remove('selecionado');
+			selecaoLigar = null;
+			tocarSom('flip');
+			return;
+		}
+
+		if (!selecaoLigar) {
+			selecaoLigar = { valor, lado, botao };
+			botao.classList.add('selecionado');
+			return;
+		}
+
+		if (selecaoLigar.lado === lado) {
+			selecaoLigar.botao.classList.remove('selecionado');
+			selecaoLigar = { valor, lado, botao };
+			botao.classList.add('selecionado');
+			tocarSom('flip');
+			return;
+		}
+
+		const esquerda = selecaoLigar.lado === 'esq' ? selecaoLigar.valor : valor;
+		const direita = selecaoLigar.lado === 'dir' ? selecaoLigar.valor : valor;
+
+		const esquerdaBtn = selecaoLigar.lado === 'esq' ? selecaoLigar.botao : botao;
+		const direitaBtn = selecaoLigar.lado === 'dir' ? selecaoLigar.botao : botao;
+
+		selecoesLigar[esquerda] = direita;
+
+		paresElementosLigar.push({
+			esqBtn: esquerdaBtn,
+			dirBtn: direitaBtn,
+			esqVal: esquerda,
+			dirVal: direita
+		});
+
+		document.querySelectorAll('.selecionado').forEach(b => b.classList.remove('selecionado'));
+
+		esquerdaBtn.classList.add('ligado');
+		direitaBtn.classList.add('ligado');
+
+		selecaoLigar = null;
+
+		if (Object.keys(selecoesLigar).length === totalParesCorretos) {
+			validarLigacoes();
+		}
+	}
+
+	function validarLigacoes() {
+		const ronda = rondasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		for (let esquerda in ronda.pares) {
+			if (selecoesLigar[esquerda] !== ronda.pares[esquerda]) {
+				tudoCerto = false;
+			}
+		}
+
+		const todosBotoes = document.getElementById('game-area').querySelectorAll('.btn-opcao-vibrante');
+
+		if (tudoCerto) {
+			pararTimerImpaciencia();
+			alterarEstadoCoruja('contente');
+
+			todosBotoes.forEach(btn => btn.classList.add('sucesso-vibrante'));
+			tocarSom('acerto');
+
+			setTimeout(() => {
+				todosBotoes.forEach(btn => btn.classList.remove('sucesso-vibrante'));
+				
+				desafioAtual++;
+				if (rondasParaDica > 0) rondasParaDica--;
+				
+				atualizarPlacar();
+				atualizarBotaoDica();
+				alterarEstadoCoruja('normal');
+				paresElementosLigar = [];
+
+				if (desafioAtual < totalDesafiosNivel) {
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1000);
+
+		} else {
+			alterarEstadoCoruja('triste');
+
+			todosBotoes.forEach(btn => btn.classList.add('erro-vibrante'));
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+
+			setTimeout(() => {
+				todosBotoes.forEach(btn => {
+					btn.classList.remove('erro-vibrante', 'ligado');
+					btn.style.opacity = '1';
+				});
+
+				selecoesLigar = {};
+				selecaoLigar = null;
+				paresElementosLigar = [];
+				alterarEstadoCoruja('normal');
+			}, 800);
+
+			resetTimerImpaciencia();
+		}
+	}
+
+	function validarArrastar() {
+        const ronda = rondasSorteadas[desafioAtual];
+        let tudoCerto = true;
+
+        for (let item in ronda.pares) {
+            if (selecoesArrastar[item] !== ronda.pares[item]) {
+                tudoCerto = false;
+            }
+        }
+
+        if (tudoCerto) {
+            simularAcerto(document.querySelector('.bloco-arrastar'));
+        } else {
+            simularErro(document.querySelector('.bloco-arrastar'));
+            
+            setTimeout(() => {
+                selecoesArrastar = {};
+                arrastoAtivo = null;
+
+                document.querySelectorAll('.bloco-arrastar').forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.classList.remove('selecionado');
+                });
+
+                const caixasAlvo = document.querySelectorAll('.alvo-arrastar');
+                ronda.alvos.forEach((alvo, idx) => {
+                    caixasAlvo[idx].innerHTML = `<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>`;
+                });
+            }, 800);
+        }
+    }
+
+	function validarLacunas() {
+		const ronda = rondasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		for (let i = 0; i < ronda.respostas.length; i++) {
+			if (selecoesLacunas[i] !== ronda.respostas[i]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			simularAcerto(document.querySelector('.palavra-banco'));
+		} else {
+			simularErro(document.querySelector('.palavra-banco'));
+			
+			setTimeout(() => {
+				selecoesLacunas = {};
+				lacunaAtiva = null;
+
+				document.querySelectorAll('.palavra-banco').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				document.querySelectorAll('.slot-vazio').forEach(slot => {
+					slot.textContent = '...';
+					slot.classList.remove('preenchido');
+				});
+			}, 800);
+		}
+	}
+
+/* ==========================================================================
+   FEEDBACKS VIBRANTES E TRANSIÇÃO
+   ========================================================================== */
+	function simularAcerto(btn) {
+		pararTimerImpaciencia();
+		
+		alterarEstadoCoruja('contente');
+
+		document.querySelectorAll('.btn-opcao-vibrante, .bloco-arrastar').forEach(b => {
+			b.classList.add('btn-disabled');
+			b.style.pointerEvents = 'none';
+		});
+
+		btn.classList.add('sucesso-vibrante');
+		tocarSom('acerto');
+
+		setTimeout(() => {
+			btn.classList.remove('sucesso-vibrante');
+			
+			document.querySelectorAll('.btn-opcao-vibrante, .bloco-arrastar').forEach(b => {
+				b.classList.remove('btn-disabled');
+				b.style.pointerEvents = 'auto';
+			});
+
+			desafioAtual++;
+			if (rondasParaDica > 0) rondasParaDica--;
+			
+			atualizarPlacar();
+			atualizarBotaoDica();
+
+			alterarEstadoCoruja('normal');
+
+			if (desafioAtual < totalDesafiosNivel) {
+				carregarRonda();
+			} else {
+				finalizarJogo();
+			}
+
+		}, 1000);
+	}
+
+	function simularErro(btn) {
+		alterarEstadoCoruja('triste');
+
+		btn.classList.add('erro-vibrante');
+		tocarSom('erro');
+		erradas++;
+		atualizarPlacar();
+
+		setTimeout(() => {
+			btn.classList.remove('erro-vibrante');
+			alterarEstadoCoruja('normal');
+		}, 500);
+
+		resetTimerImpaciencia();
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		/* Realce padrão para múltipla escolha e cliques simples */
+		document.querySelectorAll('.btn-opcao-vibrante').forEach(btn => {
+			if (btn.textContent.trim() === ronda.correta) {
+				btn.classList.add('highlight-correto');
+				setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+			}
+		});
+
+		/* CORREÇÃO INTELIGENTE: Realce de apenas UM par correto nos exercícios de Ligar */
+		if (ronda.tipo === 'ligar') {
+			const chavesPares = Object.keys(ronda.pares);
+			if (chavesPares.length > 0) {
+				const primeiroConceitoEsq = chavesPares[0]; // Ex: 'Primavera'
+				const respostaCorretaDir = ronda.pares[primeiroConceitoEsq]; // Ex: 'Nascimento de flores e folhas verdes'
+
+				// Faz piscar apenas os dois botões correspondentes ao par correto
+				document.getElementById('game-area').querySelectorAll('.btn-opcao-vibrante').forEach(btn => {
+					const textoBotao = btn.textContent.trim();
+					if (textoBotao === primeiroConceitoEsq || textoBotao === respostaCorretaDir) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+			}
+		}
+
+		/* Realce para exercícios de arrastar */
+		if (ronda.tipo === 'arrastar') {
+			document.querySelectorAll('.btn-opcao-vibrante, .alvo-arrastar').forEach(el => {
+				if (Object.values(ronda.pares).includes(el.textContent.trim())) {
+					el.classList.add('highlight-correto');
+					setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+	}
+
+/* ==========================================================================
+   FINALIZAÇÃO E REINÍCIO
+   ========================================================================== */
+	function finalizarJogo() {
+		document.getElementById('progress-fill').style.width = '100%';
+		setTimeout(() => {
+			mostrarEcra('ecra-fim');
+			document.getElementById('final-erros').textContent = erradas;
+			tocarSom('vitoria');
+			dispararConfetis();
+		}, 500);
+	}
+
+	function reiniciarJogo() {
+		iniciarJogo(totalDesafiosNivel, "", levelAtivo);
+	}
+
+	function voltarAoMenu() {
+		document.getElementById('subtitulo-header').textContent = "Escolhe um minijogo para começar!";
+		limparConfetis();
+		mostrarEcra('ecra-selecao');
+	}
+
+/* ==========================================================================
+   MOTOR DE ÁUDIO SINTETIZADO (GERAÇÃO DE BEEP RETRO COMPATÍVEL COM TRY/CATCH)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: O navegador bloqueou a inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true });																		
+	function tocarSom(tipo) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+
+			const agora = audioCtx.currentTime;
+
+			if (tipo === 'flip') {
+				const osc = audioCtx.createOscillator();
+				const gain = audioCtx.createGain();
+				osc.connect(gain);
+				gain.connect(audioCtx.destination);
+				osc.frequency.setValueAtTime(450, agora);
+				osc.frequency.exponentialRampToValueAtTime(150, agora + 0.08);
+				gain.gain.setValueAtTime(0.04, agora);
+				osc.start(agora);
+				osc.stop(agora + 0.08);
+			} else if (tipo === 'acerto') {
+				const notas = [783.99, 1046.50]; 
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (tipo === 'erro') {
+				const osc = audioCtx.createOscillator();
+				const gain = audioCtx.createGain();
+				osc.connect(gain);
+				gain.connect(audioCtx.destination);
+				osc.type = 'triangle';
+				osc.frequency.setValueAtTime(220, agora);
+				osc.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				gain.gain.setValueAtTime(0.08, agora);
+				osc.start(agora);
+				osc.stop(agora + 0.4);
+			} else if (tipo === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0, agora + nota.tempo);
+					g.gain.linearRampToValueAtTime(0.08, agora + nota.tempo + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+/* ==========================================================================
+   CONFETIS
+   ========================================================================== */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			
+			/* CORREÇÃO DO GATILHO DOS CONFETIS: usa a variável correta 'escala' */
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+	
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) container.innerHTML = '';
+	}	
+</script>
+</body>
+</html>

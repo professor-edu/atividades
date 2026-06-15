@@ -64,6 +64,7 @@ const todosOsJogos =[
 	{ nome: "Grelha do 100", icone: "icones/grelha_100.png", link: "mat/grelha-100", cat: "mat" },
 	{ nome: "Sólidos e Figuras", icone: "icones/solidos_figuras.png", link: "mat/solidos-figuras", cat: "mat" },
 	{ nome: "O Ábaco Mágico", icone: "icones/abaco.png", link: "mat/abaco", cat: "mat" },
+	{ nome: "Mistérios na Quinta", icone: "icones/misterios_quinta.png", link: "mat/misterios-quinta", cat: "mat" },
     
     // ------------------------------------
     // ESTUDO DO MEIO (cat: "em") 

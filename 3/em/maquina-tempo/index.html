@@ -1,0 +1,3142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - A Máquina do Tempo ⏳</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #E3C40D;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;
+			margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-3ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-3ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(69, 176, 98, 0.52); 
+            border-top: 8px solid var(--cor-em); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+			box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+			.grid-niveis {
+				grid-template-columns: 1fr !important; /* Força uma única coluna */
+				max-width: 310px; /* Largura ideal para não colidir com o contentor */
+				gap: 12px; /* Reduz o espaço entre botões */
+			}
+		}
+
+        .btn-nivel-novo {
+            width: 100%; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+			padding: 10px 15px !important;
+			gap: 10px !important;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #eaf1eb; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-3ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.4rem); max-width: 600px; color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 30px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--cor-btn-fundo); border: 3px solid var(--cor-em); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-em); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-em); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		*/O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-3ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+				/* =========================================
+		   NOVO DESIGN DOS BOTÕES DO MENU INICIAL (HORIZONTAL)
+		   ========================================= */
+
+		/* Transforma o botão numa estrutura horizontal alinhada à esquerda */
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+		/* Garante que a imagem do nível mantém as proporções e não encolhe */
+		.icon-btn-nivel-novo {
+			width: 45px !important;
+			height: 45px !important;
+			flex-shrink: 0;
+		}
+
+		/* Contentor de texto para empilhar Título e Subtítulo */
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none; /* Protege contra interferência de clique */
+		}
+
+		/* Estilo para a linha do Título (Superior) */
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+
+		/* Estilo para a linha do Subtítulo (Inferior) */
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+
+		/* Otimização para telemóveis mais pequenos */
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}
+		
+		/* =========================================
+           REALCE DOS TÍTULOS
+        ========================================= */	
+		
+		/* Opção A: Efeito marcador de texto (fundo amarelo) */
+		.destaque-fundo {
+			background-color: #fff275; /* Amarelo fluorescente */
+			color: var(--azul-escuro); /* Texto em azul escuro para ler bem */
+			padding: 2px 6px;
+			border-radius: 6px;
+			font-weight: 900;
+		}
+
+		/* Opção B: Apenas texto vermelho e forte (sem fundo) */
+		.destaque-texto {
+			color: var(--cor-btn-vermelho); 
+			font-weight: 900;
+		}
+		
+		/* Opção C: Apenas texto verde e forte (sem fundo) */
+		.destaque-texto-verde {
+			color: var(--cor-em); /* Usa o vermelho vibrante do seu root */
+			font-weight: 900;
+		}
+		
+		/* --- AJUSTES DO EXERCÍCIO DE LIGAR PARES --- */
+
+/* Aumenta o espaçamento entre os botões de cada coluna */
+.coluna-ligar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px !important; /* Espaçamento confortável para o 3.º ano */
+}
+
+/* Estilo visual para um par que já foi ligado (ainda clicável) */
+.btn-opcao.ligado {
+    opacity: 0.6;
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(3px) !important; /* Mantém o aspeto de pressionado */
+    cursor: pointer;
+}
+
+
+	.btn-opcao-vibrante {
+		border: 3px solid white;
+		border-radius: 15px;
+		padding: 12px 20px;
+		font-size: clamp(1rem, 3vw, 1.2rem);
+		font-weight: 700;
+		color: white;
+		cursor: pointer;
+		text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+		transition: transform 0.1s, filter 0.1s;
+		touch-action: manipulation;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.btn-opcao-vibrante:active {
+		transform: scale(0.95);
+		filter: brightness(0.9);
+	}
+	@media (hover: hover) {
+		.btn-opcao-vibrante:hover {
+			transform: translateY(-2px);
+			filter: brightness(1.05);
+		}
+	}
+
+	.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+	.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+	.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+	.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+	.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+	.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+	.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+	.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+
+
+/* ==========================================================================
+   CSS ESPECÍFICO DO JOGO: A MÁQUINA DO TEMPO (3.º ANO)
+   ========================================================================== */
+
+/* --- AJUSTES DA ÁREA DE JOGO CUSTOM --- */
+.area-jogo-custom {
+    position: relative;
+    width: 100%;
+    flex: 1; /* Definido por referência */
+    min-height: 420px;
+    background-color: #f8fafc;
+    border: 2px dashed var(--cor-em); /* Definido por referência */
+    border-radius: 20px; /* Definido por referência */
+    padding: 25px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Definido por referência */
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .area-jogo-custom {
+        min-height: 380px;
+        padding: 15px;
+        gap: 15px;
+    }
+	.opcoes-container {
+        flex-direction: column !important; /* Força os botões a empilharem-se em coluna vertical */
+        align-items: center !important;
+        gap: 12px !important; /* Espaçamento compacto ideal para o telemóvel */
+        width: 100% !important;
+        max-width: 290px !important; /* Tranca a largura para que os botões fiquem todos iguais e simétricos */
+        margin: 0 auto !important;
+    }
+
+    /* Ajuste fino nos botões empilhados */
+    .opcoes-container .btn-opcao-vibrante {
+        width: 100% !important; /* Faz o botão ocupar toda a largura do contentor trancado */
+        font-size: 0.95rem !important;
+        padding: 10px 15px !important;
+        box-sizing: border-box;
+    }
+}
+
+/* --- ANIMAÇÃO TUTORIAL INICIAL: A MÁQUINA DO TEMPO --- */
+.animacao-tutorial {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 180px;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e0f0ff 100%);
+    border: 3px dashed var(--cor-btn-azul);
+    border-radius: 20px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.15);
+    overflow: hidden;
+}
+
+/* Engrenagem da máquina que roda constantemente */
+.engrenagem-tempo {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: 8px dashed var(--cor-btn-azul);
+    border-radius: 50%;
+    animation: rodarEngrenagem 12s linear infinite;
+    opacity: 0.25;
+}
+
+/* Vortex central luminoso */
+.vortex-tempo {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    background: radial-gradient(circle, #ffffff 10%, rgba(97, 160, 255, 0.4) 60%, transparent 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 25px rgba(97, 160, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulsarVortex 2.5s infinite ease-in-out;
+    z-index: 2;
+}
+
+/* Ponteiro do relógio temporal que roda no vortex */
+.ponteiro-tempo {
+    width: 4px;
+    height: 35px;
+    background-color: var(--azul-escuro);
+    border-radius: 2px;
+    transform-origin: bottom center;
+    animation: rodarPonteiro 4s linear infinite;
+}
+
+/* Ícones de viagem a flutuar (Ampulheta e Relógio) */
+.objeto-temporal {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 28px;
+    height: 28px;
+    opacity: 0.6;
+}
+
+.objeto-temporal.ampulheta {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2361A0FF'><path d='M6 2h12v4l-4 4 4 4v4H6v-4l4-4-4-4V2zm10 2H8v2.17l4 4 4-4V4zm-8 13.83V16h8v1.83l-4-4-4 4z'/></svg>");
+    left: 15%;
+    animation: flutuarObjeto 3.5s infinite ease-in-out;
+}
+
+.objeto-temporal.calendario {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A55EEA'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-5-7h5v5h-5v-5z'/></svg>");
+    right: 15%;
+    animation: flutuarObjetoSecundario 3.5s infinite ease-in-out;
+}
+
+/* --- PERSONAGEM MASCOTE (A CORUJA GUIA) --- */
+.coruja-guia-container {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    width: 100px; /* Definido por referência */
+    height: 165px; /* Definido por referência */
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.coruja-guia-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    transform-origin: bottom center;
+    animation: corujaRespirar 4s infinite ease-in-out;
+}
+
+@media (max-width: 600px) {
+    .coruja-guia-container {
+        width: 57px; /* Definido por referência */
+        height: 85px; /* Definido por referência */
+        right: 5px;
+        bottom: 5px;
+        opacity: 0.9;
+    }
+}
+
+.coruja-contente { animation: corujaFestejar 0.8s ease-out !important; }
+.coruja-triste { animation: corujaTremer 0.5s ease-in-out !important; }
+
+/* --- CARTÃO DE EVENTO ILUSTRADO (A ALOJAR PNGs) --- */
+.cartao-evento-tempo {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+	margin-bottom: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+}
+
+/* Otimização para PC Largo: imagem de evento significativamente maior */
+@media (min-width: 769px) {
+    .cartao-evento-tempo {
+        max-width: 580px;
+        padding: 20px 25px;
+		margin-bottom: 40px !important;
+    }
+    .imagem-evento-tempo {
+        width: 150px !important; /* Imagem ampliada no computador */
+        height: 150px !important;
+    }
+    .legenda-evento-tempo {
+        font-size: 1.25rem !important;
+    }
+}
+
+.imagem-evento-tempo {
+    width: 120px;
+    height: 130px;
+    object-fit: contain;
+    border-radius: 12px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.legenda-evento-tempo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    text-align: center;
+}
+
+.legenda-evento-tempo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    text-align: center;
+}
+
+@media (max-width: 500px) {
+    .cartao-evento-tempo {
+        padding: 10px 15px;
+        gap: 8px;
+    }
+    .imagem-evento-tempo {
+        width: 100px;
+        height: 75px;
+    }
+    .legenda-evento-tempo {
+        font-size: 0.95rem;
+    }
+}
+
+/* --- FRISO CRONOLÓGICO INTERATIVO (a.C. vs d.C.) --- */
+.friso-cronologico {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    height: 12px;
+    background-color: #cbd5e1;
+    border-radius: 6px;
+    margin: 35px auto 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ponto de divisão central (Nascimento de Cristo) */
+.marcador-cristo {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: var(--cor-btn-amarelo);
+    border: 4px solid white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.marcador-cristo::after {
+    content: 'Nascimento de Cristo';
+    position: absolute;
+    top: -26px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    white-space: nowrap;
+}
+
+/* Botões laterais gigantes no friso para classificação (a.C. e d.C.) */
+.zona-tempo-friso {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38%;
+    height: 65px;
+    border-radius: 16px;
+    border: 3px dashed var(--azul-vibrante);
+    background-color: rgba(97, 160, 255, 0.05);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: var(--azul-vibrante);
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.zona-tempo-friso.esq { left: 2%; border-color: var(--cor-btn-laranja); color: var(--cor-btn-laranja); background-color: rgba(250, 152, 58, 0.05); }
+.zona-tempo-friso.dir { right: 2%; border-color: var(--cor-btn-verde); color: var(--cor-btn-verde); background-color: rgba(93, 210, 121, 0.05); }
+
+/* Efeito Hover nos botões do friso */
+@media (hover: hover) {
+    .zona-tempo-friso.esq:hover { background-color: var(--cor-btn-laranja); color: white; border-style: solid; box-shadow: 0 0 15px rgba(250, 152, 58, 0.3); }
+    .zona-tempo-friso.dir:hover { background-color: var(--cor-btn-verde); color: white; border-style: solid; box-shadow: 0 0 15px rgba(93, 210, 121, 0.3); }
+}
+
+@media (max-width: 600px) {
+    .cartao-evento-tempo {
+        padding: 10px 15px;
+        gap: 8px;
+    }
+    .imagem-evento-tempo {
+        width: 100px;
+        height: 75px;
+    }
+    .legenda-evento-tempo {
+        font-size: 0.95rem;
+    }
+
+    /* O Friso transforma-se numa linha vertical de suporte */
+    .friso-cronologico {
+        width: 12px;
+        height: 180px; /* Transforma-se em coluna vertical */
+        margin: 15px auto 25px;
+        flex-direction: column;
+    }
+
+    /* O marcador de Cristo fica centralizado no eixo vertical */
+    .marcador-cristo {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 18px;
+        height: 18px;
+        border-width: 3px;
+    }
+
+    /* O rótulo desloca-se de forma limpa para a direita para não colidir */
+    .marcador-cristo::after {
+        content: 'Ano 1';
+        top: auto;
+        right: -55px;
+        left: auto;
+        font-size: 0.75rem;
+    }
+
+    /* Os botões de escolha passam a empilhar-se ao centro sem comprimir a largura */
+    .zona-tempo-friso {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 160px; /* Largura reduzida e fixa de segurança */
+        height: 48px;
+        font-size: 0.9rem;
+        border-radius: 12px;
+    }
+
+    /* Depois de Cristo (Futuro) fica no TOPO da linha vertical */
+    .zona-tempo-friso.dir {
+        top: 0;
+        bottom: auto;
+        right: auto;
+    }
+
+    /* Antes de Cristo (Passado) fica na BASE da linha vertical */
+    .zona-tempo-friso.esq {
+        top: auto;
+        bottom: 0;
+        left: 50%;
+    }
+}
+
+/* --- ESTILOS DO EXERCÍCIO DE LACUNAS --- */
+.texto-paragrafo-lacunas {
+    font-size: 1.2rem;
+    line-height: 2.5;
+    color: var(--text-main);
+    text-align: justify;
+    margin-bottom: 25px;
+    background: #ffffff;
+    padding: 20px 25px;
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+    width: 100%;
+    max-width: 750px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.slot-vazio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    height: 34px;
+    margin: 0 6px;
+    padding: 0 12px;
+    border: 2px dashed var(--azul-vibrante);
+    border-radius: 10px;
+    background-color: #f8fafc;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    box-sizing: border-box;
+}
+
+.slot-vazio.pronto-receber {
+    border-color: var(--cor-btn-amarelo);
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+.slot-vazio.preenchido {
+    border-style: solid;
+    border-color: var(--cor-em);
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.banco-opcoes {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 650px;
+    margin-bottom: 15px;
+}
+
+.palavra-banco {
+    padding: 8px 18px;
+    background: #ffffff;
+    border: 2px solid var(--azul-vibrante);
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--azul-escuro);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 0 var(--azul-vibrante);
+}
+
+.palavra-banco.selecionado {
+    outline: 3px solid var(--cor-btn-amarelo);
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .texto-paragrafo-lacunas {
+        font-size: 1.05rem;
+        line-height: 2.6;
+        padding: 15px;
+    }
+    .slot-vazio {
+        min-width: 85px;
+        height: 28px;
+        margin: 0 4px;
+    }
+    .palavra-banco {
+        font-size: 0.95rem;
+        padding: 6px 14px;
+    }
+}
+
+/* --- ESTILOS DO EXERCÍCIO DE LIGAR PARES (COLUNAS) --- */
+.coluna-ligar-container {
+    display: flex;
+    gap: 90px;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coluna-ligar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px !important;
+}
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+    cursor: pointer;
+}
+
+@media (max-width: 650px) {
+    .coluna-ligar-container {
+        gap: 10px;
+        flex-direction: row;
+    }
+    .coluna-ligar-container .btn-opcao-vibrante {
+        font-size: 0.85rem !important;
+        padding: 10px 12px !important;
+        min-width: 110px !important;
+    }
+}
+
+/* ==========================================================================
+   ANIMAÇÕES CSS (KEYFRAMES)
+   ========================================================================== */
+
+/* Animação do Vortex LUMINOSO */
+@keyframes pulsarVortex {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(97, 160, 255, 0.4); }
+    50% { transform: scale(1.06); box-shadow: 0 0 35px rgba(97, 160, 255, 0.8); }
+}
+
+/* Rotação constante da engrenagem decorativa */
+@keyframes rodarEngrenagem {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Rotação constante do ponteiro temporal */
+@keyframes rodarPonteiro {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Flutuação suave dos objetos temporais */
+@keyframes flutuarObjeto {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+}
+@keyframes flutuarObjetoSecundario {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(8px) rotate(-5deg); }
+}
+
+/* Flutuação do cartão de imagem PNG */
+@keyframes flutuarCartao {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Respiração Neutra da Coruja (Estado Normal) */
+@keyframes corujaRespirar {
+    0%, 100% { transform: scaleY(1) scaleX(1); }
+    50% { transform: scaleY(1.03) scaleX(0.98) translateY(-2px); }
+}
+
+/* Salto de Alegria da Coruja (Estado Contente) */
+@keyframes corujaFestejar {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-20px) scaleY(1.1) scaleX(0.9); }
+    50% { transform: translateY(-20px) scaleY(0.95) scaleX(1.05) rotate(5deg); }
+    70% { transform: translateY(-10px) rotate(-5deg); }
+}
+
+/* Tremor de Deceção da Coruja (Estado Triste) */
+@keyframes corujaTremer {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20%, 60% { transform: translateX(-6px) rotate(-3deg); }
+    40%, 80% { transform: translateX(6px) rotate(3deg); }
+}
+
+/* --- IMAGEM PREMIUM NAS PERGUNTAS (PC APENAS) --- */
+
+/* Escondido por padrão em telemóveis para evitar poluição visual e manter a responsividade */
+.imagem-pergunta-premium {
+    display: none;
+}
+
+/* Visível apenas em computadores (ecrãs a partir de 769px) */
+@media (min-width: 769px) {
+    .imagem-pergunta-premium {
+        display: block;
+        width: 140px; /* Tamanho proporcional premium */
+        height: 100px;
+        object-fit: contain;
+        margin: 0 auto 15px; /* Centraliza a imagem e cria margem para a pergunta abaixo */
+        border-radius: 15px;
+        padding: 6px;
+        box-sizing: border-box;
+    }
+}
+
+		   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>A Máquina do Tempo<img src="../img-titulos/maquina_tempo.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escolhe um minijogo para começar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- Alerta flutuante para avisos rápidos ao aluno -->
+        <div id="toast-msg" class="toast-msg"></div>
+
+        <!-- =========================================
+             ECRÃ DE SELEÇÃO / MENU INICIAL
+             ========================================= -->
+        <div id="ecra-selecao" class="ecra">
+            
+            <!-- ANIMAÇÃO DE ENQUADRAMENTO DA MÁQUINA DO TEMPO -->
+            <div class="animacao-tutorial">
+                <div class="engrenagem-tempo"></div>
+                <div class="objeto-temporal ampulheta"></div>
+                <div class="objeto-temporal calendario"></div>
+                <div class="vortex-tempo">
+                    <div class="ponteiro-tempo"></div>
+                </div>
+            </div>
+            
+            <h2 class="titulo-menu">Escolhe o teu desafio:</h2>
+            <div class="subtitulo" style="margin-top:-15px; margin-bottom:25px; font-weight:bold; color:var(--azul-escuro); max-width:550px; text-align:center;">
+                Ajuda a coruja a calibrar os frisos cronológicos e viaja pela história do nosso planeta!
+            </div>
+            
+            <!-- GRELHA COM OS DOIS MENUS ATIVOS (CORES VIBRANTES) -->
+            <div class="grid-niveis">
+                
+                <!-- Nível 1: Década, Século e Milénio -->
+                <button class="btn-nivel-novo bg-turquesa" onclick="iniciarJogo(10, 'A Régua do Tempo', 1)">
+                    <img src="../img-titulos/maquina_tempo_menu_1.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">A Régua do Tempo</span>
+                        <span class="btn-nivel-subtitulo">Década, Século e Milénio</span>
+                    </div>
+                </button>
+        
+                <!-- Nível 2: Antes e depois de Cristo (a.C. / d.C.) -->
+                <button class="btn-nivel-novo bg-rosa" onclick="iniciarJogo(10, 'Viagem na História', 2)">
+                    <img src="../img-titulos/maquina_tempo_menu_2.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Viagem na História</span>
+                        <span class="btn-nivel-subtitulo">Antes e depois de Cristo (a.C. / d.C.)</span>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE JOGO
+             ========================================= -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- BARRA DE ESTADO COMPACTA E RESPONSIVA -->
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+                <div class="badge-ronda">
+                    <span id="badge-ronda-svg"></span>
+                    <span id="val-progresso">1</span>/<span id="val-total">10</span>
+                </div>
+                <div class="progress-bg">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="badge-erros">
+                    <span id="icone-erro-svg"></span>
+                    <span id="val-erros">0</span>
+                </div>
+            </div>
+
+            <!-- ÁREA DE JOGO LIVRE (CONJUNTO DE EXERCÍCIOS) -->
+            <div class="area-jogo-custom">
+                
+                <!-- Zona onde o script injeta a pergunta e as opções -->
+                <div id="game-area" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;"></div>
+                
+                <!-- A NOSSA CORUJA GUIA (FEEDBACK VISUAL) -->
+                <div class="coruja-guia-container" id="coruja-container">
+                    <img src="coruja_normal.png" class="coruja-guia-img" id="coruja-img" alt="Coruja Sabichona">
+                </div>
+
+            </div>
+            
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE TRANSIÇÃO (NÍVEL COMPLETO)
+             ========================================= -->
+        <div id="ecra-transicao" class="ecra">
+            <h2 class="end-title" id="transicao-title-text">Nível Completo!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                <p>Estás a ir muito bem!</p>
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="carregarRonda()">
+                    PRÓXIMO DESAFIO 
+                    <img src="../../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">
+                    <img src="../../../SVG/home.svg" class="icon-acao" alt=""> 
+                    VOLTAR AO MENU
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================
+             ECRÃ DE FIM (MENSAGEM DE PARABÉNS E ERROS)
+             ========================================= -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                Completaste a calibração da Máquina do Tempo!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+            
+        </div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+/* ==========================================================================
+   SVGs GLOBAIS DO TEMPLATE
+   ========================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+	<path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
+	<rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+	</svg> Menu`;
+
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;">
+	<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+	</svg>`;
+
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;">
+	<path d="M9 18h6"></path><path d="M10 22h4"></path>
+	<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+	</svg>`;
+
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;">
+	<path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
+	</svg>`;
+
+/* ==========================================================================
+   ESTADO GLOBAL DO JOGO
+   ========================================================================== */
+	let erradas = 0;
+	let desafioAtual = 0;
+	let totalDesafiosNivel = 10;
+	let levelAtivo = 1;
+	let rondasParaDica = 0;
+	let selecaoLigar = null;
+	let selecoesLigar = {};
+	let paresElementosLigar = [];
+	let arrastoAtivo = null;
+	let selecoesArrastar = {};
+	let totalArrastar = 0;
+	let totalParesCorretos = 0;
+	let lacunaAtiva = null;
+	let selecoesLacunas = {};
+	const COOLDOWN_DICA = 3;
+	let rondasSorteadas = [];
+	let timerImpaciencia = null;
+
+/* ==========================================================================
+   NÍVEL 1: A RÉGUA DO TEMPO (DÉCADA, SÉCULO E MILÉNIO) - 25 QUESTÕES
+   ========================================================================== */
+	const RONDAS_REGUA = [
+		{
+			tipo: 'multipla',
+			pergunta: 'Uma <span class="destaque-fundo">década</span> corresponde exatamente a que período de tempo?',
+			opcoes: ['5 anos', '10 anos', '50 anos', '100 anos'],
+			correta: '10 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Um <span class="destaque-fundo">século</span> é composto por um período de quantos anos?',
+			opcoes: ['10 anos', '50 anos', '100 anos', '1000 anos'],
+			correta: '100 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Um <span class="destaque-fundo">milénio</span> corresponde a um período de tempo equivalente a:',
+			opcoes: ['100 anos', '500 anos', '1000 anos', '10000 anos'],
+			correta: '1000 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Se uma árvore muito antiga na tua escola tem 30 anos, dizemos que ela tem:',
+			opcoes: ['3 décadas', '3 séculos', '3 anos', '3 milénios'],
+			correta: '3 décadas',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Uma pessoa centenária é alguém que comemorou 100 anos.<br>Isso significa que viveu:',
+			opcoes: ['Uma década', 'Meio século', 'Um século', 'Um milénio'],
+			correta: 'Um século',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Se um monumento histórico foi construído há 2000 anos, dizemos que foi construído há:',
+			opcoes: ['2 décadas', '2 séculos', '20 anos', '2 milénios'],
+			correta: '2 milénios',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Duas décadas completas correspondem a que número de anos?',
+			opcoes: ['12 anos', '20 anos', '50 anos', '200 anos'],
+			correta: '20 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Meio século de existência equivale exatamente a quantos anos?',
+			opcoes: ['25 anos', '50 anos', '75 anos', '100 anos'],
+			correta: '50 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Meio milénio equivale a que período temporal?',
+			opcoes: ['100 anos', '250 anos', '500 anos', '1000 anos'],
+			correta: '500 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'O teu primeiro Cartão de Cidadão tem uma validade de <span class="destaque-texto">10 anos</span>.<br>Dizemos que é válido por:',
+			opcoes: ['Um século', 'Meio século', 'Uma década', 'Um ano'],
+			correta: 'Uma década',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a organização das réguas do tempo.',
+			texto: 'Para medir o tempo dos acontecimentos, usamos diferentes réguas. Um período de 10 anos chama-se [0], um período de 100 anos chama-se [1], e a duração de 1000 anos chama-se [2].',
+			respostas: ['década', 'século', 'milénio'],
+			distratores: ['calendário', 'estação'],
+			dica: { tipo: 'modal', texto: 'Lembra-te das três unidades de contagem de tempo histórico: década (10), século (100) e milénio (1000).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a medição da história.',
+			texto: 'Os historiadores usam unidades maiores que o ano. Os castelos medievais duram há vários [0], que contam grupos de 100 anos. As pirâmides do Egito duram há [1], que contam grupos de 1000 anos. O crescimento de uma criança mede-se em [2], que contam grupos de 10 anos.',
+			respostas: ['séculos', 'milénios', 'décadas'],
+			distratores: ['meses', 'horas'],
+			dica: { tipo: 'modal', texto: 'Pensa nos tamanhos das unidades: séculos para centenas de anos, milénios para milhares, e décadas para dezenas.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a passagem de tempo na tua família.',
+			texto: 'A passagem de tempo ajuda a estudar a família. A diferença de idade entre ti e um irmão mais novo pode ser de alguns [0]. A idade dos teus pais conta-se por [1], e a história dos teus antepassados mais antigos conta-se por [2].',
+			respostas: ['anos', 'décadas', 'séculos'],
+			distratores: ['meses', 'milénios'],
+			dica: { tipo: 'modal', texto: 'A idade humana de curto prazo conta-se em anos, a de médio prazo em décadas e a árvore genealógica de antepassados em séculos.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a história do nosso país.',
+			texto: 'Portugal é um país muito antigo. A sua fundação como reino independente aconteceu no ano 1143. Isso significa que a história de Portugal já tem mais de 8 [0], o que equivale a quase um [1] completo.',
+			respostas: ['séculos', 'milénio'],
+			distratores: ['décadas', 'ano'],
+			dica: { tipo: 'modal', texto: 'O ano 1143 foi há mais de 800 anos (8 séculos), o que está muito perto de atingir os 1000 anos (1 milénio).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a evolução da Terra.',
+			texto: 'A história do nosso planeta é contada em períodos gigantescos. O aparecimento dos primeiros animais aconteceu há muitos [0] de anos, muito antes das primeiras cidades que têm apenas alguns [1] de história.',
+			respostas: ['milénios', 'séculos'],
+			distratores: ['décadas', 'anos'],
+			dica: { tipo: 'modal', texto: 'A natureza e o planeta contam-se por milhares de anos (milénios), enquanto as criações humanas recentes contam-se por centenas (séculos).' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada período temporal à sua equivalência exata em anos.',
+			esquerda: ['Uma década', 'Um século', 'Um milénio'],
+			direita: ['100 anos', '1000 anos', '10 anos'],
+			pares: {
+				'Uma década': '10 anos',
+				'Um século': '100 anos',
+				'Um milénio': '1000 anos'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada duração múltipla ao seu valor correto.',
+			esquerda: ['Meio século', 'Meio milénio', 'Duas décadas'],
+			direita: ['500 anos', '20 anos', '50 anos'],
+			pares: {
+				'Meio século': '50 anos',
+				'Meio milénio': '500 anos',
+				'Duas décadas': '20 anos'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga o elemento à unidade de tempo mais adequada para medir a sua existência.',
+			esquerda: ['Vida de um cão ou gato', 'História de um castelo português', 'Idade de uma floresta natural'],
+			direita: ['Séculos', 'Milénios', 'Anos'],
+			pares: {
+				'Vida de um cão ou gato': 'Anos',
+				'História de um castelo português': 'Séculos',
+				'Idade de uma floresta natural': 'Milénios'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga as durações múltiplas às suas designações corretas.',
+			esquerda: ['300 anos', '40 anos', '3000 anos'],
+			direita: ['4 décadas', '3 milénios', '3 séculos'],
+			pares: {
+				'300 anos': '3 séculos',
+				'40 anos': '4 décadas',
+				'3000 anos': '3 milénios'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga as relações de escala de tempo corretamente.',
+			esquerda: ['10 décadas', '10 séculos', '100 décadas'],
+			direita: ['1 milénio', '1 século', '1 milénio'],
+			pares: {
+				'10 décadas': '1 século',
+				'10 séculos': '1 milénio',
+				'100 décadas': '1 milénio'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Qual destas unidades de tempo representa o período de tempo mais curto?',
+			zonas: ['Um século', 'Um milénio', 'Uma década'],
+			correta: 'Uma década',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Qual destas unidades de tempo representa o período de tempo mais longo?',
+			zonas: ['Um milénio', 'Uma década', 'Um século'],
+			correta: 'Um milénio',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'O ano <span class="destaque-fundo">2000 d.C.</span> marcou na história da Humanidade o início de um novo:',
+			zonas: ['Século', 'Milénio', 'Ano'],
+			correta: 'Milénio',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Se os teus pais nasceram na década de 1980, isso significa que essa década durou:',
+			zonas: ['100 anos', '5 anos', '10 anos'],
+			correta: '10 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Uma dinastia de reis em Portugal governou durante 2 séculos completos. Isso equivale a:',
+			zonas: ['20 anos', '200 anos', '2000 anos'],
+			correta: '200 anos',
+			imagem: 'img/ampulheta.png',
+			dica: { tipo: 'highlight' }
+		}
+	];
+
+/* ==========================================================================
+   NÍVEL 2: VIAGEM NA HISTÓRIA (ANTES E DEPOIS DE CRISTO) - 25 QUESTÕES
+   ========================================================================== */
+	const RONDAS_VIAGEM = [
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Invenção da Escrita na Mesopotâmia',
+			ano: 'Há cerca de 5500 anos',
+			imagem: 'img/invencao_escrita.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'A escrita foi inventada há mais de 5000 anos. Como estamos no ano 2000 d.C., esse evento ocorreu muito antes do nascimento de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Construção do Coliseu de Roma',
+			ano: 'Ano 80 da nossa era',
+			imagem: 'img/coliseu.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'O Coliseu foi construído no primeiro século depois do nascimento de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Chegada das Caravelas Portuguesas ao Brasil',
+			ano: 'Ano 1500',
+			imagem: 'img/caravela.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'A viagem de Pedro Álvares Cabral realizou-se no ano 1500 da nossa contagem atual, ou seja, depois de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Viagem do Primeiro Homem à Lua',
+			ano: 'Ano 1969',
+			imagem: 'img/astronauta.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'A ida à Lua é um evento contemporâneo recente, situado no século XX depois de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Reinado do Faraó Tutankamon no Egito',
+			ano: 'Há cerca de 3300 anos',
+			imagem: 'img/farao.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'O Antigo Egito dos faraós desenvolveu-se muitos séculos antes do nascimento de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Fundação de Portugal por D. Afonso Henriques',
+			ano: 'Ano 1143',
+			imagem: 'img/castelo.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'D. Afonso Henriques declarou a independência no ano 1143 da nossa era histórica, ou seja, depois de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Extinção dos Dinossauros na Terra',
+			ano: 'Há 65 milhões de anos',
+			imagem: 'img/dinossauro.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'Os dinossauros desapareceram milhões de anos antes da nossa era começar, situando-se muito antes de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Invenção da Imprensa de Gutenberg',
+			ano: 'Ano 1440',
+			imagem: 'img/imprensa.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'A imprensa foi inventada na Europa no século XV, mais de 14 séculos após o nascimento de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Primeiros Jogos Olímpicos na Grécia Antiga',
+			ano: 'Há cerca de 2800 anos',
+			imagem: 'img/grecia_olimpiadas.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'Os primeiros jogos gregos realizaram-se quase 800 anos antes do nascimento de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Invenção da Roda na Antiga Mesopotâmia',
+			ano: 'Há cerca de 5500 anos',
+			imagem: 'img/roda.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'A roda foi uma das primeiras grandes invenções da humanidade, criada milhares de anos antes do nascimento de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Grande Terramoto de Lisboa',
+			ano: 'Ano 1755',
+			imagem: 'img/terramoto.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'Este acontecimento marcante da história de Portugal ocorreu no século XVIII da nossa contagem de tempo atual, depois de Cristo (d.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Construção do Monumento de Stonehenge em Inglaterra',
+			ano: 'Há cerca de 4500 anos',
+			imagem: 'img/stonehenge.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'Este círculo de pedras gigantesco foi construído por povos antigos há mais de quatro mil anos, muito antes de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Criação da Rede Pública de Internet',
+			ano: 'Ano 1991',
+			imagem: 'img/internet.png',
+			correta: 'dir',
+			dica: { tipo: 'modal', texto: 'A internet é uma tecnologia extremamente moderna da nossa atualidade, situada no século XX d.C. (depois de Cristo).' }
+		},
+		{
+			tipo: 'friso',
+			pergunta: 'Identifica o lado correto do friso cronológico para situar o evento:',
+			evento: 'Gravuras de Foz Côa feitas em Rochas (Portugal)',
+			ano: 'Há cerca de 22 000 anos',
+			imagem: 'img/pinturas_rupestres.png',
+			correta: 'esq',
+			dica: { tipo: 'modal', texto: 'Estas gravuras paleolíticas foram gravadas por caçadores nas rochas portuguesas dezenas de milhares de anos antes do nascimento de Cristo (a.C.).' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a divisão do tempo histórico:',
+			texto: 'Para ordenar a história do mundo, os países ocidentais escolheram o nascimento de [0] como o ponto de referência zero. Os acontecimentos passados antes deste marco dizem-se [1] de Cristo, e os acontecimentos posteriores dizem-se [2] de Cristo.',
+			respostas: ['Cristo', 'antes', 'depois'],
+			distratores: ['Portugal', 'ontem'],
+			dica: { tipo: 'modal', texto: 'O nascimento de Jesus Cristo é o marco divisório que define o ponto de referência central de toda a contagem dos anos da nossa história.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre as abreviaturas da história:',
+			texto: 'Para escrevermos datas históricas de forma rápida, usamos abreviaturas. Quando um evento aconteceu antes do marco zero, escrevemos [0]. Quando aconteceu depois do marco zero, escrevemos [1]. Estas letras significam antes de Cristo e depois de [2].',
+			respostas: ['a.C.', 'd.C.', 'Cristo'],
+			distratores: ['séc.', 'ano'],
+			dica: { tipo: 'modal', texto: 'As letras minúsculas "a.C." e "d.C." são usadas internacionalmente por historiadores para situar as eras.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre a representação gráfica do tempo:',
+			texto: 'Num friso cronológico horizontal, a contagem faz-se da esquerda para a direita. Os anos antes de Cristo ficam situados à [0] do marco central, enquanto os anos depois de Cristo ficam representados à [1] do nascimento de [2].',
+			respostas: ['esquerda', 'direita', 'Cristo'],
+			distratores: ['frente', 'Gutenberg'],
+			dica: { tipo: 'modal', texto: 'Pensa numa régua de números. Os valores negativos (a.C.) ficam à esquerda do zero, e os valores normais (d.C.) ficam à direita.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre os dinossauros e a escrita:',
+			texto: 'Os dinossauros desapareceram há milhões de anos, na era [0]. Já a invenção da escrita, que marca o fim da Pré-História, aconteceu há cerca de 3500 anos [1]. Ambos os acontecimentos pertencem à época anterior ao nascimento de [2].',
+			respostas: ['a.C.', 'a.C.', 'Cristo'],
+			distratores: ['d.C.', 'hoje'],
+			dica: { tipo: 'modal', texto: 'Tudo o que aconteceu na Pré-História e na Antiguidade Egípcia pertence de forma absoluta ao período antes de Cristo.' }
+		},
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto sobre os barcos e o espaço:',
+			texto: 'A viagem das caravelas em 1500 e a viagem espacial à Lua em 1969 pertencem à era [0]. Ambas aconteceram muitos séculos [1] do nascimento de Cristo e, por isso, usam a abreviatura [2].',
+			respostas: ['d.C.', 'depois', 'd.C.'],
+			distratores: ['a.C.', 'antes'],
+			dica: { tipo: 'modal', texto: 'O ano 1500 e o ano 1969 são números positivos na nossa linha de tempo, situados depois do nascimento de Cristo.' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada data histórica à sua era cronológica correta:',
+			esquerda: ['Ano 500 a.C.', 'Ano 1500 d.C.', 'Ano 1 (Marco)'],
+			direita: ['Depois de Cristo', 'Antes de Cristo', 'Nascimento de Cristo'],
+			pares: {
+				'Ano 500 a.C.': 'Antes de Cristo',
+				'Ano 1500 d.C.': 'Depois de Cristo',
+				'Ano 1 (Marco)': 'Nascimento de Cristo'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada zona do friso cronológico à sua designação:',
+			esquerda: ['Esquerda do Friso', 'Direita do Friso', 'Marcador Central'],
+			direita: ['Nascimento de Cristo', 'Antes de Cristo (a.C.)', 'Depois de Cristo (d.C.)'],
+			pares: {
+				'Esquerda do Friso': 'Antes de Cristo (a.C.)',
+				'Direita do Friso': 'Depois de Cristo (d.C.)',
+				'Marcador Central': 'Nascimento de Cristo'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada evento histórico à sua respetiva época de existência:',
+			esquerda: ['Egito dos Faraós', 'Idade Média', 'Século XXI (Atual)'],
+			direita: ['Época Moderna d.C.', 'Antiguidade a.C.', 'Época Medieval d.C.'],
+			pares: {
+				'Egito dos Faraós': 'Antiguidade a.C.',
+				'Idade Média': 'Época Medieval d.C.',
+				'Século XXI (Atual)': 'Época Moderna d.C.'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada abreviatura histórica ao seu significado completo:',
+			esquerda: ['a.C.', 'd.C.', 'séc.'],
+			direita: ['Depois de Cristo', 'Século', 'Antes de Cristo'],
+			pares: {
+				'a.C.': 'Antes de Cristo',
+				'd.C.': 'Depois de Cristo',
+				'séc.': 'Século'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada ano d.C. ao seu século correspondente em numeração romana:',
+			esquerda: ['Ano 1500', 'Ano 1143', 'Ano 2024'],
+			direita: ['Século XII', 'Século XXI', 'Século XV'],
+			pares: {
+				'Ano 1500': 'Século XV',
+				'Ano 1143': 'Século XII',
+				'Ano 2024': 'Século XXI'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'O que significa exatamente a abreviatura "a.C." que acompanha muitas datas históricas?',
+			zonas: ['Ano de Cristo', 'Antes de Cristo', 'Após o Centenário'],
+			correta: 'Antes de Cristo',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'O que significa exatamente a abreviatura "d.C." que acompanha as datas modernas?',
+			zonas: ['Durante o Centenário', 'Duração de Cristo', 'Depois de Cristo'],
+			correta: 'Depois de Cristo',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'O ano em que nos encontramos a viver atualmente pertence a que era cronológica?',
+			zonas: ['Antes de Cristo (a.C.)', 'Durante Cristo (s.C.)', 'Depois de Cristo (d.C.)'],
+			correta: 'Depois de Cristo (d.C.)',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Qual destes eventos aconteceu há mais tempo na Terra, segundo os registos da história?',
+			zonas: ['Nascimento de D. Afonso Henriques', 'Extinção dos Dinossauros', 'Invenção da Imprensa de Gutenberg'],
+			correta: 'Extinção dos Dinossauros',
+			dica: { tipo: 'highlight' }
+		},
+		{
+			tipo: 'clicar',
+			pergunta: 'Qual é o acontecimento que serve de ponto zero para dividir a história em a.C. e d.C.?',
+			zonas: ['Nascimento de Cristo', 'Invenção da Escrita', 'Descoberta do Planeta Terra'],
+			correta: 'Nascimento de Cristo',
+			dica: { tipo: 'highlight' }
+		}
+	];
+
+/* ==========================================================================
+   ARRANQUE DO JOGO (DOM CONTENT LOADED)
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
+
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+
+		alterarEstadoCoruja('normal');
+	});
+
+/* ==========================================================================
+   SISTEMA DE GESTÃO DA MASCOTE (CORUJA GUIA)
+   ========================================================================== */
+	function alterarEstadoCoruja(estado) {
+		const img = document.getElementById('coruja-img');
+		if (!img) return;
+
+		img.src = `coruja_${estado}.png`;
+		img.classList.remove('coruja-contente', 'coruja-triste');
+
+		void img.offsetWidth;
+
+		if (estado === 'contente') {
+			img.classList.add('coruja-contente');
+		} else if (estado === 'triste') {
+			img.classList.add('coruja-triste');
+		}
+	}
+
+/* ==========================================================================
+   TEMPORIZADOR ANTI-FRUSTRAÇÃO (DICA IMPACIENTE)
+   ========================================================================== */
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+
+		timerImpaciencia = setTimeout(() => {
+			if (rondasParaDica <= 0 && btnDica) {
+				btnDica.classList.add('dica-impaciente');
+			}
+		}, 15000);
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+	}
+
+/* ==========================================================================
+   MÉTODOS AUXILIARES: BARALHAR E CORES ALEATÓRIAS
+   ========================================================================== */
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-verde', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+/* ==========================================================================
+   NAVEGAÇÃO E MENUS
+   ========================================================================== */
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if (alvo) alvo.style.display = 'flex';
+	}
+	
+	function showToast(msg, isError = false) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = msg;
+		toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+		toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+		toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+		toast.classList.add('active');
+		setTimeout(() => toast.classList.remove('active'), 3000);
+	}
+
+/* ==========================================================================
+   GESTOR DE JOGO E FILTRAGEM DE MINIJOGOS
+   ========================================================================== */
+	function iniciarJogo(numQuestoes = 10, tituloNivel = "", numNivelActivo = 1) {
+		erradas = 0;
+		desafioAtual = 0;
+		rondasParaDica = 0;
+		totalDesafiosNivel = numQuestoes;
+		levelAtivo = numNivelActivo;
+
+		if (tituloNivel !== "") {
+			document.getElementById('subtitulo-header').textContent = tituloNivel;
+		}
+
+		/* Filtra e carrega a base de dados de acordo com o nível */
+		if (levelAtivo === 1) {
+			rondasSorteadas = baralharArray(RONDAS_REGUA).slice(0, numQuestoes);
+		} else {
+			rondasSorteadas = baralharArray(RONDAS_VIAGEM).slice(0, numQuestoes);
+		}
+
+		limparConfetis();
+		atualizarPlacar();
+		atualizarBotaoDica();
+		alterarEstadoCoruja('normal');
+		mostrarEcra('ecra-jogo');
+
+		carregarRonda(); 
+	}
+	
+	function atualizarPlacar() {
+		const p = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+		
+		const percentagem = (p / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+
+/* ==========================================================================
+   SISTEMA DE DICAS INTELIGENTES
+   ========================================================================== */
+	function usarDica() {
+		pararTimerImpaciencia();
+		
+		if (rondasParaDica > 0) return;
+
+		const ronda = rondasSorteadas[desafioAtual];
+		tocarSom('flip');
+
+		const configDica = ronda.dica;
+		if (!configDica) return;
+
+		if (configDica.tipo === 'modal') {
+			let htmlDica = `<p class="ajuda-texto">${configDica.texto}</p>`;
+			abrirModalDica(htmlDica);
+		}
+
+		if (configDica.tipo === '50-50') {
+			let escondidas = 0;
+			const maxEsconder = Math.floor(document.querySelectorAll('.btn-opcao-vibrante').length / 2);
+
+			document.querySelectorAll('.btn-opcao-vibrante').forEach(btn => {
+				let isCorrect = (btn.textContent.trim() === ronda.correta);
+				if (!isCorrect && escondidas < maxEsconder) {
+					btn.style.opacity = '0.3';
+					btn.style.pointerEvents = 'none';
+					btn.disabled = true;
+					escondidas++;
+				}
+			});
+			showToast("Removi algumas opções erradas!");
+		}
+
+		if (configDica.tipo === 'highlight') {
+			aplicarHighlightRespostaCorreta(ronda);
+			showToast("Olha com atenção para o ecrã!");
+		}
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+
+	function abrirModalDica(conteudoHTML) {
+		const modal = document.getElementById('modal-ajuda');
+		const conteudo = document.getElementById('modal-dica-conteudo');
+		if (modal && conteudo) {
+			conteudo.innerHTML = conteudoHTML;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharModalDica() {
+		const modal = document.getElementById('modal-ajuda');
+		if (modal) modal.classList.remove('active');
+	}
+
+/* ==========================================================================
+   CONSTRUÇÃO E MONTAGEM DOS DESAFIOS DINÂMICOS
+   ========================================================================== */
+	function carregarRonda() {
+		document.querySelectorAll('.highlight-correto').forEach(el => el.classList.remove('highlight-correto'));
+		
+		const ronda = rondasSorteadas[desafioAtual];
+		if (!ronda) {
+			finalizarJogo();
+			return;
+		}
+		
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+
+		// 1. Injeta a imagem de apoio acima da pergunta (apenas se existir imagem e não for o tipo friso)
+		if (ronda.imagem && ronda.tipo !== 'friso') {
+			const imgApoio = document.createElement('img');
+			imgApoio.src = ronda.imagem;
+			imgApoio.className = 'imagem-pergunta-premium';
+			imgApoio.alt = '';
+			imgApoio.onerror = () => { imgApoio.style.display = 'none'; }; // Evita ícone quebrado se a imagem faltar
+			area.appendChild(imgApoio);
+		}
+
+		// 2. Cria e injeta o texto da pergunta
+		const pergunta = document.createElement('div');
+		pergunta.className = 'pergunta-texto';
+		pergunta.innerHTML = ronda.pergunta;
+		area.appendChild(pergunta);
+
+		/* --- CASO 1: ESCOLHA MÚLTIPLA VIBRANTE BARALHADA --- */
+		if (ronda.tipo === 'multipla') {
+			const opcoes = document.createElement('div');
+			opcoes.className = 'opcoes-container';
+
+			const opcoesBaralhadas = baralharArray(ronda.opcoes);
+			const coresSorteio = obterCoresAleatorias(opcoesBaralhadas.length);
+
+			opcoesBaralhadas.forEach((opcao, idx) => {
+				const btn = document.createElement('button');
+				btn.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				btn.textContent = opcao;
+				btn.onclick = () => opcao === ronda.correta ? simularAcerto(btn) : simularErro(btn);
+				opcoes.appendChild(btn);
+			});
+
+			area.appendChild(opcoes);
+		}
+
+		/* --- CASO 2: CLICAR OPÇÃO CURTA VIBRANTE BARALHADA --- */
+		if (ronda.tipo === 'clicar') {
+			const opcoes = document.createElement('div');
+			opcoes.className = 'opcoes-container';
+
+			const zonasBaralhadas = baralharArray(ronda.zonas);
+			const coresSorteio = obterCoresAleatorias(zonasBaralhadas.length);
+
+			zonasBaralhadas.forEach((zona, idx) => {
+				const btn = document.createElement('button');
+				btn.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				btn.textContent = zona;
+				btn.onclick = () => zona === ronda.correta ? simularAcerto(btn) : simularErro(btn);
+				opcoes.appendChild(btn);
+			});
+
+			area.appendChild(opcoes);
+		}
+
+		/* --- CASO 3: LIGAR COLUNAS (EMPARELHAMENTO) --- */
+		if (ronda.tipo === 'ligar') {
+			selecoesLigar = {};
+			paresElementosLigar = [];
+			totalParesCorretos = Object.keys(ronda.pares).length;
+
+			const container = document.createElement('div');
+			container.className = 'coluna-ligar-container';
+
+			const esquerdaEmbaralhada = baralharArray(ronda.esquerda);
+			const direitaEmbaralhada = baralharArray(ronda.direita);
+
+			const colEsq = document.createElement('div');
+			colEsq.className = 'coluna-ligar';
+
+			esquerdaEmbaralhada.forEach(item => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-opcao-vibrante bg-azul';
+				btn.textContent = item;
+				btn.onclick = () => selecionarLigar(item, 'esq', btn);
+				colEsq.appendChild(btn);
+			});
+
+			const colDir = document.createElement('div');
+			colDir.className = 'coluna-ligar';
+
+			direitaEmbaralhada.forEach(item => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-opcao-vibrante bg-turquesa';
+				btn.textContent = item;
+				btn.onclick = () => selecionarLigar(item, 'dir', btn);
+				colDir.appendChild(btn);
+			});
+
+			container.appendChild(colEsq);
+			container.appendChild(colDir);
+			area.appendChild(container);
+		}
+
+		/* --- CASO 4: ARRASTAR E LIGAR (SISTEMA DE DOIS TOQUES) --- */
+		if (ronda.tipo === 'arrastar') {
+			selecoesArrastar = {};
+			arrastoAtivo = null; 
+			totalArrastar = Object.keys(ronda.pares).length;
+
+			const zona = document.createElement('div');
+			zona.style.display = 'flex';
+			zona.style.justifyContent = 'center';
+			zona.style.gap = '20px';
+			zona.style.width = '100%';
+			zona.style.flexWrap = 'wrap';
+
+			const itens = document.createElement('div');
+			itens.style.display = 'flex';
+			itens.style.flexDirection = 'column';
+			itens.style.gap = '10px';
+
+			const itensEmbaralhados = baralharArray(ronda.itens);
+
+			itensEmbaralhados.forEach(valor => {
+				const bloco = document.createElement('button'); 
+				bloco.className = 'bloco-arrastar';
+				bloco.textContent = valor;
+				bloco.style.fontSize = '1.1rem';
+
+				bloco.onclick = () => {
+					if (bloco.disabled) return;
+					tocarSom('flip');
+					
+					document.querySelectorAll('.bloco-arrastar').forEach(b => b.classList.remove('selecionado'));
+					bloco.classList.add('selecionado');
+					arrastoAtivo = bloco;
+
+					document.querySelectorAll('.alvo-arrastar').forEach(caixa => {
+						if (!caixa.querySelector('strong')) {
+							caixa.classList.add('pronto-receber');
+						}
+					});
+				};
+
+				itens.appendChild(bloco);
+			});
+
+			const alvos = document.createElement('div');
+			alvos.style.display = 'flex';
+			alvos.style.flexDirection = 'column';
+			alvos.style.gap = '10px';
+
+			ronda.alvos.forEach(alvo => {
+				const caixa = document.createElement('div');
+				caixa.className = 'alvo-arrastar';
+				caixa.innerHTML = `<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>`;
+				caixa.style.display = 'flex';
+				caixa.style.flexDirection = 'column';
+				caixa.style.alignItems = 'center';
+				caixa.style.gap = '5px';
+
+				caixa.onclick = () => {
+					if (!arrastoAtivo) {
+						showToast("Seleciona primeiro uma palavra em cima!", false);
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.textContent;
+					selecoesArrastar[valorSelecionado] = alvo;
+
+					caixa.innerHTML = `
+						<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>
+						<strong style="color: var(--azul-vibrante); background: white; padding: 4px 10px; border-radius: 10px; font-size: 1.1rem;">${valorSelecionado}</strong>
+					`;
+
+					arrastoAtivo.classList.remove('selecionado');
+					arrastoAtivo.style.opacity = '0.3';
+					arrastoAtivo.disabled = true;
+					arrastoAtivo = null;
+
+					document.querySelectorAll('.alvo-arrastar').forEach(c => c.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesArrastar).length === totalArrastar) {
+						setTimeout(validarArrastar, 400); 
+					}
+				};
+
+				alvos.appendChild(caixa);
+			});
+
+			zona.appendChild(itens);
+			zona.appendChild(alvos);
+			area.appendChild(zona);
+		}
+
+		/* --- CASO 5: TEXTO COM LACUNAS (MÉTODO 1 TOQUE SEGURO) --- */
+		if (ronda.tipo === 'lacunas') {
+			selecoesLacunas = {};
+			lacunaAtiva = null;
+
+			const totalSlots = ronda.respostas.length;
+
+			const paragrafo = document.createElement('div');
+			paragrafo.className = 'texto-paragrafo-lacunas';
+
+			let textoEditado = ronda.texto;
+			for (let i = 0; i < totalSlots; i++) {
+				textoEditado = textoEditado.replace(`[${i}]`, `___SLOT_${i}___`);
+			}
+
+			const partesTexto = textoEditado.split('___');
+
+			partesTexto.forEach(parte => {
+				if (parte.startsWith('SLOT_')) {
+					const idx = parseInt(parte.split('_')[1], 10);
+					
+					const slot = document.createElement('span');
+					slot.className = 'slot-vazio';
+					slot.id = `slot-lacuna-${idx}`;
+					slot.textContent = '...';
+
+					slot.onclick = () => {
+						if (!lacunaAtiva) {
+							const palavraAtual = slot.querySelector('strong')?.textContent;
+							if (palavraAtual) {
+								tocarSom('flip');
+								slot.textContent = '...';
+								slot.classList.remove('preenchido');
+								delete selecoesLacunas[idx];
+								
+								document.querySelectorAll('.palavra-banco').forEach(b => {
+									if (b.textContent === palavraAtual) {
+										b.disabled = false;
+										b.style.opacity = '1';
+									}
+								});
+							} else {
+								showToast("Seleciona primeiro uma palavra em baixo!");
+							}
+							return;
+						}
+
+						tocarSom('flip');
+						const palavraTexto = lacunaAtiva.texto;
+
+						const palavraAnterior = slot.querySelector('strong')?.textContent;
+						if (palavraAnterior) {
+							document.querySelectorAll('.palavra-banco').forEach(b => {
+								if (b.textContent === palavraAnterior) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						}
+
+						slot.innerHTML = `<strong style="color:var(--azul-escuro); font-size:1.1rem;">${palavraTexto}</strong>`;
+						slot.classList.add('preenchido');
+						
+						selecoesLacunas[idx] = palavraTexto;
+
+						lacunaAtiva.elemento.classList.remove('selecionado');
+						lacunaAtiva.elemento.style.opacity = '0.3';
+						lacunaAtiva.elemento.disabled = true;
+						lacunaAtiva = null;
+
+						document.querySelectorAll('.slot-vazio').forEach(s => s.classList.remove('pronto-receber'));
+
+						if (Object.keys(selecoesLacunas).length === totalSlots) {
+							setTimeout(validarLacunas, 400);
+						}
+					};
+
+					paragrafo.appendChild(slot);
+				} else {
+					paragrafo.appendChild(document.createTextNode(parte));
+				}
+			});
+
+			area.appendChild(paragrafo);
+
+			const banco = document.createElement('div');
+			banco.className = 'banco-opcoes';
+
+			const distratoresSeguros = ronda.distratores || [];
+			const todasAsOpcoes = baralharArray([...ronda.respostas, ...distratoresSeguros]);
+
+			todasAsOpcoes.forEach(palavra => {
+				const btnPalavra = document.createElement('button');
+				btnPalavra.className = 'palavra-banco';
+				btnPalavra.textContent = palavra;
+
+				btnPalavra.onclick = () => {
+					if (btnPalavra.disabled) return;
+					tocarSom('flip');
+
+					document.querySelectorAll('.palavra-banco').forEach(b => b.classList.remove('selecionado'));
+					btnPalavra.classList.add('selecionado');
+
+					lacunaAtiva = { elemento: btnPalavra, texto: palavra };
+
+					document.querySelectorAll('.slot-vazio').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+
+				banco.appendChild(btnPalavra);
+			});
+
+			area.appendChild(banco);
+		}
+
+		/* --- NOVO CASO 6: FRISO CRONOLÓGICO INTERATIVO (a.C. vs d.C.) --- */
+		if (ronda.tipo === 'friso') {
+			// Criação do Cartão de Imagem PNG do Evento
+			const cartao = document.createElement('div');
+			cartao.className = 'cartao-evento-tempo';
+
+			const img = document.createElement('img');
+			img.src = ronda.imagem || 'relogio.png';
+			img.className = 'imagem-evento-tempo';
+			img.alt = ronda.evento;
+			img.onerror = () => { img.style.display = 'none'; };
+			cartao.appendChild(img);
+
+			const legenda = document.createElement('div');
+			legenda.className = 'legenda-evento-tempo';
+			legenda.innerHTML = `${ronda.evento}<br><span style="color:var(--azul-vibrante); font-weight:500;">${ronda.ano}</span>`;
+			cartao.appendChild(legenda);
+
+			area.appendChild(cartao);
+
+			// Criação do Friso Horizontal
+			const friso = document.createElement('div');
+			friso.className = 'friso-cronologico';
+
+			const cristo = document.createElement('div');
+			cristo.className = 'marcador-cristo';
+			friso.appendChild(cristo);
+
+			// Botão de Classificação Esquerdo (a.C.)
+			const btnEsq = document.createElement('button');
+			btnEsq.className = 'zona-tempo-friso esq';
+			btnEsq.textContent = 'Antes de Cristo (a.C.)';
+			btnEsq.onclick = () => {
+				if (ronda.correta === 'esq') {
+					simularAcerto(btnEsq);
+				} else {
+					simularErro(btnEsq);
+				}
+			};
+
+			// Botão de Classificação Direito (d.C.)
+			const btnDir = document.createElement('button');
+			btnDir.className = 'zona-tempo-friso dir';
+			btnDir.textContent = 'Depois de Cristo (d.C.)';
+			btnDir.onclick = () => {
+				if (ronda.correta === 'dir') {
+					simularAcerto(btnDir);
+				} else {
+					simularErro(btnDir);
+				}
+			};
+
+			friso.appendChild(btnEsq);
+			friso.appendChild(btnDir);
+			area.appendChild(friso);
+		}
+		
+		resetTimerImpaciencia();
+	}
+
+/* ==========================================================================
+   LÓGICA DE VALIDAÇÃO: EMPARELHAMENTOS E ARRASTAMENTO
+   ========================================================================== */
+	function selecionarLigar(valor, lado, botao) {
+		if (botao.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === botao || p.dirBtn === botao);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			
+			if (selecaoLigar) {
+				selecaoLigar.botao.classList.remove('selecionado');
+				selecaoLigar = null;
+			}
+			return;
+		}
+
+		if (selecaoLigar && selecaoLigar.botao === botao) {
+			botao.classList.remove('selecionado');
+			selecaoLigar = null;
+			tocarSom('flip');
+			return;
+		}
+
+		if (!selecaoLigar) {
+			selecaoLigar = { valor, lado, botao };
+			botao.classList.add('selecionado');
+			return;
+		}
+
+		if (selecaoLigar.lado === lado) {
+			selecaoLigar.botao.classList.remove('selecionado');
+			selecaoLigar = { valor, lado, botao };
+			botao.classList.add('selecionado');
+			tocarSom('flip');
+			return;
+		}
+
+		const esquerda = selecaoLigar.lado === 'esq' ? selecaoLigar.valor : valor;
+		const direita = selecaoLigar.lado === 'dir' ? selecaoLigar.valor : valor;
+
+		const esquerdaBtn = selecaoLigar.lado === 'esq' ? selecaoLigar.botao : botao;
+		const direitaBtn = selecaoLigar.lado === 'dir' ? selecaoLigar.botao : botao;
+
+		selecoesLigar[esquerda] = direita;
+
+		paresElementosLigar.push({
+			esqBtn: esquerdaBtn,
+			dirBtn: direitaBtn,
+			esqVal: esquerda,
+			dirVal: direita
+		});
+
+		document.querySelectorAll('.selecionado').forEach(b => b.classList.remove('selecionado'));
+
+		esquerdaBtn.classList.add('ligado');
+		direitaBtn.classList.add('ligado');
+
+		selecaoLigar = null;
+
+		if (Object.keys(selecoesLigar).length === totalParesCorretos) {
+			validarLigacoes();
+		}
+	}
+
+	function validarLigacoes() {
+		const ronda = rondasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		for (let esquerda in ronda.pares) {
+			if (selecoesLigar[esquerda] !== ronda.pares[esquerda]) {
+				tudoCerto = false;
+			}
+		}
+
+		const todosBotoes = document.getElementById('game-area').querySelectorAll('.btn-opcao-vibrante');
+
+		if (tudoCerto) {
+			pararTimerImpaciencia();
+			alterarEstadoCoruja('contente');
+
+			todosBotoes.forEach(btn => btn.classList.add('sucesso-vibrante'));
+			tocarSom('acerto');
+
+			setTimeout(() => {
+				todosBotoes.forEach(btn => btn.classList.remove('sucesso-vibrante'));
+				
+				desafioAtual++;
+				if (rondasParaDica > 0) rondasParaDica--;
+				
+				atualizarPlacar();
+				atualizarBotaoDica();
+				alterarEstadoCoruja('normal');
+				paresElementosLigar = [];
+
+				if (desafioAtual < totalDesafiosNivel) {
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1000);
+
+		} else {
+			alterarEstadoCoruja('triste');
+
+			todosBotoes.forEach(btn => btn.classList.add('erro-vibrante'));
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+
+			setTimeout(() => {
+				todosBotoes.forEach(btn => {
+					btn.classList.remove('erro-vibrante', 'ligado');
+					btn.style.opacity = '1';
+				});
+
+				selecoesLigar = {};
+				selecaoLigar = null;
+				paresElementosLigar = [];
+				alterarEstadoCoruja('normal');
+			}, 800);
+
+			resetTimerImpaciencia();
+		}
+	}
+
+	function validarArrastar() {
+        const ronda = rondasSorteadas[desafioAtual];
+        let tudoCerto = true;
+
+        for (let item in ronda.pares) {
+            if (selecoesArrastar[item] !== ronda.pares[item]) {
+                tudoCerto = false;
+            }
+        }
+
+        if (tudoCerto) {
+            simularAcerto(document.querySelector('.bloco-arrastar'));
+        } else {
+            simularErro(document.querySelector('.bloco-arrastar'));
+            
+            setTimeout(() => {
+                selecoesArrastar = {};
+                arrastoAtivo = null;
+
+                document.querySelectorAll('.bloco-arrastar').forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.classList.remove('selecionado');
+                });
+
+                const caixasAlvo = document.querySelectorAll('.alvo-arrastar');
+                ronda.alvos.forEach((alvo, idx) => {
+                    caixasAlvo[idx].innerHTML = `<span style="font-size: 1rem; color: var(--text-main); text-align:center;">${alvo}</span>`;
+                });
+            }, 800);
+        }
+    }
+
+	function validarLacunas() {
+		const ronda = rondasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		for (let i = 0; i < ronda.respostas.length; i++) {
+			if (selecoesLacunas[i] !== ronda.respostas[i]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			simularAcerto(document.querySelector('.palavra-banco'));
+		} else {
+			simularErro(document.querySelector('.palavra-banco'));
+			
+			setTimeout(() => {
+				selecoesLacunas = {};
+				lacunaAtiva = null;
+
+				document.querySelectorAll('.palavra-banco').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				document.querySelectorAll('.slot-vazio').forEach(slot => {
+					slot.textContent = '...';
+					slot.classList.remove('preenchido');
+				});
+			}, 800);
+		}
+	}
+
+/* ==========================================================================
+   FEEDBACKS VIBRANTES E TRANSIÇÃO
+   ========================================================================== */
+	function simularAcerto(btn) {
+		pararTimerImpaciencia();
+		
+		alterarEstadoCoruja('contente');
+
+		document.querySelectorAll('.btn-opcao-vibrante, .bloco-arrastar, .zona-tempo-friso').forEach(b => {
+			b.classList.add('btn-disabled');
+			b.style.pointerEvents = 'none';
+		});
+
+		btn.classList.add('sucesso-vibrante');
+		tocarSom('acerto');
+
+		setTimeout(() => {
+			btn.classList.remove('sucesso-vibrante');
+			
+			document.querySelectorAll('.btn-opcao-vibrante, .bloco-arrastar, .zona-tempo-friso').forEach(b => {
+				b.classList.remove('btn-disabled');
+				b.style.pointerEvents = 'auto';
+			});
+
+			desafioAtual++;
+			if (rondasParaDica > 0) rondasParaDica--;
+			
+			atualizarPlacar();
+			atualizarBotaoDica();
+
+			alterarEstadoCoruja('normal');
+
+			if (desafioAtual < totalDesafiosNivel) {
+				carregarRonda();
+			} else {
+				finalizarJogo();
+			}
+
+		}, 1000);
+	}
+
+	function simularErro(btn) {
+		alterarEstadoCoruja('triste');
+
+		btn.classList.add('erro-vibrante');
+		tocarSom('erro');
+		erradas++;
+		atualizarPlacar();
+
+		setTimeout(() => {
+			btn.classList.remove('erro-vibrante');
+			alterarEstadoCoruja('normal');
+		}, 500);
+
+		resetTimerImpaciencia();
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		// Seletor universal: suporta tanto os botões vibrantes novos como os botões padrão antigos
+		const todosBotoes = document.getElementById('game-area').querySelectorAll('.btn-opcao-vibrante, .btn-opcao');
+
+		/* Realce padrão para múltipla escolha e cliques simples */
+		todosBotoes.forEach(btn => {
+			if (btn.textContent.trim() === ronda.correta) {
+				btn.classList.add('highlight-correto');
+				setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+			}
+		});
+
+		/* Realce de apenas UM par correto nos exercícios de Ligar */
+		if (ronda.tipo === 'ligar') {
+			const chavesPares = Object.keys(ronda.pares);
+			if (chavesPares.length > 0) {
+				const primeiroConceitoEsq = chavesPares[0];
+				const respostaCorretaDir = ronda.pares[primeiroConceitoEsq];
+
+				// Faz piscar apenas os dois botões correspondentes ao par correto
+				todosBotoes.forEach(btn => {
+					const textoBotao = btn.textContent.trim();
+					if (textoBotao === primeiroConceitoEsq || textoBotao === respostaCorretaDir) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+			}
+		}
+
+		/* Realce para exercícios de arrastar */
+		if (ronda.tipo === 'arrastar') {
+			document.querySelectorAll('.btn-opcao-vibrante, .btn-opcao, .alvo-arrastar').forEach(el => {
+				if (Object.values(ronda.pares).includes(el.textContent.trim())) {
+					el.classList.add('highlight-correto');
+					setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+	}
+
+/* ==========================================================================
+   FINALIZAÇÃO E REINÍCIO
+   ========================================================================== */
+	function finalizarJogo() {
+		document.getElementById('progress-fill').style.width = '100%';
+		setTimeout(() => {
+			mostrarEcra('ecra-fim');
+			document.getElementById('final-erros').textContent = erradas;
+			tocarSom('vitoria');
+			dispararConfetis();
+		}, 500);
+	}
+
+	function reiniciarJogo() {
+		iniciarJogo(totalDesafiosNivel, "", levelAtivo);
+	}
+
+	function voltarAoMenu() {
+		document.getElementById('subtitulo-header').textContent = "Escolhe um minijogo para começar!";
+		limparConfetis();
+		mostrarEcra('ecra-selecao');
+	}
+
+/* ==========================================================================
+   MOTOR DE ÁUDIO SINTETIZADO (GERAÇÃO DE BEEP RETRO)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		if (!AudioContextClass) return;
+		if (!audioCtx) audioCtx = new AudioContextClass();
+		if (audioCtx.state === 'suspended') audioCtx.resume();
+	}
+
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true });
+
+	function tocarSom(tipo) {
+		initAudio();
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		} else if (tipo === 'acerto') {
+			const notas = [783.99, 1046.50]; 
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.value = freq;
+				g.gain.setValueAtTime(0, agora + i * 0.12);
+				g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+				o.start(agora + i * 0.12);
+				o.stop(agora + i * 0.12 + 0.3);
+			});
+		} else if (tipo === 'erro') {
+			osc.type = 'triangle';
+			osc.frequency.setValueAtTime(220, agora);
+			osc.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+			gain.gain.setValueAtTime(0.08, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.4);
+		} else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+			];
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.08, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
+	}
+
+/* ==========================================================================
+   SISTEMA DE CELEBRAÇÃO (CONFETIS NO CONTENTOR)
+   ========================================================================== */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+	
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) container.innerHTML = '';
+	}	
+</script>
+</body>
+</html>

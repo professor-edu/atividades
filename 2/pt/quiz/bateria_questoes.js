@@ -91,7 +91,7 @@ const perguntasRevisaoPT = [
     { categoria: "Fonética", pergunta: "Em qual destas palavras a letra «O» lê-se com o som «U»?", opcoes: ["porta", "bola", "sapato", "cola"], correta: "sapato", dica: "No final das palavras, o 'O' costuma enganar-nos e disfarça-se de 'U'!" },
     { categoria: "Fonética", pergunta: "Em qual destas palavras a letra «S» tem o som de «Z»?", opcoes: ["sapo", "casa", "sol", "sopa"], correta: "casa", dica: "Quando o 'S' está sozinho entre duas vogais, ganha o som do Zangão." },
     { categoria: "Fonética", pergunta: "Qual destas palavras tem a letra «C» com som de «S»?", opcoes: ["cavalo", "copo", "cenoura", "curioso"], correta: "cenoura", dica: "O 'C' só ganha som de 'S' quando está de mãos dadas com o 'E' ou com o 'I'." },
-    { categoria: "Fonética", pergunta: "Em qual palavra o «X» tem o mesmo som que na palavra <span class='destaque-texto'>Táxi</span>?", opcoes: ["peixe", "exame", "próximo", "caixa"], correta: "exame", dica: "O 'X' aqui soa a 'Z'." },
+    { categoria: "Fonética", pergunta: "Em qual palavra o «X» tem o mesmo som que na palavra <span class='destaque-texto'>Exemplo</span>?", opcoes: ["peixe", "exame", "próximo", "caixa"], correta: "exame", dica: "O 'X' aqui soa a 'Z'." },
 
     // --- VOCABULÁRIO (POLISSEMIA E SENTIDO DAS PALAVRAS) ---
     { categoria: "Vocabulário", pergunta: "<span class='destaque-texto'>Eu sujei a manga da minha camisola.</span><br><br>O que significa <span class='destaque-fundo'>manga</span> aqui?", opcoes: ["Uma fruta deliciosa.", "Uma parte da roupa.", "Uma árvore verde."], correta: "Uma parte da roupa.", dica: "É onde enfias o braço quando te vestes." },

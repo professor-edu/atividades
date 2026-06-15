@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - Laboratório do Equilíbrio ⚖️</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #ff8a8a;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #5c8699;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;
+			margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-3ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-3ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(77, 171, 247, 0.66); 
+            border-top: 8px solid var(--cor-mat); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; gap: 10px;}
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.7rem); color: var(--azul-escuro); margin-bottom: 10px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #e0ecf3; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-3ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 25px; gap: 25px;
+            position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+        }
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.6rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--cor-btn-fundo); border: 3px solid var(--cor-mat); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-mat); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-mat); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		*/O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-mat); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-3ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+        
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+		
+		/* =========================================
+           REALCE DOS TÍTULOS
+        ========================================= */	
+		
+		/* Opção A: Efeito marcador de texto (fundo amarelo) */
+		.destaque-fundo {
+			background-color: #fff275; /* Amarelo fluorescente */
+			color: var(--azul-escuro); /* Texto em azul escuro para ler bem */
+			padding: 2px 6px;
+			border-radius: 6px;
+			font-weight: 900;
+		}
+
+		/* Opção B: Apenas texto vermelho e forte (sem fundo) */
+		.destaque-texto {
+			color: var(--cor-btn-vermelho); /* Usa o vermelho vibrante do seu root */
+			font-weight: 900;
+		}
+		
+		/* Opção C: Apenas texto verde e forte (sem fundo) */
+		.destaque-texto-verde {
+			color: var(--cor-em); /* Usa o vermelho vibrante do seu root */
+			font-weight: 900;
+		}
+
+		
+		/* =========================================
+		   CSS: O LABORATÓRIO DO DR. EQUILÍBRIO
+		========================================= */
+
+		/* --- ANIMAÇÃO INICIAL: FRASCO DE LABORATÓRIO E BOLHAS --- */
+		.animacao-tutorial.lab-theme {
+			background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+			border: 3px solid #10b981;
+			box-shadow: inset 0 4px 15px rgba(16, 185, 129, 0.15), 0 6px 20px rgba(16, 185, 129, 0.2);
+		}
+
+		.lab-wrapper {
+			position: relative;
+			width: 90%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+		}
+
+		/* Frasco de Vidro de Laboratório em CSS */
+		.lab-frasco {
+			position: relative;
+			width: 60px;
+			height: 75px;
+			background: rgba(255, 255, 255, 0.08);
+			border: 3px solid #34d399;
+			border-radius: 10px 10px 40px 40px;
+			box-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+			overflow: hidden;
+			display: flex;
+			align-items: flex-end;
+		}
+
+		/* Pescoço do Frasco */
+		.lab-frasco::before {
+			content: '';
+			position: absolute;
+			top: -15px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 20px;
+			height: 15px;
+			background: rgba(255, 255, 255, 0.08);
+			border: 3px solid #34d399;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+		}
+
+		/* Líquido Químico que ondula */
+		.lab-liquido {
+			width: 100%;
+			height: 55%;
+			background: linear-gradient(to top, #10b981, #34d399);
+			animation: ondulacao 4s infinite ease-in-out alternate;
+			position: relative;
+		}
+
+		@keyframes ondulacao {
+			0% { transform: skewY(-4deg); }
+			100% { transform: skewY(4deg); }
+		}
+
+		/* Bolhas de Gás que sobem do Frasco */
+		.bubble-container {
+			position: absolute;
+			bottom: 80px;
+			left: 90%;
+			transform: translateX(-50%);
+			width: 40px;
+			height: 80px;
+		}
+
+		.bubble {
+			position: absolute;
+			bottom: 0;
+			width: 8px;
+			height: 8px;
+			background: #6ee7b7;
+			border-radius: 50%;
+			opacity: 0;
+			animation: bubbleUp 3s infinite ease-in;
+		}
+
+		.bubble:nth-child(1) { left: 5px; animation-delay: 0s; animation-duration: 2.5s; }
+		.bubble:nth-child(2) { left: 20px; animation-delay: 0.8s; animation-duration: 2.8s; }
+		.bubble:nth-child(3) { left: 12px; animation-delay: 1.5s; animation-duration: 2.2s; }
+
+		@keyframes bubbleUp {
+			0% { transform: translateY(0) scale(0.5); opacity: 0; }
+			30% { opacity: 0.8; }
+			90% { opacity: 0.8; }
+			100% { transform: translateY(-70px) scale(1.3); opacity: 0; }
+		}
+
+		/* Balança de Pratos no Laboratório */
+		.lab-balanca-tut {
+			position: relative;
+			width: 120px;
+			height: 100px;
+		}
+
+		.lab-trave-tut {
+			position: absolute;
+			top: 25px;
+			left: 10px;
+			width: 100px;
+			height: 6px;
+			background: #a1a1aa;
+			transform-origin: center center;
+			animation: oscilaTut 5s infinite ease-in-out;
+		}
+
+		@keyframes oscilaTut {
+			0%, 100% { transform: rotate(-6deg); }
+			50% { transform: rotate(6deg); }
+		}
+
+		.lab-pilar-tut {
+			position: absolute;
+			bottom: 0;
+			left: 55px;
+			width: 10px;
+			height: 70px;
+			background: #71717a;
+		}
+
+		.lab-prato-tut {
+			position: absolute;
+			top: 6px;
+			width: 30px;
+			height: 6px;
+			background: #e4e4e7;
+			border-radius: 0 0 8px 8px;
+		}
+		.lab-prato-tut.esq { left: -10px; }
+		.lab-prato-tut.dir { right: -10px; }
+
+
+		/* --- VISOR DIGITAL DA EQUAÇÃO --- */
+		.visor-igualdade-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 15px;
+			margin: 20px 0;
+			flex-wrap: wrap;
+			background: #1e293b;
+			border: 4px solid #475569;
+			padding: 20px 30px;
+			border-radius: 20px;
+			box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
+			min-height: 80px;
+		}
+
+		.igualdade-termo {
+			font-size: clamp(1.5rem, 5vw, 2.5rem);
+			font-weight: 900;
+			color: #38bdf8;
+			text-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+			font-family: monospace;
+			letter-spacing: 1px;
+		}
+
+		/* Caixa Vazia Ativa (onde surge o número digitado) */
+		.caixa-vazia-igualdade {
+			min-width: 75px;
+			height: 60px;
+			border: 3px solid #10b981;
+			background: rgba(16, 185, 129, 0.1);
+			border-radius: 12px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: clamp(1.5rem, 5vw, 2.5rem);
+			font-weight: 900;
+			color: #10b981;
+			text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+			transition: all 0.2s;
+			cursor: pointer;
+			animation: pulsaCaixaAtiva 1.5s infinite alternate;
+			padding: 0 10px;
+		}
+
+		@keyframes pulsaCaixaAtiva {
+			0% { border-color: #059669; box-shadow: 0 0 0 transparent; }
+			100% { border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.5); }
+		}
+
+		/* Efeito de flash ao usar dica */
+		.caixa-vazia-igualdade.flash-hint {
+			background-color: rgba(251, 197, 49, 0.3) !important;
+			border-color: var(--cor-btn-amarelo) !important;
+			color: var(--cor-btn-amarelo) !important;
+			text-shadow: 0 0 15px rgba(251, 197, 49, 0.6) !important;
+		}
+
+
+		/* --- TECLADO NUMÉRICO VIRTUAL FIXED INTEGRADO --- */
+		.teclado-virtual-container {
+			display: grid;
+			grid-template-columns: repeat(6, 1fr); /* Transforma em 6 colunas */
+			gap: 8px;
+			width: 100%;
+			max-width: 450px; /* Alarga para acomodar os 6 botões lado a lado */
+			margin: 8px auto 0 auto; /* Margem reduzida para poupar espaço vertical */
+		}
+
+		.btn-teclado {
+			background: #f1f5f9;
+			border: 3px solid #cbd5e1;
+			border-radius: 12px;
+			padding: 8px; /* Mais compacto verticalmente */
+			font-size: 1.3rem;
+			font-weight: 900;
+			color: #334155;
+			cursor: pointer;
+			box-shadow: 0 3px 0 #94a3b8;
+			transition: all 0.1s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 45px; /* Altura compacta ideal para ecrãs horizontais */
+			touch-action: manipulation;
+			user-select: none;
+		}
+
+		@media (hover: hover) {
+			.btn-teclado:hover {
+				background: #e2e8f0;
+				border-color: #94a3b8;
+			}
+		}
+
+		.btn-teclado:active {
+			transform: translateY(3px);
+			box-shadow: 0 0px 0 transparent;
+		}
+
+		/* Botões especiais */
+		.btn-teclado.btn-apagar {
+			background: #fee2e2;
+			border-color: #fca5a5;
+			color: #ef4444;
+			box-shadow: 0 3px 0 #f87171;
+		}
+
+		.btn-teclado.btn-confirmar {
+			background: #d1fae5;
+			border-color: #6ee7b7;
+			color: #059669;
+			box-shadow: 0 3px 0 #34d399;
+		}
+
+		/* Ajuste mobile para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.teclado-virtual-container {
+				gap: 6px;
+				max-width: 320px;
+			}
+			.btn-teclado {
+				padding: 6px;
+				font-size: 1.1rem;
+				height: 40px;
+				border-radius: 10px;
+			}
+		}
+
+
+
+		
+		/* =========================================
+		   NOVO DESIGN DOS BOTÕES DO MENU INICIAL (HORIZONTAL)
+		   ========================================= */
+
+		/* Transforma o botão numa estrutura horizontal alinhada à esquerda */
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+		/* Garante que a imagem do nível mantém as proporções e não encolhe */
+		.icon-btn-nivel {
+			width: 55px;
+			height: 55px;
+			flex-shrink: 0;
+		}
+
+		/* Contentor de texto para empilhar Título e Subtítulo */
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none; /* Protege contra interferência de clique */
+		}
+
+		/* Estilo para a linha do Título (Superior) */
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+
+		/* Estilo para a linha do Subtítulo (Inferior) */
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+
+		/* Otimização para telemóveis mais pequenos */
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}
+		
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Laboratório do Equilíbrio<img src="../img-titulos/igualdades.png" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escolhe um minijogo para começar!</div>
+    </div>
+</header>
+
+<!-- =========================================
+     BLOCO MAIN: O LABORATÓRIO DO DR. EQUILÍBRIO
+     ========================================= */ -->
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <div id="confetti-container" class="confetti-container"></div>
+
+        <!-- Toast Message para avisos rápidos -->
+        <div id="toast-msg" class="toast-msg"></div>
+
+        <!-- ECRÃ DE SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            
+            <!-- ANIMAÇÃO DE LABORATÓRIO (CIENTÍFICO E DIVERTIDO) -->
+            <div class="animacao-tutorial lab-theme">
+                <div class="lab-wrapper">
+                    <!-- Balança animada -->
+                    <div class="lab-balanca-tut">
+                        <div class="lab-pilar-tut"></div>
+                        <div class="lab-trave-tut">
+                            <div class="lab-prato-tut esq"></div>
+                            <div class="lab-prato-tut dir"></div>
+                        </div>
+                    </div>
+                    <!-- Frasco de químicos e bolhas -->
+                    <div class="lab-frasco">
+                        <div class="lab-liquido"></div>
+                    </div>
+                    <div class="bubble-container">
+                        <div class="bubble"></div>
+                        <div class="bubble"></div>
+                        <div class="bubble"></div>
+                    </div>
+                </div>
+            </div>
+
+			<h2 class="titulo-menu">Escolhe o teu desafio!</h2>
+            <p style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 25px; max-width: 500px; text-align: center; font-weight: 500;">
+                Ajuda o Dr. Equilíbrio a calibrar as balanças mágicas!
+            </p>
+            <!-- GRELHA DE NÍVEIS HORIZONTAIS -->
+			<div class="grid-niveis">
+			
+				<button class="btn-nivel-novo bg-verde" onclick="iniciarJogo(10, 'Nível 1: Equilíbrio da Adição', 1)">
+					<img src="../img-titulos/igualdades_menu_1.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Equilíbrio da Adição</span>
+                        <span class="btn-nivel-subtitulo">Contas até 1000</span>
+                    </div>
+				</button>
+		
+				<button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(10, 'Nível 2: Equilíbrio da Subtração', 2)">
+					<img src="../img-titulos/igualdades_menu_2.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Equilíbrio da Subtração</span>
+                        <span class="btn-nivel-subtitulo">Contas até 1000</span>
+                    </div>
+				</button>
+				
+				<button class="btn-nivel-novo bg-amarelo" onclick="iniciarJogo(10, 'Nível 3: Balança Mistério', 3)">
+					<img src="../img-titulos/igualdades_menu_3.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Balança Mistério</span>
+                        <span class="btn-nivel-subtitulo">Adição vs Subtração</span>
+                    </div>
+				</button>
+				
+				<button class="btn-nivel-novo bg-turquesa" onclick="iniciarJogo(10, 'Nível 4: O Segredo da Multiplicação', 4)">
+					<img src="../img-titulos/igualdades_menu_4.png" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Segredo da Multiplicação</span>
+                        <span class="btn-nivel-subtitulo">Propriedades Matemáticas</span>
+                    </div>
+				</button>
+
+			</div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+
+            <!-- Zona de Jogo: Carregada dinamicamente pelo JavaScript -->
+            <div class="area-jogo-custom" id="game-area">
+                <!-- Teclado Virtual e Visor da Igualdade surgem aqui -->
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ DE TRANSIÇÃO -->
+        <div id="ecra-transicao" class="ecra">
+			<h2 class="end-title" id="transicao-title-text">Nível Completo!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                <p>O laboratório está em perfeito equilíbrio! Continua assim!</p>
+            </div>
+           
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" id="btn-proximo-nivel">
+					PRÓXIMO NÍVEL 
+					<img src="../../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+				</button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">
+					<img src="../../../SVG/home.svg" class="icon-acao" alt=""> 
+					VOLTAR AO MENU
+				</button>
+			</div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                Concluíste os desafios do Dr. Equilíbrio!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            </div>
+           
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+			</div>
+			
+        </div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+
+<script>
+	/* ==========================================
+	   ESTADO GLOBAL DO JOGO: DR. EQUILÍBRIO
+	   ========================================== */
+	let erradas = 0;
+	let desafioAtual = 0;
+	let totalDesafiosNivel = 10;
+	let levelID = 1; 
+	let rondasParaDica = 0;
+	const COOLDOWN_DICA = 5;
+
+	let rondasSorteadas = []; // Guarda as questões da sessão atual
+	let respostaJogador = ""; // Guarda os números digitados pela criança
+	let timerImpaciencia = null;
+
+	// SVGs das interfaces
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	/* ==========================================
+	   ARRANQUE DO DOCUMENTO
+	   ========================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
+
+		const btnHome = document.getElementById('btn-home-svg');
+		const badgeRonda = document.getElementById('badge-ronda-svg');
+		const btnDica = document.getElementById('btn-dica');
+		const iconeErro = document.getElementById('icone-erro-svg');
+
+		if (btnHome) btnHome.innerHTML = SVG_HOME;
+		if (badgeRonda) badgeRonda.innerHTML = SVG_STAR;
+		if (btnDica) btnDica.innerHTML = SVG_BULB + ' Dica';
+		if (iconeErro) iconeErro.innerHTML = SVG_ERRO;
+	});
+
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		document.getElementById(id).style.display = 'flex';
+	}
+
+	function showToast(msg, isError = false) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = msg;
+		toast.className = "toast-msg active";
+		toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+		toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+		toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+		setTimeout(() => toast.classList.remove('active'), 3000);
+	}
+
+	/* ==========================================
+	   CRONÓMETRO ANTI-FRUSTRAÇÃO (15s)
+	   ========================================== */
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+
+		timerImpaciencia = setTimeout(() => {
+			if (rondasParaDica <= 0 && btnDica && !btnDica.disabled) {
+				btnDica.classList.add('dica-impaciente');
+			}
+		}, 15000);
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+	}
+
+	/* ==========================================
+	   UTILITÁRIOS E BARALHAMENTO
+	   ========================================== */
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterNumeroAleatorio(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	/* ==========================================
+	   GERADOR MATEMÁTICO DE IGUALDADES (NÍVEIS 1 A 4)
+	   ========================================== */
+	function gerarSessaoJogo(numQuestoes, nivel) {
+		let sessoes = [];
+
+		for (let i = 0; i < numQuestoes; i++) {
+			// --- NÍVEL 1: EQUILÍBRIO DA ADIÇÃO ---
+			if (nivel === 1) {
+				if (i < 5) {
+					// Rondas 1-5 (Até 100)
+					let termo1 = obterNumeroAleatorio(5, 50);
+					let termo2 = obterNumeroAleatorio(5, 40);
+					let soma = termo1 + termo2;
+					
+					// Escolhe um termo 3 próximo da soma para a compensação ser visível
+					let termo3 = soma - obterNumeroAleatorio(1, 9);
+					if (termo3 <= 0) termo3 = soma - 1;
+					let termoVazio = soma - termo3;
+
+					sessoes.push({
+						pergunta: `Descobre o número que falta para equilibrar a adição:`,
+						termoEsq: `${termo1} + ${termo2}`,
+						termoDir: `${termo3} + <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Calcula primeiro o lado esquerdo: ${termo1} + ${termo2} = ${soma}. Quanto falta adicionar a ${termo3} para obteres ${soma}?`
+					});
+				} else {
+					// Rondas 6-10 (Até 1000 - números redondos)
+					let fator = 50;
+					let m1 = obterNumeroAleatorio(2, 12);
+					let m2 = obterNumeroAleatorio(2, 6);
+					let p1 = m1 * fator;
+					let p2 = m2 * fator;
+					let soma = p1 + p2;
+
+					let p3 = soma - (obterNumeroAleatorio(1, 3) * fator);
+					if (p3 <= 0) p3 = p1;
+					let termoVazio = soma - p3;
+
+					sessoes.push({
+						pergunta: `Descobre o número que falta para equilibrar a adição:`,
+						termoEsq: `${p1} + ${p2}`,
+						termoDir: `${p3} + <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Resolve o lado esquerdo: ${p1} + ${p2} = ${soma}. Tens ${p3} do lado direito. Quanto falta para obteres ${soma}?`
+					});
+				}
+			}
+			// --- NÍVEL 2: EQUILÍBRIO DA SUBTRAÇÃO ---
+			else if (nivel === 2) {
+				if (i < 5) {
+					// Rondas 1-5 (Até 100)
+					let t1 = obterNumeroAleatorio(15, 60);
+					let t2 = obterNumeroAleatorio(5, 14);
+					let diff = t1 - t2;
+
+					let t3 = diff + obterNumeroAleatorio(1, 9);
+					let termoVazio = t3 - diff;
+
+					sessoes.push({
+						pergunta: `Descobre o número que falta para equilibrar a subtração:`,
+						termoEsq: `${t1} - ${t2}`,
+						termoDir: `${t3} - <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Resolve o lado esquerdo: ${t1} - ${t2} = ${diff}. O lado direito tem de dar o mesmo resultado! De ${t3}, quanto tens de subtrair para ficar com ${diff}?`
+					});
+				} else {
+					// Rondas 6-10 (Até 1000 - números redondos)
+					let fator = 50;
+					let m1 = obterNumeroAleatorio(8, 18);
+					let m2 = obterNumeroAleatorio(2, 6);
+					let p1 = m1 * fator;
+					let p2 = m2 * fator;
+					let diff = p1 - p2;
+
+					let p3 = diff + (obterNumeroAleatorio(1, 2) * fator);
+					let termoVazio = p3 - diff;
+
+					sessoes.push({
+						pergunta: `Descobre o número que falta para equilibrar a subtração:`,
+						termoEsq: `${p1} - ${p2}`,
+						termoDir: `${p3} - <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Calcula a diferença esquerda: ${p1} - ${p2} = ${diff}. Quanto tiras a ${p3} para obteres ${diff}?`
+					});
+				}
+			}
+			// --- NÍVEL 3: BALANÇA MISTÉRIO (+ VS -) ---
+			else if (nivel === 3) {
+				if (i < 5) {
+					// Rondas 1-5 (Até 500)
+					let p1 = obterNumeroAleatorio(10, 150);
+					let p2 = obterNumeroAleatorio(10, 150);
+					let soma = p1 + p2;
+
+					let subtraendoTotal = soma + obterNumeroAleatorio(10, 50);
+					let termoVazio = subtraendoTotal - soma;
+
+					sessoes.push({
+						pergunta: `Balança Mistério! Descobre o número em falta:`,
+						termoEsq: `${p1} + ${p2}`,
+						termoDir: `${subtraendoTotal} - <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Primeiro soma: ${p1} + ${p2} = ${soma}. Agora, quanto tiras a ${subtraendoTotal} para dar ${soma}?`
+					});
+				} else {
+					// Rondas 6-10 (Até 2000)
+					let fator = 100;
+					let p1 = obterNumeroAleatorio(1, 10) * fator;
+					let p2 = obterNumeroAleatorio(1, 6) * fator;
+					let soma = p1 + p2;
+
+					let subtraendoTotal = soma + (obterNumeroAleatorio(1, 4) * fator);
+					let termoVazio = subtraendoTotal - soma;
+
+					sessoes.push({
+						pergunta: `Balança Mistério! Descobre o número em falta:`,
+						termoEsq: `${p1} + ${p2}`,
+						termoDir: `${subtraendoTotal} - <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: termoVazio,
+						dicaTexto: `Resolve a soma: ${p1} + ${p2} = ${soma}. Qual é o valor que subtraído a ${subtraendoTotal} dá exatamente ${soma}?`
+					});
+				}
+			}
+			// --- NÍVEL 4: O SEGREDO DA MULTIPLICAÇÃO ---
+			else if (nivel === 4) {
+				let tipoSub = i % 3;
+
+				if (tipoSub === 0) {
+					// Tipo 1: Igualdades simples de tabuada (3 x 4 = 2 x [_])
+					let f1 = obterNumeroAleatorio(2, 6);
+					let f2 = obterNumeroAleatorio(2, 6);
+					let prod = f1 * f2;
+
+					// Garante que o prod é divisível por um fator alternativo para dar número inteiro
+					let f3;
+					let fVazio;
+					let divisiveis = [];
+					for (let x = 2; x <= 10; x++) {
+						if (prod % x === 0 && x !== f1 && x !== f2) divisiveis.push(x);
+					}
+					if (divisiveis.length > 0) {
+						f3 = divisiveis[0];
+						fVazio = prod / f3;
+					} else {
+						f3 = f1;
+						fVazio = f2;
+					}
+
+					sessoes.push({
+						pergunta: `Descobre o segredo do equilíbrio na multiplicação:`,
+						termoEsq: `${f1} x ${f2}`,
+						termoDir: `${f3} x <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>`,
+						correto: fVazio,
+						dicaTexto: `Calcula o lado esquerdo: ${f1} x ${f2} = ${prod}. Do outro lado tens ${f3} x ?. Quanto é ${prod} a dividir por ${f3}?`
+					});
+				}
+				else if (tipoSub === 1) {
+					// Tipo 2: Distributiva simples desdobrada (3 x 12 = 3 x 10 + 3 x [_])
+					let principal = obterNumeroAleatorio(2, 5);
+					let fatorDesdobrar = obterNumeroAleatorio(11, 19);
+					let dezena = 10;
+					let unidadeVazia = fatorDesdobrar - dezena;
+
+					sessoes.push({
+						pergunta: `Completa a propriedade distributiva (desdobramento de fatores):`,
+						termoEsq: `${principal} x ${fatorDesdobrar}`,
+						termoDir: `(${principal} x ${dezena}) + (${principal} x <span class="caixa-vazia-igualdade" id="caixa-digito">?</span>)`,
+						correto: unidadeVazia,
+						dicaTexto: `A propriedade distributiva desdobra os fatores: ${fatorDesdobrar} é igual a ${dezena} mais quanto?`
+					});
+				}
+				else {
+					// Tipo 3: Associativa ou Distributiva complexa (3 x ([_] x 7) = (3 x 5) x 7)
+					let term1 = obterNumeroAleatorio(2, 5);
+					let termVazio = obterNumeroAleatorio(2, 6);
+					let term3 = obterNumeroAleatorio(2, 7);
+
+					sessoes.push({
+						pergunta: `Descobre o número em falta na propriedade associativa:`,
+						termoEsq: `${term1} x (<span class="caixa-vazia-igualdade" id="caixa-digito">?</span> x ${term3})`,
+						termoDir: `(${term1} x ${termVazio}) x ${term3}`,
+						correto: termVazio,
+						dicaTexto: `Na propriedade associativa, a ordem dos agrupamentos muda mas os números mantêm-se os mesmos!`
+					});
+				}
+			}
+		}
+		return sessoes;
+	}
+
+	/* ==========================================
+	   ARRANQUE DOS JOGOS E ENGENHARIA DE RONDAS
+	   ========================================== */
+	function iniciarJogo(numQuestoes = 10, tituloNivel = "", idNivel = 1) {
+		erradas = 0;
+		desafioAtual = 0;
+		rondasParaDica = 0;
+		totalDesafiosNivel = numQuestoes;
+		levelID = idNivel;
+
+		if (tituloNivel !== "") {
+			document.getElementById('subtitulo-header').textContent = tituloNivel;
+		}
+
+		rondasSorteadas = gerarSessaoJogo(numQuestoes, idNivel);
+
+		limparConfetis();
+		atualizarPlacar();
+		atualizarBotaoDica();
+		mostrarEcra('ecra-jogo');
+		carregarRonda();
+	}
+
+	function atualizarPlacar() {
+		// ronda ativa de 1 a N
+		const p = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+		
+		const percentagem = (p / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+
+	/* ==========================================
+	   CARREGAMENTO VISUAL DA RONDA (DOM)
+	   ========================================== */
+	function carregarRonda() {
+		respostaJogador = ""; 
+		const ronda = rondasSorteadas[desafioAtual];
+		
+		if (!ronda) {
+			finalizarJogo();
+			return;
+		}
+
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+
+		// Pergunta de Instrução
+		const pergunta = document.createElement('div');
+		pergunta.className = 'pergunta-texto';
+		pergunta.innerHTML = ronda.pergunta;
+		area.appendChild(pergunta);
+
+		// Visor Digital da Igualdade
+		const visorIgualdade = document.createElement('div');
+		visorIgualdade.className = 'visor-igualdade-container';
+
+		const termoEsqSpan = document.createElement('span');
+		termoEsqSpan.className = 'igualdade-termo';
+		termoEsqSpan.innerHTML = ronda.termoEsq;
+
+		const sinalIgual = document.createElement('span');
+		sinalIgual.className = 'igualdade-termo';
+		sinalIgual.style.color = '#10b981';
+		sinalIgual.textContent = ' = ';
+
+		const termoDirSpan = document.createElement('span');
+		termoDirSpan.className = 'igualdade-termo';
+		termoDirSpan.innerHTML = ronda.termoDir;
+
+		visorIgualdade.appendChild(termoEsqSpan);
+		visorIgualdade.appendChild(sinalIgual);
+		visorIgualdade.appendChild(termoDirSpan);
+		area.appendChild(visorIgualdade);
+
+		// Montagem do Teclado Virtual Fixo
+		const tecladoContainer = document.createElement('div');
+		tecladoContainer.className = 'teclado-virtual-container';
+
+		// Cria as teclas numéricas de 1 a 9
+		for (let i = 1; i <= 9; i++) {
+			const btn = document.createElement('button');
+			btn.className = 'btn-teclado';
+			btn.textContent = i;
+			btn.onclick = () => carregarDigito(i);
+			tecladoContainer.appendChild(btn);
+		}
+
+		// Tecla Zero
+		const btnZero = document.createElement('button');
+		btnZero.className = 'btn-teclado';
+		btnZero.textContent = '0';
+		btnZero.onclick = () => carregarDigito(0);
+		tecladoContainer.appendChild(btnZero);
+
+		// Tecla Apagar (Backspace)
+		const btnApagar = document.createElement('button');
+		btnApagar.className = 'btn-teclado btn-apagar';
+		btnApagar.textContent = '⌫';
+		btnApagar.onclick = () => apagarUltimoDigito();
+		tecladoContainer.appendChild(btnApagar);
+
+		// Tecla Confirmar (✔)
+		const btnConfirmar = document.createElement('button');
+		btnConfirmar.className = 'btn-teclado btn-confirmar';
+		btnConfirmar.textContent = '✔';
+		btnConfirmar.onclick = () => submeterResposta();
+		tecladoContainer.appendChild(btnConfirmar);
+
+		area.appendChild(tecladoContainer);
+
+		// Foco de entrada inicial
+		focarCaixaIgualdade();
+		resetTimerImpaciencia();
+	}
+
+	/* ==========================================
+	   LÓGICA E INTERAÇÕES DO TECLADO VIRTUAL
+	   ========================================== */
+	function focarCaixaIgualdade() {
+		const caixa = document.getElementById('caixa-digito');
+		if (caixa) {
+			caixa.textContent = respostaJogador === "" ? "?" : respostaJogador;
+		}
+	}
+
+	function carregarDigito(num) {
+		if (respostaJogador.length >= 4) {
+			showToast("Limite de 4 dígitos alcançado!", false);
+			return; 
+		}
+		initAudio();
+		tocarSom('flip');
+		respostaJogador += num;
+		focarCaixaIgualdade();
+	}
+
+	function apagarUltimoDigito() {
+		if (respostaJogador.length === 0) return;
+		initAudio();
+		tocarSom('flip');
+		respostaJogador = respostaJogador.slice(0, -1);
+		focarCaixaIgualdade();
+	}
+
+	function submeterResposta() {
+		if (respostaJogador === "") {
+			showToast("Escreve primeiro um número!", false);
+			return;
+		}
+
+		const ronda = rondasSorteadas[desafioAtual];
+		const valorDigitado = parseInt(respostaJogador);
+
+		// Desativa temporariamente o teclado para evitar duplo clique
+		document.querySelectorAll('.btn-teclado').forEach(b => {
+			b.style.pointerEvents = 'none';
+		});
+
+		const caixa = document.getElementById('caixa-digito');
+
+		if (valorDigitado === ronda.correto) {
+			pararTimerImpaciencia();
+			if (caixa) {
+				caixa.classList.remove('pulsaCaixaAtiva');
+				caixa.style.backgroundColor = 'rgba(16, 185, 129, 0.3)';
+				caixa.style.borderColor = 'var(--cor-sucesso)';
+			}
+			tocarSom('acerto');
+
+			setTimeout(() => {
+				document.querySelectorAll('.btn-teclado').forEach(b => {
+					b.style.pointerEvents = 'auto';
+				});
+
+				desafioAtual++;
+				
+				if (rondasParaDica > 0) rondasParaDica--;
+				
+				atualizarPlacar();
+				atualizarBotaoDica();
+
+				if (desafioAtual < totalDesafiosNivel) {
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1000);
+		} else {
+			// Resposta Errada
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+
+			if (caixa) {
+				caixa.style.backgroundColor = 'rgba(255, 71, 87, 0.2)';
+				caixa.style.borderColor = 'var(--cor-erro)';
+			}
+
+			setTimeout(() => {
+				// Limpa o ecrã vermelho para dar uma segunda oportunidade
+				respostaJogador = "";
+				focarCaixaIgualdade();
+				if (caixa) {
+					caixa.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+					caixa.style.borderColor = '#10b981';
+				}
+				document.querySelectorAll('.btn-teclado').forEach(b => {
+					b.style.pointerEvents = 'auto';
+				});
+				resetTimerImpaciencia();
+			}, 800);
+		}
+	}
+
+	/* ==========================================
+	   ALGORITMO DE DICA ILUMINADA
+	   ========================================== */
+	function usarDica() {
+		pararTimerImpaciencia();
+		
+		if (rondasParaDica > 0) return;
+
+		const ronda = rondasSorteadas[desafioAtual];
+		tocarSom('flip');
+
+		// Mostra o modal explicativo
+		let htmlDica = `<p>${ronda.dicaTexto}</p>`;
+		abrirModalDica(htmlDica);
+
+		// --- ILUMINAR A RESPOSTA CORRETA NO VISOR POR 1.5s ---
+		const caixa = document.getElementById('caixa-digito');
+		if (caixa) {
+			caixa.classList.add('flash-hint');
+			caixa.textContent = ronda.correto;
+
+			setTimeout(() => {
+				caixa.classList.remove('flash-hint');
+				focarCaixaIgualdade(); // Restaura o estado anterior do jogador
+			}, 1800);
+		}
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+
+	function abrirModalDica(conteudoHTML) {
+		const modal = document.getElementById('modal-ajuda');
+		const conteudo = document.getElementById('modal-dica-conteudo');
+		if (modal && conteudo) {
+			conteudo.innerHTML = conteudoHTML;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharModalDica() {
+		const modal = document.getElementById('modal-ajuda');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function finalizarJogo() {
+		document.getElementById('progress-fill').style.width = '100%';
+		pararTimerImpaciencia();
+		setTimeout(() => {
+			mostrarEcra('ecra-fim');
+			document.getElementById('final-erros').textContent = erradas;
+			tocarSom('vitoria');
+			dispararConfetis();
+		}, 500);
+	}
+
+	function reiniciarJogo() {
+		iniciarJogo(totalDesafiosNivel, "", levelID);
+	}
+
+	function voltarAoMenu() {
+		document.getElementById('subtitulo-header').textContent = "Escolhe um minijogo para começar!";
+		limparConfetis();
+		pararTimerImpaciencia();
+		mostrarEcra('ecra-selecao');
+	}
+
+	/* ==========================================
+	   SINTETIZADOR DE SOM RETRO
+	   ========================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		if (!AudioContextClass) return;
+		if (!audioCtx) audioCtx = new AudioContextClass();
+		if (audioCtx.state === 'suspended') audioCtx.resume();
+	}
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true });
+
+	function tocarSom(tipo) {
+		initAudio();
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.frequency.setValueAtTime(500, agora);
+			osc.frequency.exponentialRampToValueAtTime(700, agora + 0.08);
+			gain.gain.setValueAtTime(0.04, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.08);
+		} 
+		else if (tipo === 'acerto') {
+			const notas = [659.25, 880.00]; 
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); 
+				g.connect(audioCtx.destination);
+				
+				o.type = 'sine';
+				o.frequency.value = freq;
+				
+				g.gain.setValueAtTime(0, agora + i * 0.1);
+				g.gain.linearRampToValueAtTime(0.06, agora + i * 0.1 + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.1 + 0.25);
+				
+				o.start(agora + i * 0.1);
+				o.stop(agora + i * 0.1 + 0.25);
+			});
+		} 
+		else if (tipo === 'erro') {
+			osc.type = 'sawtooth';
+			osc.frequency.setValueAtTime(180, agora);
+			osc.frequency.exponentialRampToValueAtTime(60, agora + 0.3);
+			gain.gain.setValueAtTime(0.08, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.35);
+		} 
+		else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+			];
+
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); 
+				g.connect(audioCtx.destination);
+				
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.06, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
+	}
+
+	/* ==========================================
+	   CONFETIS FESTIVOS
+	   ========================================== */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		
+		for (let i = 0; i < 150; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5; 
+			const atraso = Math.random() * 1.5; 
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = ''; 
+		}
+	}
+</script>
+</body>
+</html>

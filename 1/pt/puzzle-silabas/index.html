@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1º Ano - Puzzle das Sílabas 🧩</title>
     
     <link rel="icon" type="image/png" href="../../logo.png">
@@ -173,7 +173,7 @@
            ÁREA DE JOGO LIVRE
            ========================================= */
         .area-jogo-custom {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 15px; overflow-y: auto; gap: 15px;
             position: relative; color: #94a3b8; font-weight: bold;
         }
@@ -247,12 +247,36 @@
             box-shadow: 0 4px 15px #ff6b6b91; overflow: hidden; position: relative;
             transition: all 0.3s; flex-shrink: 0;
         }
-        .imagem-pista-container img { width: 85%; height: 85%; object-fit: contain; animation: popIn 0.4s ease; display: none; }
+
         .imagem-pista-container.revelada { border-color: #2ed573; box-shadow: 0 0 20px rgba(46, 213, 115, 0.4); transform: scale(1.05); }
-        .imagem-pista-container.revelada img { display: block; }
+		#imagem-pista { width: 85%; height: 85%; object-fit: contain; animation: popIn 0.4s ease; display: none; }
+		.imagem-pista-container.revelada #imagem-pista { display: block; }
         
-        .interrogacao-pista { position: absolute; font-size: clamp(3rem, 10vw, 5rem); color: #a4b0be; }
-        .imagem-pista-container.revelada .interrogacao-pista { display: none; }
+        /* =========================================
+           A CAIXA COM A INTERROGAÇÃO (CENTRAMENTO ABSOLUTO)
+           ========================================= */
+        .interrogacao-pista { 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; /* Estica a caixa até aos limites do pai */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 5;
+        }
+
+        /* O SVG GIGANTE E RESPONSIVO */
+        .interrogacao-pista img {
+            /* A magia que antes estava no font-size passa para a largura/altura */
+            width: clamp(3rem, 10vw, 5rem); 
+            height: clamp(3rem, 10vw, 5rem);
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15)); /* Sombra para destacar */
+        }
+
+        /* Esconde quando a pista é revelada */
+        .imagem-pista-container.revelada .interrogacao-pista { 
+            display: none; 
+        }
 
         /* Área dos Slots (Destino) */
         .puzzle-drop-area {
@@ -272,12 +296,12 @@
         .pool-container {
             display: flex; justify-content: center; align-items: center; gap: clamp(8px, 2vw, 15px);
             width: 100%; max-width: 700px; padding: 20px 0; border-top: 3px dashed #e2e8f0;
-            flex-wrap: wrap; margin-top: auto;
+            flex-wrap: wrap; margin-top: 15px;
         }
 
         /* Peças (As sílabas arrastáveis) */
         .puzzle-piece {
-            width: clamp(60px, 15vw, 90px); height: clamp(60px, 15vw, 90px);
+            width: clamp(60px, 15vw, 100px); height: clamp(60px, 15vw, 90px);
             background: #e5f2fb; border: 4px solid var(--cor-1ano); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 6px 0 var(--cor-1ano-dark); cursor: grab; touch-action: none; transition: transform 0.1s;
@@ -350,6 +374,27 @@
     background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
     background-size: 25px 25px;
   }
+  
+  /* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
 </style>
 </head>
 <body>
@@ -413,7 +458,7 @@
 
             <div class="diff-container">
                 <button class="btn-nivel-menu" id="btn-menu-1" onclick="iniciarJogo(1)">
-                    <span class="nivel-icon">🟢</span>
+                    <img src="../img-titulos/puzzle_silabas_menu1.svg" class="icon-btn-nivel" alt="">
                     <span class="nivel-text">
                         <span class="nivel-titulo">Nível 1</span>
                         <span class="nivel-desc">2 Sílabas com imagem</span>
@@ -421,7 +466,7 @@
                 </button>
                 
                 <button class="btn-nivel-menu" id="btn-menu-2" onclick="iniciarJogo(2)">
-                    <span class="nivel-icon">🟡</span>
+                    <img src="../img-titulos/puzzle_silabas_menu2.svg" class="icon-btn-nivel" alt="">
                     <span class="nivel-text">
                         <span class="nivel-titulo">Nível 2</span>
                         <span class="nivel-desc">3 Sílabas com imagem</span>
@@ -429,7 +474,7 @@
                 </button>
                 
                 <button class="btn-nivel-menu" id="btn-menu-3" onclick="iniciarJogo(3)">
-                    <span class="nivel-icon">🔴</span>
+                    <img src="../img-titulos/puzzle_silabas_menu3.svg" class="icon-btn-nivel" alt="">
                     <span class="nivel-text">
                         <span class="nivel-titulo">Nível 3</span>
                         <span class="nivel-desc">Só leitura! Adivinha a imagem.</span>
@@ -453,7 +498,7 @@
                 
                 <div id="imagem-pista-container" class="imagem-pista-container">
                     <img id="imagem-pista" src="" alt="Pista">
-                    <div id="interrogacao-pista" class="interrogacao-pista">❓</div>
+                    <div id="interrogacao-pista" class="interrogacao-pista"><img src="../img-titulos/puzzle_silabas_interrogacao.svg" alt=""></div>
                 </div>
 
                 <!-- Drop Area -->
@@ -662,7 +707,7 @@
         
         if (nivelAtual === 3) {
             imgPista.style.display = 'none';
-            interroPista.style.display = 'block';
+            interroPista.style.display = 'flex';
         } else {
             imgPista.style.display = 'block';
             interroPista.style.display = 'none';
@@ -825,6 +870,8 @@
         // Se for Nível 3, revela a imagem!
         if (nivelAtual === 3) {
             imgContainer.classList.add('revelada');
+			imgPista.style.display = 'block';
+            interroPista.style.display = 'none';
         } else {
             imgContainer.classList.add('vitoria-pulse');
             setTimeout(() => imgContainer.classList.remove('vitoria-pulse'), 500);

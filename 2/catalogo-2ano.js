@@ -27,6 +27,7 @@ const todosOsJogos =[
 	{ nome: "Divisão Silábica", icone: "icones/divisao_silabica.png", link: "pt/divisao-silabica/", cat: "pt" },
 	{ nome: "Palavras por Minuto", icone: "icones/palavras_minuto.png", link: "pt/palavras-minuto/", cat: "pt" },
 	{ nome: "Super Quiz", icone: "icones/quiz_portugues.png", link: "pt/quiz/", cat: "pt" },
+	{ nome: "Determinantes Artigos", icone: "icones/determinantes_artigos.png", link: "pt/determinantes-artigos/", cat: "pt" },
 	
 	
     // ------------------------------------
@@ -52,6 +53,7 @@ const todosOsJogos =[
 	{ nome: "Gráficos", icone: "icones/graficos.png", link: "mat/graficos/", cat: "mat" },
 	{ nome: "Figuras e Sólidos", icone: "icones/figuras_solidos.png", link: "mat/figuras-solidos/", cat: "mat" },
 	{ nome: "Super Quiz", icone: "icones/quiz_matematica.png", link: "mat/quiz/", cat: "mat" },
+	{ nome: "Enigmas da Selva", icone: "icones/enigmas_selva.png", link: "mat/enigmas-selva/", cat: "mat" },
 	
 	
     
@@ -59,7 +61,6 @@ const todosOsJogos =[
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
     { nome: "Animais", icone: "icones/animais.png", link: "em/animais/", cat: "em" },
-   	{ nome: "Continentes e Oceanos", icone: "icones/continentes_oceanos.png", link: "em/continentes-oceanos/", cat: "em" },
 	{ nome: "O Corpo Humano", icone: "icones/corpo_humano.png", link: "em/corpo-humano/", cat: "em" },
 	{ nome: "Estados da Água", icone: "icones/estados_agua.png", link: "em/estados-agua/", cat: "em" },
 	{ nome: "As Plantas", icone: "icones/plantas.png", link: "em/plantas/", cat: "em" },

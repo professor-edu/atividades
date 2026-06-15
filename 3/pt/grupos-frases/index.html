@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Ano - Grupos na Frase ⛵</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-3ano: #ffabab;     
+            --cor-3ano-dark: #ff8a8a;
+            --cor-borda: #E3C40D;
+			--cor-btn-fundo: #fffde7;
+            --bg-header: #fff0f0;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;
+			margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--cor-3ano-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-3ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-3ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-3ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55); 
+            border-top: 8px solid var(--cor-pt); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-3ano-dark); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-3ano-dark); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-3ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+
+		.area-jogo-custom {
+			display: flex; 
+			flex-direction: column; 
+			align-items: center; 
+			justify-content: center;
+			width: 100%; 
+			flex: 1; 
+			min-height: 0; 
+			background: #f8fafc; 
+			border: 2px dashed var(--cor-pt); 
+			border-radius: 20px; 
+			padding: 25px !important; 
+			gap: 25px;
+			position: relative; 
+			color: #94a3b8; 
+			font-weight: bold; 
+			overflow: hidden;
+			box-sizing: border-box;
+		}
+		
+		@media (max-width: 768px) {
+			/* No telemóvel, anulamos a faixa de segurança de 140px para poupar espaço, 
+			   pois a coruja passa a fluir de forma relativa abaixo do conteúdo */
+			.area-jogo-custom > *:last-child {
+				margin-bottom: 0px !important;
+			}
+
+			.triagem-grelha {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+			
+			.zona-triagem-box {
+				min-height: 110px;
+				padding: 10px;
+			}
+			
+			/* A Corujinha e o Balão ficam alinhados horizontalmente no fundo em mobile */
+			.coruja-container {
+				position: relative;
+				bottom: 0;
+				right: 0;
+				margin-top: 20px;
+				width: 100%;
+				flex-direction: row;
+				justify-content: center;
+				gap: 15px;
+				pointer-events: auto;
+			}
+			
+			.balao-fala {
+				position: relative;
+				bottom: 0;
+				right: 0;
+				max-width: 80%;
+			}
+			
+			.balao-fala::after, .balao-fala::before {
+				display: none; /* Oculta o bico do balão em mobile */
+			}
+		}
+		
+		@media (min-width: 769px) {
+			.area-jogo-custom > *:last-child {
+				margin-bottom: 90px !important; /* Cria uma barreira invisível acima da Corujinha */
+			}
+		}
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--cor-btn-fundo); border: 3px solid var(--cor-pt); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-pt); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-pt); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		/O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-pt); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-3ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+		
+		
+		/* Animação de destaque da resposta correta */
+		@keyframes pulseHighlight {
+			0% {
+				box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6);
+			}
+			70% {
+				box-shadow: 0 0 0 14px rgba(93, 210, 121, 0);
+			}
+			100% {
+				box-shadow: 0 0 0 0 rgba(93, 210, 121, 0);
+			}
+		}
+        
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+
+
+
+		/* =========================================
+		   CSS ESPECÍFICO DO JOGO: SINTAXE (ATUALIZADO)
+		   ========================================= */
+
+		/* --- NÍVEL 1: CAIS DA SINTAXE --- */
+		.verbo-flutuante-triagem {
+			background-color: var(--cor-btn-laranja);
+			color: white;
+			font-size: 1.6rem;
+			font-weight: 900;
+			padding: 12px 30px;
+			border-radius: 20px;
+			box-shadow: 0 6px 0 #d97d2c, 0 8px 15px rgba(0,0,0,0.1);
+			text-transform: uppercase;
+			animation: respirarPalavra 2s infinite ease-in-out;
+			margin-bottom: 25px;
+			display: inline-block;
+			letter-spacing: 1px;
+		}
+
+		@keyframes respirarPalavra {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.05); }
+		}
+
+		.triagem-grelha {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr); /* 2 colunas para GN e GV */
+			gap: 15px;
+			width: 100%;
+			max-width: 850px;
+			margin-top: 10px;
+			box-sizing: border-box;
+		}
+
+		.zona-triagem-box {
+			background: #ffffff;
+			border: 3px dashed var(--borda-cartao);
+			border-radius: 20px;
+			padding: 15px;
+			min-height: 110px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			transition: all 0.2s ease;
+			cursor: pointer;
+			box-sizing: border-box;
+		}
+
+		.zona-triagem-box:hover {
+			border-color: #1d4ed8;
+			background-color: #eff6ff;
+		}
+
+		.zona-triagem-box.sucesso-l1 {
+			background-color: #ecfdf5 !important;
+			border-color: var(--cor-sucesso) !important;
+		}
+
+		.zona-triagem-box.falha-l1 {
+			animation: shakeError 0.4s ease;
+			background-color: #fef2f2 !important;
+			border-color: var(--cor-erro) !important;
+		}
+
+		.titulo-zona-triagem {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: #1d4ed8;
+			text-transform: uppercase;
+			margin-bottom: 12px;
+			pointer-events: none;
+		}
+
+		.palavra-arrumada-tag {
+			background: #eff6ff;
+			color: #1d4ed8;
+			font-weight: bold;
+			font-size: 0.95rem;
+			padding: 6px 12px;
+			border-radius: 10px;
+			margin: 4px;
+			border: 1px solid #bfdbfe;
+			animation: fadeIn 0.3s ease;
+			pointer-events: none;
+		}
+
+
+		/* --- NÍVEIS 2 e 3: TEXTOS E DIÁRIOS DE BORDO CLICÁVEIS --- */
+		.texto-clicavel-card {
+			background: white;
+			border: 3px solid #1d4ed8;
+			border-radius: 20px;
+			padding: 22px;
+			font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+			color: var(--text-main);
+			line-height: 1.8;
+			text-align: left;
+			white-space: pre-line;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+			width: 100%;
+			max-width: 800px;
+			box-sizing: border-box;
+		}
+
+		/* Níveis 2 e 3: Palavras no estado inicial (Indistinguíveis) */
+		.palavra-clicavel, .palavra-alvo-l3, .palavra-normal-l3 {
+			cursor: pointer;
+			font-weight: normal !important;
+			color: var(--text-main) !important;
+			padding: 2px 4px;
+			border-radius: 6px;
+			transition: all 0.2s ease;
+			display: inline-block;
+		}
+
+		.palavra-clicavel:hover, .palavra-alvo-l3:hover, .palavra-normal-l3:hover {
+			background-color: #eff6ff !important;
+			color: inherit !important;
+		}
+
+		/* Destaque de acerto em Azul Celeste */
+		.palavra-clicavel.correta, .palavra-alvo-l3.correta {
+			background-color: #38bdf8 !important; /* Azul Celeste */
+			color: #ffffff !important;
+			font-weight: bold !important;
+			border-radius: 6px;
+			padding: 2px 8px;
+			box-shadow: 0 2px 5px rgba(56, 189, 248, 0.3);
+			pointer-events: none;
+		}
+
+		/* Erro com abanão a vermelho */
+		.palavra-clicavel.errada, .palavra-alvo-l3.errada, .palavra-normal-l3.errada {
+			animation: shakeError 0.4s ease;
+			background-color: #fca5a5 !important;
+			color: #b91c1c !important;
+			font-weight: bold !important;
+		}
+
+
+		/* --- NÍVEL 3: O ESTALEIRO DAS FRASES (LACUNAS) --- */
+		.texto-lacunas-card {
+			background: white;
+			border: 3px solid var(--cor-btn-roxo);
+			border-radius: 20px;
+			padding: 15px 20px;
+			font-size: clamp(1rem, 2.2vw, 1.25rem);
+			color: var(--text-main);
+			line-height: 1.6;
+			text-align: left;
+			width: 100%;
+			max-width: 800px;
+			box-sizing: border-box;
+		}
+
+		.espaco-lacuna {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 70px;
+			height: 32px;
+			border-bottom: 3px solid var(--cor-btn-roxo);
+			background-color: #f1f5f9;
+			border-radius: 6px;
+			margin: 0 5px;
+			cursor: pointer;
+			vertical-align: middle;
+			font-weight: 900;
+			color: var(--cor-btn-roxo);
+			transition: all 0.2s ease;
+			font-size: 1.1rem;
+		}
+
+		.espaco-lacuna.ativo {
+			background-color: #fffde7;
+			border-color: var(--cor-btn-amarelo);
+			animation: pulseAlvo 0.8s infinite alternate;
+		}
+
+		.espaco-lacuna.preenchido {
+			background-color: #f0fdf4;
+			border-color: var(--cor-sucesso);
+			color: var(--cor-sucesso-dark);
+			border-bottom-width: 3px;
+			border-radius: 6px;
+			min-width: 80px;
+			padding: 0 8px;
+			transform: scale(1.05);
+			pointer-events: none;
+		}
+
+		.btn-opcao-lacuna {
+			background-color: #fffde7;
+			border: 3px solid var(--cor-btn-roxo);
+			color: var(--cor-btn-roxo);
+			font-size: 1.15rem;
+			font-weight: 900;
+			padding: 10px 22px;
+			border-radius: 15px;
+			cursor: pointer;
+			transition: all 0.15s ease;
+			box-shadow: 0 4px 0 var(--cor-btn-roxo);
+		}
+
+		@media (hover: hover) {
+			.btn-opcao-lacuna:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 0 var(--cor-btn-roxo);
+				background-color: #fffbeb;
+			}
+		}
+
+		.btn-opcao-lacuna:active {
+			transform: translateY(4px);
+			box-shadow: 0 0px 0 transparent;
+		}
+
+		#lacunas-opcoes-div {
+			display: flex !important;
+			justify-content: center !important;
+			flex-wrap: wrap !important;
+			gap: 20px !important;
+			width: 100%;
+			max-width: 800px;
+			margin-top: 10px !important;
+			box-sizing: border-box;
+		}
+		
+		/* --- ADICIONA MAIS "RESPIRO" (ESPAÇO) ENTRE AS FRASES DOS DIÁRIOS --- */
+		.texto-lacunas-card br {
+			content: "";
+			display: block;
+			margin-top: 14px; 
+		}
+
+
+		/* --- NÍVEL 4: O FAROL DO CONHECIMENTO (BOTOES DO QUIZ) [2] --- */
+		.opcoes-quiz-container {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 15px;
+			width: 100%;
+			max-width: 800px;
+			margin-top: 15px;
+			box-sizing: border-box;
+		}
+
+		.btn-opcao-quiz {
+			background: #ffffff;
+			border: 3px solid var(--cor-btn-turquesa);
+			color: var(--text-main);
+			font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+			font-weight: 500;
+			text-align: left;
+			padding: 16px 25px;
+			border-radius: 15px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			width: 100%;
+			box-sizing: border-box;
+			touch-action: manipulation;
+			line-height: 1.4;
+		}
+
+		@media (hover: hover) {
+			.btn-opcao-quiz:hover:not(.sucesso-vibrante):not(.erro-vibrante) {
+				transform: translateY(-2px);
+				border-color: var(--azul-escuro);
+				background-color: #f8fafc;
+				box-shadow: 0 4px 12px rgba(0, 145, 255, 0.1);
+			}
+		}
+
+		.btn-opcao-quiz:active:not(.sucesso-vibrante):not(.erro-vibrante) {
+			transform: translateY(2px);
+			box-shadow: none;
+		}
+
+		.btn-opcao-quiz.sucesso-vibrante {
+			background-color: var(--cor-sucesso) !important;
+			color: white !important;
+			border-color: var(--cor-sucesso-dark) !important;
+			font-weight: 700 !important;
+			transform: translateY(2px) !important;
+			box-shadow: none !important;
+		}
+
+		.btn-opcao-quiz.erro-vibrante {
+			animation: shakeError 0.4s ease;
+			border-color: var(--cor-erro) !important;
+			background-color: #ffefef !important;
+			color: var(--cor-erro) !important;
+			font-weight: 700 !important;
+		}
+
+
+		/* --- A MARINHEIRA E O BALÃO --- */
+		.marinheiro-container {
+			position: absolute;
+			bottom: 20px;
+			right: 25px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 100px;
+			z-index: 100;
+			pointer-events: none;
+		}
+
+		.marinheiro-container * {
+			pointer-events: none;
+		}
+
+		.marinheiro-svg {
+			width: 90px;
+			height: 90px;
+			animation: flutuarCoruja 4s infinite ease-in-out;
+		}
+
+		.balao-fala-mar {
+			position: absolute;
+			bottom: 115px !important; /* Subido 20px conforme pedido! [2] */
+			right: 5px;
+			background: white;
+			border: 3px solid #1d4ed8;
+			color: var(--text-main);
+			padding: 10px 15px;
+			border-radius: 15px;
+			font-size: 0.9rem;
+			font-weight: 700;
+			width: 210px;
+			box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+			text-align: center;
+			animation: fadeIn 0.3s ease;
+			display: none;
+			box-sizing: border-box;
+		}
+
+		.balao-fala-mar::after {
+			content: ''; position: absolute; bottom: -12px; right: 42px;
+			border-width: 12px 12px 0; border-style: solid; border-color: white transparent;
+			display: block; width: 0; z-index: 1;
+		}
+
+		.balao-fala-mar::before {
+			content: ''; position: absolute; bottom: -16px; right: 40px;
+			border-width: 15px 15px 0; border-style: solid; border-color: #1d4ed8 transparent;
+			display: block; width: 0; z-index: 0;
+		}
+
+		@keyframes flutuarCoruja {
+			0%, 100% { transform: translateY(0) rotate(0deg); }
+			50% { transform: translateY(-6px) rotate(2deg); }
+		}
+
+
+		/* --- ANIMAÇÃO TUTORIAL DO MENU INICIAL (SINTAXE) [1.1.1] --- */
+		.quadro-animacao-sintaxe {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: white;
+			padding: 15px 30px;
+			border-radius: 15px;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+			width: 380px;
+			height: 55px;
+			box-sizing: border-box;
+		}
+
+		.linha-animacao-s {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 15px;
+			width: 100%;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.grupo-nominal {
+			font-size: 1.4rem;
+			font-weight: 900;
+			color: #1d4ed8;
+			animation: pulsarSujeito 4s infinite ease-in-out;
+		}
+
+		.seta-animada-s {
+			color: #cbd5e1;
+			font-size: 1.5rem;
+		}
+
+		.grupo-verbal {
+			font-size: 1.4rem;
+			font-weight: 900;
+			color: var(--cor-pt);
+			animation: pulsarPredicado 4s infinite ease-in-out;
+		}
+
+		.l1 { animation: cicloLinhaSintaxe 12s infinite; }
+		.l1 .grupo-nominal { animation: pulsarSujeito 12s infinite; }
+		.l1 .grupo-verbal { animation: pulsarPredicado 12s infinite; }
+
+		.l2 { animation: cicloLinhaSintaxe 12s infinite; animation-delay: 4s; }
+		.l2 .grupo-nominal { animation: pulsarSujeito 12s infinite; animation-delay: 4s; }
+		.l2 .grupo-verbal { animation: pulsarPredicado 12s infinite; animation-delay: 4s; }
+
+		.l3 { animation: cicloLinhaSintaxe 12s infinite; animation-delay: 8s; }
+		.l3 .grupo-nominal { animation: pulsarSujeito 12s infinite; animation-delay: 8s; }
+		.l3 .grupo-verbal { animation: pulsarPredicado 12s infinite; animation-delay: 8s; }
+
+		@keyframes cicloLinhaSintaxe {
+			0% { opacity: 0; transform: translateY(10px); }
+			4%, 30% { opacity: 1; transform: translateY(0); }
+			33.3%, 100% { opacity: 0; transform: translateY(-10px); }
+		}
+
+		@keyframes pulsarSujeito {
+			0%, 8% { opacity: 0.3; transform: scale(0.95); }
+			12%, 85% { opacity: 1; transform: scale(1); }
+		}
+
+		@keyframes pulsarPredicado {
+			0%, 16% { opacity: 0; transform: scale(0.9) rotate(-2deg); }
+			22%, 85% { opacity: 1; transform: scale(1) rotate(0deg); }
+		}
+
+
+		/* --- RESPONSIVIDADE E ÁREA DE JOGO --- */
+		.area-jogo-custom {
+			display: flex; flex-direction: column; align-items: center; justify-content: center;
+			width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 25px; gap: 25px;
+			position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+			padding-bottom: 140px !important; 
+			box-sizing: border-box;
+		}
+
+		@media (min-width: 769px) {
+			.area-jogo-custom > *:last-child {
+				margin-bottom: 80px !important;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.area-jogo-custom {
+				padding-bottom: 25px !important;
+				gap: 15px;
+			}
+			.triagem-grelha {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+			.zona-triagem-box {
+				min-height: 110px;
+				padding: 10px;
+			}
+			.marinheiro-container {
+				position: relative;
+				bottom: 0;
+				right: 0;
+				margin-top: 20px;
+				width: 100%;
+				flex-direction: row;
+				justify-content: center;
+				gap: 15px;
+				pointer-events: auto;
+			}
+			.balao-fala-mar {
+				position: relative;
+				bottom: 0;
+				right: 0;
+				max-width: 80%;
+			}
+			.balao-fala-mar::after, .balao-fala-mar::before {
+				display: none;
+			}
+		}
+
+		/* Estilo para a mascote em formato PNG */
+		.marinheiro-png {
+			width: 100px;
+			height: 100px;
+			object-fit: contain; /* Garante que o boneco não deforma */
+			animation: flutuarCoruja 4s infinite ease-in-out; /* Mantém o boneco a flutuar suavemente! */
+		}
+		
+		/* Linha de blocos de frase do Nível 2 */
+		.linha-blocos-sintaxe {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 15px;
+			width: 100%;
+			margin-bottom: 10px;
+		}
+
+		/* Os blocos de frase clicáveis do Nível 2 */
+		.bloco-sintaxe-drag {
+			background: white;
+			border: 3px solid var(--cor-btn-verde);
+			border-radius: 15px;
+			padding: 12px 20px;
+			font-size: 1.15rem;
+			font-weight: 900;
+			color: var(--azul-escuro);
+			cursor: pointer;
+			transition: all 0.2s ease;
+			box-shadow: 0 4px 0 var(--cor-btn-verde);
+			touch-action: manipulation;
+		}
+
+		.bloco-sintaxe-drag.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			outline-offset: 4px;
+			transform: scale(1.05);
+		}
+
+		.bloco-sintaxe-drag.colocado {
+			opacity: 0.3;
+			pointer-events: none;
+			box-shadow: none;
+			transform: none !important;
+		}
+		
+		/* --- AJUSTE COMPACTO PARA EVITAR SCROLL NO ECRÃ INICIAL --- */
+
+		/* 1. Reduzir a altura da caixa de animação do menu inicial */
+		.animacao-tutorial {
+			height: 110px !important;        /* Reduzido de 180px para poupar imenso espaço */
+			margin: 0 auto 15px !important;   /* Reduzido de 25px para 15px de margem */
+		}
+
+		/* 2. Tornar o preenchimento (padding) e a grelha de botões muito mais compactos */
+		.grid-niveis {
+			gap: 12px !important;            /* Reduzido de 20px de espaço entre botões */
+		}
+
+		.btn-nivel-novo {
+			padding: 10px 15px !important;   /* Reduzido de 20px para libertar espaço vertical */
+			font-size: 1rem !important;      /* Ajustado de 1.2rem para o texto em 2 linhas caber perfeitamente */
+			gap: 4px !important;             /* Reduz o espaço entre o ícone e o texto */
+			min-height: 110px;               /* Estabiliza a altura das caixas */
+		}
+
+		/* 3. Reduzir proporcionalmente os teus ícones SVG nos botões */
+		.icon-btn-nivel {
+			width: 36px !important;          /* Reduzido de 55px */
+			height: 36px !important;         /* Reduzido de 55px */
+			margin-bottom: 2px;
+		}
+		/* Opção A: Efeito marcador de texto (fundo amarelo) */
+		.destaque-fundo {
+			background-color: #fff275; /* Amarelo fluorescente */
+			color: var(--azul-escuro); /* Texto em azul escuro para ler bem */
+			padding: 2px 6px;
+			border-radius: 6px;
+			font-weight: 900;
+		}
+
+		/* Opção B: Apenas texto colorido e forte (sem fundo) */
+		.destaque-texto {
+			color: var(--cor-btn-vermelho); /* Usa o vermelho vibrante do seu root */
+			font-weight: 900;
+		}
+		   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Grupos na Frase<img src="../img-titulos/grupos_frases.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escolhe um minijogo para começar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor protegido para os confetis não fugirem do cartão -->
+        <div id="confetti-container" class="confetti-container"></div>
+
+		<!-- ECRÃ DE SELEÇÃO: O CAIS DAS FRASES (SINTAXE) -->
+		<div id="ecra-selecao" class="ecra">
+			
+			<!-- ANIMAÇÃO TUTORIAL: Grupo Nominal [GN] + Grupo Verbal [GV] = Frase [1.1.1] -->
+			<div class="animacao-tutorial">
+				<div class="quadro-animacao-sintaxe">
+					
+					<!-- Linha 1: O barco -> desliza -->
+					<div class="linha-animacao-s l1">
+						<span class="grupo-nominal">O barco</span>
+						<span class="seta-animada-s">➔</span>
+						<span class="grupo-verbal">desliza.</span>
+					</div>
+					
+					<!-- Linha 2: As ondas -> batem -->
+					<div class="linha-animacao-s l2">
+						<span class="grupo-nominal">As ondas</span>
+						<span class="seta-animada-s">➔</span>
+						<span class="grupo-verbal">batem.</span>
+					</div>
+					
+					<!-- Linha 3: Nós -> navegamos -->
+					<div class="linha-animacao-s l3">
+						<span class="grupo-nominal">Nós</span>
+						<span class="seta-animada-s">➔</span>
+						<span class="grupo-verbal">navegamos.</span>
+					</div>
+					
+				</div>
+			</div>
+			
+			<h2 class="titulo-menu"><img src="../img-titulos/grupos_frases.svg" class="icon-svg-titulo" alt="" onerror="this.style.display='none'"> O Cais das Frases <img src="../img-titulos/grupos_frases_1.svg" class="icon-svg-titulo" alt="" onerror="this.style.display='none'"></h2>
+			<p style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 25px; max-width: 500px; text-align: center; font-weight: 500;">
+				Desvenda a estrutura das frases dividindo o Sujeito do Predicado e completa os desafios!
+			</p>
+			
+			<!-- GRELHA DE NÍVEIS 2x2 DA SINTAXE -->
+			<div class="grid-niveis">
+				<!-- Nível 1: Triagem -->
+				<button class="btn-nivel-novo bg-rosa" onclick="iniciarJogoSintaxe('nivel1', 'Nível 1: Cais da Sintaxe')">
+					<img src="../img-titulos/../img-titulos/grupos_frases_menu_1.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+					1. Classificar
+				</button>
+
+				<!-- Nível 2: A Linha de Pesca -->
+				<button class="btn-nivel-novo bg-laranja" onclick="iniciarJogoSintaxe('nivel2', 'Nível 2: A Linha de Pesca')">
+					<img src="../img-titulos/grupos_frases_menu_2.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+					2. Dividir Frases
+				</button>
+				
+				<!-- Nível 3: O Estaleiro das Frases -->
+				<button class="btn-nivel-novo bg-azul" onclick="iniciarJogoSintaxe('nivel3', 'Nível 3: O Estaleiro das Frases')">
+					<img src="../img-titulos/grupos_frases_menu_3.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+					3. Construir Frases
+				</button>
+				
+				<!-- Nível 4: O Farol do Conhecimento -->
+				<button class="btn-nivel-novo bg-turquesa" onclick="iniciarJogoSintaxe('nivel4', 'Nível 4: O Farol do Conhecimento')">
+					<img src="../img-titulos/grupos_frases_menu_4.svg" class="icon-btn-nivel" alt="" onerror="this.style.display='none'">
+					4. O Farol do Saber
+				</button>
+			</div>
+		</div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <div class="status-bar-jogo">
+				<button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">??</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+
+            <!-- Zona de Jogo: Teste de Botões Vibrantes -->
+            <div class="area-jogo-custom" id="game-area">
+                <div class="pergunta-texto">Teste aos Botões Vibrantes!</div>
+                <p style="font-size:1.1rem; color:var(--text-main); font-weight:normal; max-width:500px; margin-bottom:30px;">
+                    Clica nos botões abaixo para veres o impacto das cores fortes no acerto e no erro.
+                </p>
+                <div class="opcoes-container" id="opcoes-container">
+                    <button class="btn-opcao" onclick="simularAcerto(this)"><img src="../../../SVG/certo.svg" class="icon-certo" alt=""> Acerto</button>
+					<button class="btn-opcao" onclick="simularErro(this)"><img src="../../../SVG/errado.svg" class="icon-errado" alt=""> Erro</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- ECRÃ DE TRANSIÇÃO (Placeholder opcional) -->
+        <div id="ecra-transicao" class="ecra">
+			<h2 class="end-title" id="transicao-title-text">Nível Completo!<img src="../../../SVG/estrela.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                <p>Estás a ir muito bem!</p>
+            </div>
+           
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario">
+					PRÓXIMO NÍVEL 
+					<img src="../../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+				</button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">
+					<img src="../../../SVG/home.svg" class="icon-acao" alt=""> 
+					VOLTAR AO MENU
+				</button>
+			</div>
+        </div>
+
+        <!-- ECRÃ DE FIM -->
+        <div id="ecra-fim" class="ecra">
+            <h2 class="end-title" id="end-title-text">Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt=""></h2>
+            <div class="end-stats">
+                Completaste os testes!<br><br>
+                Tiveste <strong id="final-erros" style="color:var(--cor-erro); font-size:2rem;">0</strong> erros.
+            </div>
+           
+			
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="reiniciarJogo()">JOGAR DE NOVO<img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+				<button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU<img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+			</div>
+			
+        </div>
+		
+		<!-- MASCOTE DO PEQUENO MARINHEIRO E BALÃO DE FALA -->
+			<div id="marinheiro-mascote" class="marinheiro-container" style="display: none;">
+				<div id="balao-fala-marinheiro" class="balao-fala-mar"></div>
+				<img class="marinheiro-png" src="marinheiro.png" alt="Marinheiro Mascote">	
+			</div>
+		
+		
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/3_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+<script src="dados_sintaxe.js"></script>
+<script>
+
+	/* =========================================================================
+   SVGs GLOBAIS (QUANTIFICADORES)
+   ========================================================================= */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+	<path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
+	<rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+	</svg> Menu`;
+
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;">
+	<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+	</svg>`;
+
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;">
+	<path d="M9 18h6"></path><path d="M10 22h4"></path>
+	<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+	</svg>`;
+
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;">
+	<path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
+	</svg>`;
+		
+		
+	
+	/* =========================================================================
+	   VARIÁVEIS GLOBAIS E INICIALIZAÇÃO (JOGO DE SINTAXE)
+	   ========================================================================= */
+	let erradas = 0;
+	let desafioAtual = 0;
+	let totalDesafiosNivel = 10;
+	let rondasParaDica = 0;
+	let rondasSorteadas = [];
+	let nivelAtualAtivo = 'nivel1';
+	let timerImpaciencia = null;
+
+	// MEMÓRIA ANTI-REPETIÇÃO IMEDIATA (Evita textos repetidos) [2]
+	let l2UltimoTextoId = null;
+	let l3UltimoTemplate = null; // Correção: Feita por template porque o nível 3 não tem IDs!
+	let l4UltimoTemplate = null;
+
+	// VARIÁVEIS AUXILIARES DOS MINIJOGOS
+	let l1PalavraAtiva = null;     // Nível 1: Grupo frásico ativo
+	let l1Restantes = [];          // Nível 1: Grupos frásicos que faltam classificar
+	let l3TextoAtivo = null;       // Nível 3: O diário de bordo sorteado
+	let l3LacunaSelecionada = null;// Nível 3: ID da lacuna clicada
+	let l2ElementoAtivo = null;    // Guarda o bloco de texto selecionado
+	let l2AtivosRestantes = 2;     // Controla se ambos os blocos já foram arrumados
+
+	// Função baralhadora de arrays
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	/* =========================================================================
+	   ARRANQUE E LEITURA DE DADOS
+	   ========================================================================= */
+	document.addEventListener("DOMContentLoaded", () => {
+		const ano = document.getElementById('ano-atual');
+		if (ano) ano.textContent = new Date().getFullYear();
+
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+
+		console.log("Teste de dados:", typeof dbSintaxe !== 'undefined' ? "Sucesso! Base de dados de Sintaxe carregada." : "Erro: dados_sintaxe.js NÃO carregou!");
+	});
+
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		document.getElementById(id).style.display = 'flex';
+	}
+
+	function iniciarJogoSintaxe(nivelKey, tituloNivel) {
+		erradas = 0;
+		desafioAtual = 0;
+		rondasParaDica = 0;
+		nivelAtualAtivo = nivelKey;
+		l3LacunaSelecionada = null;
+
+		const subtitulo = document.getElementById('subtitulo-header');
+		if (subtitulo) subtitulo.textContent = tituloNivel;
+
+		const confetti = document.getElementById('confetti-container');
+		if (confetti) confetti.innerHTML = '';
+		
+		// Revela a nova mascote da Pequena Marinheira no ecrã [2]
+		const marinheiro = document.getElementById('marinheiro-mascote');
+		if (marinheiro) marinheiro.style.display = 'flex';
+
+		// Configuração de Rondas e Sorteio Anti-Repetição Imediata [2]
+		if (nivelKey === 'nivel1') {
+			totalDesafiosNivel = 10; // 10 grupos para classificar [1.1.1]
+			l1Restantes = baralharArray(dbSintaxe.nivel1).slice(0, 10);
+		} else if (nivelKey === 'nivel2') {
+			totalDesafiosNivel = 5; // Encontrar o divisor correto em 5 frases diferentes [1.1.1]
+			rondasSorteadas = baralharArray(dbSintaxe.nivel2);
+		} else if (nivelKey === 'nivel3') {
+			totalDesafiosNivel = 4; // Completar as 4 lacunas estruturais (Sujeito + Predicado) [1.1.1]
+			// CORREÇÃO: Filtramos por template para evitar erros de ausência de ID [2]
+			const textosDisponiveis = dbSintaxe.nivel3.filter(t => t.template !== l3UltimoTemplate);
+			l3TextoAtivo = baralharArray(textosDisponiveis)[0];
+			l3UltimoTemplate = l3TextoAtivo.template;
+		} else if (nivelKey === 'nivel4') {
+			totalDesafiosNivel = 5; // Responder a 5 perguntas de escolha múltipla [1.1.1]
+			rondasSorteadas = baralharArray(dbSintaxe.nivel4).slice(0, 5);
+		}
+
+		atualizarPlacar();
+		atualizarBotaoDica();
+		mostrarEcra('ecra-jogo');
+
+		carregarRonda();
+	}
+
+	function carregarRonda() {
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+
+		if (nivelAtualAtivo === 'nivel1') {
+			carregarNivel1(area);
+		} else if (nivelAtualAtivo === 'nivel2') {
+			carregarNivel2(area);
+		} else if (nivelAtualAtivo === 'nivel3') {
+			carregarNivel3(area);
+		} else if (nivelAtualAtivo === 'nivel4') {
+			carregarNivel4(area);
+		}
+
+		resetTimerImpaciencia();
+	}
+
+	/* =========================================================================
+	   NÍVEL 1: CAIS DA SINTAXE (Triagem GN vs. GV) [1.1.1]
+	   ========================================================================= */
+	function carregarNivel1(area) {
+		l1PalavraAtiva = l1Restantes[desafioAtual];
+
+		const wrapper = document.createElement('div');
+		wrapper.style.textAlign = 'center';
+		wrapper.style.width = '100%';
+
+		const instr = document.createElement('p');
+		instr.style.color = 'var(--text-main)';
+		instr.style.fontWeight = 'bold';
+		instr.style.fontSize = '1.2rem';
+		instr.textContent = "Atraca o barco no cais correspondente ao grupo frásico apresentado:";
+
+		const grupoBarco = document.createElement('div');
+		grupoBarco.className = 'verbo-flutuante-triagem';
+		grupoBarco.textContent = l1PalavraAtiva.palavra;
+
+		const grelha = document.createElement('div');
+		grelha.className = 'triagem-grelha';
+
+		const cais = [
+			{ id: "gn", label: "Grupo Nominal (Sujeito)" },
+			{ id: "gv", label: "Grupo Verbal (Predicado)" }
+		];
+
+		grelha.style.gridTemplateColumns = 'repeat(2, 1fr)';
+
+		cais.forEach(c => {
+			const box = document.createElement('div');
+			box.className = 'zona-triagem-box';
+			box.setAttribute('data-tipo', c.id);
+			box.innerHTML = `<div class="titulo-zona-triagem">${c.label}</div>`;
+			box.onclick = () => submeterTriagem(c.id, box);
+			grelha.appendChild(box);
+		});
+
+		wrapper.appendChild(instr);
+		wrapper.appendChild(grupoBarco);
+		wrapper.appendChild(grelha);
+		area.appendChild(wrapper);
+
+		falarMarinheiro(`Onde devemos atracar o grupo "${l1PalavraAtiva.palavra}"? Escolhe um cais! ⚓`, 4000);
+	}
+
+	function submeterTriagem(caisEscolhido, boxElement) {
+		if (caisEscolhido === l1PalavraAtiva.tipo) {
+			boxElement.classList.add('sucesso-l1');
+			tocarSom('acerto');
+			falarMarinheiro("Excelente! Atracaste o grupo no cais correto! ⚓", 2000);
+
+			const tag = document.createElement('div');
+			tag.className = 'palavra-arrumada-tag';
+			tag.textContent = l1PalavraAtiva.palavra;
+			boxElement.appendChild(tag);
+
+			setTimeout(() => {
+				boxElement.classList.remove('sucesso-l1');
+				desafioAtual++;
+				atualizarPlacar();
+				if (desafioAtual < totalDesafiosNivel) {
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1200);
+		} else {
+			boxElement.classList.add('falha-l1');
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+			falarMarinheiro("Humm, repara se a palavra principal é um nome (Sujeito) ou um verbo (Predicado)! ⚓", 4000);
+
+			setTimeout(() => {
+				boxElement.classList.remove('falha-l1');
+			}, 400);
+		}
+	}
+
+
+/* =========================================================================
+   NÍVEL 2 REFEITO: ARRASTAR (CLIQUE + DEPOSITO) SUJEITO E PREDICADO 
+   ========================================================================= */
+	function carregarNivel2(area) {
+		const ronda = rondasSorteadas[desafioAtual];
+		l2ElementoAtivo = null;
+		l2AtivosRestantes = 2;
+
+		// 1. Card Superior da Pergunta
+		const cardPergunta = document.createElement('div');
+		cardPergunta.className = 'quiz-pergunta-card';
+		cardPergunta.style.marginBottom = '20px';
+		cardPergunta.textContent = "Clica numa parte da frase (em verde) e depois clica na caixa correta abaixo para a arrumares!";
+		area.appendChild(cardPergunta);
+
+		// 2. Linha com as duas metades da frase (Baralhadas para obrigar a pensar!) [1.1.1]
+		const linhaBlocos = document.createElement('div');
+		linhaBlocos.className = 'linha-blocos-sintaxe';
+
+		const blocosAIvaliar = [
+			{ texto: ronda.sujeito, tipo: "gn" },
+			{ texto: ronda.predicado, tipo: "gv" }
+		];
+
+		// Baralha os blocos para que o Sujeito não apareça sempre do lado esquerdo! [1.1.1]
+		baralharArray(blocosAIvaliar).forEach(bloco => {
+			const btnBloco = document.createElement('button');
+			btnBloco.className = 'bloco-sintaxe-drag';
+			btnBloco.textContent = bloco.texto;
+			
+			btnBloco.onclick = () => {
+				tocarSom('flip');
+				document.querySelectorAll('.bloco-sintaxe-drag').forEach(b => b.classList.remove('selecionado'));
+				btnBloco.classList.add('selecionado');
+				l2ElementoAtivo = { tipo: bloco.tipo, botao: btnBloco, texto: bloco.texto };
+			};
+			
+			linhaBlocos.appendChild(btnBloco);
+		});
+		area.appendChild(linhaBlocos);
+
+		// 3. Duas Caixas de Depósito (Sujeito e Predicado) [1.1.1]
+		const grelhaDepósito = document.createElement('div');
+		grelhaDepósito.className = 'triagem-grelha';
+		grelhaDepósito.style.gridTemplateColumns = 'repeat(2, 1fr)';
+
+		const cais = [
+			{ id: "gn", label: "Grupo Nominal (Sujeito)" },
+			{ id: "gv", label: "Grupo Verbal (Predicado)" }
+		];
+
+		cais.forEach(c => {
+			const box = document.createElement('div');
+			box.className = 'zona-triagem-box';
+			box.setAttribute('data-tipo', c.id);
+			box.innerHTML = `<div class="titulo-zona-triagem">${c.label}</div>`;
+			box.onclick = () => depositarElementoL2(c.id, box);
+			grelhaDepósito.appendChild(box);
+		});
+		area.appendChild(grelhaDepósito);
+
+		falarMarinheiro("Clica numa parte verde da frase e arruma-a na caixa correta! ⚓", 4000);
+	}
+
+	function depositarElementoL2(caisId, boxElement) {
+		if (!l2ElementoAtivo) {
+			falarMarinheiro("Clica primeiro numa das partes verdes da frase lá em cima! ⚓", 3000);
+			return;
+		}
+
+		// Se o bloco selecionado coincidir com o cais correto [2]
+		if (l2ElementoAtivo.tipo === caisId) {
+			boxElement.classList.add('sucesso-l1');
+			tocarSom('acerto');
+			falarMarinheiro("¡Excelente! Encaixe perfeito! ⚓", 2000);
+
+			// Bloqueia e esmaece o bloco arrumado lá em cima
+			l2ElementoAtivo.botao.classList.remove('selecionado');
+			l2ElementoAtivo.botao.classList.add('colocado');
+
+			// Cria a etiqueta fixa dentro da caixa de depósito [2]
+			const tag = document.createElement('div');
+			tag.className = 'palavra-arrumada-tag';
+			tag.textContent = l2ElementoAtivo.texto;
+			boxElement.appendChild(tag);
+
+			l2ElementoAtivo = null;
+			l2AtivosRestantes--;
+
+			// Se ambos os blocos tiverem sido arrumados corretamente, avança!
+			if (l2AtivosRestantes === 0) {
+				setTimeout(() => {
+					desafioAtual++;
+					atualizarPlacar();
+					if (desafioAtual < totalDesafiosNivel) {
+						carregarRonda();
+					} else {
+						finalizarJogo();
+					}
+				}, 1500);
+			} else {
+				setTimeout(() => boxElement.classList.remove('sucesso-l1'), 800);
+			}
+
+		} else {
+			// Se errar
+			boxElement.classList.add('falha-l1');
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+			falarMarinheiro("Humm, timoneira, essa parte da frase não pertence a esta caixa! Tenta de novo! ⚓", 4000);
+
+			setTimeout(() => {
+				boxElement.classList.remove('falha-l1');
+			}, 400);
+		}
+	}
+
+	// CORREÇÃO: Parser específico do Nível 2 para evitar que a palavra certa seja anulada! [2]
+	function prepararTextoNivel2(htmlTexto) {
+		const tempDiv = document.createElement('div');
+		tempDiv.innerHTML = htmlTexto;
+		
+		function processarNos(no) {
+			if (no.nodeType === Node.TEXT_NODE) {
+				const palavras = no.nodeValue.split(/(\s+)/);
+				const fragmento = document.createDocumentFragment();
+				palavras.forEach(pal => {
+					if (pal.trim().length > 0) {
+						const span = document.createElement('span');
+						span.className = 'palavra-normal-l3';
+						span.textContent = pal;
+						fragmento.appendChild(span);
+					} else {
+						fragmento.appendChild(document.createTextNode(pal));
+					}
+				});
+				no.parentNode.replaceChild(fragmento, no);
+			} else if (no.nodeType === Node.ELEMENT_NODE && !no.classList.contains('palavra-clicavel')) {
+				Array.from(no.childNodes).forEach(processarNos);
+			}
+		}
+		Array.from(tempDiv.childNodes).forEach(processarNos);
+		return tempDiv.innerHTML;
+	}
+
+	/* =========================================================================
+	   NÍVEL 3: O ESTALEIRO DAS FRASES (Construção estrutural GN + GV) [1.1.1]
+	   ========================================================================= */
+	function carregarNivel3(area) {
+		l3LacunaSelecionada = null;
+
+		const cardPergunta = document.createElement('div');
+		cardPergunta.className = 'quiz-pergunta-card';
+		cardPergunta.style.marginBottom = '20px';
+		cardPergunta.textContent = "Clica numa lacuna vazia [ --- ] e escolhe os Grupos Nominais e Verbais corretos para construir a frase!";
+		area.appendChild(cardPergunta);
+
+		const cardTexto = document.createElement('div');
+		cardTexto.className = 'texto-lacunas-card';
+
+		let htmlComLacunas = l3TextoAtivo.template;
+		l3TextoAtivo.blanks.forEach(blank => {
+			htmlComLacunas = htmlComLacunas.replace(`{${blank.id}}`, `<span class="espaco-lacuna" id="${blank.id}">---</span>`);
+		});
+		cardTexto.innerHTML = htmlComLacunas;
+
+		l3TextoAtivo.blanks.forEach(blank => {
+			const el = cardTexto.querySelector(`#${blank.id}`);
+			if (el) {
+				el.onclick = () => selecionarLacuna(blank.id);
+			}
+		});
+
+		area.appendChild(cardTexto);
+
+		const opcoesDiv = document.createElement('div');
+		opcoesDiv.id = 'lacunas-opcoes-div';
+		opcoesDiv.className = 'opcoes-quiz-container';
+		area.appendChild(opcoesDiv);
+
+		falarMarinheiro("Clica num dos espaços vazios [ --- ] para veres as peças de frase disponíveis! ⚓", 4000);
+	}
+
+	function selecionarLacuna(blankId) {
+		tocarSom('flip');
+		l3LacunaSelecionada = blankId;
+
+		document.querySelectorAll('.espaco-lacuna').forEach(el => el.classList.remove('ativo'));
+		const elAtivo = document.getElementById(blankId);
+		if (elAtivo) elAtivo.classList.add('ativo');
+
+		const blankObj = l3TextoAtivo.blanks.find(b => b.id === blankId);
+		const containerOpcoes = document.getElementById('lacunas-opcoes-div');
+		if (!containerOpcoes) return;
+		containerOpcoes.innerHTML = '';
+
+		blankObj.opcoes.forEach(opcao => {
+			const btn = document.createElement('button');
+			btn.className = 'btn-opcao-lacuna';
+			btn.textContent = opcao;
+			btn.onclick = () => submeterEscolhaLacuna(opcao, btn);
+			containerOpcoes.appendChild(btn);
+		});
+
+		falarMarinheiro("Escolhe o grupo correto para preencher esta parte da frase! ⚓", 3000);
+	}
+
+	function submeterEscolhaLacuna(opcaoEscolhida, botaoClicado) {
+		if (!l3LacunaSelecionada) return;
+
+		const blankObj = l3TextoAtivo.blanks.find(b => b.id === l3LacunaSelecionada);
+		const elLacuna = document.getElementById(l3LacunaSelecionada);
+
+		if (opcaoEscolhida === blankObj.correto) {
+			elLacuna.textContent = blankObj.correto;
+			elLacuna.classList.remove('ativo');
+			elLacuna.classList.add('preenchido');
+			tocarSom('acerto');
+
+			document.getElementById('lacunas-opcoes-div').innerHTML = '';
+			l3LacunaSelecionada = null;
+
+			desafioAtual++;
+			atualizarPlacar();
+
+			if (desafioAtual < totalDesafiosNivel) {
+				falarMarinheiro("Excelente! A peça encaixou perfeitamente na frase. Escolhe o próximo espaço! ⚓", 3500);
+			} else {
+				falarMarinheiro("Sensacional! Construíste todas as frases do estaleiro de forma correta! ⚓", 4000);
+				setTimeout(finalizarJogo, 2000);
+			}
+
+		} else {
+			botaoClicado.classList.add('erro-vibrante');
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+			falarMarinheiro("Humm, essa peça de frase não encaixa bem aqui. Relembra a diferença de GN e GV! ⚓", 4500);
+
+			setTimeout(() => {
+				botaoClicado.classList.remove('erro-vibrante');
+			}, 400);
+		}
+	}
+
+	/* =========================================================================
+	   NÍVEL 4: O FAROL DO CONHECIMENTO (Quiz de Escolha Múltipla) [1.1.1]
+	   ========================================================================= */
+	function carregarNivel4(area) {
+		const ronda = rondasSorteadas[desafioAtual];
+
+		// Card da Pergunta
+		const cardPergunta = document.createElement('div');
+		cardPergunta.className = 'quiz-pergunta-card';
+		cardPergunta.style.marginBottom = '25px';
+		cardPergunta.textContent = ronda.pergunta;
+		area.appendChild(cardPergunta);
+
+		// Grelha de 4 Opções de Resposta
+		const gridOpcoes = document.createElement('div');
+		gridOpcoes.className = 'opcoes-quiz-container';
+
+		const opcoesBaralhadas = baralharArray(ronda.opcoes);
+
+		opcoesBaralhadas.forEach(opcao => {
+			const btn = document.createElement('button');
+			btn.className = 'btn-opcao-quiz'; // CORREÇÃO: Agora os botões estão estilizados no CSS! [2]
+			btn.textContent = opcao;
+			btn.onclick = () => submeterQuiz(opcao, btn);
+			gridOpcoes.appendChild(btn);
+		});
+
+		area.appendChild(gridOpcoes);
+		falarMarinheiro("Lê com atenção a pergunta do farol e clica na resposta correta! ⚓", 4000);
+	}
+
+	function submeterQuiz(opcaoEscolhida, botao) {
+		const ronda = rondasSorteadas[desafioAtual];
+
+		if (opcaoEscolhida === ronda.correta) {
+			document.querySelectorAll('.btn-opcao-quiz').forEach(b => {
+				b.style.pointerEvents = 'none';
+			});
+
+			botao.classList.add('sucesso-vibrante');
+			tocarSom('acerto');
+
+			falarMarinheiro("Excelente! Acertaste em cheio na resposta de teoria! ⚓", 4000);
+
+			setTimeout(() => {
+				desafioAtual++;
+				atualizarPlacar();
+				if (desafioAtual < totalDesafiosNivel) {
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 2200);
+
+		} else {
+			botao.classList.add('erro-vibrante');
+			tocarSom('erro');
+			erradas++;
+			atualizarPlacar();
+
+			falarMarinheiro("Oh, quase! Lembra-te: o sujeito é o Grupo Nominal e o predicado o Grupo Verbal! ⚓", 4500);
+
+			setTimeout(() => {
+				botao.classList.remove('erro-vibrante');
+			}, 400);
+
+			resetTimerImpaciencia();
+		}
+	}
+
+	/* =========================================================================
+	   DIÁLOGOS, DICAS E PLACAR DA PEQUENA MARINHEIRA
+	   ========================================================================= */
+	function falarMarinheiro(mensagem, tempoDuracao = 4000) {
+		const balao = document.getElementById('balao-fala-marinheiro');
+		if (!balao) return;
+
+		balao.textContent = mensagem; // CORREÇÃO: Limpo de lapsos de escrita [2]
+		balao.style.display = 'block';
+
+		if (balao.timeoutId) clearTimeout(balao.timeoutId);
+
+		balao.timeoutId = setTimeout(() => {
+			balao.style.display = 'none';
+		}, tempoDuracao);
+	}
+
+	function usarDica() {
+		pararTimerImpaciencia();
+		if (rondasParaDica > 0) return;
+
+		tocarSom('flip');
+		let textoDica = "";
+
+		if (nivelAtualAtivo === 'nivel1') {
+			// Nível 1: Vai buscar a dica do verbo ativo
+			textoDica = l1PalavraAtiva.dica;
+		} else if (nivelAtualAtivo === 'nivel2') {
+			// Nível 2: Vai buscar a dica da frase ativa
+			const rondaAtiva = rondasSorteadas[desafioAtual];
+			textoDica = rondaAtiva.dica; 
+		} else if (nivelAtualAtivo === 'nivel3') {
+			// Nível 3: Ajuda na seleção das lacunas do estaleiro
+			if (!l3LacunaSelecionada) {
+				textoDica = "Dica da Marinheira: Primeiro clica numa das caixas vazias [ --- ] do estaleiro para eu te ajudar! ⚓";
+			} else {
+				textoDica = "Dica da Marinheira: Pensa se nesta parte da frase faz sentido o Grupo Nominal (Sujeito) ou o Grupo Verbal (Predicado)! ⚓";
+			}
+		} else if (nivelAtualAtivo === 'nivel4') {
+			// Nível 4: Vai buscar a dica da pergunta ativa do Quiz
+			const ronda = rondasSorteadas[desafioAtual];
+			textoDica = ronda.dica;
+		}
+
+		// Apenas a Marinheira revela a dica no ecrã de forma puramente verbal! [2]
+		falarMarinheiro(textoDica, 7500);
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+	function atualizarPlacar() {
+		const p = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+		
+		const percentagem = (p / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+
+		timerImpaciencia = setTimeout(() => {
+			if (rondasParaDica <= 0 && btnDica) {
+				btnDica.classList.add('dica-impaciente');
+				falarMarinheiro("Estás com dificuldades, marinheiro? Se precisares, clica na lâmpada da dica! ⚓", 6000);
+			}
+		}, 15000);
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+	}
+
+	/* =========================================================================
+	   NAVEGAÇÃO DO TEMPLATE BASE
+	   ========================================================================= */
+	function voltarAoMenu() {
+		const subtitulo = document.getElementById('subtitulo-header');
+		if (subtitulo) subtitulo.textContent = "Escolhe um minijogo para começar!";
+		
+		const marinheiro = document.getElementById('marinheiro-mascote');
+		if (marinheiro) marinheiro.style.display = 'none'; // Ocultação segura [2]
+		
+		mostrarEcra('ecra-selecao');
+	}
+
+	function finalizarJogo() {
+		const fill = document.getElementById('progress-fill');
+		if (fill) fill.style.width = '100%';
+		
+		const marinheiro = document.getElementById('marinheiro-mascote');
+		if (marinheiro) marinheiro.style.display = 'none'; // Ocultação segura [2]
+		
+		setTimeout(() => {
+			mostrarEcra('ecra-fim');
+			const finalErros = document.getElementById('final-erros');
+			if (finalErros) finalErros.textContent = erradas;
+			tocarSom('vitoria');
+			dispararConfetis();
+		}, 500);
+	}
+
+	// CORREÇÃO: Mapeado perfeitamente para iniciar a Sintaxe no nível ativo! [2]
+	function reiniciarJogo() {
+		iniciarJogoSintaxe(nivelAtualAtivo, obterTituloNivel(nivelAtualAtivo));
+	}
+
+	function obterTituloNivel(nivelKey) {
+		if (nivelKey === 'nivel1') return 'Nível 1: Cais da Sintaxe';
+		if (nivelKey === 'nivel2') return 'Nível 2: A Linha de Pesca';
+		if (nivelKey === 'nivel3') return 'O Estaleiro das Frases';
+		return 'Nível 4: O Farol do Conhecimento';
+	}
+
+	/* =========================================================================
+	   SISTEMA DE SOM RETRO (Web Audio API)
+	   ========================================================================= */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		if (!AudioContextClass) return;
+		if (!audioCtx) audioCtx = new AudioContextClass();
+		if (audioCtx.state === 'suspended') audioCtx.resume();
+	}
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true });
+
+	function tocarSom(tipo) {
+		initAudio();
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		} else if (tipo === 'acerto') {
+			const notas = [783.99, 1046.50]; 
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.value = freq;
+				g.gain.setValueAtTime(0, agora + i * 0.12);
+				g.gain.linearRampToValueAtTime(0.1, agora + i * 0.12 + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+				o.start(agora + i * 0.12);
+				o.stop(agora + i * 0.12 + 0.3);
+			});
+		} else if (tipo === 'erro') {
+			osc.type = 'triangle';
+			osc.frequency.setValueAtTime(250, agora);
+			osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+			gain.gain.setValueAtTime(0.1, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.4);
+		} else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 },
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 },
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 },
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 },
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.80 }
+			];
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.1, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
+	}
+
+	/* =========================================================================
+	   SISTEMA DE CONFETIS
+	   ========================================================================= */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		
+		for (let i = 0; i < 150; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+</script>
+</body>
+</html>

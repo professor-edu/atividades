@@ -221,5 +221,6 @@ const palavras = [
   { palavra: "tapete", imagem: "img/tapete.png", num: 3, divisao: "TA-PE-TE" },
   { palavra: "teclado", imagem: "img/teclado.png", num: 3, divisao: "TE-CLA-DO" },
   { palavra: "tintas", imagem: "img/tintas.png", num: 2, divisao: "TIN-TAS" },
+  { palavra: "marinheiro", imagem: "img/marinheiro.png", num: 4, divisao: "MA-RI-NHEI-RO" },
   { palavra: "tubarão", imagem: "img/tubarao.png", num: 3, divisao: "TU-BA-RÃO" }
 ];

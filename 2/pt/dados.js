@@ -308,6 +308,7 @@ const dbPalavras = [
   { palavra: "mão", imagem: "../../img/mao.png", num: 1, divisao: "MÃO" },
   { palavra: "máquina", imagem: "../../img/maquina.png", num: 3, divisao: "MÁ-QUI-NA" },
   { palavra: "Maria", imagem: "../../img/maria.png", num: 3, divisao: "MA-RI-A" },
+  { palavra: "marinheiro", imagem: "../../img/marinheiro.png", num: 4, divisao: "MA-RI-NHEI-RO" },
   { palavra: "marreta", imagem: "../../img/marreta.png", num: 3, divisao: "MA-RRE-TA" },
   { palavra: "martelo", imagem: "../../img/martelo.png", num: 3, divisao: "MAR-TE-LO" },
   { palavra: "massa", imagem: "../../img/massa.png", num: 2, divisao: "MA-SSA" },
