@@ -1956,6 +1956,7 @@
 	let rondasSorteadas = [];
 	let timerImpaciencia = null;
 	let roletaA_Rodar = false;
+	let roletaPoolPaises = []; // Guarda a pilha de países para evitar repetições
 
 /* ==========================================================================
    BASE DE DADOS DE PAÍSES (ROLETA E FICHAS OFICIAIS - 27 PAÍSES UE)
@@ -2421,7 +2422,8 @@
 		} else if (levelAtivo === 3) {
 			rondasSorteadas = baralharArray(RONDAS_BANDEIRAS).slice(0, numQuestoes);
 		} else if (levelAtivo === 4) {
-			rondasSorteadas = []; /* Não há rondas sequenciais para a roleta */
+			anguloAcumuladoRoleta = 0;
+			roletaPoolPaises = baralharArray(CHAVES_PAISES);
 		}
 
 		limparConfetis();
@@ -3204,8 +3206,12 @@
 		btn.disabled = true;
 		btn.style.opacity = '0.5';
 
-		/* Sorteia o país da UE */
-		const paisSorteadoChave = CHAVES_PAISES[Math.floor(Math.random() * CHAVES_PAISES.length)];
+		/* CORREÇÃO: Garante que o sorteio retira um país único da pilha sem repetições */
+		if (roletaPoolPaises.length === 0) {
+			// Se o aluno já viu todos os 27 países, baralha e recarrega a pilha novamente
+			roletaPoolPaises = baralharArray(CHAVES_PAISES);
+		}
+		const paisSorteadoChave = roletaPoolPaises.pop(); // Retira e remove o país da pilha!
 
 		/* CORREÇÃO 1: Rotação cumulativa realista (soma voltas ao ângulo atual) */
 		const voltasCompletas = 5 * 360;

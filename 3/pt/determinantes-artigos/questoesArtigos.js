@@ -411,7 +411,7 @@ const questoesArtigos = [
     // 6. CLASSIFICAÇÕES E CONCORDÂNCIA (SEM IMAGEM)
     // ==========================================
     {
-        pergunta: "Na frase «Comi <span class='destaque-fundo'>uma</span> deliciosa pizza.», a palavra destacada é um artigo:",
+        pergunta: "Na frase «Comi <span class='destaque-fundo'>uma</span> deliciosa piza.», a palavra destacada é um artigo:",
         opcoes: ["Definido", "Indefinido", "Nome Próprio"],
         correta: "Indefinido",
         dica: "Os artigos indefinidos referem-se a coisas de forma geral (um, uma, uns, umas)."
