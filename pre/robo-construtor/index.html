@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - O Robô Construtor 🤖</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+	
+	*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+    /* =====================================================================
+        CSS DO TEMPLATE BASE E ESTRUTURA GERAL
+    ===================================================================== */
+
+	:root {
+		--bg-body: #f0f7ff;
+		--cor-pre: #4fd1c5;       
+		--cor-pre-dark: #38a89d;
+		--cor-borda: #48b5aa;    
+		--bg-header: #e1f5f2;    
+		--azul-escuro: #0d47a1;
+		--text-main: #455a64;
+		--azul-vibrante: #0091ff; 
+		
+		/* CORES DOS CARTÕES DO MENU INICIAL */
+		--cor-btn-azul: #61A0FF;
+		--cor-btn-verde: #5DD279;
+		--cor-btn-amarelo: #FBC531;
+		--cor-btn-vermelho: #FF6B6B;
+		--cor-btn-roxo: #A55EEA;
+		--cor-btn-laranja: #FA983A;
+		
+		/* CORES DO CONTAINER DE JOGO + RGBA PARA ALTERAR A SHADOW */
+		--cor-c1: #ff6b6b; /* vermelho */
+		--cor-c1-sombra: rgba(255, 107, 107, 0.55);
+		
+		--cor-c2: #4dabf7; /* azul */
+		--cor-c2-sombra: rgba(77, 171, 247, 0.66);
+		
+		--cor-c3: #51cf66; /* verde */
+		--cor-c3-sombra: rgba(69, 176, 98, 0.52);
+		
+		--cor-c4: #fcc419; /* amarelo */
+		--cor-c4-sombra: rgba(251, 197, 49, 0.75);
+		
+		--cor-c5: #cc5de8; /* roxo */
+		--cor-c5-sombra: rgba(165, 94, 234, 0.65);
+		
+		--cor-c6: #ff922b; /* laranja */
+		--cor-c6-sombra: rgba(250, 152, 58, 0.85);
+	}
+
+	body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px); background-size: 25px 25px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+
+	header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+
+	.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+	.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+	.hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+	.hamburger:hover { background: #fff9c4; }
+	.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+	.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+	.hamburger.open span:nth-child(2) { opacity: 0; }
+	.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+	.btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+	.btn-voltar:hover { transform: scale(1.05); }
+	h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+	.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+	.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+	.sidebar.active { left: 0; }
+	.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+	.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+	.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+	.sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+	.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+	.overlay.active { display: block; }
+
+	main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+	.cartao-jogo-container { 
+		background: white; width: 100%; max-width: 950px; 
+		flex: 1; min-height: 0;
+		padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px var(--cor-c3-sombra); 
+		border-top: 8px solid var(--cor-c3); display: flex; flex-direction: column; 
+		align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+	}
+
+	.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+
+	.btn-nivel-novo {
+		width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+		color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+		flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+		transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+		box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+		touch-action: manipulation; user-select: none; text-align: center;
+	}
+
+	@media (hover: hover) {
+		.btn-nivel-novo:hover {
+			transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+		}
+	}
+
+	.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+	/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+	.icon-btn-nivel {
+		width: 55px;       
+		height: 55px;      
+		object-fit: contain;
+		filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); 
+		pointer-events: none; 
+	}
+
+	/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+	@media (max-width: 600px) {
+		.icon-btn-nivel {
+			width: 40px;
+			height: 40px;
+		}
+		.btn-nivel-novo {
+			padding: 15px;
+			font-size: 1.2rem;
+		}
+		#opcoes-resposta {
+			gap: 12px !important;
+		}
+		.container-nav-jogo {
+                max-width: 100%; /* Em telemóveis, usa toda a largura disponível */
+                padding-bottom: 8px;
+            }
+
+            /* Configura a grelha para empilhar em duas linhas no telemóvel */
+            .top-row-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Linha superior: Menu à esquerda, Info à direita */
+                grid-template-rows: auto auto;   /* Linha inferior: Instrução/Título */
+                gap: 10px;
+            }
+
+            /* Menu no canto superior esquerdo */
+            .top-row-grid .col-esquerda {
+                grid-column: 1;
+                grid-row: 1;
+                justify-self: start;
+            }
+
+            /* Info (Ex: 0/5) no canto superior direito */
+            .top-row-grid .col-direita {
+                grid-column: 2;
+                grid-row: 1;
+                justify-self: end;
+            }
+
+            /* Título salta para a linha de baixo perfeitamente centralizado */
+            .top-row-grid .col-centro {
+                grid-column: 1 / -1; /* Ocupa as duas colunas */
+                grid-row: 2;
+                justify-self: center;
+                text-align: center;
+            }
+
+            .btn-voltar-menu {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .info-nivel {
+                padding: 6px 14px;
+                font-size: 0.85rem;
+            }
+            .pergunta-destaque {
+                font-size: 1.15rem;
+            }
+	}
+
+	/* Classes Utilitárias de Cor para os Botões */
+	.bg-azul { background-color: var(--cor-btn-azul); }
+	.bg-verde { background-color: var(--cor-btn-verde); }
+	.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+	.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+	.bg-roxo { background-color: var(--cor-btn-roxo); }
+	.bg-laranja { background-color: var(--cor-btn-laranja); }
+
+	footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+	footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+	footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+
+	/* ECRÃS BASE */
+	.ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+
+	/* BOTÕES GLOBAIS */
+	.btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+	.btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+	.btn-acao:hover { filter: brightness(1.05); }
+
+	/* Variantes de Cor para os Botões de Ação */
+	.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.icon-acao {
+		width: 1.4em;
+		height: 1.4em;
+		object-fit: contain;
+		flex-shrink: 0; 
+		pointer-events: none;
+		transition: transform 0.2s ease;
+	}
+
+	.primario:hover .icon-acao, 
+	.secundario:hover .icon-acao,
+	.terciario:hover .icon-acao {
+		transform: translateX(4px);
+	}
+
+	/* TÍTULOS E TEXTOS BASE */
+	.titulo-destaque { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+	.pergunta-destaque { font-size: 1.3rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+	/* =========================================
+	   O CAMINHO MÁGICO (RASTO DE TINTA E SVGs)
+	   ========================================= */
+	.caminho-magico { width: 100%; max-width: 750px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+	.caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 70px; height: 0; border-bottom: 4px dashed #cbd5e1; z-index: 1; }
+
+	.caminho-rasto {
+		position: absolute;
+		bottom: -4px; 
+		left: 0;
+		width: 0%; 
+		height: 4px;
+		background-color: var(--cor-c3);
+		border-radius: 4px;
+		box-shadow: 0 0 8px var(--cor-c3-sombra); 
+		transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+		z-index: 2;
+	}
+
+	/* Corrigido: Unificação e limpeza de conflito na classe .caminho-avatar */
+	.caminho-avatar { 
+		position: absolute; 
+		left: 0%; 
+		bottom: -5px; 
+		transform: translateX(-50%) scaleX(-1); 
+		width: clamp(40px, 8vw, 50px); 
+		height: auto;
+		object-fit: contain;
+		transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+		z-index: 3; 
+		filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+		pointer-events: none;
+	}
+
+	.caminho-alvo { 
+		position: absolute; 
+		right: 10px; 
+		bottom: -5px; 
+		width: clamp(45px, 9vw, 60px); 
+		height: auto;
+		object-fit: contain;
+		z-index: 2; 
+		filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+		pointer-events: none;
+		animation: pulsaAlvo 1.5s infinite alternate ease-in-out;
+	}
+	@keyframes pulsaAlvo { 
+        0% { transform: scale(1) rotate(0deg); } 
+        100% { transform: scale(1.15) rotate(5deg); } 
+    }	
+
+	/* ANIMAÇÕES GLOBAIS */
+	@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+	@keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+	@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+	.error-shake { animation: shakeError 0.4s ease; }
+
+	#confetti-canvas { 
+		position: absolute; 
+		top: 0; 
+		left: 0; 
+		width: 100%; 
+		height: 100%; 
+		pointer-events: none; 
+		z-index: 15; 
+		border-radius: 30px;
+	}
+
+	@media (max-width: 768px) {
+		header { padding: 15px 10px; }
+		.header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+		.nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+		.hamburger { grid-column: 1; justify-self: start; }
+		.btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+		h1, .subtitulo { grid-column: 2; text-align: center; }
+		main { padding: 15px 10px; gap: 10px; }
+		.cartao-jogo-container { padding: 15px; border-radius: 20px;}
+	}
+
+	@media (max-height: 600px) {
+		body { height: auto !important; overflow-y: auto !important; }
+		main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+		.cartao-jogo-container { margin: auto 0; }
+		.info-nivel { padding: 5px 15px; font-size: 1rem; }											 
+	}
+
+	@media (hover: none) and (pointer: coarse) {
+	  body { height: auto !important; overflow-y: auto !important; }
+	  main { justify-content: flex-start !important; overflow-y: visible !important; }
+	  footer { margin-top: auto; }
+	}
+
+	#ecra-jogo {
+        justify-content: flex-start !important; 
+    }
+
+	/* =====================================================================
+	   CSS ESPECÍFICO DO ECRÃ INICIAL (MENU) E FIM
+	===================================================================== */
+		
+
+	.grid-niveis {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		width: 100%;
+		max-width: 700px;
+		margin: 0 auto 20px;
+	}
+
+	@media (max-width: 500px) {
+		.grid-niveis {
+			grid-template-columns: 1fr;
+			max-width: 320px;
+		}
+		.info-nivel { padding: 5px 10px; font-size: 0.9rem; }											   
+	}
+
+	.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+	.icon-end-title {
+		width: 1.2em; 
+		height: 1.2em;
+		object-fit: contain;
+		filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+	}
+
+	@media (max-width: 480px) {
+		.end-title {
+			flex-direction: column; 
+			gap: 10px;
+		}
+		.info-nivel { padding: 5px 10px; font-size: 0.9rem; }											   
+	}
+
+	.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+	
+	.btn-voltar-menu {
+			background-color: var(--cor-pre);
+			color: #ffffff; 
+			border: 2px solid var(--cor-pre-dark);
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-size: 0.95rem;
+			font-weight: 700;
+			line-height: 1;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); 
+			transition: background-color 0.2s, transform 0.1s;
+			touch-action: manipulation;
+		}
+		@media (hover: hover) { 
+			.btn-voltar-menu:hover { 
+				background-color: var(--cor-pre-dark);
+				border: 2px solid var(--cor-pre);
+				transform: translateY(-1px); /* Micro movimento apenas para feedback */
+			} 
+		}
+		.btn-voltar-menu:active {
+			transform: translateY(1px); /* Feedback tátil rápido ao clicar */
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		.btn-voltar-menu img {
+			width: 1.5rem;
+			height: 1.5rem;
+			object-fit: contain;
+
+		}
+		/* Alinhamento do ícone SVG dentro dos botões */
+		.icon-svg-btn {
+			width: 1.5rem;
+			height: 1.5rem;
+			vertical-align: middle;
+			display: inline-block;
+			object-fit: contain;
+		}
+		/* Espaçamento conforme a posição do ícone */
+		.btn-voltar-menu .icon-svg-btn {
+			margin-right: 8px;
+		}
+		.btn-acao .icon-svg-btn {
+			margin-left: 8px;
+		}
+		
+		.btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        @media (hover: hover) { .btn-acao:hover { filter: brightness(1.05); } }
+	
+	/* =====================================================================
+           GRELHA DE NAVEGAÇÃO INTERNA (TRIPARTIDA)
+           ===================================================================== */
+        .container-nav-jogo { 
+            width: 100%; 
+            max-width: 700px; /* Reduz a largura máxima para aproximar os elementos */
+            margin: 0 auto;   /* Centra a barra e a sua linha tracejada */
+            padding-bottom: 12px; 
+            margin-bottom: 10px; 
+            border-bottom: 2px dashed #e1f5f2; 
+        }
+
+        .top-row-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr; /* Centraliza perfeitamente o centro e divide as laterais em partes iguais */
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-row-grid .col-esquerda { justify-self: start; }
+        .top-row-grid .col-centro { justify-self: center; text-align: center; }
+        .top-row-grid .col-direita { justify-self: end; }
+
+        /* Ajustes responsivos para ecrãs menores */
+        @media (max-width: 768px) {
+            .top-row-grid {
+                grid-template-columns: auto 1fr auto; /* Otimiza o espaço horizontal em tablets e telemóveis */
+                gap: 10px;
+            }
+            .btn-voltar-menu {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .pergunta-destaque {
+                font-size: 1.1rem;
+            }
+        }
+		.info-nivel { font-size: 1rem; font-weight: 800; color: var(--cor-pre-dark); background: #e6fffa; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-pre); }																																									   
+	
+	
+/* =====================================================================
+           CSS ESPECÍFICO: QUEBRA-CABEÇAS DE ASSOCIAÇÃO VISUAL (MOLDE MULTI-NÍVEL)
+           ===================================================================== */
+        
+        .puzzle-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: clamp(260px, 58vh, 480px); /* Aumentado drasticamente de 38vh para 58vh */
+            aspect-ratio: 1 / 1;
+            margin: auto auto; /* Centra perfeitamente no espaço útil vertical */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            gap: 0;
+            width: 100%;
+            height: 100%; /* Ocupa 100% do wrapper maximizado */
+            border: 5px solid var(--cor-pre-dark);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            background-color: #cbd5e1;
+            box-shadow: 0 8px 24px rgba(13, 71, 161, 0.12);
+            box-sizing: border-box;
+            transition: border-color 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease;
+        }
+		
+		.puzzle-controls {
+            position: absolute;
+            bottom: clamp(10px, 3vh, 25px); /* Flutua dinamicamente rente à borda inferior */
+            z-index: 150; /* Fica acima das células transparentes do puzzle */
+            display: none; /* Ativado por JS na vitória */
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            padding: 0 15px;
+            box-sizing: border-box;
+            pointer-events: auto; /* Garante que aceita cliques */
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        /* Cada Célula/Peça do Puzzle */
+        .puzzle-cell {
+            background-size: 300% 300%; /* Ajustado via JS dinamicamente para 300% ou 400% */
+            border: 1.5px solid #cbd5e1; /* Borda interna fina e uniforme */
+            box-sizing: border-box;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            /* Transição suave do desaparecimento das bordas (evita saltos e cortes bruscos) */
+            transition: border-color 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease, transform 0.15s ease;
+        }
+
+        /* Estado Selecionado: Brilho ciano grosso ao clicar na primeira peça */
+        .puzzle-cell.selected {
+            border: 3.5px solid var(--cor-pre) !important;
+            box-shadow: inset 0 0 12px rgba(79, 209, 197, 0.65);
+            transform: scale(0.97); /* Micro-compressão tátil */
+            z-index: 10;
+        }
+
+        /* =====================================================================
+           EFEITO MÁGICO DE REVELAÇÃO (FADE-OUT SEM SALTOS)
+           ===================================================================== */
+        
+        /* Quando o puzzle é concluído com sucesso, a moldura e as células perdem a borda de forma fluida */
+        .puzzle-grid.revealed {
+            border-color: transparent !important;
+            box-shadow: 0 10px 30px rgba(13, 71, 161, 0.25); /* Sombra de sucesso suave */
+        }
+
+        .puzzle-grid.revealed .puzzle-cell {
+            border-color: transparent !important; /* Desaparecimento suave e sem saltos das divisões */
+            cursor: default;
+        }
+
+        /* 2. Botão da Lâmpada de Dica (Luz pulsante) */
+        .btn-dica {
+            background-color: #fff9db;
+            border: 2px solid #fcc419;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(38px, 8vh, 46px);
+            height: clamp(38px, 8vh, 46px);
+            box-shadow: 0 3px 0 #f5b041;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .btn-dica:active {
+            transform: translateY(3px);
+            box-shadow: 0 0px 0 transparent;
+        }
+
+        .btn-dica img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Animação de Alerta: Piscar amarelo suave (Ativada por temporizador JS após 12-15s de inatividade) */
+        @keyframes blinkLamp {
+            0%, 100% { background-color: #fff9db; box-shadow: 0 3px 0 #f5b041, 0 0 0 rgba(252, 196, 25, 0); }
+            50% { background-color: #ffec99; box-shadow: 0 3px 0 #f5b041, 0 0 15px rgba(252, 196, 25, 0.7); transform: scale(1.08); }
+        }
+        
+        .btn-dica.blink {
+            animation: blinkLamp 1s infinite ease-in-out;
+        }
+		
+		/* Pulsação muito suave e leve para o botão Seguinte */
+        @keyframes softPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse-soft {
+            animation: softPulse 1.6s infinite ease-in-out !important;
+        }
+		/* Estado desativado (cinzento) para a lâmpada após usar 2 vezes */
+		.btn-dica.desativado {
+			background-color: #e2e8f0 !important;
+			border-color: #94a3b8 !important;
+			box-shadow: 0 3px 0 #64748b !important;
+			opacity: 0.5 !important;
+			cursor: default !important;
+			pointer-events: none !important;
+			animation: none !important; /* Desliga o piscar */
+		}
+
+/* =====================================================================
+           SUPER ANIMAÇÃO TUTORIAL: TROCA REAL E REVELAÇÃO (CORRIGIDA)
+           ===================================================================== */
+        
+        .animacao-tutorial {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            height: 180px;
+            background: #f4faff;
+            border: 3px dashed var(--cor-pre);
+            border-radius: 20px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05);
+            overflow: hidden;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .tuto-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Garante centragem absoluta */
+            box-sizing: border-box;
+        }
+
+        /* Grelha 2x2 Única Centrada */
+        .tuto-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            width: 90px;
+            height: 90px;
+            border: 3px solid var(--azul-escuro);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: tutoGridReveal 4s infinite ease-in-out; /* Moldura desvanece no sucesso */
+        }
+
+        .tuto-cell {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #cbd5e1;
+            box-sizing: border-box;
+            background-size: 200% 200%;
+            animation: tutoCellReveal 4s infinite ease-in-out; /* Bordas desvanecem no sucesso */
+        }
+
+        /* Fatiamento dinâmico 2x2 da imagem real do gato */
+        .tuto-cell-1 { background-image: url('gato.png'); background-position: 0% 0%; }
+        .tuto-cell-2 { background-image: url('gato.png'); background-position: 100% 0%; }
+        
+        /* Peças da base começam trocadas e deslizam para as posições corretas */
+        .tuto-cell-3 { 
+            background-image: url('gato.png'); 
+            background-position: 100% 100%; 
+            animation: tutoSwapLeft 4s infinite ease-in-out, tutoGlowActive 4s infinite ease-in-out, tutoCellReveal 4s infinite ease-in-out; 
+        }
+        .tuto-cell-4 { 
+            background-image: url('gato.png'); 
+            background-position: 0% 100%; 
+            animation: tutoSwapRight 4s infinite ease-in-out, tutoCellReveal 4s infinite ease-in-out; 
+        }
+
+        /* Mãozinha tátil com coordenadas relativas ao centro da grelha (Imune a qualquer tamanho de ecrã) */
+        .tuto-mao {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: clamp(40px, 8vw, 48px);
+            height: clamp(40px, 8vw, 48px);
+            object-fit: contain;
+            z-index: 10;
+            animation: tutoMaoGestos 4s infinite ease-in-out;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
+            pointer-events: none;
+        }
+
+        /* -----------------------------------------
+           KEYFRAMES DO MOVIMENTO FÍSICO DO TUTORIAL
+           ----------------------------------------- */
+        
+        /* Peça 3 (Esquerda) desliza 45px (meio tabuleiro) para a Direita */
+        @keyframes tutoSwapLeft {
+            0%, 46% { transform: translateX(0); }
+            52%, 80% { transform: translateX(42px); } /* Corrigido de 45px para 42px */
+            90%, 100% { transform: translateX(0); }
+        }
+
+        /* 2. Peça da Direita desliza exatamente -42px para a Esquerda */
+        @keyframes tutoSwapRight {
+            0%, 46% { transform: translateX(0); }
+            52%, 80% { transform: translateX(-42px); } /* Corrigido de -45px para -42px */
+            90%, 100% { transform: translateX(0); }
+        }
+
+        /* Brilho ciano de seleção na peça clicada */
+        @keyframes tutoGlowActive {
+            0%, 21% { border-color: #cbd5e1; box-shadow: none; }
+            22%, 46% { border-color: var(--cor-pre); box-shadow: inset 0 0 8px rgba(79, 209, 197, 0.65); }
+            47%, 100% { border-color: #cbd5e1; box-shadow: none; }
+        }
+
+        /* Desvanecimento das linhas internas na vitória */
+        @keyframes tutoCellReveal {
+            0%, 49% { border-color: #cbd5e1; }
+            52%, 80% { border-color: transparent; }
+            90%, 100% { border-color: #cbd5e1; }
+        }
+
+        /* Desvanecimento da moldura do tabuleiro na vitória */
+        @keyframes tutoGridReveal {
+            0%, 49% { border-color: var(--azul-escuro); }
+            52%, 80% { border-color: transparent; }
+            90%, 100% { border-color: var(--azul-escuro); }
+        }
+
+        /* Percurso preciso da mãozinha clicando nas fatias */
+        @keyframes tutoMaoGestos {
+            0% { transform: translate(50px, 50px) scale(1); opacity: 0; }
+            8% { transform: translate(50px, 50px) scale(1); opacity: 1; }
+            
+            /* Clica no centro da célula da esquerda (Bottom-Left) aos 22% */
+            18% { transform: translate(-28px, 18px) scale(1); }
+            22% { transform: translate(-28px, 18px) scale(0.85); }
+            26% { transform: translate(-28px, 18px) scale(1); }
+            
+            /* Clica no centro da célula da direita (Bottom-Right) aos 42% */
+            38% { transform: translate(14px, 18px) scale(1); }
+            42% { transform: translate(14px, 18px) scale(0.85); }
+            46% { transform: translate(14px, 18px) scale(1); }
+            
+            /* Recua e desvanece */
+            52% { transform: translate(50px, 50px) scale(1); }
+            80% { transform: translate(50px, 50px) scale(1); opacity: 1; }
+            90%, 100% { transform: translate(50px, 50px) scale(1); opacity: 0; }
+        }
+		
+		 @media (max-width: 600px) {
+            .puzzle-wrapper {
+                max-width: 310px; /* Mantém um tamanho confortável na vertical */
+            }
+            .puzzle-controls {
+                bottom: 12px;
+            }
+            .puzzle-controls .btn-acao {
+                max-width: 240px; /* Encurta o botão no telemóvel para não vazar a moldura */
+                height: 45px;
+                padding: 6px 16px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../"><img src="../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../"><img src="../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../1"><img src="../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../2"><img src="../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../3"><img src="../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../4"><img src="../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+
+		<h1>O Robô Construtor<img src="robo_titulo.png" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="header-subtitulo">Encaixa as peças certas e ajuda o robô a terminar a sua imagem! </div>
+    </div>
+</header>
+
+<main>
+
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-rasto" id="caminho-rasto"></div>
+
+            <img src="robo.png" class="caminho-avatar" id="avatar-progresso" alt=""> 
+        </div>
+
+        <img src="engrenagem.png" class="caminho-alvo" id="alvo-progresso" alt=""> 
+    </div>
+
+    <!-- CARTÃO DE JOGO PRINCIPAL -->
+    <div class="cartao-jogo-container">
+
+        <!-- =====================================================================
+			ECRÃ 1: MENU DE SELEÇÃO E TUTORIAL DA SUPER ANIMAÇÃO (TROCA 2x2)
+        ===================================================================== -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+                        
+            <!-- Super Animação Tutorial: Peças Deslizam e Trocam de Lugar -->
+            <div class="animacao-tutorial">
+                <div class="tuto-stage">
+                    
+                    <!-- Tabuleiro Único Centrado -->
+                    <div class="tuto-grid">
+                        <!-- Fatias dinâmicas do gatinho -->
+                        <div class="tuto-cell tuto-cell-1"></div>
+                        <div class="tuto-cell tuto-cell-2"></div>
+                        <div class="tuto-cell tuto-cell-3"></div> <!-- Esta peça brilha e desliza -->
+                        <div class="tuto-cell tuto-cell-4"></div> <!-- Esta peça desliza -->
+                    </div>
+                    
+                    <!-- Mãozinha tátil (coordenadas relativas ao centro) -->
+                    <img src="mao.svg" class="tuto-mao" alt="Mão" onerror="this.src='../../SVG/menu_principal.svg'">
+                    
+                </div>
+            </div>
+			
+			<h2 class="titulo-destaque" style="margin-bottom: 30px;">Imagens Desarrumadas!</h2>
+            
+            <!-- Escolha de Nível Dinâmica (Grelha 3x3 ou Grelha 4x4) -->
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-laranja" onclick="iniciarJogo(1)">
+                    <img src="../img-titulos/robo_construtor_menu_1.png" class="icon-btn-nivel" alt="">
+                    Fácil (Grelha 3x3)
+                </button>
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogo(2)">
+                    <img src="../img-titulos/robo_construtor_menu_2.png" class="icon-btn-nivel" alt="">
+                    Difícil (Grelha 4x4)
+                </button>
+            </div>
+
+        </div>
+
+
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- Cabeçalho Interno do Jogo (Tripartido Responsivo) -->
+            <div class="container-nav-jogo">
+                <div class="top-row-grid">
+                    <div class="col-esquerda">
+                        <button class="btn-voltar-menu" onclick="voltarAoMenu()">
+                            <img src="../../SVG/menu_principal.svg" class="btn-voltar-menu-img" alt=""> Menu
+                        </button>
+                    </div>
+                    
+                    <div class="col-centro">
+                        <div class="pergunta-destaque" id="instrucao-ronda" style="margin: 0;">Troca as peças!<br> Revela a imagem!</div>
+                    </div>
+                    
+                    <div class="col-direita" style="display: flex; align-items: center; gap: 10px;">
+                        <div class="info-nivel" id="info-contagem" style="font-weight: 900; font-size: 1rem;">0/5</div>
+                        <button id="btn-dica" class="btn-dica" onclick="revelarDicaTemporaria()">
+                            <img src="../../SVG/lampada.svg" alt="Dica">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOVO: Wrapper que unifica a Grelha e o Botão Flutuante -->
+            <div class="puzzle-wrapper">
+                
+                <!-- Tabuleiro do Puzzle (Agora muito maior!) -->
+                <div class="puzzle-grid" id="puzzle-grid"></div>
+                
+                <!-- Botão Seguinte Flutuante (Injetado por cima do fundo da imagem) -->
+                <div class="puzzle-controls" id="puzzle-controls">
+                    <button id="btn-seguinte" class="btn-acao pulse-soft" onclick="avancarRonda()">
+                        SEGUINTE <img src="../../SVG/seta_direita.svg" class="icon-acao" alt="">
+                    </button>
+                </div>
+                
+            </div>
+
+        </div>
+
+        <!-- =====================================================================
+			ECRÃ 3: ECRÃ DE FIM / PARABÉNS
+        ===================================================================== -->
+        <div id="ecra-fim" class="ecra">
+            
+            <img src="../../SVG/taca.svg" alt="Taça de Vitória" style="width: clamp(80px, 15vw, 130px); margin-bottom: 15px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            
+            <h2 class="end-title" id="end-title-text" style="margin-bottom: 15px;">Fantástico!</h2>
+            
+            <div class="end-stats" style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 35px; background: var(--bg-header); padding: 20px 30px; border-radius: 20px; border: 3px dashed var(--cor-pre); max-width: 500px;">
+                Chegaste ao fim do caminho mágico!<br>
+                És um mestre a resolver quebra-cabeças!
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">
+                    JOGAR OUTRA VEZ <img src="../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao secundario" onclick="voltarAoMenu()">
+                    VOLTAR AO MENU <img src="../../SVG/home.svg" class="icon-acao" alt="">
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- Canvas responsivo para os confetes de vitória -->
+        <canvas id="confetti-canvas"></canvas>
+
+    </div> 
+</main>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../SVG/pre.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Inicializa o ano no footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        limparConfetis();
+        limparTemporizadores();
+        document.getElementById('caminho-magico').style.display = 'none';
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarJogo() {
+        limparConfetis();
+        iniciarJogo(nivelAtual);
+    }
+
+    // Move o Esquilo em direção à Noz de Ouro
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        const rasto = document.getElementById('caminho-rasto');
+        const contador = document.getElementById('info-contagem');
+
+        if(avatar) avatar.style.left = `${percentagem}%`;
+        if(rasto) rasto.style.width = `${percentagem}%`;
+        
+        if(contador) contador.textContent = `${rondaAtual}/${totalRondas}`;
+    }
+
+    /* =====================================================================
+       SISTEMA DE ÁUDIO WEB API
+       ===================================================================== */
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    
+    function iniciarAudio() {
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    window.addEventListener('pointerdown', iniciarAudio);
+    window.addEventListener('keydown', iniciarAudio);
+
+    function tocarSom(tipo) {
+        iniciarAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator(); 
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime + 0.02;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.2, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.25, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'pop') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, agora); osc.frequency.exponentialRampToValueAtTime(800, agora + 0.1);
+            gain.gain.setValueAtTime(0.1, agora);
+            gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
+            osc.start(agora); osc.stop(agora + 0.1);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.30, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.45, duracao: 0.35 }, 
+                { freq: 783.99, tempo: 0.80, duracao: 0.35 }, 
+                { freq: 1046.50, tempo: 1.15, duracao: 0.80 }
+            ];
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle';
+                o.frequency.value = nota.freq;
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.25, agora + nota.tempo + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    /* =====================================================================
+       SISTEMA DE CONFETIS
+       ===================================================================== */
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+    
+    function redimensionarCanvas() { 
+        const container = document.querySelector('.cartao-jogo-container');
+        if(container && canvasConfetti) {
+            canvasConfetti.width = container.clientWidth; 
+            canvasConfetti.height = container.clientHeight; 
+        }
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+	
+    function limparConfetis() {
+        confetis = []; 
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+
+    /* =====================================================================
+       LÓGICA DO JOGO: IMAGENS DESARRUMADAS (PUZZLE 3X3 OU 4X4)
+       ===================================================================== */
+    const IMAGENS_PUZZLE = [
+        'img/puzzle1.png', 'img/puzzle2.png', 'img/puzzle3.png', 'img/puzzle4.png', 'img/puzzle5.png',
+        'img/puzzle6.png', 'img/puzzle7.png', 'img/puzzle8.png', 'img/puzzle9.png', 'img/puzzle10.png',
+        'img/puzzle11.png', 'img/puzzle12.png', 'img/puzzle13.png', 'img/puzzle14.png', 'img/puzzle15.png',
+		'img/puzzle16.png', 'img/puzzle17.png', 'img/puzzle18.png', 'img/puzzle19.png', 'img/puzzle20.png'
+    ];
+
+    let nivelAtual = 1; // 1 = 3x3 (9 peças), 2 = 4x4 (16 peças)
+    let gridDim = 3;    // Define a dimensão da grelha (3 ou 4)
+    let rondaAtual = 0;
+    const totalRondas = 5;
+    let isVerificando = false;
+    let puzzleImagensSessao = [];
+    let tabuleiroPosicoes = []; // Guarda o estado atual do baralhamento do utilizador
+    let pecaSelecionada = null; // Guarda a primeira peça clicada para troca
+
+    let dicasUsadasRonda = 0; // Controla o limite de 2 dicas por ronda
+    let tempoInatividade = 0;
+    let timerBlinkDica = null; // Temporizador para fazer a lâmpada piscar
+
+    function iniciarJogo(nivel) {
+        iniciarAudio();
+        nivelAtual = nivel;
+        gridDim = nivel === 1 ? 3 : 4;
+
+        rondaAtual = 0;
+        isVerificando = false;
+
+        // Baralha e escolhe 5 imagens exclusivas para esta sessão de 5 rondas
+        puzzleImagensSessao = [...IMAGENS_PUZZLE].sort(() => Math.random() - 0.5).slice(0, totalRondas);
+
+        document.getElementById('caminho-magico').style.display = 'block';
+        atualizarProgressoCaminho(0);
+        mostrarEcra('ecra-jogo');
+        prepararRonda();
+    }
+
+    function prepararRonda() {
+        isVerificando = false;
+        pecaSelecionada = null;
+        limparConfetis();
+        limparDicaOverlay();
+
+        // Reseta o limite de dicas da ronda
+        dicasUsadasRonda = 0;
+
+        // Esconde o painel do botão seguinte
+        document.getElementById('puzzle-controls').style.display = 'none';
+
+        // Reativa a lâmpada de dica (remove o estado cinzento de desativada)
+        const btnDica = document.getElementById('btn-dica');
+        if (btnDica) {
+            btnDica.style.display = 'flex';
+            btnDica.classList.remove('desativado');
+            btnDica.classList.remove('blink');
+        }
+
+        // Restaura a moldura visível do tabuleiro
+        const grid = document.getElementById('puzzle-grid');
+        grid.className = 'puzzle-grid';
+        grid.style.pointerEvents = 'auto';
+
+        // Configura as colunas e linhas da grelha
+        grid.style.gridTemplateColumns = `repeat(${gridDim}, 1fr)`;
+        grid.style.gridTemplateRows = `repeat(${gridDim}, 1fr)`;
+
+        atualizarProgressoCaminho((rondaAtual / totalRondas) * 100);
+
+        // Inicializa o temporizador da lâmpada de inatividade
+        resetTimerDica();
+
+        // Desenha o tabuleiro fatiado
+        desenharTabuleiroFatiado();
+    }
+
+    function desenharTabuleiroFatiado() {
+        const grid = document.getElementById('puzzle-grid');
+        grid.innerHTML = '';
+
+        const totalPecas = gridDim * gridDim;
+        tabuleiroPosicoes = Array.from({ length: totalPecas }, (_, i) => i);
+
+        // Baralha até garantir que o puzzle não começa já resolvido por coincidência
+        let resolvidoOriginal = true;
+        while (resolvidoOriginal) {
+            tabuleiroPosicoes.sort(() => Math.random() - 0.5);
+            resolvidoOriginal = tabuleiroPosicoes.every((val, i) => val === i);
+        }
+
+        // Injeta as células no DOM
+        tabuleiroPosicoes.forEach((originalIndex, currentIndex) => {
+            const cell = document.createElement('div');
+            cell.className = 'puzzle-cell';
+            cell.dataset.originalIndex = originalIndex; // Guarda que parte da foto deve renderizar nesta célula
+            
+            cell.style.backgroundImage = `url('${puzzleImagensSessao[rondaAtual]}')`;
+            cell.style.backgroundSize = `${gridDim * 100}% ${gridDim * 100}%`;
+
+            // Calcula o fatiamento correto com base na dimensão (3x3 ou 4x4)
+            atualizarVisualCelula(cell, originalIndex);
+
+            // Evento de clique para troca de posições
+            cell.onclick = () => clicarNaPeca(cell);
+
+            grid.appendChild(cell);
+        });
+    }
+
+    // Atualiza a porção da imagem renderizada na célula ( background-position )
+    function atualizarVisualCelula(cell, originalIndex) {
+        let col = originalIndex % gridDim;
+        let row = Math.floor(originalIndex / gridDim);
+        let percentX = (col / (gridDim - 1)) * 100;
+        let percentY = (row / (gridDim - 1)) * 100;
+        cell.style.backgroundPosition = `${percentX}% ${percentY}%`;
+    }
+
+    function clicarNaPeca(cell) {
+        if (isVerificando) return;
+
+        // Reinicia o tempo de inatividade da dica a cada interação
+        resetTimerDica();
+
+        if (pecaSelecionada === null) {
+            // Primeiro clique: Seleciona e brilha
+            pecaSelecionada = cell;
+            cell.classList.add('selected');
+            tocarSom('pop');
+        } else {
+            if (pecaSelecionada === cell) {
+                // Segundo clique na mesma peça: Desmarca
+                cell.classList.remove('selected');
+                pecaSelecionada = null;
+                tocarSom('pop');
+            } else {
+                // Segundo clique noutra peça: Efetua a troca imediata de posições
+                tocarSom('pop');
+                swapPecas(pecaSelecionada, cell);
+                pecaSelecionada.classList.remove('selected');
+                pecaSelecionada = null;
+
+                // Verifica se o puzzle foi resolvido
+                verificarVitoriaPuzzle();
+            }
+        }
+    }
+
+    function swapPecas(cell1, cell2) {
+        const tempOrigIndex = cell1.dataset.originalIndex;
+        
+        cell1.dataset.originalIndex = cell2.dataset.originalIndex;
+        atualizarVisualCelula(cell1, parseInt(cell2.dataset.originalIndex));
+
+        cell2.dataset.originalIndex = tempOrigIndex;
+        atualizarVisualCelula(cell2, parseInt(tempOrigIndex));
+    }
+
+    function verificarVitoriaPuzzle() {
+        const cells = document.querySelectorAll('.puzzle-cell');
+        let resolvido = true;
+
+        cells.forEach((cell, index) => {
+            if (parseInt(cell.dataset.originalIndex) !== index) {
+                resolvido = false;
+            }
+        });
+
+        if (resolvido) {
+            // VITÓRIA DA RONDA!
+            tocarSom('acerto');
+            isVerificando = true;
+            limparTemporizadores();
+
+            // Esconde a lâmpada de dica
+            document.getElementById('btn-dica').style.display = 'none';
+
+            // Adiciona a classe revealed que desvanece as bordas internas e a moldura sem saltos
+            const grid = document.getElementById('puzzle-grid');
+            grid.classList.add('revealed');
+            grid.style.pointerEvents = 'none'; // Tranca o tabuleiro correto
+
+            // Move o Esquilo
+            atualizarProgressoCaminho(((rondaAtual + 1) / totalRondas) * 100);
+
+            // Revela de forma flutuante o botão "Seguinte" por cima da borda inferior da imagem
+            setTimeout(() => {
+                document.getElementById('puzzle-controls').style.display = 'flex';
+            }, 500);
+        }
+    }
+
+    function avancarRonda() {
+        rondaAtual++;
+        if (rondaAtual >= totalRondas) {
+            tocarSom('vitoria');
+            dispararConfetis();
+            mostrarEcra('ecra-fim');
+        } else {
+            prepararRonda();
+        }
+    }
+
+    /* =====================================================================
+       TEMPORIZADOR DA LÂMPADA E MOTOR DE DICA ESBATIDA (LIMITADO A 2 VEZES)
+       ===================================================================== */
+    function resetTimerDica() {
+        const btnDica = document.getElementById('btn-dica');
+        if (btnDica) btnDica.classList.remove('blink');
+
+        clearTimeout(timerBlinkDica);
+        
+        // Se a criança estiver há mais de 12 segundos sem fazer qualquer movimento, a lâmpada pulsa/pisca
+        timerBlinkDica = setTimeout(() => {
+            if (btnDica && dicasUsadasRonda < 2 && !isVerificando) {
+                btnDica.classList.add('blink');
+            }
+        }, 12000);
+    }
+
+    // Revela temporariamente a imagem completa esbatida a 35% por cima do puzzle
+    // Revela temporariamente a imagem completa 100% sólida (sem se confundir com a de baixo)
+    function revelarDicaTemporaria() {
+        if (isVerificando || dicasUsadasRonda >= 2 || document.getElementById('puzzle-grid').classList.contains('revealed')) return;
+
+        tocarSom('pop');
+        dicasUsadasRonda++;
+        resetTimerDica();
+
+        const btnDica = document.getElementById('btn-dica');
+
+        // Se atingiu o limite de 2 dicas, aplica a classe cinzenta que desativa o botão
+        if (dicasUsadasRonda >= 2) {
+            if (btnDica) {
+                btnDica.classList.add('desativado');
+            }
+        }
+
+        const grid = document.getElementById('puzzle-grid');
+
+        // Cria a sobreposição da imagem inteira correta (100% sólida)
+        const overlay = document.createElement('div');
+        overlay.id = 'temp-dica-overlay';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundImage = `url('${puzzleImagensSessao[rondaAtual]}')`;
+        overlay.style.backgroundSize = 'cover';
+        overlay.style.backgroundPosition = 'center';
+        overlay.style.opacity = '1';
+        overlay.style.zIndex = '200';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.transition = 'opacity 0.3s ease';
+
+        grid.appendChild(overlay);
+
+
+        setTimeout(() => {
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        }, 2500);
+    }
+
+    function limparDicaOverlay() {
+        const overlay = document.getElementById('temp-dica-overlay');
+        if (overlay) overlay.remove();
+    }
+
+    function limparTemporizadores() {
+        clearTimeout(timerBlinkDica);
+    }
+</script>
+</body>
+</html>
