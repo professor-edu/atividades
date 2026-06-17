@@ -26,5 +26,7 @@ const todosOsJogos =[
 	{ nome: "Sem Pares" }, 
 	{ nome: "Puzzles Mágicos" }, 
 	{ nome: "Números e Cores" },
-	{ nome: "Dados Mágicos"}
+	{ nome: "Dados Mágicos"},
+	{ nome: "Sons dos Bichos"},
+	{ nome: "Quem Sou Eu?"}
 ];
