@@ -754,9 +754,15 @@
 
     function atualizarPlacar() { 
         if (elErradas) elErradas.textContent = erradas;
-        if (elProgresso) elProgresso.textContent = Math.min(desafioAtual + 1, RONDAS_POR_NIVEL);
-        const percentagem = (desafioAtual / RONDAS_POR_NIVEL) * 100;
+        
+        // Calcula a ronda ativa real de 1 a 10 (Soma 1)
+        const rondaAtiva = Math.min(desafioAtual + 1, RONDAS_POR_NIVEL);
+        if (elProgresso) elProgresso.textContent = rondaAtiva;
+        
+        // 🌟 CORREÇÃO: Calcula a percentagem usando a ronda ativa (dá 10% logo na ronda 1)
+        const percentagem = (rondaAtiva / RONDAS_POR_NIVEL) * 100;
         if (elProgressFill) elProgressFill.style.width = percentagem + '%';
+        
         atualizarBotaoDica();
     }
 
@@ -970,7 +976,6 @@
     function finalizarNivel() {
         elProgressFill.style.width = `100%`;
         tocarSom('vitoria');
-        dispararConfetis();
         
         // Se concluiu o nível mais alto que já tinha, desbloqueia o próximo!
         if (nivelAtual === nivelDesbloqueado && nivelDesbloqueado < 4) {
@@ -978,7 +983,8 @@
         }
 
         setTimeout(() => {
-            if (nivelAtual === 4) {
+            dispararConfetis();
+			if (nivelAtual === 4) {
                 mostrarEcra('ecra-fim');
                 document.getElementById('final-erros').textContent = erradas;
             } else {
