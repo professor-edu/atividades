@@ -29,5 +29,6 @@ const todosOsJogos =[
 	{ nome: "Dados Mágicos"},
 	{ nome: "Sons dos Bichos"},
 	{ nome: "Quem Sou Eu?"},
-	{ nome: "O Robô Construtor?"}
+	{ nome: "O Robô Construtor?"},
+	{ nome: "Pixel Art"}
 ];
