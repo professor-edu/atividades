@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Memória Falada 🔊</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+	
+	*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+    /* =====================================================================
+        CSS DO TEMPLATE BASE E ESTRUTURA GERAL
+    ===================================================================== */
+
+	:root {
+		--bg-body: #f0f7ff;
+		--cor-pre: #4fd1c5;       
+		--cor-pre-dark: #38a89d;
+		--cor-borda: #48b5aa;    
+		--bg-header: #e1f5f2;    
+		--azul-escuro: #0d47a1;
+		--text-main: #455a64;
+		--azul-vibrante: #0091ff; 
+		
+		/* CORES DOS CARTÕES DO MENU INICIAL */
+		--cor-btn-azul: #61A0FF;
+		--cor-btn-verde: #5DD279;
+		--cor-btn-amarelo: #FBC531;
+		--cor-btn-vermelho: #FF6B6B;
+		--cor-btn-roxo: #A55EEA;
+		--cor-btn-laranja: #FA983A;
+		
+		/* CORES DO CONTAINER DE JOGO + RGBA PARA ALTERAR A SHADOW */
+		--cor-c1: #ff6b6b; /* vermelho */
+		--cor-c1-sombra: rgba(255, 107, 107, 0.55);
+		
+		--cor-c2: #4dabf7; /* azul */
+		--cor-c2-sombra: rgba(77, 171, 247, 0.66);
+		
+		--cor-c3: #51cf66; /* verde */
+		--cor-c3-sombra: rgba(69, 176, 98, 0.52);
+		
+		--cor-c4: #fcc419; /* amarelo */
+		--cor-c4-sombra: rgba(251, 197, 49, 0.75);
+		
+		--cor-c5: #cc5de8; /* roxo */
+		--cor-c5-sombra: rgba(165, 94, 234, 0.65);
+		
+		--cor-c6: #ff922b; /* laranja */
+		--cor-c6-sombra: rgba(250, 152, 58, 0.85);
+	}
+
+	body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px); background-size: 25px 25px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y;}
+
+	header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
+
+	.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+	.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+	.hamburger { cursor: pointer; background: rgba(255,255,255,0.4); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+	.hamburger:hover { background: #fff9c4; }
+	.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; }
+	.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+	.hamburger.open span:nth-child(2) { opacity: 0; }
+	.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+	.btn-voltar { background: var(--cor-pre); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-pre-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer; }
+	.btn-voltar:hover { transform: scale(1.05); }
+	h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+	.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+	.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+	.sidebar.active { left: 0; }
+	.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+	.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+	.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+	.sidebar li a:hover { background: var(--cor-pre); color: white; transform: translateX(8px); }
+	.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+	.overlay.active { display: block; }
+
+	main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+	.cartao-jogo-container { 
+		background: white; width: 100%; max-width: 950px; 
+		flex: 1; min-height: 0;
+		padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px var(--cor-c6-sombra); 
+		border-top: 8px solid var(--cor-c6); display: flex; flex-direction: column; 
+		align-items: center; justify-content: flex-start; position: relative; overflow: hidden; 
+	}
+
+	.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+
+	.btn-nivel-novo {
+		width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+		color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+		flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+		transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+		box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+		touch-action: manipulation; user-select: none; text-align: center;
+	}
+
+	@media (hover: hover) {
+		.btn-nivel-novo:hover {
+			transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+		}
+	}
+
+	.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+	/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+	.icon-btn-nivel {
+		width: 55px;       
+		height: 55px;      
+		object-fit: contain;
+		filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); 
+		pointer-events: none; 
+	}
+
+	/* Classes Utilitárias de Cor para os Botões */
+	.bg-azul { background-color: var(--cor-btn-azul); }
+	.bg-verde { background-color: var(--cor-btn-verde); }
+	.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+	.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+	.bg-roxo { background-color: var(--cor-btn-roxo); }
+	.bg-laranja { background-color: var(--cor-btn-laranja); }
+
+	footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-borda); flex-shrink: 0; width: 100%;}
+	footer p { font-size: 0.8rem; color: var(--cor-borda); margin: 0; }
+	footer a { color: var(--cor-borda); text-decoration: none; font-weight: 700; }
+
+	/* ECRÃS BASE */
+	.ecra { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 350px; text-align: center; flex: 1; box-sizing: border-box; }
+
+	/* BOTÕES GLOBAIS */
+	.btn-acao { background-color: var(--cor-pre); color: white; border: none; padding: 15px 35px; font-size: 1.3rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 var(--cor-pre-dark); transition: 0.2s; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;}
+	.btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+	.btn-acao:hover { filter: brightness(1.05); }
+
+	/* Variantes de Cor para os Botões de Ação */
+	.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+	@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+
+	.icon-acao {
+		width: 1.4em;
+		height: 1.4em;
+		object-fit: contain;
+		flex-shrink: 0; 
+		pointer-events: none;
+		transition: transform 0.2s ease;
+	}
+
+	.primario:hover .icon-acao, 
+	.secundario:hover .icon-acao,
+	.terciario:hover .icon-acao {
+		transform: translateX(4px);
+	}
+
+	/* TÍTULOS E TEXTOS BASE */
+	.titulo-destaque { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+	.pergunta-destaque { font-size: 1.3rem; color: var(--azul-escuro); margin-bottom: 15px; font-weight: 900; }
+
+	/* =========================================
+	   O CAMINHO MÁGICO (RASTO DE TINTA E SVGs)
+	   ========================================= */
+	.caminho-magico { width: 100%; max-width: 750px; height: 50px; position: relative; display: none; margin-bottom: 5px; flex-shrink: 0; }
+	.caminho-trilho { position: absolute; bottom: 10px; left: 40px; right: 70px; height: 0; border-bottom: 4px dashed #cbd5e1; z-index: 1; }
+
+	.caminho-rasto {
+		position: absolute;
+		bottom: -4px; 
+		left: 0;
+		width: 0%; 
+		height: 4px;
+		background-color: var(--cor-c6);
+		border-radius: 4px;
+		box-shadow: 0 0 8px var(--cor-c6-sombra); 
+		transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+		z-index: 2;
+	}
+
+	/* Corrigido: Unificação e limpeza de conflito na classe .caminho-avatar */
+	.caminho-avatar { 
+		position: absolute; 
+		left: 0%; 
+		bottom: -5px; 
+		transform: translateX(-50%) scaleX(-1); 
+		width: clamp(40px, 8vw, 50px); 
+		height: auto;
+		object-fit: contain;
+		transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+		z-index: 3; 
+		filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+		pointer-events: none;
+	}
+
+	.caminho-alvo { 
+		position: absolute; 
+		right: 10px; 
+		bottom: 5px; 
+		width: clamp(45px, 9vw, 55px); 
+		height: auto;
+		object-fit: contain;
+		z-index: 2; 
+		filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); 
+		pointer-events: none;
+		animation: pulsaAlvo 1.5s infinite alternate ease-in-out;
+	}
+	@keyframes pulsaAlvo { 
+        0% { transform: scale(1) rotate(0deg); } 
+        100% { transform: scale(1.15) rotate(5deg); } 
+    }	
+
+	/* ANIMAÇÕES GLOBAIS */
+	@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+	@keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+	@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+	.error-shake { animation: shakeError 0.4s ease; }
+
+	#confetti-canvas { 
+		position: absolute; 
+		top: 0; 
+		left: 0; 
+		width: 100%; 
+		height: 100%; 
+		pointer-events: none; 
+		z-index: 15; 
+		border-radius: 30px;
+	}
+
+	@media (max-width: 768px) {
+		header { padding: 15px 10px; }
+		.header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+		.nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+		.hamburger { grid-column: 1; justify-self: start; }
+		.btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+		h1, .subtitulo { grid-column: 2; text-align: center; }
+		main { padding: 15px 10px; gap: 10px; }
+		.cartao-jogo-container { padding: 15px; border-radius: 20px;}
+	}
+
+	@media (max-height: 600px) {
+		body { height: auto !important; overflow-y: auto !important; }
+		main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+		.cartao-jogo-container { margin: auto 0; }
+		.info-nivel { padding: 5px 15px; font-size: 1rem; }											 
+	}
+
+	@media (hover: none) and (pointer: coarse) {
+	  body { height: auto !important; overflow-y: auto !important; }
+	  main { justify-content: flex-start !important; overflow-y: visible !important; }
+	  footer { margin-top: auto; }
+	}
+
+	#ecra-jogo {
+        justify-content: flex-start !important; 
+    }
+
+	/* =====================================================================
+	   CSS ESPECÍFICO DO ECRÃ INICIAL (MENU) E FIM
+	===================================================================== */
+	.animacao-tutorial {
+		width: 100%; max-width: 400px; height: 180px;
+		background: #f4faff; border: 3px dashed var(--cor-pre); border-radius: 20px;
+		margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+		box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05); color: var(--cor-pre); font-size: 1.2rem; font-weight: 900;
+		overflow: hidden;
+	}		
+
+	.grid-niveis {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		width: 100%;
+		max-width: 700px;
+		margin: 0 auto 20px;
+	}
+
+	@media (max-width: 500px) {
+		.grid-niveis {
+			grid-template-columns: 1fr;
+			max-width: 320px;
+		}
+		.info-nivel { padding: 5px 10px; font-size: 0.9rem; }											   
+	}
+
+	.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+	.icon-end-title {
+		width: 1.2em; 
+		height: 1.2em;
+		object-fit: contain;
+		filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+	}
+
+	@media (max-width: 480px) {
+		.end-title {
+			flex-direction: column; 
+			gap: 10px;
+		}
+		.info-nivel { padding: 5px 10px; font-size: 0.9rem; }											   
+	}
+
+	.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+	
+	.btn-voltar-menu {
+			background-color: var(--cor-pre);
+			color: #ffffff; 
+			border: 2px solid var(--cor-pre-dark);
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-size: 0.95rem;
+			font-weight: 700;
+			line-height: 1;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); 
+			transition: background-color 0.2s, transform 0.1s;
+			touch-action: manipulation;
+		}
+		@media (hover: hover) { 
+			.btn-voltar-menu:hover { 
+				background-color: var(--cor-pre-dark);
+				border: 2px solid var(--cor-pre);
+				transform: translateY(-1px); /* Micro movimento apenas para feedback */
+			} 
+		}
+		.btn-voltar-menu:active {
+			transform: translateY(1px); /* Feedback tátil rápido ao clicar */
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		.btn-voltar-menu img {
+			width: 1.5rem;
+			height: 1.5rem;
+			object-fit: contain;
+
+		}
+		/* Alinhamento do ícone SVG dentro dos botões */
+		.icon-svg-btn {
+			width: 1.5rem;
+			height: 1.5rem;
+			vertical-align: middle;
+			display: inline-block;
+			object-fit: contain;
+		}
+		/* Espaçamento conforme a posição do ícone */
+		.btn-voltar-menu .icon-svg-btn {
+			margin-right: 8px;
+		}
+		.btn-acao .icon-svg-btn {
+			margin-left: 8px;
+		}
+		
+		.btn-acao:active { transform: translateY(5px); box-shadow: 0 0px 0 transparent; }
+        @media (hover: hover) { .btn-acao:hover { filter: brightness(1.05); } }
+	
+	/* =====================================================================
+           GRELHA DE NAVEGAÇÃO INTERNA (TRIPARTIDA)
+           ===================================================================== */
+        .container-nav-jogo { 
+            width: 100%; 
+            max-width: 700px; /* Reduz a largura máxima para aproximar os elementos */
+            margin: 0 auto;   /* Centra a barra e a sua linha tracejada */
+            padding-bottom: 12px; 
+            margin-bottom: 10px; 
+            border-bottom: 2px dashed #e1f5f2; 
+        }
+
+        .top-row-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr; /* Centraliza perfeitamente o centro e divide as laterais em partes iguais */
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-row-grid .col-esquerda { justify-self: start; }
+        .top-row-grid .col-centro { justify-self: center; text-align: center; }
+        .top-row-grid .col-direita { justify-self: end; }
+
+        /* Ajustes responsivos para ecrãs menores */
+        @media (max-width: 768px) {
+            .top-row-grid {
+                grid-template-columns: auto 1fr auto; /* Otimiza o espaço horizontal em tablets e telemóveis */
+                gap: 10px;
+            }
+            .btn-voltar-menu {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .pergunta-destaque {
+                font-size: 1.1rem;
+            }
+        }
+		.info-nivel { font-size: 1rem; font-weight: 800; color: var(--cor-pre-dark); background: #e6fffa; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-pre); }																																									   
+	
+	/* =====================================================================
+           CSS ESPECÍFICO: JOGO "MEMÓRIA FALADA" (MULTI-TEMÁTICO)
+           ===================================================================== */
+        
+        /* Grelha de Cartas Responsiva (Desktop: 4 Colunas x 3 Linhas) */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: clamp(8px, 1.5vw, 15px);
+            width: 100%;
+            /* Aumentado de 52vh/480px para 62vh/580px para preencher as margens vazias */
+            max-width: clamp(280px, 62vh, 580px); 
+            aspect-ratio: 4 / 3;
+            margin: auto auto; /* Centra perfeitamente no espaço útil vertical */
+            box-sizing: border-box;
+        }
+
+        /* Estrutura 3D de Viragem de Cartas (Hardware Accelerated com suporte Safari) */
+        .memory-card {
+            perspective: 1000px;
+            -webkit-perspective: 1000px;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            border-radius: 18px;
+        }
+
+        .memory-card.flipped .card-inner {
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Oculta o verso durante a viragem */
+            backface-visibility: hidden;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            border: 3px solid #cbd5e1;
+        }
+
+        /* ---------------------------------------------------------------------
+           VERSO DAS CARTAS (Olho/Azul para Imagens, Ouvido/Amarelo para Sons)
+           --------------------------------------------------------------------- */
+        .card-back.back-olho {
+            background-color: #e3f2fd;
+            border-color: #61a0ff;
+            color: #0d47a1;
+        }
+        
+        .card-back.back-som {
+            background-color: #fffde7;
+            border-color: #fbc531;
+            color: #e67e22;
+        }
+
+        /* Ícones pequenos (Olho/Altifalante) e o Número Identificador no verso */
+        .back-icon-mini {
+            width: clamp(20px, 4vw, 25px);
+            height: clamp(20px, 4vw, 25px);
+            object-fit: contain;
+            opacity: 0.8;
+            margin-bottom: 5px;
+            pointer-events: none;
+        }
+
+        .back-number {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 900;
+        }
+
+        /* ---------------------------------------------------------------------
+           FRENTE DAS CARTAS (O que é revelado na viragem)
+           --------------------------------------------------------------------- */
+        .card-front {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+            padding: 8px;
+            overflow: hidden;
+        }
+
+        .img-animal-card {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Altifalante interativo para repetir o áudio */
+        .btn-som-svg {
+            width: 80%;
+            height: 80%;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .btn-som-svg:active {
+            transform: scale(0.9);
+        }
+
+        /* Estado Correto: Ambas acendem a verde suave e pulsam */
+        .memory-card.matched .card-front {
+            background-color: #eafff0 !important;
+            border-color: #2ed573 !important;
+            animation: matchedGlow 0.4s ease forwards;
+        }
+
+        @keyframes matchedGlow {
+            0% { transform: rotateY(180deg) scale(1); -webkit-transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.08); -webkit-transform: rotateY(180deg) scale(1.08); }
+            100% { transform: rotateY(180deg) scale(1); -webkit-transform: rotateY(180deg) scale(1); }
+        }
+
+        /* Tremor de Erro Flipped 3D */
+        @keyframes shakeErrorFlipped {
+            0%, 100% { transform: rotateY(180deg) translateX(0); -webkit-transform: rotateY(180deg) translateX(0); }
+            20%, 60% { transform: rotateY(180deg) translateX(-6px); -webkit-transform: rotateY(180deg) translateX(-6px); }
+            40%, 80% { transform: rotateY(180deg) translateX(6px); -webkit-transform: rotateY(180deg) translateX(6px); }
+        }
+        .error-shake-flipped {
+            animation: shakeErrorFlipped 0.4s ease;
+        }
+
+        /* Animação das Ondas de Som do Altifalante */
+        @keyframes rippleWave {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        .sound-wave {
+            animation: rippleWave 1.2s infinite ease-in-out;
+            transform-origin: center;
+        }
+
+        /* =====================================================================
+           MODAIS DE TRANSIÇÃO DE NÍVEL (JOGO DOS NÚMEROS)
+           ===================================================================== */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 255, 255, 0.95); /* Fundo esbatido claro */
+            z-index: 300; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            animation: fadeIn 0.3s ease; 
+        }
+        .modal-overlay.active { 
+            display: flex; 
+        }
+        .modal-box { 
+            background: white; 
+            width: 100%; 
+            max-width: 440px; 
+            border-radius: 25px; 
+            padding: 30px; 
+            text-align: center; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12); 
+            border-top: 8px solid var(--cor-pre); 
+        }
+        .modal-box .end-stats {
+            margin-bottom: 25px !important;
+        }
+
+        /* =====================================================================
+           SUPER ANIMAÇÃO TUTORIAL 3D EXPLICATIVA (MÃO + FLIP + SUCESSO)
+           ===================================================================== */
+        .animacao-tutorial {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            height: 180px;
+            background: #f4faff;
+            border: 3px dashed var(--cor-pre);
+            border-radius: 20px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0, 145, 255, 0.05);
+            overflow: hidden;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .tuto-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 45px;
+            box-sizing: border-box;
+        }
+
+        .tuto-card {
+            perspective: 1000px;
+            -webkit-perspective: 1000px;
+            width: 65px;
+            height: 65px;
+            position: relative;
+            box-sizing: border-box;
+            box-shadow: 0 4px 0 #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .tuto-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            border-radius: 12px;
+        }
+
+        /* Ativação dos movimentos de viragem do tutorial */
+        .tuto-card-olho .tuto-inner {
+            animation: tutoFlipOlho 4s infinite ease-in-out;
+        }
+        .tuto-card-som .tuto-inner {
+            animation: tutoFlipOuvido 4s infinite ease-in-out;
+        }
+
+        .tuto-back, .tuto-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            border: 2px solid #cbd5e1;
+        }
+
+        .tuto-back.back-olho {
+            background-color: #e3f2fd;
+            border-color: #61a0ff;
+        }
+        .tuto-back.back-som {
+            background-color: #fffde7;
+            border-color: #fbc531;
+        }
+
+        .tuto-front {
+            background-color: #ffffff;
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+            padding: 6px;
+            animation: tutoGlowFront 4s infinite ease-in-out;
+        }
+
+        .tuto-front img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        .tuto-mao {
+            position: absolute;
+            width: clamp(40px, 8vw, 48px);
+            height: clamp(40px, 8vw, 48px);
+            object-fit: contain;
+            z-index: 10;
+            animation: tutoMaoGestos 4s infinite ease-in-out;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.15));
+            pointer-events: none;
+        }
+
+        /* -----------------------------------------
+           KEYFRAMES 3D DO TUTORIAL (FLIP & MATCH GLOW)
+           ----------------------------------------- */
+        @keyframes tutoFlipOlho {
+            0%, 10% { transform: rotateY(0deg); -webkit-transform: rotateY(0deg); }
+            20%, 80% { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
+            90%, 100% { transform: rotateY(0deg); -webkit-transform: rotateY(0deg); }
+        }
+
+        @keyframes tutoFlipOuvido {
+            0%, 30% { transform: rotateY(0deg); -webkit-transform: rotateY(0deg); }
+            40%, 80% { transform: rotateY(180deg); -webkit-transform: rotateY(180deg); }
+            90%, 100% { transform: rotateY(0deg); -webkit-transform: rotateY(0deg); }
+        }
+
+        @keyframes tutoGlowFront {
+            0%, 45% { background-color: #ffffff; border-color: #cbd5e1; }
+            50%, 80% { background-color: #eafff0; border-color: #2ed573; }
+            90%, 100% { background-color: #ffffff; border-color: #cbd5e1; }
+        }
+
+        @keyframes tutoMaoGestos {
+            0% { transform: translate(-100px, 45px) scale(1); opacity: 0; }
+            8% { transform: translate(-100px, 45px) scale(1); opacity: 1; }
+            12% { transform: translate(-100px, 45px) scale(0.85); } /* Clica no Olho */
+            18% { transform: translate(-100px, 45px) scale(1); }
+            
+            28% { transform: translate(65px, 45px) scale(1); } /* Move-se para o Som */
+            32% { transform: translate(65px, 45px) scale(0.85); } /* Clica no Som */
+            38% { transform: translate(65px, 45px) scale(1); }
+            
+            75% { transform: translate(65px, 45px) scale(1); opacity: 1; }
+            85%, 100% { transform: translate(65px, 45px) scale(1); opacity: 0; }
+        }
+
+/* =====================================================================
+           UNIFICAÇÃO COMPLETA: RESPONSIVIDADE MÓVEL (ATÉ 600PX)
+           ===================================================================== */
+        @media (max-width: 600px) {
+            
+            /* -----------------------------------------
+               1. ECRÃ INICIAL (MENU DE SELEÇÃO DE NÍVEIS)
+               ----------------------------------------- */
+            .icon-btn-nivel {
+                width: 40px;
+                height: 40px;
+            }
+            .btn-nivel-novo {
+                padding: 15px;
+                font-size: 1.2rem;
+            }
+            #opcoes-resposta {
+                gap: 12px !important;
+            }
+
+            /* -----------------------------------------
+               2. CABEÇALHO INTERNO DO JOGO (TOP-ROW-GRID)
+               ----------------------------------------- */
+            .container-nav-jogo {
+                max-width: 100%; /* Usa toda a largura disponível no telemóvel */
+                padding-bottom: 8px;
+            }
+
+            /* Configura a grelha para empilhar em duas linhas no telemóvel vertical */
+            .top-row-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Linha superior: Menu à esquerda, Info à direita */
+                grid-template-rows: auto auto;   /* Linha inferior: Instrução/Título */
+                gap: 10px;
+            }
+
+            /* Menu no canto superior esquerdo */
+            .top-row-grid .col-esquerda {
+                grid-column: 1;
+                grid-row: 1;
+                justify-self: start;
+            }
+
+            /* Info (Ex: 0/6) no canto superior direito */
+            .top-row-grid .col-direita {
+                grid-column: 2;
+                grid-row: 1;
+                justify-self: end;
+            }
+
+            /* Título salta para a linha de baixo perfeitamente centralizado */
+            .top-row-grid .col-centro {
+                grid-column: 1 / -1; /* Ocupa as duas colunas inferiores */
+                grid-row: 2;
+                justify-self: center;
+                text-align: center;
+            }
+
+            .btn-voltar-menu {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .info-nivel {
+                padding: 6px 14px;
+                font-size: 0.85rem;
+            }
+            .pergunta-destaque {
+                font-size: 1.15rem;
+            }
+
+            /* -----------------------------------------
+               3. GRELHA DE CARTAS ATIVAS (ROTAÇÃO 3x4)
+               ----------------------------------------- */
+            /* Altera a grelha de 4x3 para 3x4 em ecrãs verticais */
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                grid-template-rows: repeat(4, 1fr) !important;
+                aspect-ratio: 3 / 4 !important;
+                max-width: clamp(240px, 48vh, 320px) !important; /* Tamanho rigoroso controlado em altura */
+                gap: 8px !important;
+            }
+            .card-back {
+                border-width: 2px !important;
+            }
+            .back-number {
+                font-size: 1.8rem !important;
+            }
+
+            /* -----------------------------------------
+               4. ECRÃ DE FIM E BOTÕES DE AÇÃO GERAIS
+               ----------------------------------------- */
+            /* Otimização dos Botões de Ação gerais (.btn-acao) */
+            .btn-acao {
+                font-size: clamp(0.95rem, 3.8vw, 1.1rem) !important; /* Encolhe o texto do botão no telemóvel */
+                padding: clamp(10px, 2.5vw, 12px) clamp(16px, 4vw, 24px) !important; /* Espaço interno elástico menor */
+                border-radius: 15px !important; /* Cantos arredondados mais compactos */
+                box-shadow: 0 4px 0 var(--cor-pre-dark) !important; /* Sombra 3D mais rasteira */
+                max-width: 280px !important; /* Garante que nunca vaza as laterais do ecrã */
+            }
+            .btn-acao:active {
+                transform: translateY(4px) !important;
+            }
+            
+            /* Variantes específicas dos botões de ação na vitória/menu */
+            .btn-acao.primario { box-shadow: 0 4px 0 #45b062, 0 8px 12px rgba(0,0,0,0.08) !important; }
+            .btn-acao.secundario { box-shadow: 0 4px 0 #d97d2c, 0 8px 12px rgba(0,0,0,0.08) !important; }
+
+            /* Reduz o tamanho das setas e ícones dentro dos botões */
+            .icon-acao {
+                width: 1.1em !important;
+                height: 1.1em !important;
+            }
+
+            /* Otimização da Caixa de Estatísticas Finais (.end-stats) */
+            .end-stats {
+                font-size: clamp(0.9rem, 3.5vw, 1.1rem) !important; /* Texto do resumo fica menor e proporcional */
+                padding: clamp(12px, 3vw, 18px) clamp(15px, 4vw, 22px) !important; /* Padding do balão muito mais contido */
+                margin-bottom: clamp(15px, 4vw, 25px) !important; /* Margem inferior elástica e menor */
+                border-radius: 15px !important;
+                border-width: 2px !important; /* Linha tracejada mais fina */
+                max-width: 290px !important; /* Tranca a largura para caber em qualquer telemóvel */
+            }
+
+            /* Reduz o espaçamento entre os botões na vertical no fim de jogo */
+            .botoes-acao-container {
+                gap: 15px !important; /* Reduzido de 35px para evitar rolagem */
+            }
+
+            /* Reduz o tamanho do título de parabéns (.end-title) e da taça no fim */
+            .end-title {
+                font-size: clamp(1.6rem, 5vw, 2rem) !important;
+                margin-bottom: 12px !important;
+            }
+            #ecra-fim img[alt="Taça de Vitória"] {
+                width: clamp(70px, 12vw, 100px) !important;
+                margin-bottom: 10px !important;
+            }
+
+            /* -----------------------------------------
+               5. MODAL DE TRANSIÇÃO DE NÍVEL (JOGO 2)
+               ----------------------------------------- */
+            .modal-box {
+                padding: 20px !important;
+                max-width: 290px !important;
+                border-radius: 18px !important;
+            }
+            .modal-box .end-stats {
+                font-size: 0.95rem !important;
+                margin-bottom: 15px !important;
+            }
+            .modal-box div[style*="display: flex"] {
+                flex-direction: column !important; /* Força os dois botões a empilharem na vertical */
+                gap: 10px !important;
+            }
+            .modal-box .btn-acao {
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                font-size: 0.95rem !important;
+                padding: 10px 16px !important;
+            }
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../"><img src="../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../"><img src="../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../1"><img src="../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../2"><img src="../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../3"><img src="../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../4"><img src="../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+
+		<h1>Memória Falada<img src="../img-titulos/memoria_falada.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="header-subtitulo">Ouve e descobre os pares no caminho mágico!</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- BARRA DE PROGRESSO DINÂMICA (Os avatares e alvos são injetados pelo JS por minijogo) -->
+    <div class="caminho-magico" id="caminho-magico">
+        <div class="caminho-trilho">
+            <div class="caminho-rasto" id="caminho-rasto"></div>
+            <img src="" class="caminho-avatar" id="avatar-progresso" alt="Mascote"> 
+        </div>
+        <img src="" class="caminho-alvo" id="alvo-progresso" alt="Alvo"> 
+    </div>
+
+    <!-- CARTÃO DE JOGO PRINCIPAL -->
+    <div class="cartao-jogo-container">
+
+        <!-- =====================================================================
+			ECRÃ 1: MENU DE SELEÇÃO COM OS 4 MINIJOGOS COLORIDOS
+        ===================================================================== -->
+        <div id="ecra-selecao" class="ecra" style="display: flex;">
+                        
+			<!-- Super Animação Tutorial 3D Explicativa de Vogais -->
+            <div class="animacao-tutorial">
+                <div class="tuto-stage">
+                    
+                    <!-- Carta do Olho (Azul - Vogal) -->
+                    <div class="tuto-card tuto-card-olho">
+                        <div class="tuto-inner">
+                            <div class="tuto-back back-olho">
+                                <img src="olho.svg" class="back-icon-mini" alt="">
+                            </div>
+                            <div class="tuto-front">
+                                <span style="font-size: 1.8rem; font-weight: 900; color: #0d47a1; line-height: 1;">A/a</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Carta do Som (Amarela com Altifalante) -->
+                    <div class="tuto-card tuto-card-som">
+                        <div class="tuto-inner">
+                            <div class="tuto-back back-som">
+                                <img src="som.svg" class="back-icon-mini" alt="">
+                            </div>
+                            <div class="tuto-front">
+                                <img src="som.svg" alt="Som">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mãozinha tátil SVG -->
+                    <img src="mao.svg" class="tuto-mao" alt="Mão">
+                    
+                </div>
+            </div>
+			
+			<h2 class="titulo-destaque" style="margin-bottom: 25px;">Escolhe o teu tema!</h2>
+            
+            <!-- Grelha dos 4 Cartões Iniciais de Níveis (Esmerados e Coloridos) -->
+            <div class="grid-niveis">
+                <button class="btn-nivel-novo bg-laranja" onclick="iniciarMinijogo(1)">
+                    <img src="vogais_menu.jpg" class="icon-btn-nivel" alt="">
+                    Vogais Faladas
+                </button>
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarMinijogo(2)">
+                    <img src="numeros_menu.png" class="icon-btn-nivel" alt="">
+                    Números Falados
+                </button>
+				<button class="btn-nivel-novo bg-verde" onclick="iniciarMinijogo(3)">
+                    <img src="cores_menu.png" class="icon-btn-nivel" alt="">
+                    Cores Faladas
+                </button>
+				<button class="btn-nivel-novo bg-roxo" onclick="iniciarMinijogo(4)">
+                    <img src="formas_menu.png" class="icon-btn-nivel" alt="">
+                    Formas Faladas
+                </button>
+            </div>
+
+        </div>
+
+        <!-- =====================================================================
+             ECRÃ 2: ÁREA DE JOGO (MEMORY GRID + CABEÇALHO TRIPARTIDO)
+             ===================================================================== -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- Cabeçalho de Navegação Interna Reintroduzido -->
+            <div class="container-nav-jogo">
+                <div class="top-row-grid">
+                    <!-- Esquerda: Voltar ao Menu -->
+                    <div class="col-esquerda">
+                        <button class="btn-voltar-menu" onclick="voltarAoMenu()">
+                            <img src="../../SVG/menu_principal.svg" class="btn-voltar-menu-img" alt=""> Menu
+                        </button>
+                    </div>
+                    
+                    <!-- Centro: Instrução Dinâmica da Ronda -->
+                    <div class="col-centro">
+                        <div class="pergunta-destaque" id="instrucao-ronda" style="margin: 0;">Encontra os pares!</div>
+                    </div>
+                    
+                    <!-- Direita: Contador de Pares Encontrados -->
+                    <div class="col-direita">
+                        <div class="info-nivel" id="info-contagem" style="font-weight: 900; font-size: 1rem;">0/6</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grelha de Memória Ativa (Injetada dinamicamente via JS) -->
+            <div class="memory-grid" id="memory-grid"></div>
+
+        </div>
+
+        <!-- =====================================================================
+			ECRÃ 3: ECRÃ DE FIM / VITÓRIA GERAL
+        ===================================================================== -->
+        <div id="ecra-fim" class="ecra">
+            
+            <img src="../../SVG/taca.svg" alt="Taça de Vitória" style="width: clamp(80px, 15vw, 130px); margin-bottom: 15px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15)); animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            
+            <h2 class="end-title" id="end-title-text" style="margin-bottom: 15px;">Fantástico!</h2>
+            
+            <div class="end-stats" style="font-size: 1.3rem; color: var(--text-main); margin-bottom: 35px; background: var(--bg-header); padding: 20px 30px; border-radius: 20px; border: 3px dashed var(--cor-pre); max-width: 500px;">
+                Chegaste ao fim do caminho mágico!<br>
+                És um excelente detetive de sons e imagens!
+            </div>
+           
+            <div class="botoes-acao-container">
+                <button class="btn-acao secundario" onclick="reiniciarJogo()">
+                    JOGAR OUTRA VEZ <img src="../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+                </button>
+                <button class="btn-acao primario" onclick="voltarAoMenu()">
+                    VOLTAR AO MENU <img src="../../SVG/home.svg" class="icon-acao" alt="">
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- Canvas responsivo para os confetes de vitória -->
+        <canvas id="confetti-canvas"></canvas>
+
+    </div> 
+</main>
+
+<!-- =====================================================================
+     MODAL DE TRANSIÇÃO INTERMÉDIO DE NÍVEIS (EXCLUSIVO JOGO DOS NÚMEROS)
+     ===================================================================== -->
+<div class="modal-overlay" id="modal-transicao">
+    <div class="modal-box">
+        <img src="../../SVG/fixe.svg" alt="Sucesso" style="width: clamp(65px, 12vw, 95px); margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));">
+        <h2 style="color:var(--azul-escuro); margin: 10px 0; font-weight: 900;">Muito Bem!</h2>
+        <div class="end-stats" id="modal-texto-progresso" style="color:var(--text-main); margin-bottom: 25px; line-height: 1.4; font-size: 1.1rem;">
+            Completaste o Nível 1 com sucesso!<br>Estás pronto para o próximo?
+        </div>
+        <div style="display: flex; gap: 30px; justify-content: center; width: 100%; flex-wrap: wrap;">
+            <button class="btn-acao primario" style="margin-top:0;" onclick="voltarAoMenu()">MENU <img src="../../SVG/home.svg" class="icon-acao" alt=""></button>
+            <button class="btn-acao secundario" style="margin-top:0;" onclick="avancarNivelNumeros()">SEGUINTE <img src="../../SVG/proximo_nivel.svg" class="icon-acao" alt=""></button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../SVG/pre.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    // Inicialização do ano do footer
+    document.getElementById('ano-atual').innerText = new Date().getFullYear();
+    
+    function toggleMenu() { 
+        document.getElementById('sidebar').classList.toggle('active'); 
+        document.getElementById('overlay').classList.toggle('active'); 
+        document.getElementById('hamburgerBtn').classList.toggle('open'); 
+    }
+
+    function mostrarEcra(id) {
+        document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+        const e = document.getElementById(id);
+        if(e) e.style.display = 'flex';
+    }
+
+    function voltarAoMenu() {
+        limparConfetis();
+        fecharModalTransicao();
+        document.getElementById('caminho-magico').style.display = 'none';
+        
+        const subtitulo = document.getElementById('header-subtitulo');
+        if (subtitulo) {
+            subtitulo.textContent = "Ouve, associa e descobre os pares no caminho mágico!";
+        }
+        mostrarEcra('ecra-selecao');
+    }
+
+    function reiniciarJogo() {
+        limparConfetis();
+        fecharModalTransicao();
+        iniciarMinijogo(jogoAtivo);
+    }
+
+    function atualizarProgressoCaminho(percentagem) {
+        const avatar = document.getElementById('avatar-progresso');
+        const rasto = document.getElementById('caminho-rasto');
+        const contador = document.getElementById('info-contagem');
+
+        if(avatar) avatar.style.left = `${percentagem}%`;
+        if(rasto) rasto.style.width = `${percentagem}%`;
+        if(contador) contador.textContent = `${paresDescobertos}/${totalPares}`;
+    }
+
+    /* =====================================================================
+       WEB AUDIO API (Anti-Bloqueio)
+       ===================================================================== */
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    
+    function iniciarAudio() {
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    window.addEventListener('pointerdown', iniciarAudio);
+    window.addEventListener('keydown', iniciarAudio);
+
+    function tocarSom(tipo) {
+        iniciarAudio();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator(); 
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const agora = audioCtx.currentTime + 0.02;
+
+        if (tipo === 'acerto') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora); osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.2, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora); osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.25, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 523.25, tempo: 0.30, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.45, duracao: 0.35 }, 
+                { freq: 783.99, tempo: 0.80, duracao: 0.35 }, 
+                { freq: 1046.50, tempo: 1.15, duracao: 0.80 }
+            ];
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = nota.freq;
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.25, agora + nota.tempo + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    /* =====================================================================
+       REPRODUÇÃO DE MP3 DINÂMICA
+       ===================================================================== */
+    let somTemaAtivo = null;
+
+    function tocarSomTema(pasta, nomeFicheiro) {
+        iniciarAudio();
+        
+        if (somTemaAtivo) {
+            somTemaAtivo.pause();
+            somTemaAtivo.currentTime = 0;
+        }
+
+        somTemaAtivo = new Audio(`${pasta}/${nomeFicheiro}.mp3`);
+        somTemaAtivo.play().catch(e => {
+            console.warn("Reprodução automática de áudio aguarda interação.", e);
+        });
+    }
+
+    /* =====================================================================
+       CONFELIS
+       ===================================================================== */
+    const canvasConfetti = document.getElementById('confetti-canvas');
+    const ctxConfetti = canvasConfetti.getContext('2d');
+    let confetis = [];
+    
+    function redimensionarCanvas() { 
+        const container = document.querySelector('.cartao-jogo-container');
+        if(container && canvasConfetti) {
+            canvasConfetti.width = container.clientWidth; 
+            canvasConfetti.height = container.clientHeight; 
+        }
+    }
+    window.addEventListener('resize', redimensionarCanvas);
+    
+    function dispararConfetis() {
+        redimensionarCanvas(); confetis = []; const cores = ['#4fd1c5', '#ff4757', '#0091ff', '#ffa502', '#eccc68'];
+        for (let i = 0; i < 150; i++) {
+            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        }
+        animarConfetis();
+    }
+    function animarConfetis() {
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
+        confetis.forEach(c => {
+            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
+            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
+            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
+        });
+        if (ativos) requestAnimationFrame(animarConfetis);
+    }
+	
+    function limparConfetis() {
+        confetis = []; 
+        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+    }
+
+    /* =====================================================================
+       VARIÁVEIS GLOBAIS E BASES DE DADOS DOS MINIJOGOS
+       ===================================================================== */
+    const LISTA_CORES_POOL = ["vermelho", "azul", "amarelo", "verde", "laranja", "roxo", "preto", "branco", "rosa", "castanho", "cinzento"];
+
+    const SVG_OLHO = `<svg class="back-icon-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const SVG_ALTIFALANTE_BACK = `<svg class="back-icon-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>`;
+    const SVG_ALTIFALANTE_FRONT = `
+        <svg class="btn-som-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 5L6 9H2V15H6L11 19V5Z" fill="#e67e22" stroke="#e67e22" stroke-width="2" stroke-linejoin="round"/>
+            <path class="sound-wave" d="M15.54 8.46C16.4774 9.39766 17.0041 10.6692 17.0041 12C17.0041 13.3308 16.4774 14.6023 15.54 15.54" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round"/>
+            <path class="sound-wave" d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>`;
+
+    let jogoAtivo = 0;      
+    let nivelNumeros = 1;   
+    let rondaAtual = 0;
+    let totalRondas = 1;    
+    
+    let cartasViradas = [];
+    let paresDescobertos = 0;
+    const totalPares = 6;
+    let isVerificando = false;
+    let pastaDadosAtiva = ""; 
+
+    function iniciarMinijogo(idJogo) {
+        iniciarAudio();
+        jogoAtivo = idJogo;
+        rondaAtual = 0;
+        cartasViradas = [];
+        paresDescobertos = 0;
+        isVerificando = false;
+
+        configurarMascoteProgresso(idJogo);
+
+        document.getElementById('caminho-magico').style.display = 'block';
+        atualizarProgressoCaminho(0);
+
+        if (idJogo === 2) {
+            nivelNumeros = 1;
+        }
+
+        mostrarEcra('ecra-jogo');
+        prepararTabuleiro();
+    }
+
+    function configurarMascoteProgresso(idJogo) {
+        const avatar = document.getElementById('avatar-progresso');
+        const alvo = document.getElementById('alvo-progresso');
+        
+        if (idJogo === 1) {
+            avatar.src = 'caminhos/caminho_a.png';
+            alvo.src = 'caminhos/caminho_i.png';
+        } else if (idJogo === 2) {
+            avatar.src = 'caminhos/numero_1.png';
+            alvo.src = 'caminhos/numero_0.png';
+        } else if (idJogo === 3) {
+            avatar.src = 'caminhos/azul.png';
+            alvo.src = 'caminhos/amarelo.png';
+        } else if (idJogo === 4) {
+            avatar.src = 'caminhos/quadrado.png';
+            alvo.src = 'caminhos/circulo.png';
+        }
+    }
+
+    /* =====================================================================
+       GERADOR PROCEDIMENTAL DE DADOS 3D (SOBREPOSIÇÃO REALISTA)
+       ===================================================================== */
+    /* =====================================================================
+       GERADOR PROCEDIMENTAL DE DADOS 3D (CORRIGIDO: MATEMÁTICA E COORDENADAS)
+       ===================================================================== */
+    /* =====================================================================
+       GERADOR PROCEDIMENTAL DE DADOS (DIAGONAL SEM SOBREPOSIÇÃO: 5 NO TOPO-ESQUERDO)
+       ===================================================================== */
+    function obterDadoSvgHtml(valorInput) {
+        const valor = parseInt(valorInput);
+
+        // Coordenadas fracionárias relativas ao tamanho do dado (Garante proporção em qualquer escala)
+        const PONTOS_BASE = {
+            0: [],
+            1: [[0, 0]],
+            2: [[-0.27, -0.27], [0.27, 0.27]],
+            3: [[-0.27, -0.27], [0, 0], [0.27, 0.27]],
+            4: [[-0.27, -0.27], [0.27, -0.27], [-0.27, 0.27], [0.27, 0.27]],
+            5: [[-0.27, -0.27], [0.27, -0.27], [0, 0], [-0.27, 0.27], [0.27, 0.27]]
+        };
+
+        const corFundo = "#ffffff";
+        const corBorda = "#cbd5e1";
+        const corPonto = "#2d3436";
+
+        // Desenha um dado unitário de tamanho variável centrado em (0,0)
+        const desenharDado = (val, tamanho) => {
+            const metade = tamanho / 2;
+            const raioBorda = tamanho * 0.2;       // Borda arredondada proporcional (20%)
+            const espessuraBorda = tamanho * 0.05; // Espessura de traço proporcional (5%)
+            const raioPonto = tamanho * 0.092;     // Tamanho de pinta proporcional (~9.2%)
+
+            let d = `<rect x="-${metade}" y="-${metade}" width="${tamanho}" height="${tamanho}" rx="${raioBorda}" fill="${corFundo}" stroke="${corBorda}" stroke-width="${espessuraBorda}"/>`;
+            
+            const pontosRelativos = PONTOS_BASE[val] || [];
+            pontosRelativos.forEach(([rx, ry]) => {
+                let px = rx * tamanho;
+                let py = ry * tamanho;
+                d += `<circle cx="${px}" cy="${py}" r="${raioPonto}" fill="${corPonto}"/>`;
+            });
+            return d;
+        };
+
+        let svg = `<svg viewBox="0 0 100 100" class="img-animal-card" style="width:100%; height:100%;">`;
+
+        if (valor <= 5) {
+            // ÚNICO DADO GRANDE E PERFEITAMENTE CENTRADO (Valores 0 a 5)
+            svg += `<g transform="translate(50, 50)">`;
+            svg += desenharDado(valor, 60); // Tamanho grande 60x60
+            svg += `</g>`;
+        } else {
+            // DOIS DADOS DISPOSTOS NA DIAGONAL (Valores 6 a 10)
+            const valorDianteiro = 5;
+            const valorTraseiro = valor - 5; // A matemática agora está 100% corrigida!
+
+            // 1. Canto Superior Esquerdo: Dado de 5
+            svg += `<g transform="translate(28, 28)">`;
+            svg += desenharDado(valorDianteiro, 44); // Tamanho proporcional 44x44
+            svg += `</g>`;
+
+            // 2. Canto Inferior Direito: Dado do Resto (1, 2, 3, 4 ou 5)
+            svg += `<g transform="translate(72, 72)">`;
+            svg += desenharDado(valorTraseiro, 44); // Tamanho proporcional 44x44
+            svg += `</g>`;
+        }
+
+        svg += `</svg>`;
+        return svg;
+    }
+
+    function prepararTabuleiro() {
+        // CORREÇÃO: Reseta o estado das cartas e dos pares para o novo nível/partida
+        cartasViradas = [];
+        paresDescobertos = 0;
+        isVerificando = false;
+
+        // CORREÇÃO: Repõe o macaquinho em 0% no início de cada nível
+        atualizarProgressoCaminho(0);
+
+        const grid = document.getElementById('memory-grid');
+        grid.innerHTML = '';
+        
+        // CORREÇÃO: Destranca obrigatoriamente os cliques no novo tabuleiro
+        grid.style.pointerEvents = 'auto';
+
+        let animaisSorteados = [];
+
+        // ================= CONSTRUIR O DECK POR TEMA =================
+
+        // --- 1. JOGO DAS VOGAIS ---
+        if (jogoAtivo === 1) {
+            pastaDadosAtiva = "dados_vogais";
+            document.getElementById('header-subtitulo').textContent = "Vogais Faladas";
+            animaisSorteados = ["a", "e", "i", "o", "u", "vogais"]; 
+        }
+        // --- 2. JOGO DOS NÚMEROS (3 NÍVEIS) ---
+        else if (jogoAtivo === 2) {
+            pastaDadosAtiva = "dados_numeros";
+            document.getElementById('header-subtitulo').textContent = `Números Falados - Nível ${nivelNumeros}`;
+            
+            if (nivelNumeros === 1) {
+                animaisSorteados = ["0", "1", "2", "3", "4", "5"];
+            } else if (nivelNumeros === 2) {
+                animaisSorteados = ["5", "6", "7", "8", "9", "10"];
+            } else {
+                document.getElementById('header-subtitulo').textContent = "Números Falados - Contar os Dados!";
+                let pool = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+                animaisSorteados = pool.sort(() => Math.random() - 0.5).slice(0, 6);
+            }
+        }
+        // --- 3. JOGO DAS CORES (POOL ALEATÓRIA) ---
+        else if (jogoAtivo === 3) {
+            pastaDadosAtiva = "dados_cores";
+            document.getElementById('header-subtitulo').textContent = "Cores Faladas";
+            animaisSorteados = [...LISTA_CORES_POOL].sort(() => Math.random() - 0.5).slice(0, 6);
+        }
+        // --- 4. JOGO DAS FORMAS GEOMÉTRICAS ---
+        else if (jogoAtivo === 4) {
+            pastaDadosAtiva = "dados_formas";
+            document.getElementById('header-subtitulo').textContent = "Formas Faladas";
+            animaisSorteados = ["circulo", "quadrado", "triangulo", "retangulo", "losango", "pentagono"];
+        }
+
+        let cartas = [];
+        animaisSorteados.forEach(idPar => {
+            cartas.push({ id: idPar, tipo: 'som' });
+            cartas.push({ id: idPar, tipo: 'imagem' });
+        });
+
+        cartas.sort(() => Math.random() - 0.5);
+
+        cartas.forEach((dadosCarta, index) => {
+            const numeroIdentificador = index + 1;
+
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.id = dadosCarta.id;
+            card.dataset.tipo = dadosCarta.tipo;
+
+            const inner = document.createElement('div');
+            inner.className = 'card-inner';
+
+            const back = document.createElement('div');
+            if (dadosCarta.tipo === 'imagem') {
+                back.className = 'card-back back-olho';
+                back.innerHTML = `${SVG_OLHO}<div class="back-number">${numeroIdentificador}</div>`;
+            } else {
+                back.className = 'card-back back-som';
+                back.innerHTML = `${SVG_ALTIFALANTE_BACK}<div class="back-number">${numeroIdentificador}</div>`;
+            }
+
+            const front = document.createElement('div');
+            front.className = 'card-front';
+
+            if (dadosCarta.tipo === 'imagem') {
+                if (jogoAtivo === 2 && nivelNumeros === 3) {
+                    front.innerHTML = obterDadoSvgHtml(parseInt(dadosCarta.id));
+                } else {
+                    let extensao = (jogoAtivo === 1) ? 'jpg' : 'png';
+                    front.innerHTML = `<img class="img-animal-card" src="${pastaDadosAtiva}/${dadosCarta.id}.${extensao}" alt="">`;
+                }
+            } else {
+                front.innerHTML = SVG_ALTIFALANTE_FRONT;
+                
+                const btnSom = front.querySelector('.btn-som-svg');
+                btnSom.onclick = (e) => {
+                    e.stopPropagation();
+                    tocarSomTema(pastaDadosAtiva, dadosCarta.id);
+                };
+            }
+
+            inner.appendChild(back);
+            inner.appendChild(front);
+            card.appendChild(inner);
+
+            card.onclick = () => virarCarta(card);
+
+            grid.appendChild(card);
+        });
+    }
+
+    function virarCarta(card) {
+        if (isVerificando || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+        tocarSom('pop');
+        card.classList.add('flipped');
+
+        if (card.dataset.tipo === 'som') {
+            tocarSomTema(pastaDadosAtiva, card.dataset.id);
+        }
+
+        cartasViradas.push(card);
+
+        if (cartasViradas.length === 2) {
+            isVerificando = true;
+            validarPar();
+        }
+    }
+
+    function validarPar() {
+        const carta1 = cartasViradas[0];
+        const carta2 = cartasViradas[1];
+
+        if (carta1.dataset.id === carta2.dataset.id) {
+            paresDescobertos++;
+            
+            setTimeout(() => {
+                tocarSom('acerto');
+                carta1.classList.add('matched');
+                carta2.classList.add('matched');
+                
+                cartasViradas = [];
+                isVerificando = false;
+
+                atualizarProgressoCaminho((paresDescobertos / totalPares) * 100);
+
+                if (paresDescobertos === totalPares) {
+                    setTimeout(rondaConcluidaSucesso, 800);
+                }
+            }, 500);
+
+        } else {
+            // Vibração 3D ao errar
+            setTimeout(() => {
+                // CORREÇÃO: 'tocarSom('erro')' removido para focar 100% no áudio da voz da carta
+                carta1.querySelector('.card-inner').classList.add('error-shake-flipped');
+                carta2.querySelector('.card-inner').classList.add('error-shake-flipped');
+            }, 300);
+
+            const executarDesvirar = () => {
+                carta1.querySelector('.card-inner').classList.remove('error-shake-flipped');
+                carta2.querySelector('.card-inner').classList.remove('error-shake-flipped');
+                
+                carta1.classList.remove('flipped');
+                carta2.classList.remove('flipped');
+                
+                cartasViradas = [];
+                isVerificando = false;
+            };
+
+            if (somTemaAtivo && !somTemaAtivo.paused && !somTemaAtivo.ended) {
+                somTemaAtivo.onended = () => {
+                    setTimeout(executarDesvirar, 400);
+                };
+            } else {
+                setTimeout(executarDesvirar, 1500);
+            }
+        }
+    }
+
+    function rondaConcluidaSucesso() {
+        if (jogoAtivo === 2 && nivelNumeros < 3) {
+            tocarSom('vitoria');
+            
+            const textoModal = document.getElementById('modal-texto-progresso');
+            textoModal.textContent = `Completaste o Nível ${nivelNumeros} com sucesso! Estás pronto para o próximo?`;
+            
+            document.getElementById('memory-grid').style.pointerEvents = 'none';
+            document.getElementById('modal-transicao').classList.add('active');
+        } else {
+            concluirJogoGeral();
+        }
+    }
+
+    function avancarNivelNumeros() {
+        fecharModalTransicao();
+        nivelNumeros++;
+        prepararTabuleiro();
+    }
+
+    function fecharModalTransicao() {
+        document.getElementById('modal-transicao').classList.remove('active');
+    }
+
+    function concluirJogoGeral() {
+        tocarSom('vitoria');
+        dispararConfetis();
+        mostrarEcra('ecra-fim');
+    }
+</script>
+
+
+</body>
+</html>
