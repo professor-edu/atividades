@@ -21,7 +21,7 @@ const todosOsJogos =[
 	{ nome: "Contar Sílabas" }, 
 	{ nome: "Vogais" }, 
 	{ nome: "Aprendo a Contar" }, 
-	{ nome: "Metades" }, 
+	{ nome: "Vogais Faladas" }, 
 	{ nome: "Labirintos" }, 
 	{ nome: "Sem Pares" }, 
 	{ nome: "Puzzles Mágicos" }, 
@@ -32,5 +32,6 @@ const todosOsJogos =[
 	{ nome: "O Robô Construtor?"},
 	{ nome: "Pixel Art"},
 	{ nome: "Vamos Colorir"},
-	{ nome: "Memória Falada"}
+	{ nome: "Memória Falada"},
+	{ nome: "Metades"}
 ];
