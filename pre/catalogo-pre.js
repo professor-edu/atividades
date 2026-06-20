@@ -33,5 +33,6 @@ const todosOsJogos =[
 	{ nome: "Pixel Art"},
 	{ nome: "Vamos Colorir"},
 	{ nome: "Memória Falada"},
-	{ nome: "Metades"}
+	{ nome: "Metades"},
+	{ nome: "Som Inicial"}
 ];
