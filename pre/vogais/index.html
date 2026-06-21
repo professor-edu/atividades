@@ -49,7 +49,7 @@
 			--cor-c6-sombra: rgba(250, 152, 58, 0.85);
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px); background-size: 25px 25px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
         
         header { background-color: var(--bg-header); padding: 25px 20px; border-bottom: 1px solid var(--cor-borda); box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100; }
         
@@ -175,7 +175,7 @@
         .ecra { width: 100%; flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; }
         
         .titulo-destaque { font-size: clamp(2rem, 5vw, 3rem); color: var(--azul-escuro); margin-bottom: 10px; margin-top: 0; line-height: 1.1;}
-        .texto-intro { font-size: 1.2rem; color: var(--text-main); margin-bottom: 30px; }
+        .texto-intro { font-size: 1.4rem; color: var(--cor-c5); margin-bottom: 50px; }
         
         .btn-acao { 
             background-color: var(--cor-pre); color: white; border: none; padding: 15px 45px; 
@@ -244,7 +244,7 @@
         /* =========================================
            MECÂNICA DO JOGO: FASES 1 E 2
            ========================================= */
-        #ecra-jogo { justify-content: flex-start; gap: 15px;}
+        #ecra-jogo { justify-content: center; gap: 15px;}
         
         .info-nivel { font-size: 1.2rem; font-weight: 800; color: var(--azul-escuro); background: #e7f5ff; padding: 8px 20px; border-radius: 20px; border: 2px solid var(--cor-jogo); margin-bottom: 10px;}
         .instrucao-jogo { font-size: clamp(1.3rem, 4vw, 1.8rem); color: var(--azul-escuro); font-weight: 900; margin-bottom: 15px;}
@@ -256,6 +256,7 @@
             display: flex; align-items: center; justify-content: center; padding: 15px;
             box-shadow: 0 10px 20px rgba(77, 171, 247, 0.15); margin-bottom: 30px;
             transition: transform 0.4s ease, border-color 0.4s ease;
+			position: relative;
         }
         @media (hover: hover) { .fase1-alvo-container:hover { transform: scale(1.05); border-color: var(--cor-jogo); } }
         .fase1-alvo-container img { width: 95%; height: 95%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
@@ -272,6 +273,54 @@
         }
         @media (hover: hover) { .btn-vogal:hover { border-color: var(--cor-jogo); transform: translateY(-4px); box-shadow: 0 10px 0 var(--cor-jogo); background: #e7f5ff; color: var(--cor-jogo-dark);} }
         .btn-vogal:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
+		
+		.badge-som {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            background-color: var(--cor-pre);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+            color: #ffffff;
+            transition: transform 0.15s ease, background-color 0.15s ease;
+            z-index: 10;
+            padding: 7px;
+            outline: none;
+        }
+
+        @media (hover: hover) {
+            .badge-som:hover {
+                transform: scale(1.1);
+                background-color: var(--cor-pre-dark);
+            }
+        }
+
+        .badge-som:active {
+            transform: scale(0.9);
+        }
+
+        .badge-som svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+		
+		.badge-som-pequeno {
+            width: 28px !important;
+            height: 28px !important;
+            top: 6px !important;
+            right: 6px !important;
+            padding: 4px !important;
+            border-width: 1.5px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
 
         /* --- FASE 2: LETRA TOPO --- */
         .fase2-alvo-container {
@@ -290,6 +339,7 @@
             display: flex; align-items: center; justify-content: center; padding: 15px;
             cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 0 #cbd5e1;
             user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+			position: relative;
         }
         @media (hover: hover) { .btn-imagem:hover { border-color: var(--cor-jogo); transform: translateY(-4px) scale(1.05); box-shadow: 0 10px 0 var(--cor-jogo); background: #e7f5ff;} }
         .btn-imagem:active { transform: translateY(6px); box-shadow: 0 0px 0 transparent; }
@@ -326,7 +376,10 @@
             margin-bottom: 20px;
         }
         
-        /* O formato base de cada bloco */
+        /* =====================================================================
+           PADRÃO DE VOGAIS ANIMADAS (VERSÃO ESTABILIZADA POR GPU - SEM TREMER)
+           ===================================================================== */
+        
         .bloco-letra {
             display: inline-flex;
             align-items: center;
@@ -340,23 +393,37 @@
             border-radius: 15px;
             box-shadow: 0 5px 0 rgba(0,0,0,0.2);
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
-            transition: transform 0.3s ease;
             cursor: default;
+            
+            /* FORÇAS DE ESTABILIZAÇÃO POR GPU */
+            will-change: transform; /* Avisa o browser para isolar o elemento na GPU */
+            -webkit-font-smoothing: antialiased; /* Impede que o texto "vibre" ao mudar de tamanho */
+            -webkit-backface-visibility: hidden; /* Evita cintilação de píxeis em browsers Webkit */
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0); /* Inicia o contexto 3D nativo */
+
+            /* Ativação do movimento fluido de 4 segundos (mais lento e suave) */
+            animation: floatLetter 4s infinite ease-in-out;
         }
         
-        /* Um pequeno salto divertido quando passam o rato por cima */
-        @media (hover: hover) {
-            .bloco-letra:hover {
-                transform: translateY(-8px) scale(1.05);
+        /* Delays de animação assíncronos */
+        .cor-a { background-color: #ff4757; animation-delay: 0s; }
+        .cor-e { background-color: #ffa502; animation-delay: 0.5s; } /* Ajustados para 0.5s para maior fluidez */
+        .cor-i { background-color: #2ed573; animation-delay: 1s; }
+        .cor-o { background-color: #1e90ff; animation-delay: 1.5s; }
+        .cor-u { background-color: #9b59b6; animation-delay: 2s; }
+
+        /* Keyframes de flutuação calibrados com translate3d para aceleração 3D nativa */
+        @keyframes floatLetter {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) scale(1);
+                filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+            }
+            50% {
+                transform: translate3d(0, -8px, 0) scale(1.04); /* Usa translate3d de 3 eixos */
+                filter: drop-shadow(0 12px 10px rgba(0,0,0,0.12));
             }
         }
-        
-        /* Cores específicas para cada vogal */
-        .cor-a { background-color: #ff4757; } /* Vermelho */
-        .cor-e { background-color: #ffa502; } /* Laranja */
-        .cor-i { background-color: #2ed573; } /* Verde */
-        .cor-o { background-color: #1e90ff; } /* Azul */
-        .cor-u { background-color: #9b59b6; } /* Roxo */
 
         
         
@@ -365,13 +432,32 @@
 	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
 	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
 	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
-</style>
+	
+	/* =====================================================================
+           RESPONSIVIDADE: VOGAIS EM LINHA ÚNICA HORIZONTAL NO MOBILE (ATÉ 600PX)
+           ===================================================================== */
+        @media (max-width: 600px) {
+            /* Força as 5 vogais a ficarem sempre na mesma linha */
+            .grupo-vogais-inicio {
+                flex-wrap: nowrap !important; 
+                gap: 6px !important; /* Aproxima as letras para poupar espaço */
+                margin-bottom: 25px !important;
+            }
 
-<style>
-  body {
-    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
-    background-size: 25px 25px;
-  }
+            /* Reduz as dimensões de cada bloco proporcionalmente para caber em qualquer telemóvel */
+            .bloco-letra {
+                width: clamp(45px, 11vw, 52px) !important;
+                height: clamp(45px, 11vw, 52px) !important;
+                font-size: clamp(1.8rem, 4.5vw, 2.3rem) !important; /* Ajusta a escala da fonte para não cortar */
+                border-radius: 10px !important; /* Cantos ligeiramente mais suaves para o tamanho menor */
+                box-shadow: 0 4px 0 rgba(0,0,0,0.18) !important;
+                
+                /* Mantém a animação suave por GPU sem quebras */
+                animation: floatLetter 4s infinite ease-in-out !important;
+            }
+        }
+
+
 </style>
 </head>
 <body>
@@ -429,7 +515,7 @@
 					<div class="bloco-letra cor-u">U</div>
 				</div>
 				<p class="texto-intro">Vamos descobrir as vogais!</p>
-				<button class="btn-acao" onclick="iniciarJogo()">Jogar ▶️</button>
+				<button class="btn-acao" onclick="iniciarJogo()">Jogar <img src="seta_direita.svg" class="icon-svg-titulo" alt=""></button>
 			</div>
 
         <!-- ECRÃ 2: JOGO -->
@@ -441,6 +527,14 @@
             <div id="ui-fase1" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="fase1-alvo-container" id="f1-alvo-container">
                     <img id="img-alvo-f1" src="" alt="Imagem Secreta">
+                    
+                    <!-- Novo Badge de Som tátil -->
+                    <button class="badge-som" onclick="tocarSomPalavra(alvoFase1, event)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 5L6 9H2V15H6L11 19V5Z"/>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                    </button>
                 </div>
                 <div class="fase1-vogais-container">
                     <button class="btn-vogal" onclick="verificarRespostaFase1('a', this)">A</button>
@@ -500,10 +594,10 @@
        ========================================= */
     const bancoPalavras = [
         "abelha", "aguia", "almofada", "ananas", "anel", "arvore", "aviao",
-        "elefante", "envelope", "escada", "escova", "espelho", "esquilo",
+        "elefante", "envelope", "escada", "escova", "espelho", "esquilo", "erva", "egua", "eva",
         "idoso", "igreja", "ilha", "iman", "impressora", "inseto", "iogurte", "isqueiro",
-        "oculos", "oito", "olho", "orelha", "osso", "ouro", "ovelha", "ovo",
-        "um", "unhas", "unicornio", "urso", "uvas"
+        "oculos", "oito", "olhos", "orelha", "osso", "ouro", "ovelha", "ovo",
+        "um", "unha", "unicornio", "urso", "uvas"
     ];
 
     /* =========================================
@@ -554,7 +648,8 @@
        LÓGICA PRINCIPAL
        ========================================= */
     function iniciarJogo() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
+        limparConfetis(); // CORREÇÃO: Limpa e para os confetes pendentes imediatamente
+        
         rondaGlobal = 1;
         faseAtual = 1;
         palavrasDesteJogo = [...bancoPalavras].sort(() => Math.random() - 0.5).slice(0, TOTAL_RONDAS);
@@ -585,17 +680,22 @@
     }
 
     /* --- FASE 1 --- */
-   function prepararRondaFase1() {
+    function prepararRondaFase1() {
         isVerificando = false;
         botoesVogaisF1.forEach(btn => {
             btn.classList.remove('correto', 'errado');
             btn.style.pointerEvents = 'auto';
         });
 
-        // USA A PALAVRA ÚNICA DESTA RONDA (em vez do random)
         alvoFase1 = palavrasDesteJogo[rondaGlobal - 1];
         
-        imgAlvoF1.src = `img/${alvoFase1}.svg`;
+        imgAlvoF1.src = `img/${alvoFase1}.png`; // Alterado para ler .png conforme passo anterior
+        
+        // Toca automaticamente a pronúncia da palavra da ronda atual
+        setTimeout(() => {
+            tocarSomFrase(`img/${alvoFase1}.mp3`); // Altere para dados/ se os seus áudios estiverem lá
+        }, 300);
+
         containerAlvoF1.style.animation = 'popIn 0.4s ease';
         setTimeout(() => containerAlvoF1.style.animation = '', 400);
     }
@@ -626,7 +726,7 @@
         isVerificando = false;
         opcoesContainerF2.innerHTML = '';
 
-        // 1. USA A PALAVRA ÚNICA DESTA RONDA E EXTRAI A SUA VOGAL
+        // 1. Usa a palavra única desta ronda e extrai a sua vogal
         const imgCerta = palavrasDesteJogo[rondaGlobal - 1];
         vogalFase2 = getVogal(imgCerta);
         
@@ -649,7 +749,8 @@
                 vogaisUsadas.push(vogalCandidata);
             }
         }
-        // 4. Misturar e Renderizar
+        
+        // 4. Misturar e Renderizar com o Badge de Som correspondente
         const opcoes = [
             { img: imgCerta, correta: true },
             { img: imagensIntrusas[0], correta: false },
@@ -662,9 +763,25 @@
             btn.className = 'btn-imagem';
             
             const imgHTML = document.createElement('img');
-            imgHTML.src = `img/${op.img}.svg`;
-            
+            imgHTML.src = `img/${op.img}.png`; // Modificado para PNG conforme passo anterior
             btn.appendChild(imgHTML);
+            
+            // NOVO: Adiciona o Badge de Som na opção do Jogo 2
+            const badge = document.createElement('button');
+            badge.className = 'badge-som badge-som-pequeno'; // Aplica o tamanho pequeno
+            badge.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>`;
+            
+            // Quando clica no badge de som, reproduz o áudio correspondente a essa carta específica
+            badge.onclick = (e) => {
+                e.stopPropagation(); // Evita que clicar no som valide a resposta errada/certa por engano!
+                tocarSomPalavra(op.img, e);
+            };
+            
+            btn.appendChild(badge);
             btn.onclick = () => verificarRespostaFase2(op.correta, btn);
             
             opcoesContainerF2.appendChild(btn);
@@ -713,6 +830,24 @@
             if (faseAtual === 1) prepararRondaFase1();
             else prepararRondaFase2();
         }
+    }
+	
+	let somPalavraAtivo = null;
+
+    function tocarSomPalavra(palavra, event) {
+        if (event) event.stopPropagation(); // Impede que o clique afete elementos pai
+        iniciarAudio(); // Garante o AudioContext ativado
+
+        if (somPalavraAtivo) {
+            somPalavraAtivo.pause();
+            somPalavraAtivo.currentTime = 0;
+        }
+
+        // Procura o som correspondente à palavra na pasta img/ (ex: img/abelha.mp3)
+        somFraseAtivo = new Audio(`img/${palavra}.mp3`);
+        somFraseAtivo.play().catch(e => {
+            console.warn("Reprodução de áudio aguarda interação do utilizador.", e);
+        });
     }
 
     /* =========================================
@@ -780,6 +915,12 @@
             confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
         }
         animarConfetis();
+    }
+	function limparConfetis() {
+        confetis = []; // Esvazia o array para travar o ciclo de animação automaticamente
+        if (ctxConfetti && canvasConfetti) {
+            ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); // Limpa o canvas
+        }
     }
 
     function animarConfetis() {
