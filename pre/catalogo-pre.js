@@ -34,5 +34,7 @@ const todosOsJogos =[
 	{ nome: "Vamos Colorir"},
 	{ nome: "Memória Falada"},
 	{ nome: "Metades"},
-	{ nome: "Som Inicial"}
+	{ nome: "Som Inicial"},
+	{ nome: "Ouvir e Descobrir"},
+	{ nome: "Ouvir e Resolver"}
 ];
