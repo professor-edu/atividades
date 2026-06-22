@@ -550,7 +550,7 @@
 
         /* 2. Contentor dos 3 Cartões de Escolha (Centro) */
         .choice-container {
-            margin-top: 20px;
+            margin-top: 45px;
             margin-bottom: auto; /* Afasta do rodapé, centrando o jogo */
             display: flex;
             gap: clamp(12px, 3vw, 25px);
@@ -834,6 +834,44 @@
             75% { transform: translate(-5px, 15px) scale(1); opacity: 1; }
             85%, 100% { transform: translate(-5px, 15px) scale(1); opacity: 0; } /* Desaparece */
         }
+		
+		/* =====================================================================
+           ANIMAÇÃO DO BOTÃO "JOGAR" (RESPIRAÇÃO ELÁSTICA DA CORES)
+           ===================================================================== */
+        
+        /* Aplica a animação apenas ao botão primário do ecrã inicial */
+        #ecra-selecao .btn-acao.primario {
+            animation: playBreathe 2s infinite ease-in-out;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        /* Otimização interativa: pausa a respiração e eleva ao passar o rato */
+        @media (hover: hover) {
+            #ecra-selecao .btn-acao.primario:hover {
+                animation-play-state: paused; /* Trava a animação lenta */
+                transform: scale(1.1) translateY(-2px); /* Elevação elástica suave */
+                box-shadow: 0 8px 0 #219d53, 0 12px 24px rgba(93, 210, 121, 0.5) !important;
+                filter: brightness(1.05);
+            }
+        }
+
+        #ecra-selecao .btn-acao.primario:active {
+            transform: translateY(6px) scale(1) !important;
+            box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important;
+        }
+
+        /* Keyframes da respiração elástica e pulsação da sombra verde */
+        @keyframes playBreathe {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 6px 0 #219d53, 0 4px 6px rgba(0,0,0,0.1);
+            }
+            50% {
+                transform: scale(1.06); /* Cresce ligeiramente de forma elástica */
+                box-shadow: 0 8px 0 #219d53, 0 12px 20px rgba(93, 210, 121, 0.45); /* Expande a sombra verde */
+                filter: brightness(1.03);
+            }
+        }
     </style>
 </head>
 <body>
@@ -923,7 +961,7 @@
 			<h2 class="titulo-destaque" style="margin-bottom: 20px;">Vozes dos Bichos!</h2>
             
             <button class="btn-acao primario" onclick="iniciarJogo()">
-                JOGAR <img src="../../SVG/proximo_nivel.svg" class="icon-acao" alt="">
+                JOGAR <img src="../../SVG/seta_direita.svg" class="icon-acao" alt="">
             </button>
 
         </div>
@@ -947,7 +985,7 @@
                     </div>
                     
                     <div class="col-direita" id="elemento-extra-topo">
-                        <div class="info-nivel" id="info-contagem" style="font-weight: 900; font-size: 1.2rem;">0/10</div>
+                        <div class="info-nivel" id="info-contagem" style="font-weight: 900; font-size: 1.1rem;">0/10</div>
                     </div>
                 </div>
             </div>
@@ -1201,12 +1239,7 @@
         const speakerContainer = document.getElementById('play-button');
         speakerContainer.innerHTML = SVG_ALTIFALANTE_PLAY;
 
-        // 2. Toca automaticamente o som do animal correto ao entrar na ronda
-        setTimeout(() => {
-            tocarSomAnimal(animalAlvoRonda);
-        }, 300);
-
-        // 3. Monta as 3 opções de cartas de imagem (1 correta e 2 incorretas baralhadas)
+        // 2. Monta as 3 opções de cartas de imagem (1 correta e 2 incorretas baralhadas)
         desenharOpcoes();
     }
 

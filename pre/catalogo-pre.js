@@ -36,5 +36,6 @@ const todosOsJogos =[
 	{ nome: "Metades"},
 	{ nome: "Som Inicial"},
 	{ nome: "Ouvir e Descobrir"},
-	{ nome: "Ouvir e Resolver"}
+	{ nome: "Ouvir e Resolver"},
+	{ nome: "A Magia dos Números"}
 ];
