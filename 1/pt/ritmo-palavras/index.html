@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - O Ritmo das Palavras 🔊</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* =========================================
+           CSS DO TEMPLATE BASE (CORES E ESTRUTURA)
+           ========================================= */
+		   
+        :root {
+            --bg-body: #f0f7ff;
+            --azul-vibrante: #0091ff; 
+            --cor-1ano: #0091ff;     
+            --cor-1ano-dark: #0070c5;
+            --cor-borda: #0091ff;            
+            --bg-header: #e3f2fd;    
+            --azul-escuro: #0d47a1;
+            --text-main: #455a64;
+            --borda-cartao: #ced6e0;
+            --cor-pt: #ff6b6b;
+            --cor-mat: #4dabf7;
+            --cor-em: #51cf66;
+
+            /* NOVAS CORES DO MENU INICIAL */
+            --cor-btn-azul: #61A0FF;
+            --cor-btn-verde: #5DD279;
+            --cor-btn-amarelo: #FBC531;
+            --cor-btn-vermelho: #FF6B6B;
+            --cor-btn-roxo: #A55EEA;
+            --cor-btn-laranja: #FA983A;
+			--cor-btn-rosa: #e04d8c;
+			--cor-btn-turquesa: #139ea3;
+            
+            /* Cores de Feedback (Vibrantes) */
+            --cor-sucesso: #2ed573;
+            --cor-sucesso-dark: #219d53;
+            --cor-erro: #ff4757;
+            --cor-erro-dark: #d0303f;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            text-align: center; 
+            background-color: var(--bg-body);
+			background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+			background-size: 25px 25px;			
+            margin: 0; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh; 
+            overflow-x: hidden; 
+        }
+		
+		*:focus-visible {
+			outline: 4px solid var(--cor-btn-amarelo);
+			border-radius: 8px;
+		}
+        
+        @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+		
+        
+		/* =========================================
+           HEADER E NAVEGAÇÃO
+        ========================================= */
+		
+        header {
+            background-color: var(--bg-header); padding: 25px 20px;
+            border-bottom: 1px solid var(--azul-vibrante);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+        }
+        .header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        .nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+        @media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+        .hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+        .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        
+        h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+        .btn-voltar { background: var(--cor-1ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-1ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+        @media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 10px; }
+            .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+            .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+            .hamburger { grid-column: 1; justify-self: start; }
+            .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+            h1, .subtitulo { grid-column: 2; text-align: center; }
+            main { padding: 15px 10px; gap: 10px; } 
+            .cartao-jogo-container { padding: 15px; }
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+		
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+        .sidebar.active { left: 0; }
+        .sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+        .sidebar ul { list-style: none; padding: 15px; margin: 0; }
+        .sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+        @media (hover: hover) { .sidebar li a:hover { background: var(--cor-1ano); color: white; transform: translateX(8px); } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* =========================================
+           CARTÃO PRINCIPAL
+        ========================================= */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+        
+        .cartao-jogo-container { 
+            background: white; width: 100%; max-width: 950px; 
+            flex: 1; min-height: 0; 
+            padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55); 
+            border-top: 8px solid var(--cor-pt); 
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+        }
+
+        /* =========================================
+           CONFETIS
+        ========================================= */
+        .confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+		
+		/* Confetis Limitados ao Container */
+        .confetti { 
+            position: absolute; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 2px;
+            opacity: 0; 
+            animation: fall linear forwards; 
+            pointer-events: none;
+            z-index: 15;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; } 
+            80% { opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } 
+        }
+		
+		/* =========================================
+           FOOTER
+        ========================================= */
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-1ano); margin-top: auto; flex-shrink: 0;}
+        footer p { font-size: 0.8rem; color: var(--cor-1ano); margin: 0; }
+        
+        /* =========================================
+           ECRÃS E MENUS
+           ========================================= */
+        .ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+        #ecra-selecao { display: flex; }
+        #ecra-jogo { justify-content: flex-start; }
+        .titulo-menu { font-size: clamp(1rem, 4vw, 1.4rem); color: var(--azul-escuro); margin-bottom: 35px; font-weight: 900;}
+
+        /* =========================================
+           MENU INICIAL (ANIMAÇÃO GRELHA 2x2
+           ========================================= */
+        .animacao-tutorial {
+            width: 100%; max-width: 400px; height: 180px;
+            background: #f4faff; border: 3px dashed #bcdcff; border-radius: 20px;
+            margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+            overflow: hidden;
+        }
+
+        /* Grelha adaptada para 2x2 cartões alinhados */
+        .grid-niveis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-niveis {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+        }
+
+        .btn-nivel-novo {
+            width: 100%; padding: 20px; border-radius: 20px; border: 4px solid white;
+            color: white; font-size: 1.2rem; font-weight: 900; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0,0,0,0.08); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            touch-action: manipulation; user-select: none; text-align: center;
+        }
+
+        @media (hover: hover) {
+            .btn-nivel-novo:hover {
+                transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+            }
+        }
+
+        .btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+        /* Classes Utilitárias de Cor para os Botões */
+        .bg-azul { background-color: var(--cor-btn-azul); }
+        .bg-verde { background-color: var(--cor-btn-verde); }
+        .bg-amarelo { background-color: var(--cor-btn-amarelo); }
+        .bg-vermelho { background-color: var(--cor-btn-vermelho); }
+        .bg-roxo { background-color: var(--cor-btn-roxo); }
+        .bg-laranja { background-color: var(--cor-btn-laranja); }
+		.bg-rosa { background-color: var(--cor-btn-rosa); }
+		.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+        
+        /* =========================================
+           BARRA DE ESTADO DO JOGO (status-bar-jogo) E SVGs
+        ========================================= */
+        .status-bar-jogo {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; background: #fdf2f2; padding: 8px 12px;
+            border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+            max-width: 900px;
+        }
+		
+        /* =========================================
+           BOTÕES DA BARRA DE ESTADO (ZOOM SUBTIL DO ÍCONE)
+        ========================================= */
+        
+        /* --- BOTÃO MENU --- */
+        .btn-voltar-menu { 
+            background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Menu */
+        .btn-voltar-menu svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+            /* Apenas um ligeiro zoom no ícone */
+            .btn-voltar-menu:hover svg { transform: scale(1.15); }
+        }
+        
+        
+        /* --- BOTÃO DICA --- */
+        .btn-dica { 
+            background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+            padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; 
+            transition: border-color 0.2s ease; /* Anima APENAS a cor da borda */
+            touch-action: manipulation;
+        }
+        
+        /* Prepara o SVG do botão Dica */
+        .btn-dica svg {
+            transition: transform 0.2s ease; /* Transição mais suave e curta */
+        }
+
+        @media (hover: hover) { 
+            .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+            /* Exatamente o mesmo zoom sutil do Menu */
+            .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+        }
+        
+        .btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+		
+		/* =========================================
+           DICA IMPACIENTE (pulsa ao fim de 15 segundos)
+        ========================================= */
+        .btn-dica.dica-impaciente:not(.esgotada) {
+            animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+            border-color: #f39c12;
+            background-color: #fffde7;
+        }
+
+        @keyframes chamarAtencaoDica {
+            0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; }
+            50% { 
+                transform: scale(1.1) translateY(-3px); 
+                box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); 
+            }
+        }
+
+		/* =========================================
+           BADGE DA RONDA
+        ========================================= */
+        .badge-ronda { 
+            background: white; 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            border: 2px solid #219d53; 
+            color: #219d53; 
+            
+            /* Alinhamento Perfeito (Flexbox) */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        /* Doma o SVG injetado na Ronda */
+        .badge-ronda svg {
+            margin: 0 !important; 
+            width: 1.1em !important; 
+            height: 1.1em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BADGE DE ERROS 
+        ========================================= */
+        .badge-erros { 
+            background: white; 
+            border: 2px solid var(--cor-pt); 
+            color: var(--cor-mat); 
+            font-weight: 800; 
+            font-size: 0.9rem; 
+            line-height: 1; /* Retira o ar extra em volta do número */
+            padding: 6px 12px; 
+            border-radius: 15px; 
+            white-space: nowrap; 
+            
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+        }
+
+        .badge-erros svg {
+            margin: 0 !important; 
+            width: 0.85em !important;
+            height: 0.85em !important;
+            display: block;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESSO
+        ========================================= */
+        .progress-bg { 
+            background-color: #e2e8f0; 
+            border-radius: 20px; 
+            height: 35px; 
+            flex: 1 1 0%; /* Cresce, Encolhe, e começa a contar do 0%. Força o encaixe perfeito! */
+            min-width: 50px; /* Nunca desaparece de vez */
+            margin: 0; /* Removemos a margem porque o contentor pai já tem 'gap: 10px' */
+            overflow: hidden; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+            border: 2px solid white; 
+        }
+
+        /* 🛡️ SEGURANÇA MÁXIMA PARA OS BOTÕES/BADGES */
+        /* Diz ao Flexbox: "Proibido esmagar estes elementos" */
+        .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros {
+            flex-shrink: 0;
+        }
+        .progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-1ano); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+		
+		/* BARRA DE ESTADO DE JOGO EM MOBILE VERTICAL (2 LINHAS) */
+		
+        @media (max-width: 600px) {
+            .status-bar-jogo { 
+                /* Trocamos a Grid Rígida por um Flexbox Maleável */
+                display: flex;
+                flex-wrap: wrap; /* O Segredo: permite arrumar noutra linha se não couber! */
+                justify-content: center; /* Centra tudo de forma harmoniosa */
+                align-items: center;
+                gap: 8px 6px; 
+                padding: 10px 8px;
+            }
+            
+            /* A barra de progresso vai obrigatoriamente para a última linha */
+            .progress-bg { 
+                order: 10; /* Força o elemento a ir para o fim */
+                width: 100%; 
+                margin: 4px 0 0 0; 
+                height: 25px; /* Altura elegante para mobile */
+            }
+
+            /* Botões e Badges compactos mas protegidos de esmagamentos */
+            .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { 
+                padding: 4px 8px; 
+                font-size: 0.8rem; 
+                gap: 4px;
+                white-space: nowrap; /* Garante que o texto não se parte a meio */
+                flex-shrink: 0; /* Impede os ícones de ficarem esmagados */
+            }
+        }
+	
+		.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+		.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+		.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+		.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+		.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+		
+		/* Estilo para os SVGs dentro dos botões do ecrã inicial */
+		.icon-btn-nivel {
+			width: 55px;       /* Tamanho ideal para botões grandes */
+			height: 55px;      /* Mantém o rácio quadrado */
+			object-fit: contain;
+			filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2)); /* Dá a mesma profundidade do texto */
+			pointer-events: none; /* Evita que o clique no ícone interfira com o botão */
+		}
+
+		/* Ajuste Mobile: Se o ecrã for pequeno, reduzimos o ícone */
+		@media (max-width: 600px) {
+			.icon-btn-nivel {
+				width: 40px;
+				height: 40px;
+			}
+			.btn-nivel-novo {
+				padding: 15px;
+				font-size: 1.2rem;
+			}
+		}
+
+        /* =========================================
+           ÁREA DE JOGO LIVRE E BOTÕES DE RESPOSTA
+           ========================================= */
+        .area-jogo-custom {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 25px; gap: 25px;
+            position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+        }
+
+        .pergunta-texto { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+        
+        .opcoes-container { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; width: 100%; animation: fadeIn 0.4s ease;}
+        
+        /* Botões de Resposta Padrão */
+        .btn-opcao { background: var(--bg-header); border: 3px solid var(--cor-pt); border-radius: 15px; padding: 15px 35px; font-size: 1.9rem; font-weight: bold; color: var(--azul-vibrante); gap: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 var(--cor-pt); display: flex; align-items: center; justify-content: center; min-width: 100px; touch-action: manipulation;}
+        @media (hover: hover) { .btn-opcao:hover:not(.btn-disabled):not(.sucesso-vibrante):not(.erro-vibrante) { transform: translateY(-3px); box-shadow: 0 8px 0 var(--cor-pt); } }
+        .btn-opcao:active:not(.btn-disabled) { transform: translateY(3px); box-shadow: 0 0 0 transparent; }
+        .btn-disabled { pointer-events: none; }
+		
+		.icon-certo {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1.1em; 
+			height: 1.1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		.icon-errado {
+			/* Define o tamanho proporcional ao texto de 2rem */
+			width: 1em; 
+			height: 1em;
+			object-fit: contain;
+			/* Melhora o alinhamento visual com fontes negritadas */
+			vertical-align: middle; 
+		}
+		
+        /* VIBRANT FEEDBACK BUTTONS */
+        .btn-opcao.sucesso-vibrante { 
+            background-color: var(--cor-sucesso) !important; 
+            color: white !important; 
+            border-color: var(--cor-sucesso-dark) !important; 
+            box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+            transform: translateY(3px) !important; 
+        }
+
+        .btn-opcao.erro-vibrante { 
+            animation: shakeError 0.4s ease; 
+            border-color: var(--cor-erro) !important; 
+            background-color: #ffefef !important; 
+            color: var(--cor-erro) !important; 
+            box-shadow: 0 6px 0 var(--cor-erro) !important;
+        }
+		
+        /* =========================================
+           TIPOS DE EXERCÍCIOS
+        ========================================= */		
+		
+		.selecionado {
+			outline: 4px solid var(--cor-btn-amarelo);
+			transform: scale(1.05);
+		}
+		
+		.btn-opcao[disabled] {
+			background-color: #e2e8f0;
+			cursor: not-allowed;
+		}
+		
+		.bloco-arrastar {
+            min-width: 100px;
+			padding: 12px 20px;
+            background: white;
+            border: 3px solid var(--azul-vibrante);
+            border-radius: 15px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+		
+		.bloco-arrastar:not(.selecionado):not([disabled]) {
+            animation: respirarBloco 2s infinite ease-in-out;
+        }
+		
+		@keyframes respirarBloco {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 0 var(--azul-vibrante); }
+            50% { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0, 145, 255, 0.25); }
+        }
+		
+		/*O alvo pisca a pedir a palavra que a criança selecionou */
+        .alvo-arrastar.pronto-receber {
+            border-color: var(--cor-btn-amarelo) !important;
+            background-color: #fffde7;
+            animation: pulseAlvo 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulseAlvo {
+            from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; }
+            to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); }
+        }
+		
+		.btn-opcao img {
+			max-width: 100px;
+			height: auto;
+		}
+		
+		.highlight-correto {
+			position: relative;
+			outline: 4px solid var(--cor-btn-verde);
+			outline-offset: 4px;
+			animation: pulseHighlight 1.4s infinite;
+			z-index: 2;
+		}
+		
+		.highlight-correto::after {
+			position: absolute;
+			top: -16px;
+			right: -16px;
+			background: var(--cor-btn-verde);
+			color: white;
+			border-radius: 50%;
+			width: 28px;
+			height: 28px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1rem;
+			box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			animation: bounceCheck 1s infinite alternate;
+		}
+		
+		@keyframes pulseHighlight {
+			0%   { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); }
+			70%  { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); }
+			100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); }
+		}
+		
+		
+		@keyframes bounceCheck {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(1.2);
+			}
+		}
+
+
+        /* =========================================
+           ECRÃ FIM, TRANSIÇÃO E BOTÕES DE AÇÃO 
+        ========================================= */
+        .end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+		.icon-end-title {
+			/* O tamanho 1.2em garante que o ícone acompanhe o crescimento do clamp */
+			width: 1.2em; 
+			height: 1.2em;
+			object-fit: contain;
+			/* Um leve drop-shadow para dar profundidade, combinando com o estilo de jogo */
+			filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+		}
+
+		/* Ajuste para ecrãs muito pequenos */
+		@media (max-width: 480px) {
+			.end-title {
+				flex-direction: column; /* No telemóvel, o ícone fica em cima do texto */
+				gap: 10px;
+			}
+		}
+        
+        .end-stats { 
+            font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+            text-align: center; background: var(--bg-header); padding: 30px 20px; 
+            border-radius: 20px; border: 2px dashed var(--cor-pt); line-height: 1.5; 
+        }
+
+        .botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+        
+
+        /* Botões de Ação Final/Feedback (Adaptados ao Tema) */
+        .btn-acao { 
+            border: 4px solid white; color: white; padding: 15px 30px; 
+            font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
+            width: 100%; max-width: 320px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        @media (hover: hover) { .btn-acao:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+        .btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+        /* Variantes de Cor para os Botões de Ação */
+        .btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+        
+        .btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+        @media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+		
+		.icon-acao {
+			width: 1.4em;
+			height: 1.4em;
+			object-fit: contain;
+			flex-shrink: 0; 
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		/* Ajuste específico para a seta à direita se quiseres um efeito de movimento */
+		.primario:hover .icon-acao, 
+		.secundario:hover .icon-acao,
+		.terciario:hover .icon-acao	{
+			transform: translateX(4px);
+		}
+		
+        /* Modal Ajuda */
+        .modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+        .modal-ajuda-overlay.active { display: flex; }
+        .modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-1ano);}
+        .btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+        .btn-fechar-modal:hover { background: #ff4757; color: white;}
+        .ajuda-icone { font-size: 4rem; margin-bottom: 10px; }
+        .ajuda-texto { font-size: 1.2rem; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Animações Globais e Feedback Visual */
+        .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+        .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+
+        
+        /* =========================================
+        CORREÇÃO PARA TELEMÓVEIS NA HORIZONTAL
+        ========================================= */
+        @media (max-height: 600px) {
+            body { height: auto !important; overflow-y: auto !important; }
+            main { justify-content: flex-start !important; padding-top: 15px; padding-bottom: 15px; overflow-y: visible !important; }
+            .cartao-jogo-container { margin: auto 0; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+          body { height: auto !important; overflow-y: auto !important; }
+          main { justify-content: flex-start !important; overflow-y: visible !important; }
+          footer { margin-top: auto; }
+        }
+
+		/* =========================================
+		   NOVO DESIGN DOS BOTÕES DO MENU INICIAL (HORIZONTAL)
+		   ========================================= */
+
+		/* Transforma o botão numa estrutura horizontal alinhada à esquerda */
+		.btn-nivel-novo {
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: center !important;
+			text-align: left !important;
+			padding: 15px 20px !important;
+			gap: 15px !important;
+		}
+
+		/* Garante que a imagem do nível mantém as proporções e não encolhe */
+		.icon-btn-nivel-novo {
+			width: 55px;
+			height: 55px;
+			flex-shrink: 0;
+		}
+
+		/* Contentor de texto para empilhar Título e Subtítulo */
+		.btn-nivel-text-container {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none; /* Protege contra interferência de clique */
+		}
+
+		/* Estilo para a linha do Título (Superior) */
+		.btn-nivel-titulo {
+			font-size: 1.1rem;
+			font-weight: 900;
+			color: white;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+			line-height: 1.2;
+		}
+
+		/* Estilo para a linha do Subtítulo (Inferior) */
+		.btn-nivel-subtitulo {
+			font-size: 0.85rem;
+			font-weight: 500;
+			color: rgba(255, 255, 255, 0.9);
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+			line-height: 1.2;
+		}
+
+		/* Otimização para telemóveis mais pequenos */
+		@media (max-width: 480px) {
+			.btn-nivel-novo {
+				padding: 12px 15px !important;
+				gap: 10px !important;
+			}
+			.icon-btn-nivel {
+				width: 45px;
+				height: 45px;
+			}
+			.btn-nivel-titulo {
+				font-size: 1rem;
+			}
+			.btn-nivel-subtitulo {
+				font-size: 0.75rem;
+			}
+		}		
+
+		/* =========================================
+   NOVA ANIMAÇÃO INICIAL: MINI-TUTORIAL DO GATO (5 Segundos)
+   ========================================= */
+.animacao-tutorial {
+    position: relative;
+    overflow: hidden; 
+    background: radial-gradient(circle, #ffffff 40%, #fff5f5 100%); 
+    border: 3px dashed var(--cor-pt); 
+    border-radius: 20px;
+    margin: 0 auto 20px; 
+    width: 100%; 
+    max-width: 400px; 
+    height: 180px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(255, 107, 107, 0.08);
+}
+
+/* Animação do Texto Simples "gato" (Funde-se ao fim de 3.4s) */
+.anim-gato-simples {
+    animation: animGatoTextoSimples 5s ease-in-out infinite;
+}
+
+/* Animação da Divisão Silábica "GA-TO" (Surge a verde ao fim de 3.4s) */
+.anim-gato-dividido {
+    opacity: 0;
+    animation: animGatoTextoDividido 5s ease-in-out infinite;
+}
+
+/* Animação do Quadrado 1 (Sílaba "GA") */
+.anim-q-um {
+    fill: white;
+    animation: animQuadradoUm 5s ease-in-out infinite;
+}
+
+/* Animação do Quadrado 2 (Sílaba "TO") */
+.anim-q-dois {
+    fill: white;
+    animation: animQuadradoDois 5s ease-in-out infinite;
+}
+
+/* Quadrados 3 e 4 (Permanecem brancos de reserva) */
+.anim-q-tres, .anim-q-quatro {
+    fill: white;
+}
+
+
+/* --- KEYFRAMES DA ANIMAÇÃO DE TUTORIAL --- */
+
+@keyframes animGatoTextoSimples {
+    0%, 64% { opacity: 1; }
+    68%, 100% { opacity: 0; }
+}
+
+@keyframes animGatoTextoDividido {
+    0%, 64% { opacity: 0; transform: scale(0.9); }
+    68%, 88% { opacity: 1; transform: scale(1.05); }
+    94%, 100% { opacity: 0; transform: scale(1); }
+}
+
+/* Quadrado 1: Ganha cor ao segundo 1.2, fica verde ao segundo 3.4 e apaga-se no fim */
+@keyframes animQuadradoUm {
+    0%, 20% { fill: white; stroke: #ced6e0; }
+    24%, 64% { fill: var(--cor-pt); stroke: var(--cor-pt-dark); }
+    68%, 88% { fill: var(--cor-sucesso); stroke: var(--cor-sucesso-dark); }
+    94%, 100% { fill: white; stroke: #ced6e0; }
+}
+
+/* Quadrado 2: Ganha cor ao segundo 2.4, fica verde ao segundo 3.4 e apaga-se no fim */
+@keyframes animQuadradoDois {
+    0%, 44% { fill: white; stroke: #ced6e0; }
+    48%, 64% { fill: var(--cor-pt); stroke: var(--cor-pt-dark); }
+    68%, 88% { fill: var(--cor-sucesso); stroke: var(--cor-sucesso-dark); }
+    94%, 100% { fill: white; stroke: #ced6e0; }
+}
+
+		/* =========================================
+		   CSS ESPECÍFICO DO JOGO (SÍLABAS INTERATIVAS)
+		   ========================================= */
+
+		/* Moldura Centralizada da Palavra */
+		.card-palavra-silaba {
+			width: 100%;
+			max-width: 250px;
+			background-color: white;
+			border: 3.5px solid var(--cor-pt);
+			box-shadow: 0 8px 0 var(--cor-pt-dark, #e05d5d), 0 10px 15px rgba(0,0,0,0.06);
+			border-radius: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			padding: 12px;
+			margin: 5px auto 10px;
+			position: relative;
+		}
+
+		@media (max-width: 480px) {
+			.card-palavra-silaba {
+				max-width: 190px;
+				padding: 8px;
+			}
+		}
+
+		.card-palavra-silaba img {
+			max-width: 85%;
+			height: auto;
+			max-height: 100px;
+			object-fit: contain;
+			pointer-events: none;
+		}
+
+		@media (max-width: 480px) {
+			.card-palavra-silaba img {
+				max-height: 75px;
+			}
+		}
+
+		.card-palavra-silaba span {
+			font-size: clamp(1.4rem, 4vw, 1.9rem);
+			font-weight: 900;
+			color: var(--azul-escuro);
+			text-transform: lowercase;
+			margin-top: 6px;
+			width: 100%;
+			text-align: center;
+		}
+
+		/* O CONTENTOR DOS QUADRADOS DE PINTAR (Dashes) */
+		.grelha-quadrados-silabas {
+			display: flex;
+			justify-content: center;
+			gap: 12px;
+			width: 100%;
+			margin: 15px auto;
+		}
+
+		@media (max-width: 480px) {
+			.grelha-destino {
+				gap: 8px;
+			}
+		}
+
+		/* Cada quadrado individual */
+		.slot-silaba-pinta {
+			width: 50px;
+			height: 50px;
+			background-color: white;
+			border: 3px solid #ced6e0;
+			border-radius: 12px;
+			box-shadow: 0 4px 0 #cbd5e1;
+			cursor: pointer;
+			transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			user-select: none;
+			touch-action: manipulation;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		@media (max-width: 480px) {
+			.slot-arvore-p {
+				width: 40px;
+				height: 40px;
+			}
+		}
+
+		.slot-arvore:active {
+			transform: translateY(3px);
+			box-shadow: 0 1px 0 #cbd5e1;
+		}
+
+		/* ESTADO PINTADO (Quando o aluno clica no quadrado) */
+		.slot-silaba-pinta.pintado {
+			background-color: #96edab !important;
+			border-color: var(--cor-em) !important;
+			box-shadow: 0 4px 0 var(--cor-sucesso-dark) !important;
+			transform: scale(1.05);
+			animation: baterQuadradoPintado 0.2s ease-out;
+		}
+
+		@keyframes baterQuadradoPintado {
+			0% { transform: scale(1); }
+			50% { transform: scale(1.2); }
+			100% { transform: scale(1.05); }
+		}
+
+		/* Botão Confirmar/Validar */
+		.btn-validar-silaba {
+			background-color: var(--cor-mat);
+			border: 3px solid white;
+			color: white;
+			padding: 12px 28px;
+			font-size: 1.15rem;
+			font-weight: 900;
+			border-radius: 20px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			margin: 10px auto 0;
+			box-shadow: 0 6px 0 var(--cor-btn-azul, #e05d5d), 0 10px 15px rgba(0,0,0,0.1);
+			text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+			text-transform: uppercase;
+			transition: transform 0.15s, box-shadow 0.15s;
+		}
+
+		.btn-validar-silaba:active {
+			transform: translateY(6px);
+			box-shadow: 0 0px 0 transparent, 0 0px 0 transparent;
+		}
+		
+		/* =========================================
+		   ÍCONE DE SOM TRIDIMENSIONAL E ULTRA-ATRATIVO
+		   ========================================= */
+		#btn-audio-silaba {
+			width: 54px;
+			height: 54px;
+			border-radius: 50%;
+			background-color: var(--cor-pt);
+			border: 3.5px solid white; /* Moldura branca contrastante */
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			position: relative;
+			z-index: 10;
+			transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+			
+			/* Pulsação de luz coral suave nativa integrada */
+			animation: pulsarSomSuave 2s infinite ease-in-out;
+		}
+
+		/* Efeito de Clique Físico (Afundar) */
+		#btn-audio-silaba:active {
+			transform: translateY(3px) scale(0.95) !important;
+			animation: none; /* Pára a animação temporariamente ao clicar */
+			box-shadow: 0 1px 0 transparent, 0 2px 4px rgba(255, 107, 107, 0.1) !important;
+		}
+
+		/* Efeito de Mouse Hover (Zoom + Rotação de Alegria) */
+		@media (hover: hover) {
+			#btn-audio-silaba:hover {
+				transform: scale(1.1) rotate(15deg);
+				background-color: #ff8787; /* Tom ligeiramente mais claro para iluminar */
+			}
+		}
+
+		/* DDomar o SVG do altifalante para alinhar perfeitamente */
+		#btn-audio-silaba svg {
+			width: 22px;
+			height: 22px;
+			fill: currentColor;
+			pointer-events: none;
+			transition: transform 0.2s ease;
+		}
+
+		@media (hover: hover) {
+			#btn-audio-silaba:hover svg {
+				transform: scale(1.15); /* Ícone interno ganha vida própria ao aproximar */
+			}
+		}
+
+		/* --- ANIMAÇÃO DE PULSAÇÃO DE LUZ CORAL --- */
+		@keyframes pulsarSomSuave {
+			0% {
+				transform: scale(1);
+				/* Sombra 3D original + anel de luz inicial colado à borda */
+				box-shadow: 0 5px 0 var(--cor-pt-dark, #e05d5d), 0 8px 15px rgba(255, 107, 107, 0.15), 0 0 0 0 rgba(255, 107, 107, 0.5);
+			}
+			50% {
+				transform: scale(1.08);
+				/* Expande o anel de luz para fora e desvanece gradualmente */
+				box-shadow: 0 5px 0 var(--cor-pt-dark, #e05d5d), 0 8px 15px rgba(255, 107, 107, 0.15), 0 0 0 12px rgba(255, 107, 107, 0);
+			}
+			100% {
+				transform: scale(1);
+				box-shadow: 0 5px 0 var(--cor-pt-dark, #e05d5d), 0 8px 15px rgba(255, 107, 107, 0.15), 0 0 0 0 rgba(255, 107, 107, 0);
+			}
+		}
+
+
+		   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../../4"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>O Ritmo das Palavras<img src="../img-titulos/ritmo-palavras.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Pinta os quadrados de acordo com o número de sílabas das palavras.</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        
+        <!-- Contentor de Confetis e Toast Mensagens -->
+        <div id="confetti-container" class="confetti-container"></div>
+        <div id="toast-msg" class="toast-msg"></div>
+
+        <!-- =========================================
+           ECRÃ DE SELEÇÃO (MENU INICIAL)
+           ========================================= -->
+        <div id="ecra-selecao" class="ecra">
+                       
+            <!-- ANIMAÇÃO INICIAL (3 Quadrados que se pintam ciclicamente) -->
+            <!-- ANIMAÇÃO INICIAL: MINI-TUTORIAL DO GATO (Vetorização Silábica Limpa) -->
+            <div class="animacao-tutorial">
+                <svg class="svg-tutorial-linhas" viewBox="0 0 400 180" style="width: 100%; height: 100%;">
+                    
+                    <!-- Moldura Circular com o Gato (Procura o gato.png na sua raiz) -->
+                    <g style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));">
+                        <circle cx="200" cy="45" r="30" fill="white" stroke="var(--cor-pt)" stroke-width="3"/>
+                        <image x="175" y="20" width="50" height="50" href="gato.png" onerror="this.href='../../../SVG/estrela.svg';"></image>
+                    </g>
+
+                    <!-- Textos sobrepostos que se alternam sequencialmente (gato -> GA-TO) -->
+                    <text x="200" y="98" font-family="'Roboto', sans-serif" font-weight="900" font-size="22" fill="var(--azul-escuro)" text-anchor="middle" class="anim-gato-simples">gato</text>
+                    <text x="200" y="98" font-family="'Roboto', sans-serif" font-weight="900" font-size="22" fill="var(--cor-sucesso)" text-anchor="middle" class="anim-gato-dividido">GA-TO</text>
+
+                    <!-- Grelha dos 4 Quadrados de Pintar de Sílabas -->
+                    <!-- Quadrado 1 (Sílaba 1) -->
+                    <rect x="131" y="120" width="30" height="30" rx="6" stroke="#ced6e0" stroke-width="2.5" class="anim-q-um" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.03));"/>
+                    <!-- Quadrado 2 (Sílaba 2) -->
+                    <rect x="167" y="120" width="30" height="30" rx="6" stroke="#ced6e0" stroke-width="2.5" class="anim-q-dois" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.03));"/>
+                    <!-- Quadrado 3 (Vazio) -->
+                    <rect x="203" y="120" width="30" height="30" rx="6" stroke="#ced6e0" stroke-width="2.5" class="anim-q-tres" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.03));"/>
+                    <!-- Quadrado 4 (Vazio) -->
+                    <rect x="239" y="120" width="30" height="30" rx="6" stroke="#ced6e0" stroke-width="2.5" class="anim-q-quatro" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.03));"/>
+
+                </svg>
+            </div>
+
+            <h2 class="titulo-menu">Assinala os quadrados de acordo com os sons!</h2>
+            
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <button class="btn-nivel-novo bg-azul" onclick="iniciarJogoSilabas()" style="max-width: 320px;">
+                    Começar o Jogo! <img src="../../../SVG/seta_direita.svg" class="icon-btn-nivel" alt="Começar" onerror="this.style.display='none'">
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================
+           ECRÃ DE JOGO
+           ========================================= -->
+        <div id="ecra-jogo" class="ecra">
+            
+            <!-- Barra de Estado do Template (Cor Vermelha de Português) -->
+            <div class="status-bar-jogo" style="border-color: var(--cor-pt); background-color: #fff5f5;">
+                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg" aria-label="Voltar ao menu"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()" aria-label="Usar dica"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+				<div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+
+				<div class="badge-erros"> <span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+
+            <!-- Zona de Jogo Customizada -->
+            <div class="area-jogo-custom" id="game-area" style="border-color: var(--cor-pt); gap: 30px;">
+                
+                <!-- Botão de Áudio de Pronúncia Silábica Pausada (Pulsante) -->
+                <button class="btn-audio-pergunta" id="btn-audio-silaba" onclick="reproduzirAudioSilabas()" aria-label="Ouvir palavra pausadamente" style="background-color: var(--cor-pt); border-color: white; box-shadow: 0 4px 0 var(--cor-pt-dark);">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                </button>
+
+                <!-- Cartão Principal com Imagem e Texto da Palavra -->
+                <div class="card-palavra-silaba" id="card-palavra-container">
+                    <img id="imagem-silaba" src="" alt="Palavra Ilustrada" onerror="this.src='../../../SVG/estrela.svg';">
+                    <span id="texto-palavra">...</span>
+                </div>
+
+                <!-- Grelha Horizontal dos 5 Quadrados de Pintar (Abordagem B) -->
+                <div class="grelha-quadrados-silabas" id="grelha-silabas">
+                    <button class="slot-silaba-pinta" data-index="1"></button>
+                    <button class="slot-silaba-pinta" data-index="2"></button>
+                    <button class="slot-silaba-pinta" data-index="3"></button>
+                    <button class="slot-silaba-pinta" data-index="4"></button>
+                    <button class="slot-silaba-pinta" data-index="5"></button>
+                </div>
+
+                <!-- Botão Confirmar/Validar (Abordagem B) -->
+                <button class="btn-validar-silaba" id="btn-validar" onclick="validarEscolhaSilaba()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;">
+						<path d="M20 6L9 17l-5-5"/>
+					</svg>
+                    Confirmar
+                </button>
+
+            </div>
+        </div>
+
+        <!-- =========================================
+           ECRÃ DE FIM (Com os resultados do treino de sílabas)
+           ========================================= -->
+        <div id="ecra-fim" class="ecra">
+            
+            <!-- Grelha Rígida de 2 Colunas para Métricas Simples -->
+            <div class="end-stats" id="end-stats-box" style="border-color: var(--cor-pt); background-color: #fff5f5; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 340px; margin: 0 auto 25px; text-align: center; padding: 15px 10px;">
+            </div>
+           
+            <div class="botoes-acao-container">
+              
+				<button class="btn-acao primario" onclick="reiniciarJogoAtual()">JOGAR DE NOVO <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenu()">VOLTAR AO MENU <img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+				
+            </div>
+        </div>
+        
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/1_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+    /* ==========================================
+       SVGs GLOBAIS
+       ========================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;">
+		<path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/>
+		<rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+	</svg> Menu`;
+
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;">
+		<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+	</svg>`;
+
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;">
+		<path d="M9 18h6"></path><path d="M10 22h4"></path>
+		<path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+	</svg>`;
+
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;">
+		<path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/>
+	</svg>`;
+
+    const DADOS_SILABAS = [
+	  // --- 5 PALAVRAS COM 1 SÍLABA ---
+	  { palavra: "nó", imagem: "../img/no.png", num: 1, divisao: "NÓ", audio: "sons/no.mp3" },
+	  { palavra: "flor", imagem: "../img/flor.png", num: 1, divisao: "FLOR", audio: "sons/flor.mp3" },
+	  { palavra: "mãe", imagem: "../img/mae.png", num: 1, divisao: "MÃE", audio: "sons/mae.mp3" },
+	  { palavra: "mão", imagem: "../img/mao.png", num: 1, divisao: "MÃO", audio: "sons/mao.mp3" },
+	  { palavra: "sol", imagem: "../img/sol.png", num: 1, divisao: "SOL", audio: "sons/sol.mp3" },
+
+	  // --- 10 PALAVRAS COM 2 SÍLABAS ---
+	  { palavra: "dado", imagem: "../img/dado.png", num: 2, divisao: "DA-DO", audio: "sons/dado.mp3" },
+	  { palavra: "gato", imagem: "../img/gato.png", num: 2, divisao: "GA-TO", audio: "sons/gato.mp3" },
+	  { palavra: "jipe", imagem: "../img/jipe.png", num: 2, divisao: "JI-PE", audio: "sons/jipe.mp3" },
+	  { palavra: "leão", imagem: "../img/leao.png", num: 2, divisao: "LE-ÃO", audio: "sons/leao.mp3" },
+	  { palavra: "anel", imagem: "../img/anel.png", num: 2, divisao: "A-NEL", audio: "sons/anel.mp3" },
+	  { palavra: "nuvem", imagem: "../img/nuvem.png", num: 2, divisao: "NU-VEM", audio: "sons/nuvem.mp3" },
+	  { palavra: "queijo", imagem: "../img/queijo.png", num: 2, divisao: "QUEI-JO", audio: "sons/queijo.mp3" },
+	  { palavra: "sapo", imagem: "../img/sapo.png", num: 2, divisao: "SA-PO", audio: "sons/sapo.mp3" },
+	  { palavra: "uvas", imagem: "../img/uvas.png", num: 2, divisao: "U-VAS", audio: "sons/uvas.mp3" },
+	  { palavra: "zebra", imagem: "../img/zebra.png", num: 2, divisao: "ZE-BRA", audio: "sons/zebra.mp3" },
+
+	  // --- 10 PALAVRAS COM 3 SÍLABAS ---
+	  { palavra: "cadeira", imagem: "../img/cadeira.png", num: 3, divisao: "CA-DEI-RA", audio: "sons/cadeira.mp3" },
+	  { palavra: "escada", imagem: "../img/escada.png", num: 3, divisao: "ES-CA-DA", audio: "sons/escada.mp3" },
+	  { palavra: "foguete", imagem: "../img/foguete.png", num: 3, divisao: "FO-GUE-TE", audio: "sons/foguete.mp3" },
+	  { palavra: "janela", imagem: "../img/janela.png", num: 3, divisao: "JA-NE-LA", audio: "sons/janela.mp3" },
+	  { palavra: "morango", imagem: "../img/morango.png", num: 3, divisao: "MO-RAN-GO", audio: "sons/morango.mp3" },
+	  { palavra: "navio", imagem: "../img/navio.png", num: 3, divisao: "NA-VI-O", audio: "sons/navio.mp3" },
+	  { palavra: "óculos", imagem: "../img/oculos.png", num: 3, divisao: "Ó-CU-LOS", audio: "sons/oculos.mp3" },
+	  { palavra: "palhaço", imagem: "../img/palhaco.png", num: 3, divisao: "PA-LHA-ÇO", audio: "sons/palhaco.mp3" },
+	  { palavra: "tesoura", imagem: "../img/tesoura.png", num: 3, divisao: "TE-SOU-RA", audio: "sons/tesoura.mp3" },
+	  { palavra: "vassoura", imagem: "../img/vassoura.png", num: 3, divisao: "VA-SSOU-RA", audio: "sons/vassoura.mp3" },
+	  { palavra: "girafa", imagem: "../img/girafa.png", num: 3, divisao: "GI-RA-FA", audio: "sons/girafa.mp3" },
+	  { palavra: "igreja", imagem: "../img/igreja.png", num: 3, divisao: "I-GRE-JA", audio: "sons/igreja.mp3" },
+	  { palavra: "lâmpada", imagem: "../img/lampada.png", num: 3, divisao: "LÂM-PA-DA", audio: "sons/lampada.mp3" },
+	  { palavra: "rádio", imagem: "../img/radio.png", num: 3, divisao: "RÁ-DI-O", audio: "sons/radio.mp3" },
+	  { palavra: "sapato", imagem: "../img/sapato.png", num: 3, divisao: "SA-PA-TO", audio: "sons/sapato.mp3" },
+
+	  // --- 10 PALAVRAS COM 4 SÍLABAS ---
+	  { palavra: "abacaxi", imagem: "../img/abacaxi.png", num: 4, divisao: "A-BA-CA-XI", audio: "sons/abacaxi.mp3" },
+	  { palavra: "bicicleta", imagem: "../img/bicicleta.png", num: 4, divisao: "BI-CI-CLE-TA", audio: "sons/bicicleta.mp3" },
+	  { palavra: "chocolate", imagem: "../img/chocolate.png", num: 4, divisao: "CHO-CO-LA-TE", audio: "sons/chocolate.mp3" },
+	  { palavra: "dinossauro", imagem: "../img/dinossauro.png", num: 4, divisao: "DI-NO-SSAU-RO", audio: "sons/dinossauro.mp3" },
+	  { palavra: "elefante", imagem: "../img/elefante.png", num: 4, divisao: "E-LE-FAN-TE", audio: "sons/elefante.mp3" },
+	  { palavra: "joaninha", imagem: "../img/joaninha.png", num: 4, divisao: "JO-A-NI-NHA", audio: "sons/joaninha.mp3" },
+	  { palavra: "melancia", imagem: "../img/melancia.png", num: 4, divisao: "ME-LAN-CI-A", audio: "sons/melancia.mp3" },
+	  { palavra: "papagaio", imagem: "../img/papagaio.png", num: 4, divisao: "PA-PA-GAI-O", audio: "sons/papagaio.mp3" },
+	  { palavra: "tartaruga", imagem: "../img/tartaruga.png", num: 4, divisao: "TAR-TA-RU-GA", audio: "sons/tartaruga.mp3" },
+	  { palavra: "violino", imagem: "../img/violino.png", num: 4, divisao: "VI-O-LI-NO", audio: "sons/violino.mp3" },
+	  { palavra: "borboleta", imagem: "../img/borboleta.png", num: 4, divisao: "BOR-BO-LE-TA", audio: "sons/borboleta.mp3" },
+	  { palavra: "computador", imagem: "../img/computador.png", num: 4, divisao: "COM-PU-TA-DOR", audio: "sons/computador.mp3" },
+	  { palavra: "marinheiro", imagem: "../img/marinheiro.png", num: 4, divisao: "MA-RI-NHEI-RO", audio: "sons/marinheiro.mp3" },
+	  { palavra: "televisão", imagem: "../img/televisao.png", num: 4, divisao: "TE-LE-VI-SÃO", audio: "sons/televisao.mp3" },
+
+	  // --- TODAS AS PALAVRAS COM 5 SÍLABAS ---
+	  { palavra: "americano", imagem: "../img/americano.png", num: 5, divisao: "A-ME-RI-CA-NO", audio: "sons/americano.mp3" },
+	  { palavra: "calculadora", imagem: "../img/calculadora.png", num: 5, divisao: "CAL-CU-LA-DO-RA", audio: "sons/calculadora.mp3" },
+	  { palavra: "escaravelho", imagem: "../img/escaravelho.png", num: 5, divisao: "ES-CA-RA-VE-LHO", audio: "sons/escaravelho.mp3" },
+	  { palavra: "escavadora", imagem: "../img/escavadora.png", num: 5, divisao: "ES-CA-VA-DO-RA", audio: "sons/escavadora.mp3" },
+	  { palavra: "hipopótamo", imagem: "../img/hipopotamo.png", num: 5, divisao: "HI-PO-PÓ-TA-MO", audio: "sons/hipopotamo.mp3" },
+	  { palavra: "rinoceronte", imagem: "../img/rinoceronte.png", num: 5, divisao: "RI-NO-CE-RON-TE", audio: "sons/rinoceronte.mp3" }
+		
+        
+    ];
+
+	/* ==========================================
+	   ESTADO GLOBAL DO JOGO
+	   ========================================== */
+	let erradas = 0;
+	let desafioAtual = 0; 
+	let totalDesafiosNivel = 10; 
+	let rondasParaDica = 0;
+    let blocoDicaUsada = -1;
+    const COOLDOWN_DICA = 5;
+	let timerImpaciencia = null;
+	let palavrasJogadas = [];
+
+	let rondasSorteadas = []; 
+    let audioRonda = null;
+
+	/* ==========================================
+	   FUNÇÕES AUXILIARES GLOBAIS
+	   ========================================= */
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if (btnDica) btnDica.classList.remove('dica-impaciente');
+
+		timerImpaciencia = setTimeout(() => {
+			const btn = document.getElementById('btn-audio-silaba');
+			if (btn) btn.classList.add('dica-impaciente'); // Faz o botão de áudio piscar se o aluno demorar
+		}, 15000);
+	}
+
+	function pararTimerImpaciencia() {
+		clearTimeout(timerImpaciencia);
+		const btn = document.getElementById('btn-audio-silaba');
+		if (btn) btn.classList.remove('dica-impaciente');
+	}
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function showToast(msg, isError = false) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = msg;
+		toast.style.borderColor = isError ? "var(--cor-erro)" : "#fbc531";
+		toast.style.color = isError ? "var(--cor-erro)" : "#b18500";
+		toast.style.backgroundColor = isError ? "#ffefef" : "#fff9c4";
+		toast.classList.add('active');
+		setTimeout(() => toast.classList.remove('active'), 3000);
+	}
+
+	/* ==========================================
+	   ARRANQUE E NAVEGAÇÃO
+	   ========================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+			const ano = document.getElementById('ano-atual');
+			if (ano) ano.textContent = new Date().getFullYear();
+
+			document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+			document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+			document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+
+			// Configura a interação táctil/clique dos 5 quadrados de pintar (Abordagem B)
+			document.querySelectorAll('.slot-silaba-pinta').forEach(quadrado => {
+				quadrado.onclick = () => {
+					const idx = parseInt(quadrado.dataset.index);
+					const estaPintado = quadrado.classList.contains('pintado');
+					
+					if (estaPintado) {
+						// Tenta DESPINTAR: Só pode se o quadrado à direita NÃO estiver pintado (evita buracos)
+						const proximoNo = document.querySelector(`.slot-silaba-pinta[data-index="${idx + 1}"]`);
+						const proximoPintado = proximoNo ? proximoNo.classList.contains('pintado') : false;
+						
+						if (!proximoPintado) {
+							tocarSom('flip');
+							quadrado.classList.remove('pintado');
+						} else {
+							// Alerta suave (opcional, pode ser removido se preferir silêncio)
+							showToast("Desmarca primeiro os quadrados da direita!", true);
+						}
+					} else {
+						// Tenta PINTAR: Só pode se for o primeiro OU se o anterior à esquerda já estiver pintado
+						const anteriorNo = document.querySelector(`.slot-silaba-pinta[data-index="${idx - 1}"]`);
+						const anteriorPintado = anteriorNo ? anteriorNo.classList.contains('pintado') : false;
+						
+						if (idx === 1 || anteriorPintado) {
+							tocarSom('flip');
+							quadrado.classList.add('pintado');
+						} else {
+							// Alerta suave (opcional, pode ser removido se preferir silêncio)
+							showToast("Pinta primeiro os quadrados da esquerda!", true);
+						}
+					}
+				};
+			});
+		}); 
+
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		document.getElementById(id).style.display = 'flex';
+	}
+
+	function voltarAoMenu() {
+        pararAudioRonda();
+		document.getElementById('subtitulo-header').textContent = "Pinta os quadrados de acordo com o número de sílabas das palavras.";
+		mostrarEcra('ecra-selecao');
+	}
+
+    function reiniciarJogoAtual() {
+        iniciarJogoSilabas();
+    }
+
+	/* ==========================================
+	   INICIALIZAÇÃO DO JOGO
+	   ========================================== */
+    function iniciarJogoSilabas() {
+     erradas = 0;
+     desafioAtual = 0;
+     document.getElementById('confetti-container').innerHTML = '';
+     pararTimerImpaciencia();
+
+     // 1. Filtra a base de dados excluindo as palavras que o aluno já jogou em partidas anteriores
+     let disponiveis = DADOS_SILABAS.filter(p => !palavrasJogadas.includes(p.palavra));
+
+     // 2. Se as palavras disponíveis acabarem ou forem menos de 10, limpa a memória e recomeça
+     if (disponiveis.length < totalDesafiosNivel) {
+         palavrasJogadas = [];
+         disponiveis = [...DADOS_SILABAS];
+     }
+
+     // 3. Sorteia as 10 palavras estritamente inéditas
+     rondasSorteadas = baralharArray(disponiveis).slice(0, totalDesafiosNivel);
+
+     // 4. Regista estas 10 palavras na nossa memória para não voltarem a sair na próxima partida
+     rondasSorteadas.forEach(r => palavrasJogadas.push(r.palavra));
+
+     document.getElementById('subtitulo-header').textContent = "Treino de Sílabas: Ativo!";
+     mostrarEcra('ecra-jogo');
+     carregarRondaSilaba();
+ }
+
+	/* ==========================================
+	   MONTAGEM DA RONDA ATUAL
+	   ========================================== */
+    function carregarRondaSilaba() {
+        pararAudioRonda();
+        pararTimerImpaciencia();
+
+        // Ativa o botão de confirmar para a nova ronda
+        const btnVal = document.getElementById('btn-validar');
+        if (btnVal) {
+            btnVal.style.pointerEvents = "auto";
+            btnVal.style.opacity = "1";
+        }
+
+        const ronda = rondasSorteadas[desafioAtual];
+        if (!ronda) {
+            finalizarJogoSilaba();
+            return;
+        }
+
+        // 1. Atualizar Imagem e Palavra no Cartão Central (Texto limpo)
+        const img = document.getElementById('imagem-silaba');
+        if (img) {
+            img.src = ronda.imagem;
+            img.alt = ronda.palavra;
+        }
+
+        const txt = document.getElementById('texto-palavra');
+        if (txt) {
+            txt.textContent = ronda.palavra;
+            txt.style.color = "var(--azul-escuro)";
+        }
+
+        // 2. LIMPEZA DOS QUADRADOS: Garante que todos começam limpos (brancos) nesta ronda
+        document.querySelectorAll('.slot-silaba-pinta').forEach(q => {
+            q.classList.remove('pintado');
+        });
+
+		atualizarPlacarSilabas();
+        atualizarBotaoDica(); // Atualiza se o botão de dicas está bloqueado ou livre
+        resetTimerImpaciencia();
+    }
+
+
+	/* ==========================================
+	   VALIDAÇÃO DA ESCOLHA (Abordagem B)
+	   ========================================== */
+	function validarEscolhaSilaba() {
+        const btnVal = document.getElementById('btn-validar');
+        if (!btnVal || btnVal.style.pointerEvents === "none") return;
+
+        const ronda = rondasSorteadas[desafioAtual];
+        
+        // CONTAGEM DINÂMICA: Conta quantos quadrados têm a classe ".pintado" ativa no ecrã
+        const totalPintados = document.querySelectorAll('.slot-silaba-pinta.pintado').length;
+
+        if (totalPintados === 0) {
+            showToast("Pinta primeiro os quadrados com as sílabas!", true);
+            return;
+        }
+
+        // Bloqueia cliques adicionais para evitar spam de validações
+        btnVal.style.pointerEvents = "none";
+        btnVal.style.opacity = "0.5";
+
+        if (totalPintados === ronda.num) {
+            // SUCESSO COMPLETO
+            pararTimerImpaciencia();
+            pararAudioRonda();
+            tocarSom('acerto');
+
+            // REFORÇO PEDAGÓGICO: Transforma o texto na divisão silábica oficial a verde!
+            const txt = document.getElementById('texto-palavra');
+            txt.textContent = ronda.divisao;
+            txt.style.color = "var(--cor-sucesso)";
+
+            // Faz os quadrados brilharem a verde sucesso temporariamente
+            document.querySelectorAll('.slot-silaba-pinta.pintado').forEach(q => {
+                q.style.backgroundColor = "var(--cor-sucesso)";
+                q.style.borderColor = "var(--cor-sucesso-dark)";
+            });
+
+            setTimeout(() => {
+                desafioAtual++;
+                atualizarPlacarSilabas();
+
+                // Limpa estilos temporários de sucesso e limpa a pintura para a nova ronda
+                document.querySelectorAll('.slot-silaba-pinta').forEach(q => {
+                    q.style.backgroundColor = "";
+                    q.style.borderColor = "";
+                    q.classList.remove('pintado'); // Despinta para a nova ronda
+                });
+
+                if (desafioAtual < totalDesafiosNivel) {
+                    carregarRondaSilaba();
+                } else {
+                    finalizarJogoSilaba();
+                }
+            }, 1800);
+
+        } else {
+            // ERRO
+            tocarSom('erro');
+            erradas++;
+            atualizarPlacarSilabas();
+
+            // Dispara a animação e cor de erro diretamente no estilo inline do cartão central
+            const cardContainer = document.getElementById('card-palavra-container');
+            if (cardContainer) {
+                cardContainer.style.animation = "shakeError 0.4s ease";
+                cardContainer.style.borderColor = "var(--cor-erro)";
+                cardContainer.style.backgroundColor = "#ffefef";
+            }
+
+            // Faz os quadrados vibrar com erro
+            document.querySelectorAll('.slot-silaba-pinta').forEach(q => {
+                q.classList.add('erro-vibrante');
+                setTimeout(() => q.classList.remove('erro-vibrante'), 500);
+            });
+
+            // Reseta a pintura para 0 e limpa as animações inline após o erro
+            setTimeout(() => {
+                document.querySelectorAll('.slot-silaba-pinta').forEach(q => {
+                    q.classList.remove('pintado'); // Limpa a pintura errada de todos
+                });
+                
+                if (cardContainer) {
+                    cardContainer.style.animation = "";
+                    cardContainer.style.borderColor = "";
+                    cardContainer.style.backgroundColor = "";
+                }
+                
+                btnVal.style.pointerEvents = "auto";
+                btnVal.style.opacity = "1";
+            }, 700);
+
+            resetTimerImpaciencia();
+        }
+    }
+	
+	/* ==========================================
+       LÓGICA DA DICA DIRETA (SEM MODAL)
+       ========================================== */
+    function obterBlocoAtual() {
+        return Math.floor(desafioAtual / 5);
+    }
+
+    function atualizarBotaoDica() {
+        const btn = document.getElementById('btn-dica');
+        if (!btn) return;
+
+        const blocoAtual = obterBlocoAtual();
+
+        if (blocoDicaUsada === blocoAtual) {
+            rondasParaDica = (blocoAtual + 1) * 5 - desafioAtual;
+            btn.classList.add('esgotada');
+            btn.disabled = true;
+            btn.innerHTML = `⏳ ${rondasParaDica}`;
+        } else {
+            btn.classList.remove('esgotada');
+            btn.disabled = false;
+            btn.innerHTML = SVG_BULB + ' Dica';
+        }
+    }
+
+    function usarDica() {
+        pararTimerImpaciencia();
+        const blocoAtual = obterBlocoAtual();
+        if (blocoDicaUsada === blocoAtual) return;
+
+        tocarSom('flip');
+
+        const ronda = rondasSorteadas[desafioAtual];
+
+        // Ilumina com a aura de sucesso todos os quadrados corretos sequenciais
+        document.querySelectorAll('.slot-silaba-pinta').forEach(quadrado => {
+            const idx = parseInt(quadrado.dataset.index);
+            if (idx <= ronda.num) {
+                quadrado.classList.add('highlight-correto');
+                setTimeout(() => quadrado.classList.remove('highlight-correto'), 5000);
+            }
+        });
+
+        blocoDicaUsada = blocoAtual;
+        atualizarBotaoDica();
+    }
+
+	/* ==========================================
+	   SISTEMA DE ÁUDIO MP3 DE VOZ (ANTI-BLOQUEIO)
+	   ========================================== */
+    function reproduzirAudioSilabas() {
+        initAudio(); 
+        
+        const ronda = rondasSorteadas[desafioAtual];
+        if (!ronda || !ronda.audio) return;
+
+        try {
+            if (audioRonda) {
+                audioRonda.pause();
+                audioRonda.currentTime = 0;
+            }
+
+            // Reproduz o MP3 local correspondente (ex: sons/casa.mp3)
+            audioRonda = new Audio(ronda.audio);
+            const btn = document.getElementById('btn-audio-silaba');
+
+            btn.classList.add('audio-a-tocar');
+
+            audioRonda.addEventListener('ended', () => {
+                btn.classList.remove('audio-a-tocar');
+            });
+            audioRonda.addEventListener('pause', () => {
+                btn.classList.remove('audio-a-tocar');
+            });
+
+            const playPromise = audioRonda.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(err => {
+                    console.warn("Autoplay bloqueado pelo sistema. Aguardando clique manual no botão.", err);
+                    btn.classList.remove('audio-a-tocar');
+                });
+            }
+        } catch (e) {
+            console.error("Erro na reprodução do áudio:", e);
+        }
+    }
+
+    function pararAudioRonda() {
+        if (audioRonda) {
+            audioRonda.pause();
+            audioRonda.currentTime = 0;
+        }
+        const btn = document.getElementById('btn-audio-silaba');
+        if (btn) btn.classList.remove('audio-a-tocar');
+    }
+
+	/* ==========================================
+	   BARRA DE PROGRESSO E ESTADOS FINAIS
+	   ========================================== */
+	function atualizarPlacarSilabas() {
+		const p = Math.min(desafioAtual + 1, totalDesafiosNivel); 
+		document.getElementById('val-erros').textContent = erradas;
+		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-total').textContent = totalDesafiosNivel;
+
+		const percentagem = ((desafioAtual) / totalDesafiosNivel) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+
+	function finalizarJogoSilaba() {
+        pararAudioRonda();
+        document.getElementById('progress-fill').style.width = '100%';
+        
+        setTimeout(() => {
+            // Injeta o título de forma segura
+            const endTitle = document.getElementById('end-title-text');
+            if (endTitle) {
+                endTitle.innerHTML = `Missão Cumprida!<img src="../../../SVG/confeti.svg" class="icon-end-title" alt="">`;
+            }
+            
+            // Preenche o ecrã final na nossa grelha estruturada de 2 colunas sem falhas
+            const caixaResultados = document.querySelector('#ecra-fim .end-stats');
+            if (caixaResultados) {
+                caixaResultados.innerHTML = `
+                    <div>
+                        <strong style="color: var(--cor-sucesso); font-size: 2.3rem; display:block; font-weight:900;">${totalDesafiosNivel - erradas}/${totalDesafiosNivel}</strong>
+                        <p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Acertos</p>
+                    </div>
+                    <div>
+                        <strong style="color: var(--cor-erro); font-size: 2.3rem; display:block; font-weight:900;">${erradas}</strong>
+                        <p style="margin: 8px 0 0 0; font-size: 0.95rem; font-weight: bold; color: var(--text-main);">Erros</p>
+                    </div>
+                `;
+            }
+
+            mostrarEcra('ecra-fim');
+            tocarSom('vitoria');
+            dispararConfetis();
+        }, 500);
+    }
+
+	/* ==========================================
+	   SISTEMA DE SOM DEFINITIVO
+	   ========================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		if (!AudioContextClass) return;
+		if (!audioCtx) audioCtx = new AudioContextClass();
+		if (audioCtx.state === 'suspended') audioCtx.resume();
+	}
+	document.addEventListener('click', initAudio, { once: true });
+	document.addEventListener('touchstart', initAudio, { once: true }); 
+
+	function tocarSom(tipo) {
+		initAudio();
+		if (!audioCtx) return;
+
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		const agora = audioCtx.currentTime;
+
+		if (tipo === 'flip') {
+			osc.frequency.setValueAtTime(400, agora);
+			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+			gain.gain.setValueAtTime(0.05, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.1);
+		} else if (tipo === 'acerto') {
+			const notas = [783.99, 1046.50]; 
+			notas.forEach((freq, i) => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; 
+				o.frequency.value = freq;
+				g.gain.setValueAtTime(0, agora + i * 0.12);
+				g.gain.linearRampToValueAtTime(0.1, agora + i * 0.12 + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+				o.start(agora + i * 0.12);
+				o.stop(agora + i * 0.12 + 0.3);
+			});
+		} else if (tipo === 'erro') {
+			osc.type = 'triangle';
+			osc.frequency.setValueAtTime(250, agora);
+			osc.frequency.exponentialRampToValueAtTime(100, agora + 0.3);
+			gain.gain.setValueAtTime(0.1, agora);
+			osc.start(agora);
+			osc.stop(agora + 0.4);
+		} else if (tipo === 'vitoria') {
+			const melodia = [
+				{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+				{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+				{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+				{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+				{ freq: 1046.50, tempo: 0.65, duracao: 0.80 } 
+			];
+
+			melodia.forEach(nota => {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle'; 
+				o.frequency.value = nota.freq;
+				g.gain.setValueAtTime(0, agora + nota.tempo);
+				g.gain.linearRampToValueAtTime(0.1, agora + nota.tempo + 0.02);
+				g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+				o.start(agora + nota.tempo);
+				o.stop(agora + nota.tempo + nota.duracao);
+			});
+		}
+	}
+
+	/* ==========================================
+       CONFETIS
+    ========================================== */
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		const cores = ['#ff4757','#2ed573','#0091ff','#ffa502','#9b59b6'];
+		for (let i = 0; i < 150; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			const escala = Math.random() * 0.8 + 0.4; 
+			const duracao = Math.random() * 2 + 2.5; 
+			const atraso = Math.random() * 1.5; 
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+</script>
+</body>
+</html>

@@ -40,6 +40,7 @@ const todosOsJogos =[
 	{ nome: "Ordem Alfabética", icone: "icones/ordem_alfabetica.png", link: "pt/ordem-alfabetica", cat: "pt" },
 	{ nome: "Ligar Letras", icone: "icones/ligar_letras.png", link: "pt/ligar-letras", cat: "pt" },
 	{ nome: "Monstro das Imagens", icone: "icones/monstro_imagens.png", link: "pt/monstro-imagens", cat: "pt" },
+	{ nome: "O Ritmo das Palavras", icone: "icones/ritmo_palavras.png", link: "pt/ritmo-palavras", cat: "pt" },
     
     // ------------------------------------
     // MATEMÁTICA (cat: "mat") 
