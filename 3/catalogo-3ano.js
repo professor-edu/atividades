@@ -56,13 +56,13 @@ const todosOsJogos =[
     // ESTUDO DO MEIO (cat: "em")
     // ------------------------------------
 
-	{ nome: "Direitos da Criança", icone: "icones/direitos_crianca.png", link: "mat/direitos-crianca/", cat: "em" },
-	{ nome: "Saúde e Bem-Estar", icone: "icones/saude.png", link: "mat/saude/", cat: "em" },
-	{ nome: "A Máquina do Tempo", icone: "icones/maquina_tempo.png", link: "mat/maquina-tempo/", cat: "em" },
-	{ nome: "Portugal e a Europa", icone: "icones/portugal_europa.png", link: "mat/portugal-europa/", cat: "em" },
-	{ nome: "A Teia da Vida", icone: "icones/teia_vida.png", link: "mat/teia-vida/", cat: "em" },
-	{ nome: "Terra, Lua e Luz", icone: "icones/terra_lua_luz.png", link: "mat/terra_lua_luz/", cat: "em" },
-	{ nome: "Relevo e Rios", icone: "icones/relevo.png", link: "mat/relevo/", cat: "em" },
-	{ nome: "Continentes e Oceanos", icone: "icones/continentes_oceanos.png", link: "mat/continentes-oceanos/", cat: "em" }
+	{ nome: "Direitos da Criança", icone: "icones/direitos_crianca.png", link: "em/direitos-crianca/", cat: "em" },
+	{ nome: "Saúde e Bem-Estar", icone: "icones/saude.png", link: "em/saude/", cat: "em" },
+	{ nome: "A Máquina do Tempo", icone: "icones/maquina_tempo.png", link: "em/maquina-tempo/", cat: "em" },
+	{ nome: "Portugal e a Europa", icone: "icones/portugal_europa.png", link: "em/portugal-europa/", cat: "em" },
+	{ nome: "A Teia da Vida", icone: "icones/teia_vida.png", link: "em/teia-vida/", cat: "em" },
+	{ nome: "Terra, Lua e Luz", icone: "icones/terra_lua_luz.png", link: "em/terra_lua_luz/", cat: "em" },
+	{ nome: "Relevo e Rios", icone: "icones/relevo.png", link: "em/relevo/", cat: "em" },
+	{ nome: "Continentes e Oceanos", icone: "icones/continentes_oceanos.png", link: "em/continentes-oceanos/", cat: "em" }
 
 ];
