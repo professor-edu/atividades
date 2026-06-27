@@ -8,9 +8,7 @@
     <link rel="icon" type="image/png" href="../../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     
-    <!-- Importação do ficheiro de dados externo -->
-    <script src="../dados.js"></script>
-    
+   
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -49,7 +47,7 @@
             --cor-erro-dark: #d0303f;
         }
 
-        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
+        body { font-family: 'Roboto', sans-serif; text-align: center; background-color: var(--bg-body); background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px); background-size: 25px 25px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; touch-action: pan-y; }
         
         @media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
 
@@ -276,7 +274,14 @@
         @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
         @keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
 
-        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; overflow: hidden; }
+        #confetti-canvas {
+			position: absolute;
+			top: 0; left: 0;
+			width: 100%; height: 100%;
+			pointer-events: none;
+			z-index: 50;
+			border-radius: 30px; /* Para respeitar as bordas do cartão */
+		}
         
         /* Modal e Overlays Extras */
         .toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
@@ -298,13 +303,82 @@
 	.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
 	.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
 	.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
-</style>
 
-<style>
-  body {
-    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
-    background-size: 25px 25px;
-  }
+  
+	.icon-acao {
+		width: 1.4em;
+		height: 1.4em;
+		object-fit: contain;
+		flex-shrink: 0; 
+		pointer-events: none;
+		transition: transform 0.2s ease;
+	}
+	
+	/* =====================================================================
+           DANÇA DE VITÓRIA DA TAÇA (BRILHO DOURADO E BALANÇO RITMADO)
+           ===================================================================== */
+        
+        .taca-vitoria {
+            width: clamp(80px, 15vw, 130px); 
+            margin-bottom: 15px; 
+            object-fit: contain;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            
+            /* Encadeamento: corre o popIn uma vez e depois corre o tacaDanca infinitamente após 0.6s */
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
+                       tacaDanca 3s infinite 0.6s ease-in-out;
+        }
+
+        /* Keyframes da dança (Gera micro-saltos de comemoração e pulsação da sombra dourada) */
+        @keyframes tacaDanca {
+            0%, 100% { 
+                transform: translateY(0) scale(1) rotate(0deg); 
+                filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); /* Sombra dourada suave */
+            }
+            25% { 
+                transform: translateY(-10px) scale(1.06) rotate(-4deg); /* Salta e inclina para a esquerda */
+                filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); /* Brilho dourado forte */
+            }
+            50% { 
+                transform: translateY(0) scale(1) rotate(0deg); 
+                filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3));
+            }
+            75% { 
+                transform: translateY(-10px) scale(1.06) rotate(4deg); /* Salta e inclina para a direita */
+                filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65));
+            }
+        }
+		
+		.icon-svg-emoji {
+			width: 1.5em;
+			height: 1.5em;
+			vertical-align: middle;
+			margin-bottom: 0.15em;
+		}
+		
+		/* Animação para o botão de dica pulsar quando a criança erra 3 vezes */
+		@keyframes pulsarDicaAjuda {
+			0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 197, 49, 0.7); }
+			70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(251, 197, 49, 0); }
+			100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 197, 49, 0); }
+		}
+
+		.pulsar-ajuda {
+			animation: pulsarDicaAjuda 1.5s infinite !important;
+			border-color: #fbc531 !important;
+			background-color: #fff9c4 !important;
+		}
+
+		/* Tamanho do ícone de Rank no ecrã final */
+		.img-rank-final {
+			width: 120px;
+			height: 120px;
+			margin: 10px auto;
+			display: block;
+			filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+		}
 </style>
 </head>
 <body>
@@ -353,12 +427,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                 </div>
                 <div class="tut-input-box">
-                    <span class="tut-text">maçã</span><span class="tut-cursor">|</span>
+                    <span class="tut-text">gato</span><span class="tut-cursor">|</span>
                 </div>
-                <div class="tut-btn-verificar">VERIFICAR</div>
+                <div class="tut-btn-verificar">VERIFICAR <img src="verificar.svg" class="icon-svg-emoji"></div>
             </div>
 
-            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">JOGAR AGORA ▶️</button>
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto;">JOGAR AGORA <img src="../../../SVG/seta_direita.svg" class="icon-acao" alt=""></button>
         </div>
 
         <!-- ECRÃ 2: JOGO -->
@@ -366,7 +440,7 @@
             
             <!-- BARRA DE ESTADO COM DICA -->
             <div class="status-bar-jogo" id="status-bar" style="display: none;">
-                <button class="btn-voltar-menu" onclick="voltarAoMenu()" id="btn-home-svg"></button>
+                <button class="btn-voltar-menu" onclick="limparTudoEvoltar()" id="btn-home-svg"></button>
                 <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
 				<div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div> 
                 <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
@@ -388,7 +462,7 @@
                 
                 <div class="input-area">
                     <input type="text" id="word-input" class="word-input" placeholder="escreve aqui..." autocomplete="off" spellcheck="false">
-                    <button id="btn-verificar" class="btn-verificar">VERIFICAR</button>
+                    <button id="btn-verificar" class="btn-verificar">VERIFICAR <img src="verificar.svg" class="icon-svg-emoji"></button>
                 </div>
 
             </div>
@@ -397,13 +471,13 @@
 
         <!-- ECRÃ 3: FIM -->
         <div id="ecra-fim" class="ecra">
-            <div style="font-size: 5rem; margin-bottom: 15px; line-height: 1;">🏆</div>
-            <h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
+            <div id="rank-container"></div>
+			<h2 class="titulo-menu" id="end-title-text" style="margin-bottom: 10px;">Missão Cumprida!</h2>
             <div class="end-stats">
                 Escreveste <strong id="final-certas" style="color:#2ed573">0</strong> palavras certas.<br>
                 Tiveste <strong id="final-erros" style="color:#ff4757">0</strong> tentativas erradas.
             </div>
-            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto; margin-bottom: 10px;">JOGAR DE NOVO 🔄</button>
+            <button class="btn-acao" onclick="iniciarJogo()" style="margin: 0 auto; margin-bottom: 10px;">JOGAR DE NOVO <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
         </div>
 
     </div>
@@ -456,27 +530,62 @@
     }
 
     /* =========================================
-       DADOS DE FALLBACK (Se ../dados.js falhar)
+       DADOS DE PALAVRAS 
        ========================================= */
-    let bancoPalavras = [];
-    if (typeof palavras !== 'undefined') {
-        bancoPalavras = palavras;
-    } else if (typeof window.palavras !== 'undefined') {
-        bancoPalavras = window.palavras;
-    } else {
-        bancoPalavras = [
-            { palavra: "abacaxi", imagem: "img/abacaxi.png" },
-            { palavra: "abelha", imagem: "img/abelha.png" },
-            { palavra: "bolo", imagem: "img/bolo.png" },
-            { palavra: "cavalo", imagem: "img/cavalo.png" },
-            { palavra: "dado", imagem: "img/dado.png" },
-            { palavra: "elefante", imagem: "img/elefante.png" },
-            { palavra: "fada", imagem: "img/fada.png" },
-            { palavra: "gato", imagem: "img/gato.png" },
-            { palavra: "janela", imagem: "img/janela.png" },
-            { palavra: "maçã", imagem: "img/maca.png" }
-        ];
-    }
+    const bancoPalavras = [
+        { palavra: "ábaco", ref: "abaco" },
+        { palavra: "água", ref: "agua" },
+        { palavra: "águia", ref: "aguia" },
+        { palavra: "alface", ref: "alface" },
+        { palavra: "alfinete", ref: "alfinete" },
+        { palavra: "algemas", ref: "algemas" },
+        { palavra: "alho", ref: "alho" },
+        { palavra: "almofada", ref: "almofada" },
+        { palavra: "árvore", ref: "arvore" },
+        { palavra: "asa", ref: "asa" },
+        { palavra: "ave", ref: "ave" },
+        { palavra: "bandeira", ref: "bandeira" },
+        { palavra: "bota", ref: "bota" },
+        { palavra: "casa", ref: "casa" },
+        { palavra: "cenoura", ref: "cenoura" },
+        { palavra: "chave", ref: "chave" },
+        { palavra: "dedo", ref: "dedo" },
+        { palavra: "ecoponto", ref: "ecoponto" },
+        { palavra: "égua", ref: "egua" },
+        { palavra: "erva", ref: "erva" },
+        { palavra: "flor", ref: "flor" },
+        { palavra: "galinha", ref: "galinha" },
+        { palavra: "girafa", ref: "girafa" },
+        { palavra: "hipopótamo", ref: "hipopotamo" },
+        { palavra: "iglu", ref: "iglu" },
+        { palavra: "igreja", ref: "igreja" },
+        { palavra: "iguana", ref: "iguana" },
+        { palavra: "ilha", ref: "ilha" },
+        { palavra: "iogurte", ref: "iogurte" },
+        { palavra: "janela", ref: "janela" },
+        { palavra: "marinheiro", ref: "marinheiro" },
+        { palavra: "menina", ref: "menina" },
+        { palavra: "navio", ref: "navio" },
+        { palavra: "óculos", ref: "oculos" },
+        { palavra: "ogre", ref: "ogre" },
+        { palavra: "orca", ref: "orca" },
+        { palavra: "osso", ref: "osso" },
+        { palavra: "ovelha", ref: "ovelha" },
+        { palavra: "palhaço", ref: "palhaco" },
+        { palavra: "peixe", ref: "peixe" },
+        { palavra: "professor", ref: "professor" },
+        { palavra: "rato", ref: "rato" },
+        { palavra: "televisão", ref: "televisao" },
+        { palavra: "telhado", ref: "telhado" },
+        { palavra: "um", ref: "um" },
+        { palavra: "umbigo", ref: "umbigo" },
+        { palavra: "unha", ref: "unha" },
+        { palavra: "unicórnio", ref: "unicornio" },
+        { palavra: "urso", ref: "urso" },
+        { palavra: "uvas", ref: "uvas" },
+        { palavra: "vaca", ref: "vaca" },
+        { palavra: "zebra", ref: "zebra" }
+    ];
 
     /* =========================================
        ESTADOS E VARIÁVEIS
@@ -487,6 +596,9 @@
     let rondaAtual = 1; // 1 to 10
     let errosTotais = 0;
     let isVerificando = false;
+	let somVozAtual = new Audio();
+	let errosNaPalavraAtual = 0;
+	let palavrasRestantesNoSaco = []; 
 
     // Lógica das Dicas
     let dicasUsadas = []; 
@@ -514,9 +626,9 @@
     }
 
     function voltarAoMenu() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        window.speechSynthesis.cancel();
-        elStatus.style.display = 'none';
+        if (typeof window.speechSynthesis !== 'undefined') window.speechSynthesis.cancel();
+
+        if (elStatus) elStatus.style.display = 'none';
         mostrarEcra('ecra-selecao');
     }
 
@@ -543,24 +655,32 @@
        LÓGICA PRINCIPAL
        ========================================= */
     function iniciarJogo() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height);
-        window.speechSynthesis.cancel();
+        limparConfetis(); 
+        if (typeof window.speechSynthesis !== 'undefined') window.speechSynthesis.cancel();
+
         rondaAtual = 1;
         palavraAtualIndex = 0;
         errosTotais = 0;
         isVerificando = false;
         dicasUsadas = [];
+
+        // --- LÓGICA DE NÃO REPETIÇÃO ---
         
-        // Misturar o banco
-        let embaralhadas = [...bancoPalavras].sort(() => Math.random() - 0.5);
-        
-        // Prevenir erro se a lista fosse menor
-        while (embaralhadas.length < MAX_PALAVRAS) {
-            embaralhadas = embaralhadas.concat([...bancoPalavras].sort(() => Math.random() - 0.5));
+        // 1. Se o saco estiver vazio ou tiver menos de 10 palavras, voltamos a enchê-lo
+        if (palavrasRestantesNoSaco.length < MAX_PALAVRAS) {
+            console.log("A reencher o saco com todas as 52 palavras!");
+            palavrasRestantesNoSaco = [...bancoPalavras];
+            
+            // Baralhamos o saco mal o enchemos
+            palavrasRestantesNoSaco.sort(() => Math.random() - 0.5);
         }
+
+        // 2. Tiramos as próximas 10 palavras do saco (e elas saem de lá!)
+        // O comando .splice(0, 10) remove os primeiros 10 itens do array original
+        palavrasDoJogo = palavrasRestantesNoSaco.splice(0, MAX_PALAVRAS);
         
-        palavrasDoJogo = embaralhadas.slice(0, MAX_PALAVRAS);
-        
+        // ------------------------------
+
         elStatus.style.display = 'flex';
         atualizarPlacarUI();
         atualizarDicasUI();
@@ -568,70 +688,79 @@
         
         carregarPalavra();
     }
-
-    function getImagePath(imgPath) {
-        if (!imgPath) return '';
-        if (imgPath.startsWith('../') || imgPath.startsWith('http')) return imgPath;
-        return '../' + imgPath;
+    
+	function getImagePath(ref) {
+        return `sons/${ref}.png`;
+    }
+	
+	function getAudioPath(ref) {
+        return `sons/${ref}.mp3`;
     }
 
-		function carregarPalavra() {
+	function carregarPalavra() {
+        errosNaPalavraAtual = 0; 
+		document.getElementById('btn-dica').classList.remove('pulsar-ajuda');
+		
 		isVerificando = false;
-		removerDestaquesDica();
-		atualizarDicasUI();
+        removerDestaquesDica();
+        atualizarDicasUI();
 
-		const palavraObj = palavrasDoJogo[palavraAtualIndex];
-		if (!palavraObj) return; // Proteção extra caso o jogo acabe
-		
-		elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
-		
-		// 1. Mandar a carta virar de volta (Inicia a animação CSS)
-		elMediaContainer.classList.remove('revelado');
-		elBtnOuvir.classList.remove('playing');
-		
-		// 2. SÓ ATUALIZA A IMAGEM DEPOIS DA ANIMAÇÃO TERMINAR (ex: 400 milissegundos)
-		// Durante a rotação, a criança continuará a ver a imagem antiga a esconder-se.
-		setTimeout(() => {
-			elImage.src = getImagePath(palavraObj.imagem);
-			elImage.onerror = () => { 
-				elImage.src = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23eee'/><text x='50' y='50' font-family='sans-serif' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23999'>IMG</text></svg>`; 
-			};
-		}, 400); // 💡 Se a transição CSS demorar mais ou menos tempo, ajusta este valor (400 = 0.4s)
+        const palavraObj = palavrasDoJogo[palavraAtualIndex];
+        if (!palavraObj) return;
+        
+        elProgressFill.style.width = `${(palavraAtualIndex / MAX_PALAVRAS) * 100}%`;
+        
+        elMediaContainer.classList.remove('revelado');
+        elBtnOuvir.classList.remove('playing');
+        
+        // Atualiza a imagem usando a referência (ref)
+        setTimeout(() => {
+            elImage.src = getImagePath(palavraObj.ref);
+        }, 400);
 
-		elInput.value = '';
-		elInput.classList.remove('error-shake', 'success-bounce');
-		elInput.disabled = false;
-		
-		setTimeout(() => elInput.focus(), 100); 
-	}
-    function ouvirPalavraAtual() {
+        elInput.value = '';
+        elInput.classList.remove('error-shake', 'success-bounce');
+        elInput.disabled = false;
+        
+        setTimeout(() => elInput.focus(), 100); 
+    }
+    
+	function ouvirPalavraAtual() {
         if (isVerificando) return;
         
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        window.speechSynthesis.cancel();
-        
+        // Garante que o áudio do sistema está acordado (útil para iOS)
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
         const palavraObj = palavrasDoJogo[palavraAtualIndex];
         if (!palavraObj) return;
 
-        const som = new SpeechSynthesisUtterance(palavraObj.palavra);
-        som.lang = 'pt-PT';
-        som.rate = 0.85; 
+        // 1. Para qualquer som que esteja a tocar e limpa os eventos antigos
+        somVozAtual.pause();
+        somVozAtual.onplay = null;
+        somVozAtual.onended = null;
+
+        // 2. Define o novo ficheiro
+        somVozAtual.src = getAudioPath(palavraObj.ref);
         
-        som.onstart = () => elBtnOuvir.classList.add('playing');
-        som.onend = () => {
+        // 3. Configura o que acontece quando o som começa e acaba
+        somVozAtual.onplay = () => elBtnOuvir.classList.add('playing');
+        somVozAtual.onended = () => {
             elBtnOuvir.classList.remove('playing');
             elInput.focus();
         };
-        som.onerror = () => elBtnOuvir.classList.remove('playing');
-        
-        window.speechSynthesis.speak(som);
+
+        // 4. Toca o som
+        somVozAtual.play().catch(e => {
+            console.warn("Som bloqueado ou não encontrado:", palavraObj.ref);
+            elBtnOuvir.classList.remove('playing');
+        });
     }
 
     function verificarResposta() {
         if (isVerificando) return;
         
         const respostaAluno = elInput.value.trim().toLowerCase();
-        // Verificação sensível a acentos
+        // A comparação ignora maiúsculas mas mantém a sensibilidade aos acentos
         const respostaCorreta = palavrasDoJogo[palavraAtualIndex].palavra.toLowerCase();
 
         // Se o utilizador não escreveu nada, ouve a palavra de novo
@@ -644,32 +773,53 @@
         removerDestaquesDica();
 
         if (respostaAluno === respostaCorreta) {
+            // --- CASO ACERTE ---
             tocarSom('acerto');
             
-            elInput.value = respostaCorreta; // Garante formatação visual
+            elInput.value = respostaCorreta; // Garante a formatação visual
             elInput.classList.add('success-bounce');
             elInput.disabled = true;
+
+            // Para o som da voz imediatamente ao acertar
+            if (somVozAtual) {
+                somVozAtual.pause();
+                somVozAtual.currentTime = 0;
+            }
 
             // ANIMAÇÃO PRÉMIO: Roda o cartão para mostrar a imagem!
             elMediaContainer.classList.add('revelado');
 
+            // Espera 2 segundos para a criança festejar e ver a imagem
             setTimeout(() => {
                 avancarRonda();
-            }, 1800); // Mais tempo para a criança ver a imagem de recompensa
+            }, 2000); 
             
         } else {
+            // --- CASO ERRE ---
             errosTotais++;
+            errosNaPalavraAtual++; // Incrementa erros desta palavra específica
             atualizarPlacarUI();
             tocarSom('erro');
             
             elInput.classList.add('error-shake');
             
+            // LÓGICA DE SOCORRO: Se errar 3 vezes a mesma palavra, sugere a dica
+            if (errosNaPalavraAtual >= 3) {
+                const btnDica = document.getElementById('btn-dica');
+                // Só pulsa se a dica ainda não foi usada neste bloco de 5 palavras
+                if (btnDica && !btnDica.classList.contains('esgotada')) {
+                    btnDica.classList.add('pulsar-ajuda');
+                    showToast("Precisas de uma ajuda? Clica na lâmpada!");
+                }
+            }
+            
+            // Limpa o input para nova tentativa após a animação de "tremer"
             setTimeout(() => {
                 elInput.classList.remove('error-shake');
                 elInput.value = ''; 
                 elInput.focus();
                 isVerificando = false;
-            }, 500);
+            }, 600);
         }
     }
 
@@ -708,18 +858,28 @@
         if (rondaAtual > MAX_PALAVRAS) {
             elProgressFill.style.width = `100%`;
             document.getElementById('final-erros').textContent = errosTotais;
-            
+            document.getElementById('final-certas').textContent = MAX_PALAVRAS;
+
             const titleText = document.getElementById('end-title-text');
+            const rankContainer = document.getElementById('rank-container');
+            let imgRank = "";
+
             if (errosTotais === 0) {
-                titleText.textContent = "PERFEITO! 🏆";
+                titleText.textContent = "DITADO PERFEITO!";
+                imgRank = "rank_ouro.svg"; // General da Escrita
                 tocarSom('vitoria'); dispararConfetis();
             } else if (errosTotais <= 3) {
-                titleText.textContent = "MUITO BEM! 🎉";
+                titleText.textContent = "MUITO BEM!";
+                imgRank = "rank_prata.svg"; // Capitão das Letras
                 tocarSom('vitoria'); dispararConfetis();
             } else {
-                titleText.textContent = "BOM ESFORÇO! 💪";
+                titleText.textContent = "BOM ESFORÇO!";
+                imgRank = "rank_bronze.svg"; // Recruta Esforçado
                 tocarSom('acerto'); 
             }
+
+            // Injeta o SVG do Rank
+            rankContainer.innerHTML = `<img src="../../../SVG/${imgRank}" class="taca-vitoria" alt="Medalha de Vitória">`;
 
             elStatus.style.display = 'none';
             mostrarEcra('ecra-fim');
@@ -730,126 +890,146 @@
         }
     }
 
-    /* =========================================
-       SISTEMA DE SOM E CONFETIS
+	/* =========================================
+       SISTEMA DE SOM E CONFETIS (VERSÃO SEGURA)
        ========================================= */
-	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-	let audioCtx = null;
-
-	// ✅ garante que o áudio está pronto
-	function initAudio() {
-		if (!AudioContextClass) return;
-
-		if (!audioCtx) {
-			audioCtx = new AudioContextClass();
-		}
-
-		if (audioCtx.state === 'suspended') {
-			audioCtx.resume();
-		}
-	}
-
-	// ✅ desbloqueia no primeiro clique (CRUCIAL)
-	document.addEventListener('click', initAudio, { once: true });
-
-
-	// ✅ função principal para sons
-	function tocarSom(tipo) {
-
-		initAudio(); // garante sempre
-
-		if (!audioCtx) return;
-
-		const osc = audioCtx.createOscillator();
-		const gain = audioCtx.createGain();
-
-		osc.connect(gain);
-		gain.connect(audioCtx.destination);
-
-		const agora = audioCtx.currentTime;
-
-		if (tipo === 'flip') {
-			osc.type = 'sine';
-			osc.frequency.setValueAtTime(400, agora);
-			osc.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
-			gain.gain.setValueAtTime(0.05, agora);
-			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.1);
-			osc.start(agora);
-			osc.stop(agora + 0.1);
-		}
-
-		else if (tipo === 'acerto') {
-			osc.type = 'sine';
-			osc.frequency.setValueAtTime(600, agora);
-			osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
-			gain.gain.setValueAtTime(0.1, agora);
-			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
-			osc.start(agora);
-			osc.stop(agora + 0.3);
-		}
-
-		else if (tipo === 'erro') {
-			osc.type = 'triangle';
-			osc.frequency.setValueAtTime(250, agora);
-			osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
-			gain.gain.setValueAtTime(0.15, agora);
-			gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
-			osc.start(agora);
-			osc.stop(agora + 0.3);
-		}
-
-		else if (tipo === 'vitoria') {
-			const notas = [523.25, 659.25, 783.99, 1046.50];
-
-			notas.forEach((freq, i) => {
-				const o = audioCtx.createOscillator();
-				const g = audioCtx.createGain();
-
-				o.connect(g);
-				g.connect(audioCtx.destination);
-
-				o.type = 'sine';
-				o.frequency.value = freq;
-
-				g.gain.setValueAtTime(0.1, agora + i * 0.15);
-				g.gain.exponentialRampToValueAtTime(0.01, agora + i * 0.15 + 0.3);
-
-				o.start(agora + i * 0.15);
-				o.stop(agora + i * 0.15 + 0.3);
-			});
-		}
-	}
-
-    const canvasConfetti = document.getElementById('confetti-canvas');
-    const ctxConfetti = canvasConfetti.getContext('2d');
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let idAnimacaoConfete = null;
+    let confetesAtivos = false;
     let confetis = [];
 
-    function redimensionarCanvas() { 
-        canvasConfetti.width = document.querySelector('.cartao-jogo-container').clientWidth; 
-        canvasConfetti.height = document.querySelector('.cartao-jogo-container').clientHeight; 
+    function initAudio() {
+        if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
-    window.addEventListener('resize', redimensionarCanvas);
+
+    document.addEventListener('mousedown', initAudio, { once: true });
+    document.addEventListener('touchstart', initAudio, { once: true });
+
+    function tocarSom(tipo) {
+        initAudio();
+        if (!audioCtx) return;
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'acerto') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, agora);
+            osc.frequency.exponentialRampToValueAtTime(1200, agora + 0.2);
+            gain.gain.setValueAtTime(0.1, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(250, agora);
+            osc.frequency.exponentialRampToValueAtTime(150, agora + 0.2);
+            gain.gain.setValueAtTime(0.15, agora); gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+            osc.start(agora); osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+            const melodia = [
+                { freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+                { freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+                { freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+                { freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+                { freq: 1046.50, tempo: 0.65, duracao: 1.00 } 
+            ];
+            melodia.forEach(nota => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.setValueAtTime(nota.freq, agora + nota.tempo);
+                g.gain.setValueAtTime(0, agora + nota.tempo);
+                g.gain.linearRampToValueAtTime(0.2, agora + nota.tempo + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+                o.start(agora + nota.tempo); o.stop(agora + nota.tempo + nota.duracao);
+            });
+        }
+    }
+
+    function limparConfetis() {
+        confetesAtivos = false;
+        if (idAnimacaoConfete) cancelAnimationFrame(idAnimacaoConfete);
+        
+        // Silêncio total imediato
+        if (somVozAtual) {
+            somVozAtual.pause();
+            somVozAtual.src = ""; // Remove o rasto do ficheiro da memória
+        }
+
+        const canvas = document.getElementById('confetti-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
 
     function dispararConfetis() {
-        redimensionarCanvas(); confetis = []; const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
-        for (let i = 0; i < 150; i++) {
-            confetis.push({ x: Math.random() * canvasConfetti.width, y: Math.random() * canvasConfetti.height - canvasConfetti.height, w: Math.random() * 10 + 5, h: Math.random() * 10 + 5, cor: cores[Math.floor(Math.random() * cores.length)], velY: Math.random() * 3 + 2, velX: Math.random() * 2 - 1, rotacao: Math.random() * 360, velRotacao: Math.random() * 5 - 2.5 });
+        const canvas = document.getElementById('confetti-canvas');
+        const container = document.querySelector('.cartao-jogo-container');
+        if (!canvas || !container) return;
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = container.clientWidth; 
+        canvas.height = container.clientHeight; 
+        
+        confetis = []; 
+        confetesAtivos = true;
+        const cores = ['#0091ff', '#2ed573', '#ff4757', '#ffa502', '#eccc68'];
+        
+        for (let i = 0; i < 120; i++) {
+            confetis.push({ 
+                x: Math.random() * canvas.width, 
+                y: -20, 
+                w: Math.random() * 7 + 4, 
+                h: Math.random() * 7 + 4, 
+                cor: cores[Math.floor(Math.random() * cores.length)], 
+                velY: Math.random() * 2.5 + 1.5, 
+                velX: Math.random() * 2 - 1, 
+                rotacao: Math.random() * 360, 
+                velRotacao: Math.random() * 5 - 2.5 
+            });
         }
-        animarConfetis();
+        
+		function animar() {
+            if (!confetesAtivos) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let aindaHaConfetes = false;
+            confetis.forEach(c => {
+                c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao;
+                if (c.y < canvas.height) aindaHaConfetes = true;
+                ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rotacao * Math.PI / 180);
+                ctx.fillStyle = c.cor; ctx.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctx.restore();
+            });
+            if (aindaHaConfetes) idAnimacaoConfete = requestAnimationFrame(animar);
+        }
+        animar();
     }
 
-    function animarConfetis() {
-        ctxConfetti.clearRect(0, 0, canvasConfetti.width, canvasConfetti.height); let ativos = false;
-        confetis.forEach(c => {
-            c.y += c.velY; c.x += c.velX; c.rotacao += c.velRotacao; if (c.y < canvasConfetti.height) ativos = true;
-            ctxConfetti.save(); ctxConfetti.translate(c.x, c.y); ctxConfetti.rotate(c.rotacao * Math.PI / 180);
-            ctxConfetti.fillStyle = c.cor; ctxConfetti.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctxConfetti.restore();
-        });
-        if (ativos) requestAnimationFrame(animarConfetis);
+    function limparTudoEvoltar() {
+        limparConfetis();
+        
+        if (somVozAtual) {
+            somVozAtual.pause();
+            somVozAtual.currentTime = 0;
+        }
+
+        if (typeof window.speechSynthesis !== 'undefined') window.speechSynthesis.cancel();
+        
+        voltarAoMenu();
     }
 
-    // Arranca no menu
-    window.onload = () => mostrarEcra('ecra-selecao');
+	function preCarregarTudo() {
+		bancoPalavras.forEach(item => {
+			const img = new Image();
+			img.src = `sons/${item.ref}.png`;
+			const audio = new Audio();
+			audio.src = `sons/${item.ref}.mp3`;
+		});
+	}
+	window.onload = () => {
+		mostrarEcra('ecra-selecao');
+		preCarregarTudo();
+	};
 
 </script>
 </body>
