@@ -16,6 +16,7 @@ const todosOsJogos =[
 	{ nome: "O Mistério das Perguntas", icone: "icones/misterio_perguntas.png", link: "pt/misterio-perguntas/", cat: "pt" },
 	{ nome: "O Mundo das Preposições", icone: "icones/preposicoes.png", link: "pt/preposicoes/", cat: "pt" },
 	{ nome: "Truques de Escrita", icone: "icones/truques_escrita.png", link: "pt/truques-escrita/", cat: "pt" },
+	{ nome: "Expressões Idiomáticas", icone: "icones/expressoes.png", link: "pt/expressoes/", cat: "pt" },
     
 	
 	
