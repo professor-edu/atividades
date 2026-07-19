@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - Quiz dos Sistemas 💪</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(69, 176, 98, 0.52); 
+    border-top: 8px solid var(--cor-em); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #eaf1eb; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1.4rem, 4vw, 1.8rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 75px;
+    height: 75px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 240px !important; height: 240px !important; }
+    .card-imagem-zoomable.img-retangular { width: 330px !important; height: 220px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-em); border-radius: 20px; padding: 25px; gap: 25px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto { font-size: clamp(1.2rem, 4vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 12px 20px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+.btn-opcao-vibrante.sucesso-vibrante, .btn-opcao.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, .btn-opcao.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar */
+.bloco-arrastar {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100%; min-width: 150px; padding: 12px 20px !important; border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.1rem) !important; font-weight: 700 !important;
+    background-color: #ffffff !important; border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; touch-action: manipulation;
+}
+.bloco-arrastar:active { transform: scale(0.95) !important; box-shadow: 0 0px 0 transparent !important; }
+.bloco-arrastar:not(.selecionado):not([disabled]) { animation: respirarBloco 2s infinite ease-in-out; }
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.25rem !important; line-height: 2.6 !important; color: var(--text-main) !important;
+    text-align: justify !important; margin-bottom: 25px !important; background: #ffffff !important;
+    padding: 20px 25px !important; border-radius: 20px !important; border: 2px solid #e2e8f0 !important;
+    width: 100% !important; max-width: 750px !important; box-sizing: border-box !important;
+}
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-em) !important; background-color: #ffffff !important; }
+
+.banco-opcoes { display: flex !important; gap: 12px !important; justify-content: center !important; flex-wrap: wrap !important; width: 100% !important; max-width: 650px !important; margin-bottom: 15px !important; }
+.palavra-banco {
+    padding: 8px 18px !important; background: #ffffff !important; border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; font-weight: 800 !important; font-size: 1.1rem !important; color: var(--azul-escuro) !important;
+    cursor: pointer !important; transition: all 0.15s ease !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-em) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   8. MASCOTE, MODAIS E OVERLAYS
+   ========================================================================== */
+#foguetao-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; display: flex; align-items: center; justify-content: center;
+}
+#foguetao-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+.foguetao-normal { animation: flutuar 3s infinite ease-in-out; }
+.foguetao-erro { animation: shakeError 0.4s ease-in-out; filter: saturate(1.5) hue-rotate(-20deg); }
+.foguetao-decolar { animation: decolar 1.5s forwards ease-in; }
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: clamp(80px, 15vw, 130px); 
+    margin-bottom: 15px; 
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, tacaDanca 3s infinite 0.6s ease-in-out;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+/* ==========================================================================
+   10. ZONA DE EDIÇÃO: PERSONALIDADE, ANIMAÇÕES E DESTAQUES
+   ========================================================================== */
+.scanner-tutorial {
+    width: 100%; max-width: 400px; height: 180px;
+    background: #0a1424; border: 3px dashed var(--cor-btn-turquesa);
+    border-radius: 20px; position: relative; margin: 0 auto 25px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.scanner-tutorial img { height: 85%; opacity: 0.3; }
+.laser {
+    position: absolute; width: 100%; height: 4px; background: #00ff88;
+    box-shadow: 0 0 15px #00ff88; animation: scanMove 2.5s infinite ease-in-out;
+    top: 0;
+}
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #fff275; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+
+/* ==========================================================================
+   11. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes decolar { 0% { transform: translateY(0) scale(1); } 20% { transform: translateY(10px) scale(0.9); } 100% { transform: translateY(-1000px) scale(1.2); opacity: 0; } }
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+
+/* ==========================================================================
+   ANIMAÇÃO DE ENTRADA: BIO-SCAN (ZONA DE EDIÇÃO)
+   ========================================================================== */
+.intro-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0a1424; z-index: 500; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; border-radius: 22px;
+    animation: fadeOutIntro 0.8s forwards 3.2s; /* Desaparece após 3.2 segundos */
+}
+
+.silhueta-container { position: relative; width: 250px; height: 350px; }
+
+.silhueta-neon {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: drop-shadow(0 0 15px #00d4ff); opacity: 0.2;
+    animation: pulsarSilhueta 1.5s infinite alternate;
+}
+
+.laser-scan-line {
+    position: absolute; left: 0; width: 100%; height: 6px;
+    background: #00ff88; box-shadow: 0 0 20px #00ff88;
+    z-index: 10; animation: scanAnim 1.5s ease-in-out infinite;
+}
+
+.msg-sistema {
+    margin-top: 20px; color: #00ff88; font-family: monospace;
+    font-size: 1.1rem; letter-spacing: 2px;
+    animation: glitchText 0.2s infinite;
+}
+
+/* KEYFRAMES DA ENTRADA */
+@keyframes scanAnim { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes pulsarSilhueta { from { opacity: 0.2; transform: scale(1); } to { opacity: 0.5; transform: scale(1.05); } }
+@keyframes fadeOutIntro { from { opacity: 1; visibility: visible; } to { opacity: 0; visibility: hidden; } }
+@keyframes glitchText { 
+    0% { opacity: 1; transform: translateX(0); }
+    50% { opacity: 0.8; transform: translateX(-2px); }
+    100% { opacity: 1; transform: translateX(2px); }
+}
+
+/* ==========================================================================
+   12. MEDIA QUERIES UNIFICADAS (600PX E 768PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+}
+
+@media (max-width: 600px) {
+    .grid-niveis { grid-template-columns: 1fr !important; max-width: 320px; }
+    .btn-nivel-novo { padding: 12px 15px !important; gap: 10px !important; }
+    .icon-btn-nivel { width: 40px; height: 40px; }
+    .btn-nivel-titulo { font-size: 1rem; }
+    .btn-nivel-subtitulo { font-size: 0.75rem; }
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    .progress-bg { order: 10; width: 100%; margin: 4px 0 0 0; height: 25px; }
+    .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { padding: 4px 8px; font-size: 0.8rem; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .opcoes-container { flex-direction: column !important; align-items: center !important; gap: 12px !important; width: 100% !important; max-width: 290px !important; margin: 0 auto !important; }
+    .opcoes-container .btn-opcao-vibrante { width: 100% !important; font-size: 0.95rem !important; padding: 10px 15px !important; box-sizing: border-box; }
+    .imagem-opcao-vibrante { max-width: 90px; max-height: 70px; }
+    .texto-paragrafo-lacunas { font-size: 1.05rem !important; line-height: 2.8 !important; padding: 15px !important; }
+    .slot-vazio { min-width: 85px !important; height: 28px !important; margin: 0 4px !important; }
+    .palavra-banco { font-size: 0.95rem !important; padding: 6px 14px !important; }
+    #foguetao-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
+    .mapa-relevo-wrapper.mapa-quadrado { max-width: 210px; }
+    .mapa-relevo-wrapper.mapa-retangular { max-width: 320px; }
+    .slot-mapa.preenchido strong { font-size: 0.72rem !important; }
+    .end-title { flex-direction: column; gap: 10px; }
+}
+
+/* ==========================================================================
+   13. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Quiz dos Sistemas<img src="sistemas_quiz_menu.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Mostra o que sabes!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+
+        <!-- FOGUETÃO: Posicionado corretamente para não tapar o menu -->
+        <img id="foguetao-feedback" src="img/foguetao_normal.png" class="mascote-foguetao" style="display: none;">
+
+        <!-- ECRÃ 1: SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+            <!-- CONTENTOR DA ANIMAÇÃO DE ENTRADA -->
+			<div id="intro-bio-scan" class="intro-overlay">
+				<div class="silhueta-container">
+					<img src="img/corpo_silhueta_neon.png" class="silhueta-neon" alt="">
+					<div class="laser-scan-line"></div>
+				</div>
+				<div class="msg-sistema">A INICIAR SISTEMAS VITAIS...</div>
+			</div>
+			
+			<div class="scanner-tutorial">
+                <img src="img/corpo_silhueta.png" alt="">
+                <div class="laser"></div>
+                <div style="position: absolute; bottom: 10px; color: #00d4ff; font-family: monospace; font-size: 0.8rem;">
+                    SISTEMAS_OK: PRONTO PARA O QUIZ
+                </div>
+            </div>
+            <h2 class="titulo-menu">Exploração de Sistemas</h2>
+
+            <div class="grid-niveis" style="grid-template-columns: 1fr; max-width: 500px;">
+			<button class="btn-nivel-novo bg-roxo" onclick="prepararJogo('quiz-total')">
+				<img src="sistemas_quiz.png" class="icon-btn-nivel-novo">
+				<div class="btn-nivel-text-container">
+					<span class="btn-nivel-titulo">GRANDE QUIZ DO CORPO HUMANO</span>
+					<span class="btn-nivel-subtitulo">60 questões para testar os teus conhecimentos!</span>
+				</div>
+			</button>
+		</div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"><span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div id="rank-container"></div>
+            <h2 class="end-title" id="end-title-text">Missão Concluída!</h2>
+            <div class="end-stats">Erros no Sistema: <strong id="final-erros">0</strong></div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">REPETIR O QUIZ <img src="../../../SVG/seta_direita.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">VOLTAR AO MENU <img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+        </div>
+		
+		<!-- MODAL DE ZOOM DE IMAGEM (TELA DE AMPLIÇÃO UNIVERSAL OPCIONAL) -->
+		<div id="zoom-modal" class="zoom-overlay-imagem" onclick="if(event.target === this) fecharZoomImagem()">
+			<button class="btn-fechar-zoom" onclick="fecharZoomImagem()">✕</button>
+			<img id="zoom-img-content" class="zoom-imagem-conteudo" src="" alt="Imagem ampliada">
+		</div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+	document.getElementById('ano-atual').innerText = new Date().getFullYear();
+	
+	/* =====================================================================
+	   1. DEFINIÇÕES E SVGs GLOBAIS DO TEMPLATE
+	   ===================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Sair`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	const CORES_BTNS = ['bg-azul', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa'];
+	const COOLDOWN_DICA = 3;
+	let erradas = 0, desafioAtual = 0, perguntasSorteadas = [], podeInteragir = true, timerImpaciencia = null, sistemaAtivo = "";
+	let poolRestantesSessao = [];
+	let rondasParaDica = 0;
+	let selecaoLigar = null, selecoesLigar = {}, paresElementosLigar = [], arrastoAtivo = null, selecoesArrastar = {}, selecoesLacunas = {}, lacunaAtiva = null;
+	let modoAtual = "";
+	let totalRondas = 10;
+
+/* =============================================================
+   GRANDE BASE DE DADOS: SISTEMAS DO CORPO HUMANO (4.º ANO)
+   Total: 50 Questões Consolidadas
+   ============================================================= */
+	const BD_GERAL_CORPO_HUMANO = [
+		// --- SISTEMA DIGESTIVO ---
+		{ tipo: 'multipla', pergunta: 'Que órgão em forma de saco amassa os alimentos?', imagem: 'img/estomago.png', proporcao: 'quadrada', opcoes: ['Estômago', 'Coração', 'Pulmões'], correta: 'Estômago', dica: { tipo: 'retirar-um' } },
+		{ tipo: 'multipla', pergunta: 'Qual é o órgão interno que produz a bílis?', imagem: 'img/figado.png', proporcao: 'quadrada', opcoes: ['Fígado', 'Pâncreas', 'Bexiga'], correta: 'Fígado', dica: 'Está do lado direito do abdómen.' },
+		{ tipo: 'multipla', pergunta: 'Onde se inicia o processo da digestão?', imagem: 'img/boca.png', proporcao: 'retangular', opcoes: ['Boca', 'Esófago', 'Estômago'], correta: 'Boca', dica: 'É onde usas os dentes.' },
+		{ tipo: 'multipla', pergunta: 'Que tubo liga a boca ao estômago?', imagem: 'img/esofago.png', proporcao: 'quadrada', opcoes: ['Traqueia', 'Esófago', 'Ureteres'], correta: 'Esófago', dica: 'É um canal muscular longo.' },
+		{ tipo: 'multipla', pergunta: 'Que órgão produz o suco pancreático?', imagem: 'img/pancreas.png', proporcao: 'quadrada', opcoes: ['Rins', 'Fígado', 'Pâncreas'], correta: 'Pâncreas', dica: 'O nome do suco ajuda-te!' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">intestino delgado</span> é onde ocorre a maior parte da absorção de nutrientes.', correta: 'Verdadeiro', imagem: 'img/intestino_delgado.png', proporcao: 'quadrada', dica: 'É um tubo muito longo e enrolado.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">saliva</span> ajuda a formar o bolo alimentar na boca.', correta: 'Verdadeiro', imagem: 'img/boca.png', proporcao: 'retangular', dica: 'A saliva amolece a comida.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">fígado</span> pertence ao sistema respiratório.', correta: 'Falso', imagem: 'img/figado.png', proporcao: 'quadrada', dica: 'O fígado ajuda a processar o que comes.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'Os <span class="destaque-fundo">dentes</span> servem para triturar os alimentos.', correta: 'Verdadeiro', imagem: 'img/dentes.png', proporcao: 'quadrada', dica: 'A mastigação é o primeiro passo.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">bolo alimentar</span> transforma-se em quilo no estômago.', correta: 'Falso', imagem: 'img/estomago.png', proporcao: 'quadrada', dica: 'No estômago forma-se o quimo.' },
+
+		// --- SISTEMA RESPIRATÓRIO ---
+		{ tipo: 'multipla', pergunta: 'Que órgãos esponjosos realizam as trocas gasosas?', imagem: 'img/pulmoes.png', proporcao: 'quadrada', opcoes: ['Rins', 'Pulmões', 'Fígado'], correta: 'Pulmões', dica: 'Temos dois e ficam no peito.' },
+		{ tipo: 'multipla', pergunta: 'Como se chama o tubo com anéis que leva o ar aos pulmões?', imagem: 'img/traqueia.png', proporcao: 'quadrada', opcoes: ['Esófago', 'Traqueia', 'Uretra'], correta: 'Traqueia', dica: 'Fica à frente do esófago.' },
+		{ tipo: 'multipla', pergunta: 'Por onde deve entrar o ar para ser filtrado e aquecido?', imagem: 'img/fossas_nasais.png', proporcao: 'quadrada', opcoes: ['Boca', 'Nariz', 'Ouvidos'], correta: 'Nariz', dica: 'As fossas nasais filtram o pó.' },
+		{ tipo: 'multipla', pergunta: 'Que músculo ajuda os pulmões a encher e esvaziar?', imagem: 'img/diafragma.png', proporcao: 'retangular', opcoes: ['Bíceps', 'Diafragma', 'Coração'], correta: 'Diafragma', dica: 'Fica por baixo dos pulmões.' },
+		{ tipo: 'multipla', pergunta: 'Onde se localizam as cordas vocais?', imagem: 'img/laringe.png', proporcao: 'quadrada', opcoes: ['Laringe', 'Faringe', 'Estômago'], correta: 'Laringe', dica: 'É a nossa caixa da voz.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">inspiração</span> é o movimento de saída do ar.', correta: 'Falso', imagem: 'img/pulmoes.png', proporcao: 'quadrada', dica: 'Inspirar é pôr ar para dentro.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">oxigénio</span> é o gás que o nosso corpo precisa para viver.', correta: 'Verdadeiro', imagem: 'img/ar.png', proporcao: 'quadrada', dica: 'Entra nos pulmões e vai para o sangue.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">faringe</span> é comum aos sistemas respiratório e digestivo.', correta: 'Verdadeiro', imagem: 'img/faringe.png', proporcao: 'quadrada', dica: 'Passa tanto ar como comida.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">dióxido de carbono</span> é um gás que o corpo deve expelir.', correta: 'Verdadeiro', imagem: 'img/ar_expulso.png', proporcao: 'quadrada', dica: 'É o desperdício da respiração.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'Os <span class="destaque-fundo">brónquios</span> são as ramificações da traqueia.', correta: 'Verdadeiro', imagem: 'img/bronquios.png', proporcao: 'quadrada', dica: 'Parecem ramos de uma árvore.' },
+
+		// --- SISTEMA CIRCULATÓRIO ---
+		{ tipo: 'multipla', pergunta: 'Qual é o motor que bombeia o sangue?', imagem: 'img/coracao.png', proporcao: 'quadrada', opcoes: ['Cérebro', 'Coração', 'Estômago'], correta: 'Coração', dica: 'É um músculo que nunca descansa.' },
+		{ tipo: 'multipla', pergunta: 'Como se chamam os vasos que levam o sangue do coração para o corpo?', imagem: 'img/arterias.png', proporcao: 'quadrada', opcoes: ['Veias', 'Artérias', 'Ureteres'], correta: 'Artérias', dica: 'Têm paredes grossas e fortes.' },
+		{ tipo: 'multipla', pergunta: 'Que vasos trazem o sangue de volta ao coração?', imagem: 'img/veias.png', proporcao: 'quadrada', opcoes: ['Veias', 'Artérias', 'Brónquios'], correta: 'Veias', dica: 'Têm válvulas para o sangue não recuar.' },
+		{ tipo: 'multipla', pergunta: 'Como se chamam os vasos muito fininhos onde ocorrem trocas entre o sangue e as células?', imagem: 'img/capilares.png', proporcao: 'quadrada', opcoes: ['Artérias', 'Veias', 'Capilares'], correta: 'Capilares', dica: 'São finos como cabelos.' },
+		{ tipo: 'multipla', pergunta: 'Qual é o líquido que transporta nutrientes e gases?', imagem: 'img/sangue.png', proporcao: 'quadrada', opcoes: ['Água', 'Sangue', 'Urina'], correta: 'Sangue', dica: 'É de cor vermelha.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">coração</span> bate mais depressa quando fazemos desporto.', correta: 'Verdadeiro', imagem: 'img/exercicio.png', proporcao: 'quadrada', dica: 'O corpo precisa de mais oxigénio.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">sangue</span> serve para transportar as fezes.', correta: 'Falso', imagem: 'img/sangue.png', proporcao: 'quadrada', dica: 'Transporta oxigénio e nutrientes.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">pulso</span> permite sentir as batidas do coração.', correta: 'Verdadeiro', imagem: 'img/pulso.png', proporcao: 'quadrada', dica: 'Sente-se no pulso ou pescoço.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'As <span class="destaque-fundo">veias</span> são representadas a azul nos desenhos.', correta: 'Verdadeiro', imagem: 'img/veias_azul.png', proporcao: 'quadrada', dica: 'Distingue do sangue oxigenado.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">coração</span> humano tem quatro cavidades.', correta: 'Verdadeiro', imagem: 'img/coracao_interno.png', proporcao: 'quadrada', dica: 'Duas aurículas e dois ventrículos.' },
+
+		// --- SISTEMA REPRODUTOR ---
+		{ tipo: 'multipla', pergunta: 'Onde se desenvolve o bebé antes de nascer?', imagem: 'img/utero.png', proporcao: 'quadrada', opcoes: ['Estômago', 'Útero', 'Bexiga'], correta: 'Útero', dica: 'Fica no corpo da mulher.' },
+		{ tipo: 'multipla', pergunta: 'Quais são os órgãos femininos que produzem óvulos?', imagem: 'img/ovarios.png', proporcao: 'quadrada', opcoes: ['Ovários', 'Testículos', 'Rins'], correta: 'Ovários', dica: 'São dois e pequenos.' },
+		{ tipo: 'multipla', pergunta: 'Que órgãos masculinos produzem espermatozoides?', opcoes: ['Ovários', 'Testículos', 'Ureteres'], correta: 'Testículos', dica: 'Sistema masculino.' },
+		{ tipo: 'multipla', pergunta: 'Como se chama a célula reprodutora masculina?', imagem: 'img/espermatozoide.png', proporcao: 'quadrada', opcoes: ['Óvulo', 'Espermatozoide', 'Sangue'], correta: 'Espermatozoide', dica: 'Tem uma cauda para nadar.' },
+		{ tipo: 'multipla', pergunta: 'Como se chama a célula reprodutora feminina?', imagem: 'img/ovulo.png', proporcao: 'quadrada', opcoes: ['Óvulo', 'Espermatozoide', 'Célula'], correta: 'Óvulo', dica: 'Célula redonda e maior.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">reprodução</span> permite que a vida continue na Terra.', correta: 'Verdadeiro', imagem: 'img/familia.png', proporcao: 'quadrada', dica: 'Capacidade de ter descendentes.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">embrião</span> cresce dentro do estômago da mãe.', correta: 'Falso', imagem: 'img/gravidez.png', proporcao: 'quadrada', dica: 'Cresce no útero.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'Os homens e as mulheres têm sistemas reprodutores diferentes.', correta: 'Verdadeiro', imagem: 'img/diferencas.png', proporcao: 'quadrada', dica: 'Diferença biológica.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">fecundação</span> é a união do óvulo com o espermatozoide.', correta: 'Verdadeiro', imagem: 'img/fecundacao.png', proporcao: 'quadrada', dica: 'Início de uma nova vida.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">puberdade</span> é a fase em que ocorrem muitas mudanças no corpo.', correta: 'Verdadeiro', imagem: 'img/puberdade.png', proporcao: 'quadrada', dica: 'Transição para a idade adulta.' },
+
+		// --- SISTEMA EXCRETOR ---
+		{ tipo: 'multipla', pergunta: 'Que órgãos em forma de feijão filtram o sangue?', imagem: 'img/rins.png', proporcao: 'quadrada', opcoes: ['Rins', 'Fígado', 'Pulmões'], correta: 'Rins', dica: 'Eles produzem a urina.' },
+		{ tipo: 'multipla', pergunta: 'Onde fica guardada a urina antes de ser expelida?', imagem: 'img/bexiga.png', proporcao: 'quadrada', opcoes: ['Estômago', 'Bexiga', 'Rins'], correta: 'Bexiga', dica: 'Saco muscular elástico.' },
+		{ tipo: 'multipla', pergunta: 'Qual é o maior órgão do corpo que elimina suor?', imagem: 'img/pele.png', proporcao: 'retangular', zoom: true, opcoes: ['Pele', 'Rins', 'Coração'], correta: 'Pele', dica: 'Cobre todo o corpo.' },
+		{ tipo: 'multipla', pergunta: 'Como se chamam os canais que ligam os rins à bexiga?', imagem: 'img/ureteres.png', proporcao: 'quadrada', opcoes: ['Uretra', 'Ureteres', 'Artérias'], correta: 'Ureteres', dica: 'Leva a urina dos rins.' },
+		{ tipo: 'multipla', pergunta: 'Como se chama o canal de saída da urina para o exterior?', opcoes: ['Uretra', 'Ureteres', 'Esófago'], correta: 'Uretra', dica: 'Parte final das vias urinárias.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'O <span class="destaque-fundo">suor</span> ajuda a regular a temperatura do corpo.', correta: 'Verdadeiro', imagem: 'img/suor.png', proporcao: 'quadrada', dica: 'O corpo arrefece ao transpirar.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'Os <span class="destaque-fundo">rins</span> purificam o sangue.', correta: 'Verdadeiro', imagem: 'img/rins.png', proporcao: 'quadrada', dica: 'Funcionam como filtros potentes.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'Devemos beber pouca água para os rins descansarem.', correta: 'Falso', imagem: 'img/beber_agua.png', proporcao: 'quadrada', dica: 'Beber água ajuda os rins.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'A <span class="destaque-fundo">pele</span> elimina substâncias desnecessárias através dos poros.', correta: 'Verdadeiro', imagem: 'img/pele.png', proporcao: 'quadrada', dica: 'O suor sai por buraquinhos.' },
+		{ tipo: 'verdadeiro-falso', pergunta: 'As <span class="destaque-fundo">glândulas sudoríparas</span> produzem a urina.', correta: 'Falso', imagem: 'img/glandulas_sudoriparas.png', proporcao: 'quadrada', dica: 'Produzem suor.' },
+		
+		// --- MÚLTIPLAS COM IMAGENS ---
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa o <span class="destaque-fundo">Pâncreas</span>?',
+			opcoes: ['img/pancreas.png', 'img/estomago.png', 'img/figado.png'],
+			correta: 'img/pancreas.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa o <span class="destaque-fundo">Fígado</span>?',
+			opcoes: ['img/pancreas.png', 'img/estomago.png', 'img/figado.png'],
+			correta: 'img/figado.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa o <span class="destaque-fundo">Coração</span>?',
+			opcoes: ['img/pancreas.png', 'img/coracao.png', 'img/figado.png'],
+			correta: 'img/coracao.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa o <span class="destaque-fundo">Estômago</span>?',
+			opcoes: ['img/pancreas.png', 'img/estomago.png', 'img/figado.png'],
+			correta: 'img/estomago.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa a <span class="destaque-fundo">Traqueia</span>?',
+			opcoes: ['img/traqueia.png', 'img/estomago.png', 'img/figado.png'],
+			correta: 'img/traqueia.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa os <span class="destaque-fundo">Pulmões</span>?',
+			opcoes: ['img/pancreas.png', 'img/coracao.png', 'img/pulmoes.png'],
+			correta: 'img/pulmoes.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa os <span class="destaque-fundo">Rins</span>?',
+			opcoes: ['img/rins.png', 'img/pulmoes.png', 'img/coracao.png'],
+			correta: 'img/rins.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa a <span class="destaque-fundo">Bexiga</span>?',
+			opcoes: ['img/bexiga.png', 'img/estomago.png', 'img/utero.png'],
+			correta: 'img/bexiga.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa os <span class="destaque-fundo">Intestinos</span>?',
+			opcoes: ['img/intestino_delgado.png', 'img/esofago.png', 'img/traqueia.png'],
+			correta: 'img/intestino_delgado.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa o <span class="destaque-fundo">Espermatozoide</span>?',
+			opcoes: ['img/espermatozoide.png', 'img/ovulo.png', 'img/sangue.png'],
+			correta: 'img/espermatozoide.png',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual das imagens representa a <span class="destaque-fundo">Pele</span>?',
+			opcoes: ['img/pele.png', 'img/pancreas.png', 'img/figado.png'],
+			correta: 'img/pele.png',
+			dica: { tipo: 'retirar-um' }
+		}
+	];
+
+/* ==========================================================================
+   3. ARRANQUE E NAVEGAÇÃO
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		// Dentro do document.addEventListener("DOMContentLoaded", () => { ... })
+		const intro = document.getElementById('intro-bio-scan');
+		if (intro) {
+			// Toca o som de decolar (ou um som sci-fi) para o scan
+			setTimeout(() => { tocarSom('decolar'); }, 500); 
+			
+			// Mostra o foguetão a "sobrevoar" o menu no final da animação
+			setTimeout(() => { 
+				animarFoguetao('acerto'); 
+				tocarSom('flip');
+			}, 2800);
+
+			// Remove o elemento da intro do DOM para libertar memória após 4 segundos
+			setTimeout(() => { intro.remove(); }, 4500);
+		}
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+		mostrarEcra('ecra-selecao');
+		
+	});
+	
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if(alvo) alvo.style.display = 'flex';
+	}
+
+	/* --- SISTEMA DE ZOOM DE IMAGEM SEGURO --- */
+	function abrirZoomImagem(srcCaminho) {
+		const modal = document.getElementById('zoom-modal');
+		const img = document.getElementById('zoom-img-content');
+		if (modal && img) {
+			img.src = srcCaminho;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharZoomImagem() {
+		const modal = document.getElementById('zoom-modal');
+		if (modal) modal.classList.remove('active');
+	}
+
+	/* VARIÁVEL GLOBAL PARA MANTER A MEMÓRIA ENTRE JOGOS (COLOCAR NO TOPO DO JS SE NÃO EXISTIR) */
+	let poolQuizTotal = []; 
+
+	function prepararJogo(sistema) {
+		sistemaAtivo = sistema;
+		erradas = 0; desafioAtual = 0; podeInteragir = true;
+		
+		let base = [];
+		let nomeSistema = "";
+
+		// 1. SELEÇÃO DA BASE DE DADOS
+		if (sistema === 'quiz-total') {
+			base = BD_GERAL_CORPO_HUMANO;
+			nomeSistema = "Grande Quiz: Sistemas";
+			
+			// --- LÓGICA DE NÃO REPETIÇÃO ---
+			// Se a pilha de memória estiver vazia ou com menos de 10 perguntas, recarrega com as 50
+			if (poolQuizTotal.length < 10) {
+				poolQuizTotal = baralharArray([...base]); 
+				console.log("Pilha de Quiz recarregada com 50 questões.");
+			}
+			
+			// Retira (remove) 10 perguntas da pilha para esta partida
+			perguntasSorteadas = poolQuizTotal.splice(0, 10);
+			
+		} else {
+			// Lógica para sistemas individuais (Digestivo, etc.)
+			// Aqui podes manter a tua lógica anterior ou usar a mesma de exclusão
+			if (sistema === 'digestivo') base = BD_DIGESTIVO;
+			else if (sistema === 'circulatorio') base = BD_CIRCULATORIO;
+			else if (sistema === 'respiratorio') base = BD_RESPIRATORIO;
+			else if (sistema === 'reprodutor') base = BD_REPRODUTOR;
+			else if (sistema === 'excretor') base = BD_EXCRETOR;
+			
+			nomeSistema = "Sistema " + sistema.charAt(0).toUpperCase() + sistema.slice(1);
+			perguntasSorteadas = baralharArray(base).slice(0, 10);
+			
+			// Ao mudar para um sistema individual, limpamos a pilha do Quiz Total
+			poolQuizTotal = []; 
+		}
+		
+		// 2. INTERFACE E INICIALIZAÇÃO
+		const fog = document.getElementById('foguetao-feedback');
+		if(fog) { fog.style.display = "flex"; animarFoguetao('normal'); }
+		
+		document.getElementById('subtitulo-header').textContent = nomeSistema;
+		rondasParaDica = 0;
+		atualizarBotaoDica(); 
+		mostrarEcra('ecra-jogo');
+		atualizarBarraEstado();
+		carregarRonda();
+	}
+	
+	function atualizarBarraEstado() {
+		const p = document.getElementById('val-progresso');
+		const t = document.getElementById('val-total');
+		const e = document.getElementById('val-erros');
+		if(p) p.textContent = Math.min(desafioAtual + 1, 10);
+		if(t) t.textContent = 10;
+		if(e) e.textContent = erradas;
+
+		// PROGRESSO VISUAL CORRIGIDO: Começa logo preenchido em 10% na Ronda 1
+		const progressoReferencia = Math.min(desafioAtual + 1, 10);
+		document.getElementById('progress-fill').style.width = (progressoReferencia / 10 * 100) + '%';
+	}
+	
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		// Se o tempo de recarga chegou a zero, o botão fica ativo
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			// Se estiver em recarga, bloqueia o botão e mostra a ampulheta com a contagem decrescente
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO MAPA EM CASO DE ERRO --- */
+	function validarMapa(zona) {
+		const ronda = perguntasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		// Verifica se cada órgão foi colocado no local correto
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, zona);
+		} else {
+			validar(false, zona);
+			
+			// REPOSIÇÃO SUAVE DO MAPA EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os botões azuis de órgãos à esquerda
+				document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e esvazia visualmente as caixas sobrepostas do corpo
+				document.querySelectorAll('.slot-mapa').forEach(slot => {
+					slot.innerHTML = '';
+					slot.className = 'slot-mapa';
+				});
+			}, 800);
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO ARRASTAR EM CASO DE ERRO --- */
+	function validarArrastar(container, ronda) {
+		let tudoCerto = true;
+
+		// Compara cada conceito ordenado com o par correto respetivo
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, container);
+		} else {
+			validar(false, container);
+			
+			// REPOSIÇÃO DO ARRASTAMENTO EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os blocos cinzentos à esquerda
+				document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e repõe o texto inicial dos alvos da direita (remover as palavras erradas)
+				const botoesAlvo = document.getElementById('game-area').querySelectorAll('.coluna-ligar:last-child button');
+				ronda.alvos.forEach((alvo, index) => {
+					if (botoesAlvo[index]) {
+						botoesAlvo[index].textContent = alvo;
+					}
+				});
+			}, 800);
+		}
+	}
+
+/* ==========================================================================
+   4. CONSTRUÇÃO DINÂMICA DOS EXERCÍCIOS
+   ========================================================================== */
+	function carregarRonda() {
+		podeInteragir = true;
+		selecaoLigar = null; 
+		selecoesLigar = {};
+		paresElementosLigar = [];
+		arrastoAtivo = null; 
+		selecoesArrastar = {}; 
+		selecoesLacunas = {}; 
+		lacunaAtiva = null;
+		
+		// Remove realces de rondas anteriores
+		document.querySelectorAll('.highlight-correto').forEach(el => el.classList.remove('highlight-correto'));
+
+		const ronda = perguntasSorteadas[desafioAtual];
+		const area = document.getElementById('game-area');
+		if(!area || !ronda) return;
+		area.innerHTML = '';
+
+		// Limpa as classes do wrapper do ligar e lacunas de segurança
+		area.className = 'area-jogo-custom';
+		if(ronda.tipo === 'ligar') area.classList.add('jogo-tipo-ligar');
+		if(ronda.tipo === 'lacunas') area.classList.add('jogo-tipo-lacunas');
+
+		// A. INJETA IMAGEM MODULAR (QUADRADA OU RETANGULAR COM ZOOM OPCIONAL)
+		if(ronda.imagem && ronda.tipo !== 'mapa') {
+			const wrapper = document.createElement('div');
+			const proporcaoClasse = ronda.proporcao === 'quadrada' ? 'img-quadrada' : 'img-retangular';
+			wrapper.className = `card-imagem-zoomable ${proporcaoClasse}`;
+
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'imagem-evento-tempo';
+			img.alt = 'Imagem de suporte';
+			img.onerror = () => { wrapper.remove(); };
+			wrapper.appendChild(img);
+
+			// Se a propriedade "zoom" for verdadeira na base de dados, ativa a lupa e o clique!
+			if (ronda.zoom === true) {
+				wrapper.onclick = () => abrirZoomImagem(ronda.imagem);
+
+				const zoomBtn = document.createElement('div');
+				zoomBtn.className = 'btn-zoom-imagem';
+				zoomBtn.innerHTML = `
+					<svg viewBox="0 0 24 24">
+						<circle cx="11" cy="11" r="8"></circle>
+						<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					</svg>
+				`;
+				wrapper.appendChild(zoomBtn);
+			}
+
+			area.appendChild(wrapper);
+		}
+
+		// B. INJETA O TEXTO DA PERGUNTA
+		if (ronda.pergunta && ronda.tipo !== 'mapa') {
+			const txt = document.createElement('div');
+			txt.className = 'pergunta-texto';
+			txt.innerHTML = ronda.pergunta;
+			area.appendChild(txt);
+		}
+
+		// C. GERADOR DE SELEÇÃO MÚLTIPLA VIBRANTE (SUPORTA TEXTO OU IMAGENS)
+		if (ronda.tipo === 'multipla') {
+			const container = document.createElement('div'); container.className = 'opcoes-container';
+			const baralhadas = [...ronda.opcoes].sort(() => Math.random() - 0.5);
+			const coresSorteio = obterCoresAleatorias(baralhadas.length);
+
+			baralhadas.forEach((opt, idx) => {
+				const b = document.createElement('button');
+				b.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				
+				// VERIFICAÇÃO INTELIGENTE: Se a opção for um caminho de imagem, desenha a imagem
+				if (opt.endsWith('.png') || opt.endsWith('.svg') || opt.endsWith('.jpg') || opt.endsWith('.webp')) {
+					const imgOpt = document.createElement('img');
+					imgOpt.src = opt;
+					imgOpt.className = 'imagem-opcao-vibrante';
+					imgOpt.alt = '';
+					imgOpt.onerror = () => { imgOpt.style.display = 'none'; };
+					b.appendChild(imgOpt);
+				} else {
+					// Caso contrário, injeta o texto normal
+					b.textContent = opt;
+				}
+				
+				b.onclick = () => validar(opt === ronda.correta, b);
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+		// D. GERADOR DE LIGAR COLUNAS (COM DESFAZER E CLASSES DO CSS)
+		else if (ronda.tipo === 'ligar') {
+			const container = document.createElement('div'); container.className = 'coluna-ligar-container';
+			const colEsq = document.createElement('div'); colEsq.className = 'coluna-ligar';
+			const colDir = document.createElement('div'); colDir.className = 'coluna-ligar';
+			
+			ronda.esquerda.forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-azul'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarEsq(it, b, ronda); };
+				colEsq.appendChild(b);
+			});
+			[...ronda.direita].sort(() => Math.random() - 0.5).forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarDir(it, b, ronda); };
+				colDir.appendChild(b);
+			});
+			container.appendChild(colEsq); container.appendChild(colDir); area.appendChild(container);
+		}
+		// E. GERADOR DE TEXTO COM LACUNAS (MÉTODO PREMIUM 2 TOQUES)
+		else if (ronda.tipo === 'lacunas') {
+			const p = document.createElement('div'); p.className = 'texto-paragrafo-lacunas';
+			let html = ronda.texto;
+			ronda.respostas.forEach((r, i) => html = html.replace(`[${i}]`, `<span class="slot-vazio" id="slot-lacuna-${i}">...</span>`));
+			p.innerHTML = html; area.appendChild(p);
+			
+			const banco = document.createElement('div'); banco.className = 'banco-opcoes';
+			const distratoresSeguros = ronda.distratores || [];
+			const todasAsOpcoes = baralharArray([...ronda.respostas, ...distratoresSeguros]);
+
+			todasAsOpcoes.forEach(pal => {
+				const b = document.createElement('button'); b.className = 'palavra-banco'; b.textContent = pal;
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.palavra-banco').forEach(x => x.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					lacunaAtiva = { elemento: b, texto: pal };
+
+					// Ilumina apenas os slots vazios
+					document.querySelectorAll('.slot-vazio').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+				banco.appendChild(b);
+			});
+			area.appendChild(banco);
+
+			// Ativa ação de clique nos slots vazios para receber a palavra
+			document.querySelectorAll('.slot-vazio').forEach((slot, idx) => {
+				slot.onclick = () => {
+					if (!lacunaAtiva) {
+						const palavraAtual = slot.querySelector('strong')?.textContent;
+						if (palavraAtual) {
+							tocarSom('flip');
+							slot.textContent = '...';
+							slot.classList.remove('preenchido');
+							delete selecoesLacunas[idx];
+							
+							document.querySelectorAll('.palavra-banco').forEach(b => {
+								if (b.textContent === palavraAtual) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						} else {
+							showToast("Seleciona primeiro uma palavra em baixo!");
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const palavraTexto = lacunaAtiva.texto;
+
+					const palavraAnterior = slot.querySelector('strong')?.textContent;
+					if (palavraAnterior) {
+						document.querySelectorAll('.palavra-banco').forEach(b => {
+							if (b.textContent === palavraAnterior) {
+								b.disabled = false;
+								b.style.opacity = '1';
+							}
+						});
+					}
+
+					slot.innerHTML = `<strong style="color:var(--azul-escuro); font-size:1.1rem;">${palavraTexto}</strong>`;
+					slot.classList.add('preenchido');
+					selecoesLacunas[idx] = palavraTexto;
+
+					lacunaAtiva.elemento.classList.remove('selecionado');
+					lacunaAtiva.elemento.style.opacity = '0.3';
+					lacunaAtiva.elemento.disabled = true;
+					lacunaAtiva = null;
+
+					document.querySelectorAll('.slot-vazio').forEach(s => s.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesLacunas).length === ronda.respostas.length) {
+						let tudoOk = true; 
+						ronda.respostas.forEach((res, index) => { 
+							if(selecoesLacunas[index] !== res) tudoOk = false; 
+						});
+						validar(tudoOk, p);
+					}
+				};
+			});
+		}
+		// F. GERADOR DE ARRASTAR E LIGAR (SISTEMA DE DOIS TOQUES)
+		else if (ronda.tipo === 'arrastar') {
+			const container = document.createElement('div'); container.style.display="flex"; container.style.gap="30px";
+			const colItens = document.createElement('div'); colItens.className="coluna-ligar";
+			const colAlvos = document.createElement('div'); colAlvos.className="coluna-ligar";
+			
+			const itensEmbaralhados = baralharArray(ronda.itens);
+
+			itensEmbaralhados.forEach(it => {
+				const b = document.createElement('button'); b.className = 'bloco-arrastar'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir || b.disabled) return; document.querySelectorAll('.bloco-arrastar').forEach(x=>x.classList.remove('selecionado')); b.classList.add('selecionado'); arrastoAtivo = {val: it, btn: b}; tocarSom('flip'); };
+				colItens.appendChild(b);
+			});
+
+			ronda.alvos.forEach(al => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = al;
+				
+				b.onclick = () => {
+					// MECÂNICA DE DESFAZER ATIVA NO ARRASTAR: Se clicar num alvo já ocupado sem palavra selecionada
+					if (!arrastoAtivo) {
+						let itemEncontrado = null;
+						for (let item in selecoesArrastar) {
+							if (selecoesArrastar[item] === al) {
+								itemEncontrado = item;
+								break;
+							}
+						}
+						
+						if (itemEncontrado) {
+							tocarSom('flip');
+							delete selecoesArrastar[itemEncontrado];
+							b.textContent = al; // Devolve o botão ao seu texto original de etapa
+
+							// Reativa o bloco correspondente no lado esquerdo
+							document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(bloco => {
+								if (bloco.textContent === itemEncontrado) {
+									bloco.disabled = false;
+									bloco.style.opacity = '1';
+								}
+							});
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.val;
+					selecoesArrastar[valorSelecionado] = al;
+					
+					b.innerHTML = `${al}<br><small style="color:white; opacity:0.8;">(${valorSelecionado})</small>`; 
+					arrastoAtivo.btn.disabled = true; 
+					arrastoAtivo.btn.style.opacity = "0.3"; 
+					arrastoAtivo = null;
+
+					if (Object.keys(selecoesArrastar).length === ronda.itens.length) {
+						// CORREÇÃO: Encaminha para a validação e reposição do arrastamento em caso de erro!
+						setTimeout(() => { validarArrastar(container, ronda); }, 400);
+					}
+				};
+				colAlvos.appendChild(b);
+			});
+			container.appendChild(colItens); container.appendChild(colAlvos); area.appendChild(container);
+		}
+
+		// G. NOVO CASO: MAPA / ESQUEMA ANATÓMICO COM COORDENADAS E LINHAS VETORIAIS DINÂMICAS
+		else if (ronda.tipo === 'mapa') {
+			selecoesArrastar = {};
+			arrastoAtivo = null;
+			totalArrastar = Object.keys(ronda.pares).length;
+
+			const zona = document.createElement('div');
+			zona.style.display = 'flex';
+			zona.style.alignItems = 'center';
+			zona.style.justifyContent = 'center';
+			zona.style.gap = '25px';
+			zona.style.width = '100%';
+			zona.style.flexWrap = 'wrap';
+
+			const itens = document.createElement('div');
+			itens.className = 'coluna-ligar';
+
+			const itensEmbaralhados = baralharArray(ronda.itens);
+			itensEmbaralhados.forEach(valor => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-vibrante bg-azul';
+				b.textContent = valor;
+				b.style.fontSize = '0.92rem';
+
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.btn-opcao-vibrante').forEach(b => b.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					arrastoAtivo = { val: valor, btn: b };
+
+					document.querySelectorAll('.slot-mapa').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+				itens.appendChild(b);
+			});
+
+			const wrapper = document.createElement('div');
+			const mapaProporcao = 'mapa-quadrado'; /* Forçado 1:1 Quadrado para o Corpo Humano */
+			wrapper.className = `mapa-relevo-wrapper ${mapaProporcao}`;
+
+			// Injeta o mapa de fundo
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'mapa-relevo-imagem';
+			img.alt = 'Esquema do Corpo';
+			img.onerror = () => { wrapper.remove(); };
+			wrapper.appendChild(img);
+
+			// NOVO: Desenha as linhas pontilhadas dinamicamente na tela transparente sobre o mapa
+			if (ronda.coords.linhas) {
+				const svgNS = "http://www.w3.org/2000/svg";
+				const svg = document.createElementNS(svgNS, "svg");
+				svg.setAttribute("viewBox", "0 0 100 100");
+				svg.style.position = "absolute";
+				svg.style.top = "0";
+				svg.style.left = "0";
+				svg.style.width = "100%";
+				svg.style.height = "100%";
+				svg.style.pointerEvents = "none";
+				svg.style.zIndex = "5";
+
+				ronda.coords.linhas.forEach(linhaObj => {
+				const path = document.createElementNS(svgNS, "path");
+				path.setAttribute("d", linhaObj.d); // Lê o trajeto d
+				path.setAttribute("stroke", linhaObj.cor || "#0091ff"); // Lê a cor individual definida ou usa azul por padrão
+				path.setAttribute("stroke-width", "0.6");
+				path.setAttribute("fill", "none");
+				svg.appendChild(path);
+			});
+
+				wrapper.appendChild(svg);
+			}
+
+			// Leitura das coordenadas dinâmicas da base de dados (Evita erros de cruzamento)
+			const tops = ronda.coords.tops;
+			const lefts = ronda.coords.lefts;
+			const widths = ronda.coords.widths;
+			const heights = ronda.coords.heights || ['6%', '6%', '6%', '6%', '6%'];
+
+			ronda.alvos.forEach((alvo, index) => {
+				const slot = document.createElement('div');
+				slot.className = 'slot-mapa';
+				slot.style.top = tops[index];
+				slot.style.left = lefts[index];
+				slot.style.width = widths[index];
+				slot.style.height = heights[index];
+
+				slot.onclick = () => {
+					if (!arrastoAtivo) {
+						const palavraAtual = slot.querySelector('strong')?.textContent;
+						if (palavraAtual) {
+							tocarSom('flip');
+							slot.innerHTML = '';
+							slot.classList.remove('preenchido');
+							delete selecoesArrastar[palavraAtual];
+							
+							document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(b => {
+								if (b.textContent === palavraAtual) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						} else {
+							showToast("Seleciona primeiro uma palavra à esquerda!", false);
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.val;
+					selecoesArrastar[valorSelecionado] = alvo;
+
+					slot.innerHTML = `<strong>${valorSelecionado}</strong>`;
+					slot.classList.add('preenchido');
+
+					arrastoAtivo.btn.classList.remove('selecionado');
+					arrastoAtivo.btn.style.opacity = '0.3';
+					arrastoAtivo.btn.disabled = true;
+					arrastoAtivo = null;
+
+					document.querySelectorAll('.slot-mapa').forEach(s => s.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesArrastar).length === totalArrastar) {
+						setTimeout(() => { validarMapa(zona); }, 400);
+					}
+				};
+
+				wrapper.appendChild(slot);
+			});
+
+			zona.appendChild(itens);
+			zona.appendChild(wrapper);
+			area.appendChild(zona);
+		}
+		// H. NOVO CASO: JOGO DE VERDADEIRO OU FALSO (BOTÕES FIXOS DE CORES FIXAS)
+		else if (ronda.tipo === 'verdadeiro-falso') {
+			const container = document.createElement('div'); 
+			container.className = 'opcoes-container';
+
+			// Botão Fixo "Verdadeiro" (Sempre Verde Vibrante)
+			const btnVerdadeiro = document.createElement('button');
+			btnVerdadeiro.className = 'btn-opcao-vibrante bg-verde';
+			btnVerdadeiro.textContent = 'Verdadeiro';
+			btnVerdadeiro.onclick = () => validar(ronda.correta === 'Verdadeiro', btnVerdadeiro);
+
+			// Botão Fixo "Falso" (Sempre Vermelho Vibrante)
+			const btnFalso = document.createElement('button');
+			btnFalso.className = 'btn-opcao-vibrante bg-vermelho';
+			btnFalso.textContent = 'Falso';
+			btnFalso.onclick = () => validar(ronda.correta === 'Falso', btnFalso);
+
+			container.appendChild(btnVerdadeiro);
+			container.appendChild(btnFalso);
+			area.appendChild(container);
+		}
+		resetTimerImpaciencia();
+	}
+
+/* ==========================================================================
+   5. LÓGICA DE COORDENAÇÃO DO JOGO DE LIGAR (DESFAZER E ESTILO)
+   ========================================================================== */
+	function selecionarLigarEsq(it, b, ronda) {
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			if (selecaoLigar) {
+				selecaoLigar.btn.classList.remove('selecionado');
+				selecaoLigar = null;
+			}
+			return;
+		}
+
+		if (selecaoLigar && selecaoLigar.btn === b) {
+			b.classList.remove('selecionado');
+			selecaoLigar = null;
+			tocarSom('flip');
+			return;
+		}
+
+		tocarSom('flip');
+		document.querySelectorAll('.coluna-ligar button').forEach(x => x.classList.remove('selecionado'));
+		b.classList.add('selecionado');
+		selecaoLigar = { val: it, btn: b };
+	}
+
+	function selecionarLigarDir(it, b, ronda) {
+		if (!selecaoLigar || !podeInteragir) return;
+		
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			selecaoLigar = null;
+			return;
+		}
+
+		const ok = (ronda.pares[selecaoLigar.val] === it);
+		
+		if (ok) {
+			b.classList.add('ligado');
+			selecaoLigar.btn.classList.add('ligado');
+			selecaoLigar.btn.classList.remove('selecionado');
+
+			selecoesLigar[selecaoLigar.val] = it;
+			paresElementosLigar.push({
+				esqBtn: selecaoLigar.btn,
+				dirBtn: b,
+				esqVal: selecaoLigar.val,
+				dirVal: it
+			});
+
+			selecaoLigar = null;
+
+			const totalPares = Object.keys(ronda.pares).length;
+			if (Object.keys(selecoesLigar).length === totalPares) {
+				validar(true, b);
+			} else {
+				tocarSom('acerto');
+			}
+		} else {
+			validar(false, b);
+			
+			setTimeout(() => {
+				selecoesLigar = {};
+				selecaoLigar = null;
+				paresElementosLigar = [];
+				document.querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.classList.remove('selecionado', 'ligado');
+					btn.style.opacity = '1';
+				});
+			}, 600);
+		}
+	}
+
+/* ==========================================================================
+   6. VERIFICAÇÃO E TRANSIÇÕES DE FEEDBACK
+   ========================================================================== */
+	function validar(correto, el) {
+		if (!podeInteragir) return; podeInteragir = false; clearTimeout(timerImpaciencia);
+		if (correto) {
+			el.classList.add('sucesso-vibrante'); animarFoguetao('acerto'); tocarSom('decolar'); // Ativa o rugido do motor ao subir!
+			
+			// ADICIONADO: Reduz o cooldown da dica em caso de acerto!
+			if (rondasParaDica > 0) {
+				rondasParaDica--;
+			}
+			atualizarBotaoDica();
+
+			setTimeout(() => { desafioAtual++; if(desafioAtual < 10) { atualizarBarraEstado(); carregarRonda(); } else finalizarJogo(); }, 1600);
+		} else {
+			el.classList.add('erro-vibrante'); erradas++; atualizarBarraEstado(); animarFoguetao('erro'); tocarSom('erro');
+			setTimeout(() => { el.classList.remove('erro-vibrante'); podeInteragir = true; resetTimerImpaciencia(); }, 600);
+		}
+	}
+
+	function animarFoguetao(estado) {
+		const fog = document.getElementById('foguetao-feedback');
+		if (!fog) return;
+
+		// Limpa as animações antigas para permitir que ocorra o reflow
+		fog.classList.remove('foguetao-normal', 'foguetao-erro', 'foguetao-decolar');
+		void fog.offsetWidth;
+
+		if (estado === 'normal') {
+			fog.src = "img/foguetao_normal.png"; // Carrega o foguetão em repouso
+			fog.classList.add('foguetao-normal');
+		}
+		else if (estado === 'erro') {
+			fog.src = "img/foguetao_normal.png"; // Usa o mesmo em repouso para abanar no erro
+			fog.classList.add('foguetao-erro');
+			setTimeout(() => animarFoguetao('normal'), 500);
+		}
+		else if (estado === 'acerto') {
+			fog.src = "img/foguetao_decolar.png"; // Carrega o foguetão com chamas e propulsão!
+			fog.classList.add('foguetao-decolar');
+			setTimeout(() => { 
+				if (desafioAtual < 10) animarFoguetao('normal'); 
+			}, 1500);
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+		timerImpaciencia = setTimeout(() => { if(btnDica) btnDica.classList.add('dica-impaciente'); }, 15000);
+	}
+
+	function usarDica() {
+		if (rondasParaDica > 0 || !podeInteragir) return;
+		
+		const ronda = perguntasSorteadas[desafioAtual];
+		const configDica = ronda.dica;
+		if (!configDica) return;
+
+		tocarSom('flip');
+
+		// 1. Dica tipo TEXTO (Abre Modal)
+		if (typeof configDica === 'string') {
+			document.getElementById('modal-dica-conteudo').innerHTML = `<p>${configDica}</p>`;
+			document.getElementById('modal-ajuda').classList.add('active');
+		}
+		// 2. Dica tipo HIGHLIGHT (Delega para a função inteligente)
+		else if (configDica.tipo === 'highlight') {
+			aplicarHighlightRespostaCorreta(ronda);
+		}
+		// 3. Dica tipo 50-50 ou RETIRAR-UM
+		else if (configDica.tipo === '50-50' || configDica.tipo === 'retirar-um') {
+			// Seleciona botões que não estão desativados nem ligados
+			const botoes = Array.from(document.querySelectorAll('.btn-opcao-vibrante:not(.ligado), .palavra-banco:not([disabled])'));
+			let errados = botoes.filter(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				
+				// Verifica se é a correta (suporta texto ou imagem)
+				const isCorretaMultipla = (texto === ronda.correta || imgInside === ronda.correta);
+				const isCorretaLacuna = ronda.respostas && ronda.respostas.includes(texto);
+				
+				return !isCorretaMultipla && !isCorretaLacuna;
+			});
+
+			errados = baralharArray(errados);
+			const qtdParaEsconder = (configDica.tipo === '50-50') ? Math.max(1, Math.floor(errados.length / 2)) : 1;
+
+			for (let i = 0; i < qtdParaEsconder; i++) {
+				errados[i].style.opacity = '0.2';
+				errados[i].style.pointerEvents = 'none';
+				errados[i].setAttribute('disabled', 'true');
+			}
+			showToast("Removi opções erradas!");
+		}
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+
+	function fecharModalDica() { document.getElementById('modal-ajuda').classList.remove('active'); }
+
+	function finalizarJogo() {
+		document.getElementById('foguetao-feedback').style.display = "none";
+		mostrarEcra('ecra-fim');
+		document.getElementById('final-erros').textContent = erradas;
+		const rank = document.getElementById('rank-container');
+		let img = erradas === 0 ? "rank_ouro.svg" : (erradas <= 3 ? "rank_prata.svg" : "rank_bronze.svg");
+		rank.innerHTML = `<img src="../../../SVG/${img}" class="taca-vitoria" style="width:120px;">`;
+		tocarSom('vitoria'); dispararConfetis();
+	}
+
+	function voltarAoMenuPrincipal() {
+		mostrarEcra('ecra-selecao');
+		document.getElementById('foguetao-feedback').style.display = "none";
+		document.getElementById('subtitulo-header').textContent = "Exploração de Sistemas";
+		limparConfetis();
+	}
+
+	function confirmarSair() {
+		voltarAoMenuPrincipal();
+	}
+
+	function reiniciarJogo() { prepararJogo(sistemaAtivo); limparConfetis();}
+
+/* ==========================================================================
+   7. ÁUDIO, CONFETIS E AUXILIARES (COM COMPATIBILIDADE SEGURA)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha na inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('pointerdown', initAudio, { once: true });
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+	function tocarSom(t) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+			const agora = audioCtx.currentTime; // Variável unificada como agora
+
+			if (t === 'acerto') {
+				const notas = [783.99, 1046.50];
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (t === 'erro') {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle';
+				o.frequency.setValueAtTime(220, agora);
+				o.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				g.gain.setValueAtTime(0.08, agora);
+				o.start(agora);
+				o.stop(agora + 0.3);
+			} else if (t === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0.08, agora + nota.tempo);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			} else if (t === 'decolar') {
+				// NOVO: Som de Propulsão Sci-Fi Limpo e Cristalino (Zwoooop!)
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; // Onda 100% pura e limpa, sem qualquer distorção
+				o.frequency.setValueAtTime(150, agora);
+				// Varredura exponencial ascendente muito rápida (efeito de aceleração para o espaço)
+				o.frequency.exponentialRampToValueAtTime(1800, agora + 0.8); 
+				g.gain.setValueAtTime(0, agora);
+				g.gain.linearRampToValueAtTime(0.12, agora + 0.05); // Ataque de ignição rápido
+				g.gain.exponentialRampToValueAtTime(0.001, agora + 0.8); // Desvanece suavemente
+				o.start(agora);
+				o.stop(agora + 0.8);
+			} else if (t === 'flip') { // CORREÇÃO: Removida a chaveta extra "}" que quebrava a sintaxe aqui
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.setValueAtTime(400, agora);
+				o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+				g.gain.setValueAtTime(0.05, agora);
+				o.start(agora);
+				o.stop(agora + 0.1);
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		c.innerHTML = '';
+		const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = '';
+		}
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		// Seleciona todos os elementos interativos possíveis
+		const todosBotoes = document.querySelectorAll('.btn-opcao-vibrante, .btn-opcao, .bloco-arrastar, .palavra-banco, .cartao-opcao-visual');
+
+		/* A. CASO: ESCOLHA MÚLTIPLA */
+		if (ronda.tipo === 'multipla') {
+			todosBotoes.forEach(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				// Verifica se o texto ou o SRC da imagem coincide com a resposta certa
+				if (texto === ronda.correta || imgInside === ronda.correta) {
+					btn.classList.add('highlight-correto');
+					setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+
+		/* B. CASO: LIGAR (Lógica Inteligente) */
+		else if (ronda.tipo === 'ligar') {
+			// Encontra o primeiro par da esquerda que AINDA NÃO está ligado
+			const parPendente = Object.entries(ronda.pares).find(([esq, dir]) => {
+				const btnEsq = Array.from(todosBotoes).find(b => b.textContent.trim() === esq);
+				return btnEsq && !btnEsq.classList.contains('ligado');
+			});
+
+			if (parPendente) {
+				const [valEsq, valDir] = parPendente;
+				todosBotoes.forEach(btn => {
+					const txt = btn.textContent.trim();
+					if (txt === valEsq || txt === valDir) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+			}
+		}
+
+		/* C. CASO: ARRASTAR OU MAPA */
+		else if (ronda.tipo === 'arrastar' || ronda.tipo === 'mapa') {
+			// Encontra o primeiro item que ainda não foi colocado no alvo
+			const itemPendente = Object.keys(ronda.pares).find(item => !selecoesArrastar[item]);
+
+			if (itemPendente) {
+				todosBotoes.forEach(el => {
+					if (el.textContent.trim() === itemPendente) {
+						el.classList.add('highlight-correto');
+						setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+					}
+				});
+				showToast("Observa o destaque!");
+			}
+		}
+	}
+</script>
+</body>
+</html>

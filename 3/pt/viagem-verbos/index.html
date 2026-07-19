@@ -1579,11 +1579,13 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 				...textoSorteado,
 				perguntas: baralharArray(textoSorteado.perguntas) // Baralha as perguntas para evitar cliques previsíveis! [1.1.4]
 			};
+		// ... dentro de iniciarJogoVerbos ...
 		} else if (nivelKey === 'nivel3') {
-			totalDesafiosNivel = 5; // Encontrar os 5 verbos escondidos [1.1.4]
 			const textosDisponiveis = dbVerbos.nivel3.filter(t => t.id !== l3UltimoTextoId);
 			l3TextoAtivo = baralharArray(textosDisponiveis)[0];
 			l3UltimoTextoId = l3TextoAtivo.id;
+			
+			totalDesafiosNivel = l3TextoAtivo.alvos.length; 
 		} else if (nivelKey === 'nivel4') {
 			totalDesafiosNivel = 4; // Completar as 4 lacunas do diário de bordo [1.1.4]
 			const textosDisponiveis = dbVerbos.nivel4.filter(t => t.template !== l4UltimoTemplate);
@@ -1671,6 +1673,7 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 			l4UltimoTemplate = l4TextoAtivo.template; // Guarda este template na memória global [2]
 		}
 
+		limparConfetis();
 		atualizarPlacar();
 		atualizarBotaoDica();
 		mostrarEcra('ecra-jogo');
@@ -1774,7 +1777,7 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 		const cardPergunta = document.createElement('div');
 		cardPergunta.className = 'quiz-pergunta-card';
 		cardPergunta.style.marginBottom = '20px';
-		cardPergunta.innerHTML = pergunta.instrucao; // Suporta as tuas novas classes de destaque! [2]
+		cardPergunta.innerHTML = pergunta.instrucao;
 		area.appendChild(cardPergunta);
 
 		// Card do Texto do Diário de Bordo
@@ -1788,7 +1791,7 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 		});
 
 		area.appendChild(cardTexto);
-		falarMarinheiro("Lê a página do diário e clica no verbo correspondente! ⚓", 4000);
+		falarMarinheiro("Lê a página do diário e clica no verbo correspondente!", 4000);
 	}
 
 	function submeterCliqueTexto(palavraClicada, spanElement) {
@@ -1797,7 +1800,7 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 		if (palavraClicada === pergunta.resposta) {
 			spanElement.classList.add('correta');
 			tocarSom('acerto');
-			falarMarinheiro("Incrível! Decifraste a pista do diário de bordo! ⚓", 3000);
+			falarMarinheiro("Incrível! Decifraste a pista do diário de bordo!", 3000);
 
 			setTimeout(() => {
 				desafioAtual++;
@@ -1813,7 +1816,7 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 			tocarSom('erro');
 			erradas++;
 			atualizarPlacar();
-			falarMarinheiro("Humm, não é esse! Reler a pergunta da carta ajuda a encontrar o verbo! ⚓", 4500);
+			falarMarinheiro("Humm, não é esse! Reler a pergunta da carta ajuda a encontrar o verbo!", 4500);
 
 			setTimeout(() => {
 				spanElement.classList.remove('errada');
@@ -1824,62 +1827,71 @@ const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="m
 	/* =========================================================================
    NÍVEL 3: PESCA DE VERBOS (Encontrar todos os 5 alvos) [1.1.4]
    ========================================================================= */
-function carregarNivel3(area) {
-    const cardPergunta = document.createElement('div');
-    cardPergunta.className = 'quiz-pergunta-card';
-    cardPergunta.style.marginBottom = '20px';
-    cardPergunta.textContent = `Ajuda-me a pescar todos os ${l3TextoAtivo.alvos.length} verbos escondidos nesta página de diário!`;
-    area.appendChild(cardPergunta);
+	function carregarNivel3(area) {
+		area.innerHTML = ''; // Limpeza de segurança
 
-    const cardTexto = document.createElement('div');
-    cardTexto.className = 'texto-clicavel-card';
-    
-    // Converte dinamicamente todas as outras palavras do texto em alvos normais (sem pistas no hover) [2]
-    cardTexto.innerHTML = prepararTextoNivel3(l3TextoAtivo.texto);
+		const cardPergunta = document.createElement('div');
+		cardPergunta.className = 'quiz-pergunta-card';
+		cardPergunta.style.marginBottom = '20px';
+		// Dinâmico: usa a quantidade real de alvos do texto sorteado
+		cardPergunta.textContent = `Ajuda-me a pescar todos os ${l3TextoAtivo.alvos.length} verbos escondidos nesta página de diário!`;
+		area.appendChild(cardPergunta);
 
-    // Ouvinte para os verbos corretos
-    cardTexto.querySelectorAll('.palavra-alvo-l3').forEach(span => {
-        const palavra = span.getAttribute('data-palavra');
-        
-        if (l3AlvosEncontrados.includes(palavra)) {
-            span.classList.add('correta');
-        }
+		const cardTexto = document.createElement('div');
+		cardTexto.className = 'texto-clicavel-card';
+		cardTexto.innerHTML = prepararTextoNivel3(l3TextoAtivo.texto);
+		area.appendChild(cardTexto);
 
-        span.onclick = () => {
-            if (!l3AlvosEncontrados.includes(palavra)) {
-                span.classList.add('correta');
-                tocarSom('acerto');
-                l3AlvosEncontrados.push(palavra);
-                desafioAtual = l3AlvosEncontrados.length;
-                atualizarPlacar();
+		// Ouvinte para os verbos corretos
+		cardTexto.querySelectorAll('.palavra-alvo-l3').forEach(span => {
+			const palavra = span.getAttribute('data-palavra');
+			
+			// Se voltarmos ao nível e já tiver sido encontrada
+			if (l3AlvosEncontrados.includes(palavra)) {
+				span.classList.add('correta');
+			}
 
-                const restantes = l3TextoAtivo.alvos.length - l3AlvosEncontrados.length;
-                if (restantes > 0) {
-                    falarMarinheiro(`Muito bem! Pescámos o verbo "${palavra}". Faltam pescar mais ${restantes}! ⚓`, 4000);
-                } else {
-                    falarMarinheiro("Excelente pesca! Encontraste todos os verbos da página! ⚓", 3500);
-                    setTimeout(finalizarJogo, 2000);
-                }
-            }
-        };
-    });
+			span.onclick = () => {
+				// PROTEÇÃO: Se já clicou, não faz nada (evita erro de contagem)
+				if (span.classList.contains('correta')) return;
 
-    // Ouvinte para as palavras normais (erradas)
-    cardTexto.querySelectorAll('.palavra-normal-l3').forEach(span => {
-        span.onclick = () => {
-            span.classList.add('errada');
-            tocarSom('erro');
-            erradas++;
-            atualizarPlacar();
-            falarMarinheiro("Essa palavra não é um verbo! Lembra-te: os verbos descrevem ações, estados ou fenómenos! ⚓", 4500);
-            setTimeout(() => span.classList.remove('errada'), 400);
-        };
-    });
+				span.classList.add('correta');
+				tocarSom('acerto');
+				
+				// Adicionamos à lista de encontrados
+				l3AlvosEncontrados.push(palavra);
+				
+				// O desafio atual no placar é o número de verbos já pescados
+				desafioAtual = l3AlvosEncontrados.length;
+				atualizarPlacar();
 
-    area.appendChild(cardTexto);
-    falarMarinheiro(`Timoneiro, estão ${l3TextoAtivo.alvos.length} verbos escondidos sob a água! Lança a tua cana de pesca! 🎣`, 5000);
-}
+				const restantes = l3TextoAtivo.alvos.length - l3AlvosEncontrados.length;
+				
+				if (restantes > 0) {
+					falarMarinheiro(`Muito bem! Pescámos o verbo "${palavra}". Faltam pescar mais ${restantes}!`, 3000);
+				} else {
+					falarMarinheiro("Excelente pesca! Encontraste todos os verbos da página!", 3500);
+					setTimeout(finalizarJogo, 2000);
+				}
+			};
+		});
 
+		// Ouvinte para as palavras normais (erradas)
+		cardTexto.querySelectorAll('.palavra-normal-l3').forEach(span => {
+			span.onclick = () => {
+				if (span.classList.contains('errada')) return;
+
+				span.classList.add('errada');
+				tocarSom('erro');
+				erradas++;
+				atualizarPlacar();
+				falarMarinheiro("Essa palavra não é um verbo! Lembra-te: os verbos descrevem ações!", 4000);
+				setTimeout(() => span.classList.remove('errada'), 500);
+			};
+		});
+
+		falarMarinheiro(`Timoneiro, estão ${l3TextoAtivo.alvos.length} verbos escondidos sob a água! Lança a tua cana!`, 5000);
+	}
 // Analisador dinâmico de texto (Impede desvelar no hover) [2]
 function prepararTextoNivel3(htmlTexto) {
     const tempDiv = document.createElement('div');
@@ -1945,7 +1957,7 @@ function prepararTextoNivel3(htmlTexto) {
 		opcoesDiv.className = 'opcoes-quiz-container'; // Estilizado pelo ID generoso
 		area.appendChild(opcoesDiv);
 
-		falarMarinheiro("Primeiro, clica num dos espaços vazios [ --- ] do diário de bordo! ⚓", 4000);
+		falarMarinheiro("Primeiro, clica num dos espaços vazios [ --- ] do diário de bordo!", 4000);
 	}
 
 	function selecionarLacuna(blankId) {
@@ -1969,7 +1981,7 @@ function prepararTextoNivel3(htmlTexto) {
 			containerOpcoes.appendChild(btn);
 		});
 
-		falarMarinheiro(`Como conjugas o verbo para este espaço? Escolhe uma das opções! ⚓`, 3000);
+		falarMarinheiro(`Como conjugas o verbo para este espaço? Escolhe uma das opções!`, 3000);
 	}
 
 	function submeterEscolhaLacuna(opcaoEscolhida, botaoClicado) {
@@ -1991,9 +2003,9 @@ function prepararTextoNivel3(htmlTexto) {
 			atualizarPlacar();
 
 			if (desafioAtual < totalDesafiosNivel) {
-				falarMarinheiro("Excelente! Esse espaço ficou preenchido com o tempo correto. Clica no seguinte! ⚓", 3500);
+				falarMarinheiro("Excelente! Esse espaço ficou preenchido com o tempo correto. Clica no seguinte!", 3500);
 			} else {
-				falarMarinheiro("Perfeito! Completaste todas as anotações do diário de bordo! ⚓", 4000);
+				falarMarinheiro("Perfeito! Completaste todas as anotações do diário de bordo!", 4000);
 				setTimeout(finalizarJogo, 2000);
 			}
 
@@ -2002,7 +2014,7 @@ function prepararTextoNivel3(htmlTexto) {
 			tocarSom('erro');
 			erradas++;
 			atualizarPlacar();
-			falarMarinheiro("Humm, esse tempo verbal não concorda com o texto. Tenta outra opção! ⚓", 4500);
+			falarMarinheiro("Humm, esse tempo verbal não concorda com o texto. Tenta outra opção!", 4500);
 
 			setTimeout(() => {
 				botaoClicado.classList.remove('erro-vibrante');
@@ -2062,10 +2074,10 @@ function prepararTextoNivel3(htmlTexto) {
 			textoDica = l3TextoAtivo.dica;
 		} else if (nivelAtualAtivo === 'nivel4') {
 			if (!l4LacunaSelecionada) {
-				textoDica = "Primeiro tens de clicar num dos espaços vazios [ --- ] do diário para eu te ajudar! ⚓";
+				textoDica = "Primeiro tens de clicar num dos espaços vazios [ --- ] do diário para eu te ajudar!";
 			} else {
 				const blankObj = l4TextoAtivo.blanks.find(b => b.id === l4LacunaSelecionada);
-				textoDica = `Pensa se nessa frase a ação já aconteceu (passado), acontece agora (presente) ou irá acontecer (futuro)! ⚓`;
+				textoDica = `Pensa se nessa frase a ação já aconteceu (passado), acontece agora (presente) ou irá acontecer (futuro)!`;
 
 				let escondidas = 0;
 				document.querySelectorAll('.btn-opcao-lacuna').forEach(btn => {
@@ -2086,14 +2098,20 @@ function prepararTextoNivel3(htmlTexto) {
 	}
 
 	function atualizarPlacar() {
-		const p = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		let valorProgresso;
+		if (nivelAtualAtivo === 'nivel3') {
+			valorProgresso = desafioAtual; 
+		} else {
+			valorProgresso = Math.min(desafioAtual + 1, totalDesafiosNivel);
+		}
 		
 		document.getElementById('val-erros').textContent = erradas;
-		document.getElementById('val-progresso').textContent = p;
+		document.getElementById('val-progresso').textContent = valorProgresso;
 		document.getElementById('val-total').textContent = totalDesafiosNivel;
 		
-		const percentagem = (p / totalDesafiosNivel) * 100;
-		document.getElementById('progress-fill').style.width = percentagem + '%';
+		const percentagem = (valorProgresso / totalDesafiosNivel) * 100;
+		const fill = document.getElementById('progress-fill');
+		if (fill) fill.style.width = percentagem + '%';
 	}
 
 	function atualizarBotaoDica() {
@@ -2119,7 +2137,7 @@ function prepararTextoNivel3(htmlTexto) {
 		timerImpaciencia = setTimeout(() => {
 			if (rondasParaDica <= 0 && btnDica) {
 				btnDica.classList.add('dica-impaciente');
-				falarMarinheiro("Estás com dificuldades, marinheiro? Se precisares, clica na lâmpada da dica! ⚓", 6000);
+				falarMarinheiro("Estás com dificuldades, marinheiro? Se precisares, clica na lâmpada da dica!", 6000);
 			}
 		}, 15000);
 	}
@@ -2158,7 +2176,7 @@ function fecharModalDica() {
 		
 		const marinheiro = document.getElementById('marinheiro-mascote');
 		if (marinheiro) marinheiro.style.display = 'none'; // Esconde o marinheiro no menu
-		
+		limparConfetis();
 		mostrarEcra('ecra-selecao');
 	}
 
@@ -2290,6 +2308,14 @@ function dispararConfetis() {
         c.appendChild(d);
         setTimeout(() => d.remove(), (duracao + atraso) * 1000);
     }
-}</script>
+}
+
+	function limparConfetis() {
+			const container = document.getElementById('confetti-container');
+			if (container) {
+				container.innerHTML = ''; // Esvazia o contentor eliminando todos os elementos [2]
+			}
+	}
+</script>
 </body>
 </html>

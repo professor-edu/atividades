@@ -54,6 +54,7 @@ const todosOsJogos =[
 	{ nome: "Figuras e Sólidos", icone: "icones/figuras_solidos.png", link: "mat/figuras-solidos/", cat: "mat" },
 	{ nome: "Super Quiz", icone: "icones/quiz_matematica.png", link: "mat/quiz/", cat: "mat" },
 	{ nome: "Enigmas da Selva", icone: "icones/enigmas_selva.png", link: "mat/enigmas-selva/", cat: "mat" },
+	{ nome: "Problemas no Caderno", icone: "icones/problemas_caderno.png", link: "mat/problemas-caderno/", cat: "mat" },
 	
 	
     

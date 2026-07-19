@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - Multiplicação ✖️2️⃣</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(77, 171, 247, 0.66); 
+    border-top: 8px solid var(--cor-mat); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #e0ecf3; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1.1rem, 4vw, 1.5rem); color: var(--azul-escuro); margin-bottom: 30px; margin-top: 40px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 240px !important; height: 240px !important; }
+    .card-imagem-zoomable.img-retangular { width: 330px !important; height: 220px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 10px; gap: 15px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto { font-size: clamp(1.1rem, 4vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 10px 0; animation: fadeIn 0.4s ease;}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px !important;
+    min-width: 180px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+	flex-direction: column !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+.btn-opcao-vibrante.sucesso-vibrante, .btn-opcao.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, .btn-opcao.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar */
+.bloco-arrastar {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100%; min-width: 150px; padding: 12px 20px !important; border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.1rem) !important; font-weight: 700 !important;
+    background-color: #ffffff !important; border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; touch-action: manipulation;
+}
+.bloco-arrastar:active { transform: scale(0.95) !important; box-shadow: 0 0px 0 transparent !important; }
+.bloco-arrastar:not(.selecionado):not([disabled]) { animation: respirarBloco 2s infinite ease-in-out; }
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.25rem !important; line-height: 2.6 !important; color: var(--text-main) !important;
+    text-align: justify !important; margin-bottom: 25px !important; background: #ffffff !important;
+    padding: 20px 25px !important; border-radius: 20px !important; border: 2px solid #e2e8f0 !important;
+    width: 100% !important; max-width: 750px !important; box-sizing: border-box !important;
+}
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-mat) !important; background-color: #ffffff !important; }
+
+.banco-opcoes { display: flex !important; gap: 12px !important; justify-content: center !important; flex-wrap: wrap !important; width: 100% !important; max-width: 650px !important; margin-bottom: 15px !important; }
+.palavra-banco {
+    padding: 8px 18px !important; background: #ffffff !important; border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; font-weight: 800 !important; font-size: 1.1rem !important; color: var(--azul-escuro) !important;
+    cursor: pointer !important; transition: all 0.15s ease !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-mat) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   8. MASCOTE: SISTEMA DE EXPRESSÕES E MOVIMENTOS
+   ========================================================================== */
+#robo-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+#robo-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Estado em Repouso: Movimento lateral leve e mecânico */
+.mascote-normal { animation: balancoRobo 3s infinite ease-in-out; }
+
+/* Estado de Erro: Abana (Shake) */
+.mascote-erro { animation: shakeError 0.4s ease-in-out; }
+
+/* Estado de Sucesso: Salto de alegria */
+.mascote-sucesso { animation: saltoAlegria 0.8s ease-out; }
+
+/* ANIMAÇÃO DO SALTO */
+@keyframes saltoAlegria {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-45px) scale(1.1, 0.9); } /* Sobe e achata um pouco */
+    50% { transform: translateY(-55px) scale(0.9, 1.1); } /* Pico do salto e estica */
+}
+
+/* Responsividade Mobile */
+@media (max-width: 600px) {
+    #robo-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
+}
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #fff275; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: clamp(80px, 15vw, 130px); 
+    margin-bottom: 15px; 
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, tacaDanca 3s infinite 0.6s ease-in-out;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+
+/* ==========================================================================
+   10. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes balancoRobo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+
+
+/* ==========================================================================
+   11. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+
+/* ==========================================================================
+   12. ZONA DE EDIÇÃO: PERSONALIDADE, ANIMAÇÕES E DESTAQUES
+   ========================================================================== */
+
+
+/* ==========================================================================
+   ANIMAÇÃO: O MOTOR DO ALGORITMO (MATEMÁTICA)
+   ========================================================================== */
+.animacao-tutorial {
+    width: 100%;
+	max-width: 400px;
+    height: 180px;
+	background: #0f172a;
+    border: 3px dashed var(--cor-mat) !important;
+	border-radius: 20px;
+	box-shadow: inset 0 0 15px rgba(0,145,255,0.05);
+    position: relative;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+	font-family: 'Roboto', sans-serif;
+}
+
+.maquina-nucleo {
+    position: absolute;
+    width: 80px; height: 100px;
+    background: #334155;
+    border: 3px solid #475569;
+    border-radius: 12px;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+}
+
+.vidro-scanner {
+    width: 80%; height: 40%;
+    background: #020617;
+    border: 2px solid var(--azul-vibrante);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.mult-fixo { color: #60a5fa; font-weight: 900; font-size: 1.2rem; }
+
+/* --- TUBOS E ETIQUETAS --- */
+.tubo-entrada {
+    position: absolute; left: 0; width: 30%; height: 35px;
+    background: linear-gradient(to bottom, #475569, #94a3b8, #475569);
+    border-radius: 0 15px 15px 0;
+}
+
+.saida-grupo {
+    position: absolute; right: 0; width: 35%;
+    display: flex; flex-direction: column; align-items: flex-end;
+}
+.s-cima { top: 25px; }
+.s-baixo { bottom: 25px; }
+
+.tubo-curto {
+    width: 100%; height: 30px;
+    background: linear-gradient(to bottom, #475569, #94a3b8, #475569);
+    border-radius: 15px 0 0 15px;
+}
+
+.etiqueta-viva {
+    font-size: 0.65rem; font-weight: 900; padding: 2px 8px;
+    border-radius: 4px; margin-bottom: 2px; margin-right: 10px;
+}
+.etiqueta-viva.res { background: #fbbf24; color: #78350f; }
+.etiqueta-viva.result { background: #e2e8f0; color: #1e293b; }
+
+/* --- NÚMEROS --- */
+.digito-entrada {
+    position: absolute; left: 10px; color: white; font-weight: 900; font-size: 1.6rem;
+    z-index: 5; animation: entraMaq 4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.num-voador {
+    position: absolute; right: 40px; font-weight: 900; font-size: 1.4rem; opacity: 0; z-index: 15;
+}
+.n-reserva { color: #fbbf24; top: 32px; animation: saiRes 4s infinite 1.6s; }
+.n-unidade { color: white; bottom: 32px; animation: saiUni 4s infinite 1.6s; }
+
+/* --- ANIMAÇÕES --- */
+@keyframes entraMaq {
+    0% { left: 5%; opacity: 1; }
+    30%, 100% { left: 50%; opacity: 0; transform: scale(0.5); }
+}
+
+@keyframes saiRes {
+    0% { transform: translate(-20px, 40px); opacity: 0; }
+    15% { transform: translate(0, 0); opacity: 1; }
+    40%, 100% { transform: translateX(60px); opacity: 0; }
+}
+
+@keyframes saiUni {
+    0% { transform: translate(-20px, -40px); opacity: 0; }
+    15% { transform: translate(0, 0); opacity: 1; }
+    40%, 100% { transform: translateX(60px); opacity: 0; }
+}
+
+.robo-operador {
+    position: absolute;
+    left: 50%; /* Alinha o eixo esquerdo ao meio */
+    bottom: 5px; /* Encostado à margem inferior */
+    transform: translateX(-50%); /* Puxa metade da largura de volta para o centro */
+    width: 45px;
+    height: 45px;
+    background: url('img/mascote_normal.png') no-repeat center/contain;
+    z-index: 20; /* Garante que fica à frente de tudo */
+    animation: supervisorFlutuar 3s infinite ease-in-out;
+}
+
+@keyframes supervisorFlutuar {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0) rotate(0deg);
+    }
+    33% {
+        transform: translateX(-55%) translateY(-3px) rotate(-5deg); /* Desvia para a esquerda */
+    }
+    66% {
+        transform: translateX(-45%) translateY(-3px) rotate(5deg); /* Desvia para a direita */
+    }
+}
+
+/* ==========================================================================
+   REGRAS PARA MOBILE (Ecrãs 600px)
+   ========================================================================== */
+@media (max-width: 600px) {
+    .maquina-nucleo { width: 65px; height: 85px; }
+    .mult-fixo { font-size: 1rem; }
+    .etiqueta-viva { font-size: 0.55rem; padding: 1px 4px; }
+    .num-voador { font-size: 1.1rem; right: 25px; }
+    .digito-entrada { font-size: 1.3rem; }
+    .tubo-curto { height: 22px; }
+	.robo-operador {
+        width: 35px;
+        height: 35px;
+        bottom: 2px;
+    }
+}
+
+/* Efeito de Hover no Teclado (Apenas PC) */
+@media (hover: hover) {
+    .btn-teclado:hover {
+        background-color: #f8fafc;
+        transform: translateY(-3px); /* O botão sobe */
+        box-shadow: 0 7px 0 #cbd5e1; /* A sombra aumenta para dar profundidade */
+        color: var(--azul-vibrante);
+    }
+    
+    .btn-teclado.btn-apagar:hover {
+        background-color: #fff1f0;
+        box-shadow: 0 7px 0 #ffa39e;
+    }
+    
+    .btn-teclado.btn-confirmar:hover {
+        background-color: #f6ffed;
+        box-shadow: 0 7px 0 #b7eb8f;
+    }
+}
+
+/* Ajuste no clique para parecer que afunda mesmo */
+.btn-teclado:active {
+    transform: translateY(2px) !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+}
+
+/* ==========================================================================
+   ZONA 12.1: ALGORITMO DA MULTIPLICAÇÃO (ESTILOS ESPECÍFICOS)
+   ========================================================================== */
+
+.teclado-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 25px;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-teclado {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 5px;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    box-shadow: 0 5px 0 #cbd5e1;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.btn-teclado:active { transform: translateY(4px); box-shadow: 0 1px 0 #cbd5e1; }
+.btn-teclado.btn-apagar { background: #fff1f0; color: var(--cor-erro); box-shadow: 0 5px 0 #ffa39e; }
+.btn-teclado.btn-confirmar { background: #f6ffed; color: var(--cor-sucesso); box-shadow: 0 5px 0 #b7eb8f; }
+
+/* ==========================================================================
+   ESTILOS DE GRELHA DO ALGORITMO E CAIXAS
+   ========================================================================== */
+.conta-armada-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.grelha-multiplicacao {
+    --w-sinal: 40px;   /* Largura da coluna do Sinal */
+    --w-numero: 55px;  /* Largura das colunas dos Números */
+    
+    display: grid;
+    grid-template-rows: 35px 50px 50px 10px 65px;
+    align-items: center;
+    justify-items: center;
+    gap: 4px;
+}
+
+.caixa-resultado {
+    width: 55px; /* Assumi o tamanho maior (55px) da tua duplicação */
+    height: 60px;
+    border: 3px solid #ced6e0;
+    border-radius: 12px;
+    background: white;
+    font-size: 1.8rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.caixa-reserva {
+    width: 35px !important;
+    height: 35px !important;
+    border: 2px dashed var(--cor-mat);
+    border-radius: 8px;
+    background: #e3f2fd;
+    font-size: 0.9rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.caixa-resultado:empty::before, 
+.caixa-reserva:empty::before {
+    content: '';
+}
+
+/* --- CONFIGURAÇÃO DA GRELHA 3x2 (7 LINHAS) --- */
+.grelha-multiplicacao.grid-3x2 {
+    display: grid !important;
+    /* 7 linhas: Mando, Mador, Linha, P1, P2, Linha, Total */
+    grid-template-rows: 40px 40px 4px 55px 55px 4px 60px !important;
+    gap: 5px 2px !important;
+    align-items: center;
+    justify-items: center;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.zero-fixo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #94a3b8 !important; /* Cor de número desativado */
+    background: #f1f5f9;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+}
+
+.algarismo-fixo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    width: 50px;
+    text-align: center;
+    color: var(--text-main);
+}
+
+.sinal-operacao {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+}
+
+.grid-3x2 .caixa-resultado {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #ced6e0;
+    background: white;
+    font-size: 1.8rem;
+    font-weight: 900;
+    border-radius: 10px;
+}
+
+.linha-resultado {
+    width: 100%;
+    background: var(--azul-escuro) !important;
+    height: 4px !important;
+    border-radius: 2px;
+}
+
+.grid-3x2 .linha-resultado {
+    height: 3px !important;
+    background: var(--azul-escuro);
+}
+
+
+
+/* ==========================================================================
+   ESTILOS DE FOCO E INTERAÇÃO
+   ========================================================================== */
+/* Foco da Caixa Amarela */
+.caixa-focada {
+    border: 3px dashed var(--cor-btn-amarelo) !important;
+    background-color: #fffde7 !important;
+    color: var(--cor-btn-azul) !important;
+    z-index: 10;
+    animation: animarCaixaAmarela 1.2s infinite ease-in-out !important;
+}
+
+@keyframes animarCaixaAmarela {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 5px rgba(251, 197, 49, 0.4); 
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(251, 197, 49, 0.8); 
+    }
+}
+
+/* Foco do Botão Verde */
+.btn-confirmar.caixa-focada {
+    border: none !important;
+    background-color: #f6ffed !important;
+    color: var(--cor-sucesso) !important;
+    transform: scale(1.08);
+    animation: animarBotaoVerde 1.2s infinite ease-in-out !important;
+}
+
+@keyframes animarBotaoVerde {
+    0%, 100% { filter: brightness(1); box-shadow: 0 0 5px rgba(46, 213, 115, 0.4); }
+    50% { filter: brightness(1.15); box-shadow: 0 0 25px rgba(46, 213, 115, 0.8); }
+}
+
+/* Erro e Sucesso Fluxo */
+.caixa-erro-anim {
+    animation: shakeError 0.4s ease-in-out !important;
+    border-color: var(--cor-erro) !important;
+    color: var(--cor-erro) !important;
+}
+
+.caixa-preenchida {
+    border-style: solid !important;
+    border-color: var(--cor-mat) !important;
+}
+
+/* O Fluxo do Transporte (Seta) */
+.tutorial-mult-flow {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; position: relative;
+}
+.seta-transporte { position: absolute; width: 2px; background: var(--cor-btn-amarelo); opacity: 0; z-index: 5; }
+
+/* ==========================================================================
+   MEDIA QUERIES UNIFICADAS (Responsivo)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+}
+
+@media (max-width: 600px) {
+    /* Ajustes Teclado */
+    .teclado-container { grid-template-columns: repeat(4, 1fr); max-width: 320px; }
+    .capsula-reta { font-size: 0.8rem; padding: 4px 10px; }
+
+    /* Ajustes Conta Armada */
+    .grelha-multiplicacao {
+        --w-sinal: 25px;
+        --w-numero: 42px;
+        /* manténs os restantes ajustes de gap e margem aqui */
+    }
+    .caixa-resultado { width: 40px; height: 50px; font-size: 1.4rem; }
+    .caixa-reserva { width: 30px !important; height: 25px !important; }
+
+    /* Ajustes Menus e Outros Componentes */
+    .grid-niveis {
+        grid-template-columns: 1fr !important;
+        max-width: 100%; /* Em vez de 320px. Assim respeita sempre o contentor pai */
+        padding: 0 10px; /* Opcional: para não colar aos bordos em ecrãs minúsculos */
+    }
+    .btn-nivel-novo {
+		width: 100%;
+		box-sizing: border-box;
+		/* Evita que textos muito longos empurrem o design: */
+		word-wrap: break-word; 
+		white-space: normal; 
+	}
+    .icon-btn-nivel { width: 40px; height: 40px; }
+    .btn-nivel-titulo { font-size: 1rem; }
+    .btn-nivel-subtitulo { font-size: 0.75rem; }
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    .progress-bg { order: 10; width: 100%; margin: 4px 0 0 0; height: 25px; }
+    .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { padding: 4px 8px; font-size: 0.8rem; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .opcoes-container { flex-direction: column !important; align-items: center !important; gap: 12px !important; width: 100% !important; max-width: 290px !important; margin: 0 auto !important; }
+    .opcoes-container .btn-opcao-vibrante { width: 100% !important; font-size: 0.95rem !important; padding: 10px 15px !important; box-sizing: border-box; }
+    .imagem-opcao-vibrante { max-width: 90px; max-height: 70px; }
+    .texto-paragrafo-lacunas { font-size: 1.05rem !important; line-height: 2.8 !important; padding: 15px !important; }
+    .slot-vazio { min-width: 85px !important; height: 28px !important; margin: 0 4px !important; }
+    .palavra-banco { font-size: 0.95rem !important; padding: 6px 14px !important; }
+    .mapa-relevo-wrapper.mapa-quadrado { max-width: 210px; }
+    .mapa-relevo-wrapper.mapa-retangular { max-width: 320px; }
+    .slot-mapa.preenchido strong { font-size: 0.72rem !important; }
+    .end-title { flex-direction: column; gap: 10px; }
+	.grelha-multiplicacao.grid-3x2 {
+        --largura-sinal: 30px;
+        --largura-coluna: 45px;
+        grid-template-rows: 30px 30px 3px 45px 45px 3px 50px !important;
+    }
+    .algarismo-fixo { font-size: 1.6rem; width: 40px; }
+    .grid-3x2 .caixa-resultado, .zero-fixo { width: 40px; height: 40px; font-size: 1.4rem !important; }
+}
+
+@media (max-width: 380px) {
+    .grelha-multiplicacao {
+        --w-sinal: 20px;
+        --w-numero: 36px;
+        /* manténs os restantes ajustes aqui */
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Multiplicação <img src="vezes.svg" class="icon-svg-titulo" alt=""><img src="dois.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Domina o algoritmo 3X2 e calcula o produto final!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <!-- Elementos de Feedback e UI Globais -->
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+
+        <!-- MASCOTE ROBÔ -->
+        <img id="robo-feedback" src="img/mascote_normal.png" class="mascote-robo" style="display: none;">
+
+        <!-- ECRÃ 1: SELEÇÃO DE DESAFIO -->
+        <div id="ecra-selecao" class="ecra">
+<div class="animacao-tutorial">
+    <!-- Tubo de Entrada -->
+    <div class="tubo-entrada"></div>
+    <div class="digito-entrada">7</div>
+
+    <!-- Máquina -->
+    <div class="maquina-nucleo">
+        <div class="vidro-scanner">
+            <span class="mult-fixo">× 8</span>
+        </div>
+        <div class="luz-processamento"></div>
+    </div>
+
+    <!-- Saídas com Etiquetas Legíveis -->
+    <div class="saida-grupo s-cima">
+        <div class="etiqueta-viva res">RESERVA</div>
+        <div class="tubo-curto"></div>
+    </div>
+    
+    <div class="saida-grupo s-baixo">
+        <div class="etiqueta-viva result">RESULTADO</div>
+        <div class="tubo-curto"></div>
+    </div>
+
+    <!-- Números que viajam -->
+    <div class="num-voador n-reserva">5</div>
+    <div class="num-voador n-unidade">6</div>
+
+    <div class="robo-operador"></div>
+</div>
+            
+            <h2 class="titulo-menu">Consegues resolver as multiplicações?</h2>
+
+            <div class="grid-niveis">
+                <!-- Nível 1 -->
+                <button class="btn-nivel-novo bg-roxo" onclick="prepararJogo('nivel1')">
+                    <img src="img/menu_1.svg" class="icon-btn-nivel-novo">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">INICIAR TREINO</span>
+                        <span class="btn-nivel-subtitulo">Com reagrupamento (transporte)</span>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO EM CURSO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/5</div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"><span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+
+            <!-- O algoritmo e o teclado serão injetados aqui -->
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ 3: RESULTADOS FINAIS -->
+        <div id="ecra-fim" class="ecra">
+            <div id="rank-container"></div>
+            <h2 class="end-title" id="end-title-text">Cálculos Concluídos!</h2>
+            <div class="end-stats">O teu processador matemático teve <strong id="final-erros">0</strong> erros.</div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">REPETIR NÍVEL <img src="../../../SVG/jogar_novo.svg" class="icon-acao"></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">VOLTAR AO MENU <img src="../../../SVG/home.svg" class="icon-acao"></button>
+            </div>
+        </div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+	document.getElementById('ano-atual').innerText = new Date().getFullYear();
+	
+	/* =====================================================================
+	   DEFINIÇÕES E SVGs GLOBAIS DO TEMPLATE
+	   ===================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	const SVG_APAGAR = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>`;
+	const SVG_CONFIRMAR = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+
+	const CORES_BTNS = ['bg-azul', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa'];
+	const COOLDOWN_DICA = 3;
+	/* --- VARIÁVEIS DE ESTADO DO JOGO (CONTROLO GERAL) --- */
+	let desafioAtual = 0;
+	let totalRondas = 5;
+	let erradas = 0;
+	let podeInteragir = true;
+	let timerImpaciencia = null;
+	let sistemaAtivo = "nivel1"; // Controla a dificuldade
+	let rondasParaDica = 0;
+
+	/* --- MOTOR DO ALGORITMO (MATEMÁTICA) --- */
+	let multiplicandoAtivo, multiplicadorAtivo;
+	let algarismosCorretos = {}; // Gabarito da conta atual: {resU: 5, rD: 1, ...}
+	let ordemFoco = [];          // Sequência de IDs para o cursor saltar
+	let focoAtualIndex = 0;      // Posição atual do cursor na sequência acima
+	let historicoContas = [];    // Evita repetição imediata de contas
+	let perguntasSorteadas = []; // Pool de desafios da sessão
+	/* --- ESTADO ESPECÍFICO 3x2 --- */
+	let partial1Correto = 0;
+	let partial2Correto = 0; // Este incluirá o zero fixo no cálculo
+	let totalFinalCorreto = 0;
+
+/* ==========================================================================
+   ARRANQUE E NAVEGAÇÃO
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+		mostrarEcra('ecra-selecao');
+	});
+	
+	function resetEstadoRonda() {
+		algarismosCorretos = {};
+		ordemFoco = [];
+		focoAtualIndex = 0;
+		inputAtual = "";
+	}
+	
+	function mostrarEcra(id) {
+		// Esconde TODOS os ecrãs que tenham a classe .ecra
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		
+		// Mostra apenas o que pedimos
+		const alvo = document.getElementById(id);
+		if(alvo) alvo.style.display = 'flex';
+	}
+	
+	/* --- FUNÇÃO DE AJUDA (HINT) --- */
+	function showToast(mensagem) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		toast.textContent = mensagem;
+		toast.classList.add('active');
+		
+		// Remove a mensagem após 4 segundos
+		setTimeout(() => {
+			toast.classList.remove('active');
+		}, 5000);
+	}
+
+	/* --- FORMATAR NÚMEROS COM ESPAÇO (pt-PT) --- */
+	function formatarNumero(num) {
+		// Transforma o número em string e usa regex para colocar espaço a cada 3 dígitos
+		return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+	}
+	
+	function interacaoTeclado(tecla) {
+		if (!podeInteragir) return;
+		
+		// Remove foco do botão confirmar caso ele o tenha
+		const btnConf = document.querySelector('.btn-confirmar');
+		if (btnConf) btnConf.classList.remove('caixa-focada');
+
+		const idAtivo = ordemFoco[focoAtualIndex];
+		const el = document.getElementById(idAtivo);
+		if (!el) return;
+
+		if (tecla === 'apagar') {
+			el.textContent = "";
+			tocarSom('flip');
+		} else if (tecla === 'confirmar') {
+			validarTudo();
+		} else {
+			// Se a caixa diz "0" (por erro) ou está vazia, substitui pelo novo número
+			// Excepto na última caixa (resM ou resC) que pode ter 2 dígitos
+			const eUltimaCaixa = (focoAtualIndex === ordemFoco.length - 1 && idAtivo.startsWith('res'));
+			
+			if (eUltimaCaixa) {
+				el.textContent += tecla;
+			} else {
+				el.textContent = tecla;
+			}
+			
+			tocarSom('flip');
+
+			// Salto automático
+			if (focoAtualIndex < ordemFoco.length - 1) {
+				setTimeout(() => definirFoco(focoAtualIndex + 1), 150);
+			} else {
+				setTimeout(() => focarBotaoConfirmar(), 150);
+			}
+		}
+	}
+
+	function focarBotaoConfirmar() {
+		// 1. Remove o foco de todas as caixas de input
+		document.querySelectorAll('.caixa-focada').forEach(el => {
+			el.classList.remove('caixa-focada');
+		});
+		
+		// 2. Aplica ao botão verde (o CSS tratará de não pôr o tracejado)
+		const btn = document.querySelector('.btn-confirmar');
+		if (btn) {
+			btn.classList.add('caixa-focada');
+		}
+	}
+	
+	function definirFoco(index) {
+		if (index >= ordemFoco.length) return;
+		focoAtualIndex = index;
+
+		// Limpar focos anteriores
+		document.querySelectorAll('.caixa-reserva, .caixa-resultado').forEach(el => {
+			el.classList.remove('caixa-focada');
+		});
+
+		const idAtivo = ordemFoco[index];
+		const elAtivo = document.getElementById(idAtivo);
+
+		if (elAtivo) {
+			elAtivo.classList.add('caixa-focada');
+
+			// Pular reservas de valor 0 automaticamente para fluidez
+			if (idAtivo.startsWith('r') && algarismosCorretos[idAtivo] === 0) {
+				elAtivo.textContent = "0";
+				elAtivo.classList.add('caixa-preenchida');
+				setTimeout(() => definirFoco(index + 1), 100);
+			}
+		}
+	}
+	
+	function validarTudo() {
+		let tudoCerto = true;
+		
+		ordemFoco.forEach(id => {
+			const el = document.getElementById(id);
+			const valorInserido = parseInt(el.textContent);
+			if (valorInserido !== algarismosCorretos[id]) {
+				tudoCerto = false;
+				el.style.color = "var(--cor-erro)";
+			} else {
+				el.style.color = "var(--cor-sucesso)";
+				el.classList.add('caixa-preenchida');
+			}
+		});
+
+		if (tudoCerto) {
+			podeInteragir = false;
+			animarRobo('acerto');
+			tocarSom('acerto');
+
+			setTimeout(() => {
+				desafioAtual++;
+				if (desafioAtual < totalRondas) {
+					atualizarBarraEstado();
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1600);
+		} else {
+			animarRobo('erro');
+			tocarSom('erro');
+			erradas++;
+			atualizarBarraEstado();
+			setTimeout(() => {
+				podeInteragir = true;
+				// Mantemos os valores para o aluno corrigir onde errou
+			}, 1000);
+		}
+	}
+
+	/* --- SUPORTE PARA TECLADO FÍSICO --- */
+	document.addEventListener('keydown', (e) => {
+		if (document.getElementById('ecra-jogo').style.display !== 'flex') return;
+		
+		if (e.key >= '0' && e.key <= '9') interacaoTeclado(e.key);
+		if (e.key === 'Backspace') interacaoTeclado('apagar');
+		if (e.key === 'Enter') interacaoTeclado('confirmar');
+	});
+	
+	function validarResposta() {
+		if (inputAtual === "") {
+			showToast("Tens de escrever o número do marcador!");
+			return;
+		}
+
+		podeInteragir = false;
+		const caixa = document.getElementById('caixa-resposta');
+
+		if (inputAtual === respostaCorretaGlobal) {
+			caixa.style.borderColor = "var(--cor-sucesso)";
+			caixa.style.color = "var(--cor-sucesso)";
+			animarRobo('acerto');
+			tocarSom('acerto');
+			
+			if (rondasParaDica > 0) { rondasParaDica--; }
+			atualizarBotaoDica();
+			
+			setTimeout(() => {
+				desafioAtual++;
+				if (desafioAtual < 10) {
+					atualizarBarraEstado();
+					carregarRonda();
+				} else {
+					finalizarJogo();
+				}
+			}, 1600);
+		} else {
+			erradas++;
+			atualizarBarraEstado();
+			animarRobo('erro');
+			tocarSom('erro');
+			caixa.classList.add('erro-vibrante');
+
+			setTimeout(() => {
+				caixa.classList.remove('erro-vibrante');
+				podeInteragir = true;
+			}, 800);
+		}
+	}
+
+/* --- FUNÇÃO DE DICA PEDAGÓGICA --- */
+	function usarDica() {
+		if (rondasParaDica > 0 || !podeInteragir) return;
+		
+		tocarSom('flip');
+		
+		const pistas = [
+			"Começa sempre pelas unidades (coluna da direita)!",
+			"Se o resultado for 10 ou mais, a dezena 'vai lá para cima' para a reserva.",
+			"Não te esqueças de somar 'o que vai' depois de multiplicar!",
+			"Multiplica o número de baixo por cada um dos de cima, um a um."
+		];
+		
+		const pistaAleatoria = pistas[Math.floor(Math.random() * pistas.length)];
+		showToast(pistaAleatoria);
+		
+		// Bloqueia a dica para o resto desta ronda
+		rondasParaDica = 1; 
+		atualizarBotaoDica();
+	}
+	
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	/* --- SISTEMA DE ZOOM DE IMAGEM SEGURO --- */
+	function abrirZoomImagem(srcCaminho) {
+		const modal = document.getElementById('zoom-modal');
+		const img = document.getElementById('zoom-img-content');
+		if (modal && img) {
+			img.src = srcCaminho;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharZoomImagem() {
+		const modal = document.getElementById('zoom-modal');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function prepararJogo(nivel) {
+		// 1. Definir o estado inicial
+		sistemaAtivo = nivel; 
+		desafioAtual = 0;
+		erradas = 0;
+		podeInteragir = true;
+		rondasParaDica = 0;
+		
+		// 2. Limpezas visuais obrigatórias
+		limparConfetis(); // Remove confetis da vitória anterior
+		const toast = document.getElementById('toast-msg');
+		if(toast) toast.classList.remove('active'); // Esconde dicas residuais
+
+		// 3. Gestão de Ecrãs (A forma correta que respeita o template)
+		mostrarEcra('ecra-jogo'); 
+		
+		// 4. Mostrar o Robô (garantir que o ID está correto conforme o teu HTML)
+		const robo = document.getElementById('robo-feedback');
+		if(robo) {
+			robo.style.display = 'flex';
+			animarRobo('normal');
+		}
+		
+		// 5. Iniciar a lógica
+		atualizarBarraEstado();
+		atualizarBotaoDica();
+		carregarRonda();
+	}
+	
+	function atualizarBarraEstado() {
+		const p = document.getElementById('val-progresso');
+		const t = document.getElementById('val-total');
+		const e = document.getElementById('val-erros');
+		
+		const progressoAtual = desafioAtual + 1;
+		
+		if(p) p.textContent = Math.min(progressoAtual, totalRondas);
+		if(t) t.textContent = totalRondas;
+		if(e) e.textContent = erradas;
+
+		// Cálculo da barra: (1 / 5 * 100) = 20% por cada acerto
+		const percentagem = (progressoAtual / totalRondas) * 100;
+		document.getElementById('progress-fill').style.width = percentagem + '%';
+	}
+	
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (rondasParaDica <= 0) {
+			// Dica Disponível
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			// Dica já usada nesta ronda
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = '✔️ Usada'; // Texto claro para a criança
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO MAPA EM CASO DE ERRO --- */
+	function validarMapa(zona) {
+		const ronda = perguntasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		// Verifica se cada órgão foi colocado no local correto
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, zona);
+		} else {
+			validar(false, zona);
+			
+			// REPOSIÇÃO SUAVE DO MAPA EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os botões azuis de órgãos à esquerda
+				document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e esvazia visualmente as caixas sobrepostas do corpo
+				document.querySelectorAll('.slot-mapa').forEach(slot => {
+					slot.innerHTML = '';
+					slot.className = 'slot-mapa';
+				});
+			}, 800);
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO ARRASTAR EM CASO DE ERRO --- */
+	function validarArrastar(container, ronda) {
+		let tudoCerto = true;
+
+		// Compara cada conceito ordenado com o par correto respetivo
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, container);
+		} else {
+			validar(false, container);
+			
+			// REPOSIÇÃO DO ARRASTAMENTO EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os blocos cinzentos à esquerda
+				document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e repõe o texto inicial dos alvos da direita (remover as palavras erradas)
+				const botoesAlvo = document.getElementById('game-area').querySelectorAll('.coluna-ligar:last-child button');
+				ronda.alvos.forEach((alvo, index) => {
+					if (botoesAlvo[index]) {
+						botoesAlvo[index].textContent = alvo;
+					}
+				});
+			}, 800);
+		}
+	}
+	
+	/* --- GERADOR DO COMPONENTE TECLADO --- */
+	function gerarTecladoHTML() {
+		// 1. Definimos os números (Notepad++ colorirá bem este array)
+		const listaNumeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+		
+		// 2. Criamos os botões numéricos
+		const botoesNumeros = listaNumeros.map(n => {
+			return `<button class="btn-teclado" onclick="interacaoTeclado('${n}')">${n}</button>`;
+		}).join('');
+
+		// 3. Montamos a estrutura final (Injetamos as constantes SVG que já tens no topo)
+		return `
+			<div class="teclado-container">
+				${botoesNumeros}
+				<button class="btn-teclado btn-apagar" onclick="interacaoTeclado('apagar')" title="Apagar">
+					${SVG_APAGAR}
+				</button>
+				<button class="btn-teclado btn-confirmar" onclick="interacaoTeclado('confirmar')" title="Confirmar">
+					${SVG_CONFIRMAR}
+				</button>
+			</div>
+		`;
+	}
+
+/* --- GERADOR DE NÚMEROS POR NÍVEL (EVITA REPETIÇÕES) --- */
+	function gerarNumerosValidos() {
+		let tentativaConta = "";
+		let tentativasLimit = 0;
+
+		do {
+			// Multiplicando: 3 algarismos (ex: 124 a 999)
+			multiplicandoAtivo = Math.floor(Math.random() * 876) + 124;
+			
+			// Multiplicador: 2 algarismos (ex: 12 a 98)
+			multiplicadorAtivo = Math.floor(Math.random() * 87) + 12;
+
+			// --- REGRA: IMPEDIR TERMINADOS EM ZERO (10, 20, 30...) ---
+			while (multiplicadorAtivo % 10 === 0) {
+				multiplicadorAtivo = Math.floor(Math.random() * 87) + 12;
+			}
+
+			const mUnits = multiplicadorAtivo % 10;
+			const mTens = Math.floor(multiplicadorAtivo / 10);
+
+			partial1Correto = multiplicandoAtivo * mUnits;
+			partial2Correto = (multiplicandoAtivo * mTens) * 10;
+			totalFinalCorreto = partial1Correto + partial2Correto;
+
+			tentativaConta = `${multiplicandoAtivo}x${multiplicadorAtivo}`;
+			tentativasLimit++;
+		} while (historicoContas.includes(tentativaConta) && tentativasLimit < 20);
+
+		historicoContas.push(tentativaConta);
+		if (historicoContas.length > 5) historicoContas.shift();
+	}
+
+/* --- FUNÇÃO PRINCIPAL: CARREGAR RONDA --- */
+	function carregarRonda() {
+		resetEstadoRonda();
+		podeInteragir = true;
+		const area = document.getElementById('game-area');
+		
+		// 1. Gera os números e os resultados parciais
+		gerarNumerosValidos();
+
+		const m = multiplicadorAtivo;
+		const numStr = multiplicandoAtivo.toString();
+
+		// 2. Injeta a Grelha de 7 linhas e o Teclado
+		area.innerHTML = gerarGrelhaMultiplicacao(numStr, m) + gerarTecladoHTML();
+
+		// 3. MAPEAMENTO DINÂMICO DE FOCO (A ordem pela qual o aluno resolve)
+		
+		// Etapa A: Produto Parcial 1 (ex: 247 * 3)
+		const p1 = partial1Correto.toString().split('').reverse();
+		const idsP1 = ["p1_U", "p1_D", "p1_C", "p1_UM", "p1_DM"];
+		p1.forEach((val, i) => {
+			if (document.getElementById(idsP1[i])) {
+				ordemFoco.push(idsP1[i]);
+				algarismosCorretos[idsP1[i]] = parseInt(val);
+			}
+		});
+
+		// Etapa B: Produto Parcial 2 (ex: 247 * 8, saltando o zero fixo)
+		// p2Correto já tem o 0, por isso dividimos por 10 para mapear os inputs
+		const p2 = (partial2Correto / 10).toString().split('').reverse();
+		const idsP2 = ["p2_D", "p2_C", "p2_UM", "p2_DM"];
+		p2.forEach((val, i) => {
+			if (document.getElementById(idsP2[i])) {
+				ordemFoco.push(idsP2[i]);
+				algarismosCorretos[idsP2[i]] = parseInt(val);
+			}
+		});
+
+		// Etapa C: Resultado Final (Soma das duas linhas)
+		const res = totalFinalCorreto.toString().split('').reverse();
+		const idsRes = ["res_U", "res_D", "res_C", "res_UM", "res_DM"];
+		res.forEach((val, i) => {
+			if (document.getElementById(idsRes[i])) {
+				ordemFoco.push(idsRes[i]);
+				algarismosCorretos[idsRes[i]] = parseInt(val);
+			}
+		});
+
+		// 4. Ativar o primeiro foco
+		setTimeout(() => {
+			definirFoco(0);
+			// Permitir clique direto nas caixas
+			document.querySelectorAll('.caixa-resultado').forEach(caixa => {
+				caixa.onclick = () => {
+					const idx = ordemFoco.indexOf(caixa.id);
+					if(idx !== -1 && podeInteragir) { tocarSom('flip'); definirFoco(idx); }
+				};
+			});
+		}, 200);
+
+		const robo = document.getElementById('robo-feedback');
+		if(robo) { robo.style.display = 'flex'; animarRobo('normal'); }
+		resetTimerImpaciencia();
+		rondasParaDica = 0; // 0 significa que a dica está disponível
+		atualizarBotaoDica();
+	}
+
+/* ==========================================================================
+   LÓGICA DE COORDENAÇÃO DO JOGO DE LIGAR (DESFAZER E ESTILO)
+   ========================================================================== */
+	
+	function gerarNumerosPorNivel() {
+		if (sistemaAtivo === 'nivel1') {
+			multiplicadorAtivo = Math.floor(Math.random() * 4) + 2;
+			multiplicandoAtivo = Math.floor(Math.random() * 30) + 11;
+			while ((multiplicandoAtivo % 10) * multiplicadorAtivo >= 10 || Math.floor(multiplicandoAtivo/10)*multiplicadorAtivo >= 10) {
+				multiplicandoAtivo--;
+			}
+		} else if (sistemaAtivo === 'nivel2') {
+			multiplicadorAtivo = Math.floor(Math.random() * 6) + 3;
+			multiplicandoAtivo = Math.floor(Math.random() * 70) + 15;
+		} else {
+			multiplicadorAtivo = Math.floor(Math.random() * 8) + 2;
+			multiplicandoAtivo = Math.floor(Math.random() * 800) + 100;
+		}
+	}	
+	
+	
+function gerarGrelhaMultiplicacao(numStr, m) {
+    const numCols = 6; // Estrutura: 1 Sinal/Espaço + 5 Colunas Numéricas (DM|UM|C|D|U)
+    const gridCols = `var(--largura-sinal, 40px) repeat(5, var(--largura-coluna, 55px))`;
+
+    // 1. Linha do Multiplicando (3 algarismos alinhados à direita)
+    // Injetamos 3 espaços vazios para empurrar o número para as colunas C, D, U
+    let linha1 = `<div></div><div></div><div></div>`;
+    numStr.padStart(3, ' ').split('').forEach(d => {
+        linha1 += `<div class="algarismo-fixo">${d === ' ' ? '' : d}</div>`;
+    });
+
+    // 2. Linha do Multiplicador (Sinal na 4.ª casa + 2 algarismos)
+    // Injetamos 3 espaços vazios, depois o Sinal, depois os 2 dígitos
+    let linha2 = `<div></div><div></div><div></div>`; 
+    linha2 += `<div class="sinal-operacao">×</div>`; // Sinal com a classe correta
+    m.toString().padStart(2, ' ').split('').forEach(d => {
+        linha2 += `<div class="algarismo-fixo">${d === ' ' ? '' : d}</div>`;
+    });
+
+    // 3. Produto Parcial 1 (Inputs)
+    let linha4 = `<div></div>`; // Espaço do sinal vazio
+    const p1Str = partial1Correto.toString().padStart(5, ' ');
+    const idsP1 = ["p1_DM", "p1_UM", "p1_C", "p1_D", "p1_U"];
+    p1Str.split('').forEach((d, i) => {
+        linha4 += (d !== ' ') ? `<div class="caixa-resultado" id="${idsP1[i]}"></div>` : `<div></div>`;
+    });
+
+    // 4. Produto Parcial 2 (Sinal + | Inputs | Zero Fixo)
+    let linha5 = `<div class="sinal-operacao">+</div>`; // Sinal de adição
+    // Pad de 4 porque a 5.ª casa é o zero-fixo
+    const p2Str = Math.floor(partial2Correto / 10).toString().padStart(4, ' ');
+    const idsP2 = ["p2_DM", "p2_UM", "p2_C", "p2_D"];
+    p2Str.split('').forEach((d, i) => {
+        linha5 += (d !== ' ') ? `<div class="caixa-resultado" id="${idsP2[i]}"></div>` : `<div></div>`;
+    });
+    linha5 += `<div class="algarismo-fixo zero-fixo">0</div>`;
+
+    // 5. Resultado Final (Inputs)
+    let linha7 = `<div></div>`;
+    const resStr = totalFinalCorreto.toString().padStart(5, ' ');
+    const idsRes = ["res_DM", "res_UM", "res_C", "res_D", "res_U"];
+    resStr.split('').forEach((d, i) => {
+        linha7 += (d !== ' ') ? `<div class="caixa-resultado" id="${idsRes[i]}"></div>` : `<div></div>`;
+    });
+
+    return `
+        <div class="conta-armada-container">
+            <div class="grelha-multiplicacao grid-3x2" style="grid-template-columns: ${gridCols}">
+                ${linha1}
+                ${linha2}
+                <div class="linha-resultado" style="grid-column: 1 / span 6"></div>
+                ${linha4}
+                ${linha5}
+                <div class="linha-resultado" style="grid-column: 1 / span 6"></div>
+                ${linha7}
+            </div>
+        </div>`;
+}	
+	
+
+/* ==========================================================================
+   VERIFICAÇÃO E TRANSIÇÕES DE FEEDBACK
+   ========================================================================== */
+	function validar(correto, el) {
+		if (!podeInteragir) return; podeInteragir = false; clearTimeout(timerImpaciencia);
+		if (correto) {
+			el.classList.add('sucesso-vibrante'); animarRobo('acerto'); tocarSom('decolar'); // Ativa o rugido do motor ao subir!
+			
+			// ADICIONADO: Reduz o cooldown da dica em caso de acerto!
+			if (rondasParaDica > 0) {
+				rondasParaDica--;
+			}
+			atualizarBotaoDica();
+
+			setTimeout(() => { desafioAtual++; if(desafioAtual < 10) { atualizarBarraEstado(); carregarRonda(); } else finalizarJogo(); }, 1600);
+		} else {
+			el.classList.add('erro-vibrante'); erradas++; atualizarBarraEstado(); animarRobo('erro'); tocarSom('erro');
+			setTimeout(() => { el.classList.remove('erro-vibrante'); podeInteragir = true; resetTimerImpaciencia(); }, 600);
+		}
+	}
+
+	function animarRobo(estado) {
+		const mascote = document.getElementById('robo-feedback');
+		if (!mascote) return;
+
+		// 1. Limpa as classes de animação anteriores
+		mascote.classList.remove('mascote-normal', 'mascote-erro', 'mascote-sucesso');
+		void mascote.offsetWidth; // Truque de Engenharia para reiniciar a animação
+
+		if (estado === 'normal') {
+			mascote.src = "img/mascote_normal.png";
+			mascote.classList.add('mascote-normal');
+		}
+		else if (estado === 'erro') {
+			mascote.src = "img/mascote_erro.png";
+			mascote.classList.add('mascote-erro');
+			// Volta ao estado normal automaticamente após o abanão (0.6s)
+			setTimeout(() => animarRobo('normal'), 600);
+		}
+		else if (estado === 'acerto') {
+			mascote.src = "img/mascote_acerto.png";
+			mascote.classList.add('mascote-sucesso');
+			// Volta ao estado normal automaticamente após o salto (1s)
+			setTimeout(() => {
+				// Se ainda não acabou o jogo, volta a flutuar
+				if (desafioAtual < totalRondas) animarRobo('normal');
+			}, 1000);
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+		timerImpaciencia = setTimeout(() => { if(btnDica) btnDica.classList.add('dica-impaciente'); }, 15000);
+	}
+
+
+
+	function fecharModalDica() { document.getElementById('modal-ajuda').classList.remove('active'); }
+
+	function finalizarJogo() {
+		document.getElementById('robo-feedback').style.display = "none";
+		mostrarEcra('ecra-fim');
+		document.getElementById('final-erros').textContent = erradas;
+		const rank = document.getElementById('rank-container');
+		let img = erradas === 0 ? "rank_ouro.svg" : (erradas <= 3 ? "rank_prata.svg" : "rank_bronze.svg");
+		rank.innerHTML = `<img src="../../../SVG/${img}" class="taca-vitoria" style="width:120px;">`;
+		tocarSom('vitoria'); dispararConfetis();
+	}
+
+	function voltarAoMenuPrincipal() {
+		mostrarEcra('ecra-selecao');
+		document.getElementById('robo-feedback').style.display = "none";
+		document.getElementById('subtitulo-header').textContent = "Domina o algoritmo 3X2 e calcula o produto final!";
+		limparConfetis();
+	}
+
+	function confirmarSair() {
+		voltarAoMenuPrincipal();
+	}
+
+	function reiniciarJogo() { prepararJogo(sistemaAtivo); limparConfetis();}
+
+/* ==========================================================================
+   ÁUDIO, CONFETIS E AUXILIARES (COM COMPATIBILIDADE SEGURA)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha na inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('pointerdown', initAudio, { once: true });
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+	function tocarSom(t) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+			const agora = audioCtx.currentTime; // Variável unificada como agora
+
+			if (t === 'acerto') {
+				const notas = [783.99, 1046.50];
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (t === 'erro') {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle';
+				o.frequency.setValueAtTime(220, agora);
+				o.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				g.gain.setValueAtTime(0.08, agora);
+				o.start(agora);
+				o.stop(agora + 0.3);
+			} else if (t === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0.08, agora + nota.tempo);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			} else if (t === 'decolar') {
+				// NOVO: Som de Propulsão Sci-Fi Limpo e Cristalino (Zwoooop!)
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; // Onda 100% pura e limpa, sem qualquer distorção
+				o.frequency.setValueAtTime(150, agora);
+				// Varredura exponencial ascendente muito rápida (efeito de aceleração para o espaço)
+				o.frequency.exponentialRampToValueAtTime(1800, agora + 0.8); 
+				g.gain.setValueAtTime(0, agora);
+				g.gain.linearRampToValueAtTime(0.12, agora + 0.05); // Ataque de ignição rápido
+				g.gain.exponentialRampToValueAtTime(0.001, agora + 0.8); // Desvanece suavemente
+				o.start(agora);
+				o.stop(agora + 0.8);
+			} else if (t === 'flip') { // CORREÇÃO: Removida a chaveta extra "}" que quebrava a sintaxe aqui
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.setValueAtTime(400, agora);
+				o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+				g.gain.setValueAtTime(0.05, agora);
+				o.start(agora);
+				o.stop(agora + 0.1);
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		c.innerHTML = '';
+		const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = '';
+		}
+	}
+
+	
+</script>
+</body>
+</html>

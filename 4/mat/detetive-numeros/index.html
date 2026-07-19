@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - Detetive dos Números 🔢</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(77, 171, 247, 0.66); 
+    border-top: 8px solid var(--cor-mat); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #e0ecf3; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-mat); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-mat); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1rem, 4vw, 1.3rem); color: var(--azul-escuro); margin-bottom: 40px; margin-top: 30px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 75px;
+    height: 75px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 240px !important; height: 240px !important; }
+    .card-imagem-zoomable.img-retangular { width: 330px !important; height: 220px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-mat); border-radius: 20px; padding: 25px; gap: 25px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto { font-size: clamp(1.2rem, 4vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px !important;
+    min-width: 160px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+	flex-direction: column !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+.btn-opcao-vibrante.sucesso-vibrante, .btn-opcao.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, .btn-opcao.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar */
+.bloco-arrastar {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100%; min-width: 150px; padding: 12px 20px !important; border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.1rem) !important; font-weight: 700 !important;
+    background-color: #ffffff !important; border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; touch-action: manipulation;
+}
+.bloco-arrastar:active { transform: scale(0.95) !important; box-shadow: 0 0px 0 transparent !important; }
+.bloco-arrastar:not(.selecionado):not([disabled]) { animation: respirarBloco 2s infinite ease-in-out; }
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.25rem !important; line-height: 2.6 !important; color: var(--text-main) !important;
+    text-align: justify !important; margin-bottom: 25px !important; background: #ffffff !important;
+    padding: 20px 25px !important; border-radius: 20px !important; border: 2px solid #e2e8f0 !important;
+    width: 100% !important; max-width: 750px !important; box-sizing: border-box !important;
+}
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-mat) !important; background-color: #ffffff !important; }
+
+.banco-opcoes { display: flex !important; gap: 12px !important; justify-content: center !important; flex-wrap: wrap !important; width: 100% !important; max-width: 650px !important; margin-bottom: 15px !important; }
+.palavra-banco {
+    padding: 8px 18px !important; background: #ffffff !important; border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; font-weight: 800 !important; font-size: 1.1rem !important; color: var(--azul-escuro) !important;
+    cursor: pointer !important; transition: all 0.15s ease !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-mat) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   8. MASCOTE: SISTEMA DE EXPRESSÕES E MOVIMENTOS
+   ========================================================================== */
+#foguetao-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+#foguetao-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Estado em Repouso: Flutua suavemente */
+.mascote-normal { animation: flutuar 3s infinite ease-in-out; }
+
+/* Estado de Erro: Abana e muda ligeiramente a cor */
+.mascote-erro { 
+    animation: shakeError 0.4s ease-in-out; 
+    filter: saturate(1.5) hue-rotate(-20deg); 
+}
+
+/* Estado de Sucesso: Dá um salto de alegria (mais soberbo que o decolar) */
+.mascote-sucesso { animation: saltoAlegria 0.8s ease-out; }
+
+/* ANIMAÇÃO DO SALTO */
+@keyframes saltoAlegria {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-45px) scale(1.1, 0.9); } /* Sobe e achata um pouco */
+    50% { transform: translateY(-55px) scale(0.9, 1.1); } /* Pico do salto e estica */
+}
+
+
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: clamp(80px, 15vw, 130px); 
+    margin-bottom: 15px; 
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, tacaDanca 3s infinite 0.6s ease-in-out;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+
+/* ==========================================================================
+   ANIMAÇÃO: O PULSAR DO SISTEMA DECIMAL (MATEMÁTICA)
+   ========================================================================== */
+
+.animacao-tutorial {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 180px !important;
+    border: 3px dashed var(--azul-vibrante) !important;
+    border-radius: 20px !important;
+    background: #020617 !important; /* Azul cobalto ultra escuro */
+    position: relative;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+}
+
+/* 1. CHUVA DE NÚMEROS (FUNDO) */
+.matrix-datastream {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: rgba(251, 197, 49, 0.3); /* Azul neon muito suave */
+    line-height: 25px;
+    letter-spacing: 8px;
+    animation: scrollVertical 15s linear infinite;
+    pointer-events: none;
+    text-align: center;
+}
+
+@keyframes scrollVertical {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+}
+
+/* 2. PILARES E MASCOTE (CENTRO) */
+.frequency-bars {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+}
+
+.bar {
+    width: 6px;
+    height: 30px;
+    border-radius: 10px;
+    opacity: 0.5;
+    animation: barPulse 1.5s infinite ease-in-out alternate;
+}
+
+/* Cores das Ordens Matemáticas */
+.bar-cm { background: #9b59b6; animation-delay: 0.0s; }
+.bar-dm { background: #f1c40f; animation-delay: 0.2s; }
+.bar-um { background: #e67e22; animation-delay: 0.4s; }
+.bar-c  { background: #2ecc71; animation-delay: 0.6s; }
+.bar-d  { background: #e74c3c; animation-delay: 0.8s; }
+.bar-u  { background: #3498db; animation-delay: 1.0s; }
+
+@keyframes barPulse {
+    to { height: 100px; opacity: 1; box-shadow: 0 0 15px currentColor; }
+}
+
+/* 3. MASCOTE HOLOGRÁFICA */
+.mascote-holo-container {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mascote-holo {
+    width: 90px;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+    animation: flutuarHolo 3s infinite ease-in-out;
+}
+
+@keyframes flutuarHolo {
+    0%, 100% { transform: translateY(0) scale(1); filter: brightness(1); }
+    50% { transform: translateY(-5px) scale(1.05); filter: brightness(1.2); }
+}
+
+/* 4. SCANNER DE SISTEMA */
+.system-scanner {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+    box-shadow: 0 0 15px #38bdf8;
+    z-index: 15;
+    opacity: 0.4;
+    animation: moveScan 4s linear infinite;
+}
+
+@keyframes moveScan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+/* 5. LABEL TÉCNICA */
+.label-era {
+    position: absolute;
+    bottom: 8px;
+    background: rgba(2, 6, 23, 0.8);
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    z-index: 20;
+}
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #fff275; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+
+
+/* ==========================================================================
+   10.1 ZONA DE EDIÇÃO: MOTOR DO ÁBACO DE 6 ORDENS
+   ========================================================================== */
+
+/* 1. CONTENTOR GERAL DO ÁBACO */
+.abaco-base-trilho {
+    display: none;
+}
+
+.abaco-layout {
+    position: relative;
+    background: #2c3e50;
+	border: 2px solid var(--cor-mat);
+    border-radius: 25px;
+    padding: 25px 20px 15px 20px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.barra-separadora-horizontal {
+    position: absolute;
+    bottom: 45px; /* Distância exata para ficar acima das labels */
+    left: 15px;
+    right: 15px;
+    height: 12px;
+    background: #475569; /* Cinza metal */
+    border-radius: 10px;
+    z-index: 1; /* Atrás das argolas */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* 2. ESTRUTURA DA HASTE */
+
+.abaco-flex-hastes {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: relative;
+    z-index: 2; /* À frente da barra */
+}
+
+.haste-contentor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 55px;
+}
+
+
+.haste-eixo {
+    position: relative;
+    width: 8px;
+    height: 180px;
+    background: #94a3b8;
+    border-radius: 4px;
+    margin-bottom: 12px; /* Espaço exato da altura da barra */
+}
+
+/* 3. AS ARGOLAS (STYLING SOBERBO) */
+.argola {
+    width: 44px; /* Mais larga que a haste */
+    height: 16px;
+    margin-bottom: 2px; /* Pequeno espaço entre argolas */
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.2);
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes cairArgola {
+    from { transform: translateY(-150px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.argolas-stack {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* Centra as argolas na haste */
+    display: flex;
+    flex-direction: column-reverse; /* Faz com que a 1ª argola seja a de baixo */
+    width: 100%;
+    align-items: center;
+}
+
+/* 4. LABELS DAS ORDENS */
+.haste-label {
+    font-weight: 900;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    height: 30px; /* Espaço para o texto */
+    display: flex;
+    align-items: center;
+}
+
+/* 5. CÁPSULAS DE CONTROLO (+ e -) */
+.controlo-haste {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border-radius: 30px;
+    padding: 5px;
+    margin-top: 15px;
+    gap: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-ajuste {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--cor-sucesso);
+    color: white;
+    font-weight: 900;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+}
+
+.haste-contentor:nth-child(3) {
+    margin-right: 25px !important;
+}
+
+.btn-ajuste:active { transform: scale(0.9); }
+.btn-ajuste.btn-menos { background: var(--cor-erro); }
+
+.valor-num {
+    font-weight: 900;
+    font-size: 1rem;
+    color: white;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* --- DEVOLVER A BARRA AO JOGO 1 E 2 (MODO LEITURA) --- */
+.abaco-layout::after {
+    content: '';
+    position: absolute;
+    /* Posiciona no pé das hastes de 180px */
+    top: 210px; 
+    left: 20px;
+    right: 20px;
+    height: 10px;
+    background: #475569;
+    border-radius: 5px;
+    z-index: 1;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Garante que as labels no Jogo 1 e 2 têm espaço para a barra */
+.abaco-layout .haste-label {
+    margin-top: 25px !important;
+    font-weight: 900;
+}
+
+/* Garante que as hastes do Jogo 1 e 2 tocam na barra */
+.abaco-layout .haste-eixo {
+    height: 180px !important;
+    margin-bottom: 0 !important;
+}
+
+
+
+
+/* ==========================================================================
+   10. ZONA DE EDIÇÃO: TABELA DE VALOR POSICIONAL E INPUT
+   ========================================================================== */
+
+/* 1. A TABELA DE ORDENS */
+.tabela-ordens-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0; /* Colunas coladas como num quadro */
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    border: 3px solid var(--azul-escuro);
+    border-radius: 15px;
+    overflow: hidden;
+    background: white;
+}
+
+.coluna-ordem {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e2e8f0;
+}
+.coluna-ordem:last-child { border-right: none; }
+
+.cabecalho-ordem {
+    padding: 10px 5px;
+    color: white;
+    font-weight: 900;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.celula-valor {
+    padding: 20px 5px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    text-align: center;
+    background: #f8fafc;
+}
+
+/* Espaçamento visual para separar milhares de unidades (entre UM e C) */
+.coluna-ordem:nth-child(3) {
+    border-right: 4px double var(--azul-escuro);
+}
+
+/* 2. CAIXA DE RESPOSTA (INPUT) */
+.zona-resposta-digital {
+    display: flex !important;
+    flex-direction: row; /* Lado a lado no PC */
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+
+
+.input-resposta-mat {
+    width: 180px;
+    padding: 15px;
+    font-size: 1.5rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    text-align: center;
+    border: 4px solid var(--cor-4ano);
+    border-radius: 20px;
+    color: var(--azul-escuro);
+    background: white;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+
+.input-resposta-mat:focus {
+    outline: none;
+    border-color: var(--cor-btn-amarelo);
+    box-shadow: 0 0 15px rgba(251, 197, 49, 0.3);
+    transform: scale(1.05);
+}
+
+#btn-confirmar-valor {
+    height: 52px; /* Alinhado com a altura do input */
+    margin: 0 !important;
+    padding: 0 25px !important;
+    font-size: 1rem !important;
+}
+
+
+/* 3. CORES DAS ORDENS (Reutilizando as cores do ábaco) */
+.bg-cm { background-color: #9b59b6; }
+.bg-dm { background-color: #f1c40f; }
+.bg-um { background-color: #e67e22; }
+.bg-c  { background-color: #2ecc71; }
+.bg-d  { background-color: #e74c3c; }
+.bg-u  { background-color: #3498db; }
+
+
+.pergunta-texto-mat {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    margin: 15px 0;
+    text-align: center;
+}
+
+
+/* Efeito de destaque para o algarismo alvo */
+.celula-valor.alvo-destacado {
+    background-color: #fff9c4 !important; /* Fundo amarelo suave */
+    color: var(--azul-vibrante) !important;
+    outline: 4px solid var(--cor-btn-amarelo);
+    outline-offset: -4px;
+    animation: pulsarAlvoMat 1.5s infinite;
+}
+
+/* No ábaco, destacamos a label por baixo */
+.haste-label.alvo-destacado {
+    transform: scale(1.3);
+    text-decoration: underline;
+    animation: pulsarAlvoMat 1.5s infinite;
+}
+
+@keyframes pulsarAlvoMat {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* --- FOCO VISUAL NO ÁBACO --- */
+
+/* Haste Alvo: Pulsa e brilha com a cor da própria ordem */
+.haste-foco {
+
+    z-index: 20;
+    transition: all 0.4s ease;
+}
+
+.haste-foco .haste-eixo {
+    box-shadow: 0 0 20px currentColor; /* Brilha com a cor definida no style inline */
+    background: #ffffff !important; /* Haste alvo fica branca brilhante */
+}
+
+.haste-foco .haste-label {
+    transform: scale(1.3);
+    font-size: 1.1rem !important;
+	animation: pulsarDestaque 1.2s infinite ease-in-out;
+}
+
+/* Hastes Desfocadas: Ficam em segundo plano */
+.haste-desfocada {
+    opacity: 0.4 !important;
+}
+
+@keyframes pulsarDestaque {
+    0%, 100% { transform: scale(1); filter: brightness(1.2); }
+    50% { transform: scale(1.25); filter: brightness(1.5); }
+}
+
+
+.algarismo-alvo-destaque {
+    font-weight: 900;            /* Deixa o número extra negrito */
+    font-size: 1.4em;            /* Fica ligeiramente maior que o texto em volta */
+    background-color: #f0f4f8;   /* Fundo cinza-azulado muito claro e neutro */
+    padding: 2px 10px;           /* Espaçamento interno (cima/baixo, lados) */
+    border-radius: 8px;          /* Cantos arredondados estilo Pixar */
+    border: 2px solid #e2e8f0;   /* Uma borda leve para dar volume 3D */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra subtil no fundo */
+    display: inline-block;       /* Garante que o padding e a borda funcionam bem */
+    vertical-align: middle;      /* Alinha perfeitamente com o texto da frase */
+}
+
+
+/* ==========================================================================
+   11. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes decolar { 0% { transform: translateY(0) scale(1); } 20% { transform: translateY(10px) scale(0.9); } 100% { transform: translateY(-1000px) scale(1.2); opacity: 0; } }
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+
+/* ==========================================================================
+   12. MEDIA QUERIES UNIFICADAS (600PX E 768PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+}
+
+@media (max-width: 600px) {
+    .grid-niveis { grid-template-columns: 1fr !important; max-width: 320px; }
+    .btn-nivel-novo { padding: 12px 15px !important; gap: 10px !important; }
+    .icon-btn-nivel { width: 40px; height: 40px; }
+    .btn-nivel-titulo { font-size: 1rem; }
+    .btn-nivel-subtitulo { font-size: 0.75rem; }
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    .progress-bg { order: 10; width: 100%; margin: 4px 0 0 0; height: 25px; }
+    .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { padding: 4px 8px; font-size: 0.8rem; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .opcoes-container { flex-direction: column !important; align-items: center !important; gap: 12px !important; width: 100% !important; max-width: 290px !important; margin: 0 auto !important; }
+    .opcoes-container .btn-opcao-vibrante { width: 100% !important; font-size: 0.95rem !important; padding: 10px 15px !important; box-sizing: border-box; }
+    .imagem-opcao-vibrante { max-width: 90px; max-height: 70px; }
+    .texto-paragrafo-lacunas { font-size: 1.05rem !important; line-height: 2.8 !important; padding: 15px !important; }
+    .slot-vazio { min-width: 85px !important; height: 28px !important; margin: 0 4px !important; }
+    .palavra-banco { font-size: 0.95rem !important; padding: 6px 14px !important; }
+    .mapa-relevo-wrapper.mapa-quadrado { max-width: 210px; }
+    .mapa-relevo-wrapper.mapa-retangular { max-width: 320px; }
+    .slot-mapa.preenchido strong { font-size: 0.72rem !important; }
+    .end-title { flex-direction: column; gap: 10px; }
+	.abaco-layout {
+        gap: 5px;
+        padding: 30px 10px 15px;
+    }
+    
+    .haste-contentor {
+        width: 42px;
+    }
+    
+    /* Espaço menor entre classes no mobile */
+    .haste-contentor[style*="margin-right"] {
+        margin-right: 12px !important;
+    }
+
+    .haste-eixo {
+        height: 140px; /* Haste mais curta */
+        width: 6px;
+    }
+
+    .argola {
+        width: 26px;
+        height: 12px;
+    }
+
+    .haste-label {
+        font-size: 0.7rem;
+    }
+	.haste-contentor:nth-child(3) {
+        margin-right: 12px !important;
+    }
+
+    .btn-ajuste {
+        width: 26px;
+        height: 26px;
+        font-size: 1rem;
+    }
+	.barra-separadora-horizontal {
+        bottom: 35px; /* Ajuste para letras menores */
+        height: 8px;
+    }
+    .haste-eixo {
+        height: 140px;
+    }
+    .haste-contentor:nth-child(3) {
+        margin-right: 15px !important;
+    }
+	.celula-valor { font-size: 1.3rem; padding: 15px 2px; }
+    .cabecalho-ordem { font-size: 0.65rem; }
+    .input-resposta-mat { width: 100%; max-width: 180px; font-size: 1.4rem; }
+	.zona-resposta-digital {
+        flex-direction: column; /* Volta a empilhar no telemóvel */
+        gap: 10px;
+    }
+	.pergunta-texto-mat {
+        font-size: 1.1rem; /* Reduzido de 1.3rem para não quebrar tanto o texto */
+        margin: 10px 0;    /* Margem vertical reduzida para poupar espaço no ecrã */
+    }
+}
+
+/* Responsividade Mobile */
+@media (max-width: 600px) {
+    #foguetao-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
+}
+
+/* ==========================================================================
+   13. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Detetive dos Números<img src="detetive-numeros.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Escolhe um minijogo para começar!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+
+        <!-- FOGUETÃO: Posicionado corretamente para não tapar o menu -->
+        <img id="foguetao-feedback" src="img/mascote_normal.png" class="mascote-foguetao" style="display: none;">
+
+        <!-- ECRÃ 1: SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+<div class="animacao-tutorial">
+    <!-- Camada 1: Matriz de Dados (Chuva de Números Subtil) -->
+    <div class="matrix-datastream">
+        <span>8 3 0 1 4 2 9 5 7 6 0 1 3 4 8 2</span>
+        <span>0 9 2 7 5 3 1 8 4 6 0 2 9 3 5 1</span>
+        <span>4 1 8 0 2 6 9 3 7 5 4 1 0 8 2 6</span>
+        <span>7 5 3 9 1 0 2 8 4 6 7 3 5 9 1 0</span>
+		<span>8 3 0 1 4 2 9 5 7 6 0 1 3 4 8 2</span>
+        <span>0 9 2 7 5 3 1 8 4 6 0 2 9 3 5 1</span>
+		<span>4 1 8 0 2 6 9 3 7 5 4 1 0 8 2 6</span>
+        <span>7 5 3 9 1 0 2 8 4 6 7 3 5 9 1 0</span>
+		<span>8 3 0 1 4 2 9 5 7 6 0 1 3 4 8 2</span>
+    </div>
+
+    <!-- Camada 2: Pilares de Frequência Decimal -->
+    <div class="frequency-bars">
+        <div class="bar bar-cm"></div>
+        <div class="bar bar-dm"></div>
+        <div class="bar bar-um"></div>
+        <!-- O Robô fica no centro dos dois grupos de 3 -->
+        <div class="mascote-holo-container">
+            <img src="img/mascote_animacao.png" class="mascote-holo" alt="">
+        </div>
+        <div class="bar bar-c"></div>
+        <div class="bar bar-d"></div>
+        <div class="bar bar-u"></div>
+    </div>
+
+    <!-- Camada 3: Varredura de Sistema -->
+    <div class="system-scanner"></div>
+
+    <div class="label-era">MARINHEIRO_OS: ANALISANDO_VALOR_POSICIONAL...</div>
+</div>
+            <h2 class="titulo-menu">Ajuda o robô Marinheiro a aprender o valor posicional dos algarismos!</h2>
+
+            <div class="grid-niveis">
+				<!-- Nível 1: Até 50 000 -->
+				<button class="btn-nivel-novo bg-vermelho" onclick="prepararValorPosicional('50k')">
+					<img src="img/menu_1.png" class="icon-btn-nivel-novo">
+					<div class="btn-nivel-text-container">
+						<span class="btn-nivel-titulo">NÍVEL 1</span>
+						<span class="btn-nivel-subtitulo">Até 50 000</span>
+					</div>
+				</button>
+
+				<!-- Nível 2: Até 100 000 -->
+				<button class="btn-nivel-novo bg-roxo" onclick="prepararValorPosicional('100k')">
+					<img src="img/menu_2.png" class="icon-btn-nivel-novo">
+					<div class="btn-nivel-text-container">
+						<span class="btn-nivel-titulo">NÍVEL 2</span>
+						<span class="btn-nivel-subtitulo">Até 100 000</span>
+					</div>
+				</button>
+
+				<!-- Nível 3: Até 500 000 -->
+				<button class="btn-nivel-novo bg-azul" onclick="prepararValorPosicional('500k')">
+					<img src="img/menu_3.png" class="icon-btn-nivel-novo">
+					<div class="btn-nivel-text-container">
+						<span class="btn-nivel-titulo">NÍVEL 3</span>
+						<span class="btn-nivel-subtitulo">Até 500 000</span>
+					</div>
+				</button>
+
+				<!-- Nível 4: Até 1 000 000 -->
+				<button class="btn-nivel-novo bg-verde" onclick="prepararValorPosicional('1M')">
+					<img src="img/menu_4.png" class="icon-btn-nivel-novo">
+					<div class="btn-nivel-text-container">
+						<span class="btn-nivel-titulo">NÍVEL 4</span>
+						<span class="btn-nivel-subtitulo">Até 1 000 000</span>
+					</div>
+				</button>
+			</div>
+        </div>
+
+        <!-- ECRÃ 2: JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"><span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ 3: FIM -->
+        <div id="ecra-fim" class="ecra">
+            <div id="rank-container"></div>
+            <h2 class="end-title" id="end-title-text">Missão Concluída!</h2>
+            <div class="end-stats">Erros: <strong id="final-erros">0</strong></div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">REPETIR JOGO <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">OUTRO JOGO <img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+        </div>
+		
+		<!-- MODAL DE ZOOM DE IMAGEM (TELA DE AMPLIÇÃO UNIVERSAL OPCIONAL) -->
+		<div id="zoom-modal" class="zoom-overlay-imagem" onclick="if(event.target === this) fecharZoomImagem()">
+			<button class="btn-fechar-zoom" onclick="fecharZoomImagem()">✕</button>
+			<img id="zoom-img-content" class="zoom-imagem-conteudo" src="" alt="Imagem ampliada">
+		</div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-box" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+	document.getElementById('ano-atual').innerText = new Date().getFullYear();
+	
+	/* =====================================================================
+	   1. DEFINIÇÕES E SVGs GLOBAIS DO TEMPLATE
+	   ===================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	const CORES_BTNS = ['bg-azul', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa'];
+	
+	/* --- VARIÁVEIS DE ESTADO DO DETETIVE DE ALGARISMOS --- */
+	let erradas = 0, desafioAtual = 0, perguntasSorteadas = [], podeInteragir = true;
+	let timerImpaciencia = null, sistemaAtivo = "";
+	let ultimoSistema = "";
+	let totalRondas = 10;
+	let dicasDisponiveis = 1; // Sistema de cargas para o Calculitron
+
+	/* --- DICIONÁRIO DE CORES DAS ORDENS --- */
+	const CORES_ORDENS = {
+		cm: "#9b59b6", // Roxo
+		dm: "#f1c40f", // Amarelo
+		um: "#e67e22", // Laranja
+		c: "#2ecc71",  // Verde
+		d: "#e74c3c",  // Vermelho
+		u: "#3498db"   // Azul
+	};
+
+
+/* ==========================================================================
+   2. ARRANQUE E NAVEGAÇÃO
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		// 1. Injeta os SVGs do template base nos elementos da barra de estado
+		if (document.getElementById('btn-home-svg')) 
+			document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		
+		if (document.getElementById('badge-ronda-svg')) 
+			document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		
+		if (document.getElementById('icone-erro-svg')) 
+			document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+
+		// 2. Garante que a mascote começa no estado normal
+		animarFoguetao('normal');
+
+		// 3. Abre o ecrã de seleção de níveis
+		mostrarEcra('ecra-selecao');
+	});
+	
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if(alvo) alvo.style.display = 'flex';
+	}
+
+	/* --- SISTEMA DE ZOOM DE IMAGEM SEGURO --- */
+	function abrirZoomImagem(srcCaminho) {
+		const modal = document.getElementById('zoom-modal');
+		const img = document.getElementById('zoom-img-content');
+		if (modal && img) {
+			img.src = srcCaminho;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharZoomImagem() {
+		const modal = document.getElementById('zoom-modal');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function prepararValorPosicional(nivel) {
+		sistemaAtivo = nivel;
+		erradas = 0;
+		desafioAtual = 0;
+		podeInteragir = true;
+		
+		let nomeNivel = "", max = 0;
+		
+		if (nivel === '50k') { nomeNivel = "Até 50 000"; max = 50000; }
+		else if (nivel === '100k') { nomeNivel = "Até 100 000"; max = 100000; }
+		else if (nivel === '500k') { nomeNivel = "Até 500 000"; max = 500000; }
+		else if (nivel === '1M') { nomeNivel = "Até 1 000 000"; max = 999999; }
+		
+		perguntasSorteadas = gerarSessaoValorPosicional(10, max);
+		dicasDisponiveis = 1; 
+		document.getElementById('subtitulo-header').textContent = nomeNivel;
+		atualizarBotaoDica();
+
+		mostrarEcra('ecra-jogo');
+		atualizarBarraEstado();
+		carregarRonda();
+	}
+	
+	function gerarSessaoValorPosicional(numQuestoes, maximo) {
+		let sessoes = [];
+		const ordensPossiveis = ['u', 'd', 'c', 'um', 'dm', 'cm'];
+		
+		for (let i = 0; i < numQuestoes; i++) {
+			const min = maximo > 500000 ? 100000 : 10000;
+			const numero = Math.floor(Math.random() * (maximo - min + 1)) + min;
+			const decomposto = decomporNumero(numero);
+			
+			// Escolhe uma ordem aleatória que não seja zero para perguntar
+			let ordemAlvo;
+			do {
+				ordemAlvo = ordensPossiveis[Math.floor(Math.random() * Math.log10(maximo))];
+			} while (decomposto[ordemAlvo] === 0);
+
+			const algarismoAlvo = decomposto[ordemAlvo];
+			const valorReal = algarismoAlvo * Math.pow(10, ordensPossiveis.indexOf(ordemAlvo));
+			
+			sessoes.push({
+				numero: numero,
+				decomposto: decomposto,
+				algarismoAlvo: algarismoAlvo,
+				ordemAlvo: ordemAlvo,
+				valorCorreto: valorReal,
+				modoVisual: i % 2 === 0 ? "tabela" : "abaco" // Alterna entre tabela e ábaco
+			});
+		}
+		return sessoes;
+	}
+	
+	function atualizarBarraEstado() {
+		const p = document.getElementById('val-progresso');
+		const t = document.getElementById('val-total');
+		const e = document.getElementById('val-erros');
+		if(p) p.textContent = Math.min(desafioAtual + 1, 10);
+		if(t) t.textContent = 10;
+		if(e) e.textContent = erradas;
+
+		// PROGRESSO VISUAL CORRIGIDO: Começa logo preenchido em 10% na Ronda 1
+		const progressoReferencia = Math.min(desafioAtual + 1, 10);
+		document.getElementById('progress-fill').style.width = (progressoReferencia / 10 * 100) + '%';
+	}
+	
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		if (dicasDisponiveis > 0) {
+			btn.disabled = false;
+			btn.style.opacity = "1";
+			btn.style.filter = "none";
+			btn.innerHTML = `${SVG_BULB} Dica: ${dicasDisponiveis}`;
+			btn.classList.remove('esgotada');
+		} else {
+			btn.disabled = true;
+			btn.style.opacity = "0.5";
+			btn.style.filter = "grayscale(100%)";
+			btn.innerHTML = `⏳ Esgotada`;
+			btn.classList.add('esgotada');
+		}
+	}
+	
+
+	function carregarRonda() {
+		const fog = document.getElementById('foguetao-feedback');
+		if(fog) { 
+			fog.style.display = "flex"; // Garante que o robô aparece
+			animarFoguetao('normal'); 
+		}
+		podeInteragir = true;
+		const ronda = perguntasSorteadas[desafioAtual];
+		const area = document.getElementById('game-area');
+		if (!area || !ronda) return;
+		area.innerHTML = '';
+		
+		// Mostra o número na Tabela ou no Ábaco
+		if (ronda.modoVisual === "tabela") {
+			desenharTabela(ronda.decomposto);
+		} else {
+			const abacoContainer = document.createElement('div');
+			abacoContainer.className = 'abaco-layout';
+			abacoContainer.id = 'container-visual-abaco';
+			area.appendChild(abacoContainer);
+			desenharAbaco(ronda.decomposto, false, ronda.ordemAlvo);
+		}
+		
+		// Injeta a pergunta e a zona de resposta
+		area.innerHTML += `
+			<div class="pergunta-texto-mat">
+				Qual é o valor do algarismo <span class="algarismo-alvo-destaque" style="color:${CORES_ORDENS[ronda.ordemAlvo]}">${ronda.algarismoAlvo}</span>?
+			</div>
+			<div class="zona-resposta-digital">
+				<input type="number" id="input-resposta" class="input-resposta-mat" placeholder="0">
+				<button class="btn-opcao-vibrante bg-verde" id="btn-confirmar-valor">CONFIRMAR ✓</button>
+			</div>
+		`;
+
+		// Ativação do Clique
+			document.getElementById('btn-confirmar-valor').onclick = () => validarRespostaDigital();
+
+			// --- NOVA FUNCIONALIDADE: ATIVAR ENTER ---
+			const campoInput = document.getElementById('input-resposta');
+			campoInput.focus(); // Coloca o cursor pronto a escrever
+			
+			campoInput.addEventListener('keydown', (event) => {
+				if (event.key === 'Enter') {
+					validarRespostaDigital();
+				}
+			});
+
+			resetTimerImpaciencia();
+	
+	}	
+	
+	function desenharTabela(valores) {
+		const area = document.getElementById('game-area');
+		const ronda = perguntasSorteadas[desafioAtual]; // Precisamos da ronda para saber o alvo
+		
+		let tabelaHTML = '<div class="tabela-ordens-container">';
+		const ordens = ['cm', 'dm', 'um', 'c', 'd', 'u'];
+		
+		ordens.forEach(ordem => {
+			if (valores[ordem] !== undefined) {
+				// Se esta coluna for o alvo da pergunta, adiciona a classe de destaque
+				const classeDestaque = (ordem === ronda.ordemAlvo) ? 'alvo-destacado' : '';
+				
+				tabelaHTML += `
+					<div class="coluna-ordem">
+						<div class="cabecalho-ordem bg-${ordem}">${ordem.toUpperCase()}</div>
+						<div class="celula-valor ${classeDestaque}">${valores[ordem]}</div>
+					</div>
+				`;
+			}
+		});
+		tabelaHTML += '</div>';
+		area.innerHTML = tabelaHTML;
+	}
+
+	function validarRespostaDigital() {
+		if(!podeInteragir) return;
+		const input = document.getElementById('input-resposta');
+		const valorUser = parseInt(input.value.replace(/\s/g, ''));
+		const correto = (valorUser === perguntasSorteadas[desafioAtual].valorCorreto);
+		validar(correto, document.getElementById('btn-confirmar-valor'));
+	}
+
+	function usarDica() {
+		// 1. Bloqueio de segurança
+		if (dicasDisponiveis <= 0 || !podeInteragir) return;
+		
+		const ronda = perguntasSorteadas[desafioAtual];
+		if (!ronda) return;
+
+		// 2. Consumo imediato
+		dicasDisponiveis = 0;
+		atualizarBotaoDica();
+		tocarSom('flip');
+
+		const nomes = {
+			cm: 'Centenas de Milhar', dm: 'Dezenas de Milhar', um: 'Unidades de Milhar',
+			c: 'Centenas', d: 'Dezenas', u: 'Unidades'
+		};
+
+		const msg = `O algarismo destacado está na casa das ${nomes[ronda.ordemAlvo]}.`;
+
+		// 3. Tentativa de mostrar no Modal
+		const modalConteudo = document.getElementById('modal-dica-conteudo');
+		const modalAjuda = document.getElementById('modal-ajuda');
+
+		if (modalConteudo && modalAjuda) {
+			modalConteudo.innerHTML = `<p style="font-size:1.2rem; font-weight:700;">${msg}</p>`;
+			modalAjuda.classList.add('active');
+		} else {
+			// Plano B: Se o modal não existir, mostra apenas o Toast
+			showToast(msg);
+		}
+	}
+
+
+
+function decomporNumero(n) {
+    return {
+        cm: Math.floor(n / 100000),
+        dm: Math.floor((n % 100000) / 10000),
+        um: Math.floor((n % 10000) / 1000),
+        c:  Math.floor((n % 1000) / 100),
+        d:  Math.floor((n % 100) / 10),
+        u:  n % 10
+    };
+}
+
+	function converterAbacoParaNumero(v) {
+		return (v.cm * 100000) + (v.dm * 10000) + (v.um * 1000) + (v.c * 100) + (v.d * 10) + v.u;
+	}
+
+	function desenharAbaco(valores, interativo, ordemAlvo = null) {
+		const container = document.getElementById('container-visual-abaco');
+		if (!container) return;
+		container.innerHTML = ''; 
+
+		// Contentor principal do ábaco
+		const visualWrapper = document.createElement('div');
+		visualWrapper.className = 'abaco-visual-area';
+		
+		const flexHastes = document.createElement('div');
+		flexHastes.className = 'abaco-flex-hastes';
+
+		const ordens = ['cm', 'dm', 'um', 'c', 'd', 'u'];
+		ordens.forEach(ordem => {
+			const hasteDiv = document.createElement('div');
+			
+			// Atribui as classes de foco/desfoco conforme o alvo
+			if (ordemAlvo) {
+				hasteDiv.className = (ordem === ordemAlvo) ? 'haste-contentor haste-foco' : 'haste-contentor haste-desfocada';
+			} else {
+				hasteDiv.className = 'haste-contentor';
+			}
+
+			if (ordem === 'um') hasteDiv.style.marginRight = '25px';
+
+			let argolasHTML = '';
+			for (let i = 0; i < valores[ordem]; i++) {
+				argolasHTML += `<div class="argola" style="background-color: ${CORES_ORDENS[ordem]}"></div>`;
+			}
+
+			// Estrutura limpa: Haste em cima, Label em baixo (sempre no mesmo nível)
+			hasteDiv.innerHTML = `
+				<div class="haste-eixo">
+					<div class="argolas-stack">${argolasHTML}</div>
+				</div>
+				<div class="haste-label" style="color: ${CORES_ORDENS[ordem]}">${valores[ordem]}</div>
+			`;
+			flexHastes.appendChild(hasteDiv);
+		});
+
+		visualWrapper.appendChild(flexHastes);
+		container.appendChild(visualWrapper);
+	}
+
+
+/* ==========================================================================
+   6. VERIFICAÇÃO E TRANSIÇÕES DE FEEDBACK
+   ========================================================================== */
+	function validar(correto, el) {
+		if (!podeInteragir) return; podeInteragir = false; clearTimeout(timerImpaciencia);
+		if (correto) {
+        el.classList.add('sucesso-vibrante'); 
+        animarFoguetao('acerto'); 
+        tocarSom('acerto');
+        
+        // RECUPERAÇÃO DA DICA: Se chegar à ronda 5, ganha 1 dica (não acumulável)
+        // desafioAtual + 1 porque o contador começa em 0
+        // Só dá a nova dica e mostra a mensagem se o aluno estiver sem dicas (0)
+		if ((desafioAtual + 1) === 5 && dicasDisponiveis === 0) {
+			dicasDisponiveis = 1;
+			showToast("O Robô Marinheiro carregou uma nova dica! ⚡");
+		} else if ((desafioAtual + 1) === 5) {
+			// Se já tinha uma dica, apenas garantimos que continua com 1 (não acumula)
+			// mas não mostramos a mensagem de carregamento.
+			dicasDisponiveis = 1;
+		}
+        
+        atualizarBotaoDica();
+
+        setTimeout(() => { 
+            desafioAtual++; 
+            if(desafioAtual < 10) { 
+                atualizarBarraEstado(); 
+                carregarRonda(); 
+            } else {
+                finalizarJogo(); 
+            }
+        }, 1600);
+    } else {
+			el.classList.add('erro-vibrante'); erradas++; atualizarBarraEstado(); animarFoguetao('erro'); tocarSom('erro');
+			setTimeout(() => { el.classList.remove('erro-vibrante'); podeInteragir = true; resetTimerImpaciencia(); }, 600);
+		}
+	}
+
+	function animarFoguetao(estado) {
+		const mascote = document.getElementById('foguetao-feedback');
+		if (!mascote) return;
+
+		// 1. Limpa as classes de animação anteriores
+		mascote.classList.remove('mascote-normal', 'mascote-erro', 'mascote-sucesso');
+		void mascote.offsetWidth; // Truque de Engenharia para reiniciar a animação
+
+		if (estado === 'normal') {
+			mascote.src = "img/mascote_normal.png";
+			mascote.classList.add('mascote-normal');
+		}
+		else if (estado === 'erro') {
+			mascote.src = "img/mascote_erro.png";
+			mascote.classList.add('mascote-erro');
+			// Volta ao estado normal automaticamente após o abanão (0.6s)
+			setTimeout(() => animarFoguetao('normal'), 600);
+		}
+		else if (estado === 'acerto') {
+			mascote.src = "img/mascote_acerto.png";
+			mascote.classList.add('mascote-sucesso');
+			// Volta ao estado normal automaticamente após o salto (1s)
+			setTimeout(() => {
+				// Se ainda não acabou o jogo, volta a flutuar
+				if (desafioAtual < totalRondas) animarFoguetao('normal');
+			}, 1000);
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+		timerImpaciencia = setTimeout(() => { if(btnDica) btnDica.classList.add('dica-impaciente'); }, 15000);
+	}
+
+
+
+	function fecharModalDica() { document.getElementById('modal-ajuda').classList.remove('active'); }
+
+	function finalizarJogo() {
+		document.getElementById('foguetao-feedback').style.display = "none";
+		mostrarEcra('ecra-fim');
+		document.getElementById('final-erros').textContent = erradas;
+		const rank = document.getElementById('rank-container');
+		let img = erradas === 0 ? "rank_ouro.svg" : (erradas <= 3 ? "rank_prata.svg" : "rank_bronze.svg");
+		rank.innerHTML = `<img src="../../../SVG/${img}" class="taca-vitoria" style="width:120px;">`;
+		tocarSom('vitoria'); dispararConfetis();
+	}
+
+	function voltarAoMenuPrincipal() {
+		mostrarEcra('ecra-selecao');
+		document.getElementById('foguetao-feedback').style.display = "none";
+		document.getElementById('subtitulo-header').textContent = "Escolhe um minijogo para começar!";
+		limparConfetis();
+	}
+
+	function confirmarSair() {
+		voltarAoMenuPrincipal();
+	}
+
+	function reiniciarJogo() {
+		limparConfetis();
+		// Chamamos a função correta usando o nível que estava ativo
+		prepararValorPosicional(sistemaAtivo);
+	}
+
+/* ==========================================================================
+   7. ÁUDIO, CONFETIS E AUXILIARES (COM COMPATIBILIDADE SEGURA)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha na inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('pointerdown', initAudio, { once: true });
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+	function tocarSom(t) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+			const agora = audioCtx.currentTime; // Variável unificada como agora
+
+			if (t === 'acerto') {
+				const notas = [783.99, 1046.50];
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (t === 'erro') {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle';
+				o.frequency.setValueAtTime(220, agora);
+				o.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				g.gain.setValueAtTime(0.08, agora);
+				o.start(agora);
+				o.stop(agora + 0.3);
+			} else if (t === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0.08, agora + nota.tempo);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			} else if (t === 'decolar') {
+				// NOVO: Som de Propulsão Sci-Fi Limpo e Cristalino (Zwoooop!)
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; // Onda 100% pura e limpa, sem qualquer distorção
+				o.frequency.setValueAtTime(150, agora);
+				// Varredura exponencial ascendente muito rápida (efeito de aceleração para o espaço)
+				o.frequency.exponentialRampToValueAtTime(1800, agora + 0.8); 
+				g.gain.setValueAtTime(0, agora);
+				g.gain.linearRampToValueAtTime(0.12, agora + 0.05); // Ataque de ignição rápido
+				g.gain.exponentialRampToValueAtTime(0.001, agora + 0.8); // Desvanece suavemente
+				o.start(agora);
+				o.stop(agora + 0.8);
+			} else if (t === 'flip') { // CORREÇÃO: Removida a chaveta extra "}" que quebrava a sintaxe aqui
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.setValueAtTime(400, agora);
+				o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+				g.gain.setValueAtTime(0.05, agora);
+				o.start(agora);
+				o.stop(agora + 0.1);
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		c.innerHTML = '';
+		const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = '';
+		}
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		// Seleciona todos os elementos interativos possíveis
+		const todosBotoes = document.querySelectorAll('.btn-opcao-vibrante, .btn-opcao, .bloco-arrastar, .palavra-banco, .cartao-opcao-visual');
+
+		/* A. CASO: ESCOLHA MÚLTIPLA */
+		if (ronda.tipo === 'multipla') {
+			todosBotoes.forEach(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				// Verifica se o texto ou o SRC da imagem coincide com a resposta certa
+				if (texto === ronda.correta || imgInside === ronda.correta) {
+					btn.classList.add('highlight-correto');
+					setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+
+		/* B. CASO: LIGAR (Lógica Inteligente) */
+		else if (ronda.tipo === 'ligar') {
+			// Encontra o primeiro par da esquerda que AINDA NÃO está ligado
+			const parPendente = Object.entries(ronda.pares).find(([esq, dir]) => {
+				const btnEsq = Array.from(todosBotoes).find(b => b.textContent.trim() === esq);
+				return btnEsq && !btnEsq.classList.contains('ligado');
+			});
+
+			if (parPendente) {
+				const [valEsq, valDir] = parPendente;
+				todosBotoes.forEach(btn => {
+					const txt = btn.textContent.trim();
+					if (txt === valEsq || txt === valDir) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+			}
+		}
+
+		/* C. CASO: ARRASTAR OU MAPA */
+		else if (ronda.tipo === 'arrastar' || ronda.tipo === 'mapa') {
+			// Encontra o primeiro item que ainda não foi colocado no alvo
+			const itemPendente = Object.keys(ronda.pares).find(item => !selecoesArrastar[item]);
+
+			if (itemPendente) {
+				todosBotoes.forEach(el => {
+					if (el.textContent.trim() === itemPendente) {
+						el.classList.add('highlight-correto');
+						setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+					}
+				});
+				showToast("Observa o destaque!");
+			}
+		}
+	}
+	
+	function showToast(mensagem) {
+		const toast = document.getElementById('toast-msg');
+		if (!toast) return;
+		
+		toast.textContent = mensagem;
+		toast.classList.add('active');
+		
+		// Esconde a mensagem após 3 segundos
+		setTimeout(() => {
+			toast.classList.remove('active');
+		}, 3000);
+	}
+	
+</script>
+</body>
+</html>

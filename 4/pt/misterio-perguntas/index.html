@@ -1,0 +1,3538 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - O Mistério das Perguntas 🎒</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55); 
+    border-top: 8px solid var(--cor-pt); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #fdf2f2; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--azul-escuro); margin-bottom: 30px; margin-top: 30px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 
+    0 -6px 15px rgba(255, 107, 107, 0.4), /* Sombra Superior */
+    0 6px 15px rgba(255, 107, 107, 0.4);  /* Sombra Inferior */
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 180px !important; height: 180px !important; }
+    .card-imagem-zoomable.img-retangular { width: 225px !important; height: 150px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 25px; gap: 25px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto {
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  line-height: 2;
+  color: var(--azul-escuro);
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 20px 0;
+  max-width: 800px;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7); /* Começa mais pequeno */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1); /* Termina no tamanho normal com um leve ressalto */
+  }
+}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px !important;
+    min-width: 180px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+	flex-direction: column !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+.btn-opcao-vibrante.sucesso-vibrante, .btn-opcao.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, .btn-opcao.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+.card-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    width: 100%;
+    max-width: 800px;
+    background-color: #f4faff;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55);
+    box-sizing: border-box;
+    position: relative;
+}
+
+.texto-split {
+    flex: 1;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    line-height: 1.5;
+    text-align: justify;
+}
+
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar (Alinhados com as proporções do btn-opcao-vibrante) */
+.bloco-arrastar {
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important;
+    width: 100%; 
+    min-width: 180px; /* Alinhado */
+    padding: 15px !important; /* Alinhado */
+    border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.2rem) !important; /* Alinhado */
+    font-weight: 700 !important;
+    background-color: #ffffff !important; 
+    border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; 
+    box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; 
+    transition: transform 0.1s, box-shadow 0.1s; 
+    touch-action: manipulation;
+}
+.bloco-arrastar:active { 
+    transform: scale(0.95) !important; 
+    box-shadow: 0 0px 0 transparent !important; 
+}
+.bloco-arrastar:not(.selecionado):not([disabled]) { 
+    animation: respirarBloco 2s infinite ease-in-out; 
+}
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.1rem !important; /* Ligeiramente mais compacto */
+    line-height: 2.6 !important;
+    color: var(--text-main) !important;
+    text-align: justify !important;
+    margin-bottom: 18px !important;
+    background: #ffffff !important;
+    padding: 15px 20px !important;
+    border-radius: 20px !important;
+    border: 2px solid #e2e8f0 !important;
+    width: 100% !important;
+    max-width: 750px !important;
+    box-sizing: border-box !important;
+}
+
+.dica-suave {
+    font-size: 0.72rem !important;
+
+    font-weight: 600 !important;
+    color: #57606f !important; /* Cinzento suave */
+    background-color: #f1f5f9; /* Fundo cinzento clarinho discreto */
+    border: 1px solid #cbd5e1;
+    padding: 1px 6px;
+    border-radius: 6px;
+    display: inline-block;
+    line-height: 1.1;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-pt) !important; background-color: #ffffff !important; }
+
+.banco-opcoes {
+    display: grid !important; /* Muda de flex para grid */
+    grid-template-columns: repeat(4, minmax(110px, 140px)); /* Força 4 colunas exatas */
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 610px !important; /* Limita a largura para obrigar à quebra 4+4 */
+    margin: 0 auto 15px auto !important;
+}
+.palavra-banco {
+    padding: 8px 14px !important; /* Ajuste fino de padding para não espremer texto */
+    background: #ffffff !important; 
+    border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; 
+    font-weight: 800 !important; 
+    font-size: 1rem !important; 
+    color: var(--azul-escuro) !important;
+    cursor: pointer !important; 
+    transition: all 0.15s ease !important; 
+    box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    text-align: center;
+    box-sizing: border-box;
+    width: 100% !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-pt) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   8. MASCOTE: SISTEMA DE EXPRESSÕES E MOVIMENTOS
+   ========================================================================== */
+#mascote-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+#mascote-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Estado em Repouso: Movimento lateral leve e mecânico */
+.mascote-normal { animation: balancoMascote 3s infinite ease-in-out; }
+
+/* Estado de Erro: Abana (Shake) */
+.mascote-erro { animation: shakeError 0.4s ease-in-out; }
+
+/* Estado de Sucesso: Salto de alegria */
+.mascote-sucesso { animation: saltoAlegria 0.8s ease-out; }
+
+/* ANIMAÇÃO DO SALTO */
+@keyframes saltoAlegria {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-45px) scale(1.1, 0.9); } /* Sobe e achata um pouco */
+    50% { transform: translateY(-55px) scale(0.9, 1.1); } /* Pico do salto e estica */
+}
+
+/* Responsividade Mobile */
+@media (max-width: 600px) {
+    #mascote-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
+}
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #fff275; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+
+/* Destaque tipo badge */
+.regra-destaque-irregular {
+    background-color: #fff275;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 900;
+    color: var(--cor-erro-dark); /* Vermelho escuro para contraste */
+    border: 1px dashed var(--cor-btn-amarelo);
+    display: inline-block;
+    font-size: 0.95em;
+    margin: 0 4px;
+}
+
+
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: clamp(80px, 15vw, 130px); 
+    margin-bottom: 15px; 
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, tacaDanca 3s infinite 0.6s ease-in-out;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+
+/* ==========================================================================
+   10. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes balancoMascote {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+@keyframes respirarBloco {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 0 var(--azul-vibrante);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 6px 12px rgba(0, 145, 255, 0.25), 0 5px 0 var(--azul-vibrante);
+    }
+}
+
+
+/* ==========================================================================
+   11. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+/* ==========================================================================
+   12. TECLADO
+   ========================================================================== */
+.teclado-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 25px;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-teclado {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 5px;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    box-shadow: 0 5px 0 #cbd5e1;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.btn-teclado:active { transform: translateY(4px); box-shadow: 0 1px 0 #cbd5e1; }
+.btn-teclado.btn-apagar { background: #fff1f0; color: var(--cor-erro); box-shadow: 0 5px 0 #ffa39e; }
+.btn-teclado.btn-confirmar { background: #f6ffed; color: var(--cor-sucesso); box-shadow: 0 5px 0 #b7eb8f; }
+
+/* Efeito de Hover no Teclado (Apenas PC) */
+@media (hover: hover) {
+    .btn-teclado:hover {
+        background-color: #f8fafc;
+        transform: translateY(-3px); /* O botão sobe */
+        box-shadow: 0 7px 0 #cbd5e1; /* A sombra aumenta para dar profundidade */
+        color: var(--azul-vibrante);
+    }
+    
+    .btn-teclado.btn-apagar:hover {
+        background-color: #fff1f0;
+        box-shadow: 0 7px 0 #ffa39e;
+    }
+    
+    .btn-teclado.btn-confirmar:hover {
+        background-color: #f6ffed;
+        box-shadow: 0 7px 0 #b7eb8f;
+    }
+}
+
+/* Ajuste no clique para parecer que afunda mesmo */
+.btn-teclado:active {
+    transform: translateY(2px) !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+}
+
+
+/* ==========================================================================
+   12.1. CSS ESPECÍFICO DO BOTÃO LINK
+   ========================================================================== */
+.badge-biblioteca {
+    margin: 20px auto 0;
+    background: #fffde7;
+    border: 2px solid #fbc531;
+    border-radius: 15px;
+    padding: 10px 20px;
+    width: fit-content;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(251, 197, 49, 0.15);
+}
+
+.badge-biblioteca:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.badge-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #b18500;
+}
+
+.svg-biblio {
+    width: 24px;
+    height: 24px;
+    stroke: #fbc531;
+    flex-shrink: 0;
+}
+
+.badge-text {
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+
+@media (hover: hover) {
+    .badge-biblioteca:hover {
+        background: #fbc531;
+        transform: translateY(-2px);
+    }
+    .badge-biblioteca:hover .badge-text,
+    .badge-biblioteca:hover .svg-biblio {
+        color: white;
+        stroke: white;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .badge-biblioteca {
+        width: 90%; /* Ocupa quase a largura toda no mobile */
+        max-width: 300px;
+        padding: 8px 15px;
+        margin-top: 20px;
+    }
+	.svg-biblio {
+        width: 20px;
+        height: 20px;
+    }
+	.badge-text {
+        font-size: 0.6rem;
+    }
+
+}
+
+
+/* ==========================================================================
+   13. ZONA DA ANIMAÇÃO (O MISTÉRIO DAS PERGUNTAS - MOCHILA MÁGICA)
+   ========================================================================== */
+.animacao-tutorial {
+    background: #f4fbf7; /* Tom verde muito suave */
+    border: 3px dashed var(--cor-pt);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 180px;
+    margin: 0 auto 25px;
+    box-shadow: inset 0 0 15px rgba(46, 213, 115, 0.05);
+}
+
+.mochila-anim-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Mochila Central (Usa a tua mochila verde real!) */
+.mochila-central-anim {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%) scale(1);
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    animation: pulsarMochila 2s infinite ease-in-out;
+}
+
+.img-mochila-central {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+}
+
+/* Ponto de Interrogação que é sugado pela mochila */
+.ponto-interrogacao-anim {
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--cor-btn-laranja);
+    text-shadow: 0 0 8px rgba(250, 152, 58, 0.4);
+    animation: sugarInterrogacao 4.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+}
+
+/* Pílulas dos Determinantes que saem disparadas */
+.determ-anim-que, .determ-anim-qual, .determ-anim-quais {
+    position: absolute;
+    right: -100px;
+    border: 2px solid white;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    font-weight: 900;
+    z-index: 5;
+}
+
+.determ-anim-que {
+    top: 20%;
+    background: var(--cor-btn-verde);
+    box-shadow: 0 3px 0 #45b062;
+    animation: dispararQue 4.5s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+.determ-anim-qual {
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--cor-btn-rosa);
+    box-shadow: 0 3px 0 #b33663;
+    animation: dispararQual 4.5s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+.determ-anim-quais {
+    bottom: 20%;
+    background: var(--cor-btn-azul);
+    box-shadow: 0 3px 0 #1d4ed8;
+    animation: dispararQuais 4.5s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+/* Centelhas de Brilho Mágico */
+.sparkle-mochila {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffdf00;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 12;
+}
+.sm-1 { left: calc(50% + 15px); top: 55px; animation: faiscaMochila1 4.5s infinite linear; }
+.sm-2 { left: calc(50% + 20px); bottom: 55px; animation: faiscaMochila2 4.5s infinite linear; }
+
+
+/* ==========================================================================
+   KEYFRAMES DAS ANIMAÇÕES DO MISTÉRIO DAS PERGUNTAS
+   ========================================================================== */
+
+@keyframes pulsarMochila {
+    0%, 100% { transform: translate(-50%, -55%) scale(0.95); }
+    50% { transform: translate(-50%, -55%) scale(1.04); }
+}
+
+@keyframes sugarInterrogacao {
+    0% { left: -80px; opacity: 1; transform: translateY(-50%) rotate(0deg) scale(1); }
+    22% { left: calc(50% - 70px); transform: translateY(-50%) rotate(-15deg) scale(1); opacity: 1; }
+    30% { left: 50%; transform: translate(-50%, -50%) rotate(-45deg) scale(0.3); opacity: 0; }
+    100% { left: 50%; transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+}
+
+@keyframes dispararQue {
+    0%, 30% { right: 50%; transform: scale(0); opacity: 0; }
+    35% { right: 50%; transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(93, 210, 121, 0.6); }
+    70% { right: 15px; opacity: 1; transform: scale(1); }
+    85% { right: -100px; opacity: 0; transform: scale(0.7); }
+    100% { right: -100px; opacity: 0; }
+}
+
+@keyframes dispararQual {
+    0%, 33% { right: 50%; transform: translateY(-50%) scale(0); opacity: 0; }
+    38% { right: 50%; transform: translateY(-50%) scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(224, 77, 140, 0.6); }
+    73% { right: 25px; opacity: 1; transform: translateY(-50%) scale(1); }
+    88% { right: -100px; opacity: 0; transform: translateY(-50%) scale(0.7); }
+    100% { right: -100px; opacity: 0; }
+}
+
+@keyframes dispararQuais {
+    0%, 36% { right: 50%; transform: scale(0); opacity: 0; }
+    41% { right: 50%; transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px rgba(0, 145, 255, 0.6); }
+    76% { right: 20px; opacity: 1; transform: scale(1); }
+    91% { right: -100px; opacity: 0; transform: scale(0.7); }
+    100% { right: -100px; opacity: 0; }
+}
+
+@keyframes faiscaMochila1 {
+    0%, 30% { opacity: 0; transform: scale(0); }
+    32% { opacity: 1; transform: translate(15px, -15px) scale(1.8); }
+    37% { opacity: 0; transform: translate(25px, -25px) scale(0.5); }
+    100% { opacity: 0; }
+}
+
+@keyframes faiscaMochila2 {
+    0%, 33% { opacity: 0; transform: scale(0); }
+    35% { opacity: 1; transform: translate(15px, 15px) scale(1.8); }
+    40% { opacity: 0; transform: translate(25px, 25px) scale(0.5); }
+    100% { opacity: 0; }
+}
+
+
+/* ==========================================================================
+   14. CSS ESPECÍFICO DO JOGO 
+   ========================================================================== */
+
+/* Painel de Triagem Geral (Estilo Base Compacto e Estável) */
+.painel-carruagens-tempo {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 750px;
+    background: #fdfaf6;
+    border: 4px solid var(--cor-btn-amarelo);
+    border-radius: 25px;
+    padding: 20px;
+    box-sizing: border-box;
+    justify-content: space-around;
+    margin: 15px 0;
+    box-shadow: inset 0 0 15px rgba(251, 197, 49, 0.15);
+}
+
+/* Contentores de Depósito com Altura Estável e sem Rodas */
+.carruagem-destino, .deposito-palavras {
+    flex: 1;
+    height: 160px; /* Altura fixa à prova de saltos */
+    max-height: 160px;
+    background: #ffffff;
+    border: 3px dashed #ced6e0;
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    align-content: flex-start; 
+    justify-content: center;
+    gap: 8px;
+    overflow-y: auto; /* Barra de rolagem interna */
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Título interno das caixas */
+.carruagem-titulo {
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* Depósito Pretérito Perfeito (Azul) */
+.carruagem-perfeito { 
+    border-color: var(--cor-btn-azul) !important; 
+    background-color: #f0f7ff !important; 
+}
+
+/* Depósito Pretérito Imperfeito (Rosa/Roxo) */
+.carruagem-imperfeito { 
+    border-color: var(--cor-btn-rosa) !important; 
+    background-color: #fff0f5; 
+}
+
+/* Ajuste das palavras depositadas */
+.carruagem-destino .destaque-fundo {
+    margin: 0 !important;
+    padding: 4px 10px;
+    font-size: 0.95rem !important;
+    height: fit-content;
+}
+
+/* Grelha simétrica de pílulas no PC */
+.coluna-classificacao {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(110px, 150px)); /* 4 colunas */
+    justify-content: center;
+    gap: 12px !important;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 15px auto;
+}
+
+/* Botão Estilo Pílula */
+.btn-opcao-pilula {
+    background-color: var(--cor-btn-azul);
+    border: 3px solid white;
+    border-radius: 20px;
+    padding: 8px 16px !important;
+    min-width: 110px;
+    max-width: 150px;
+    font-size: 1rem !important;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 0 #4a8deb;
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.btn-opcao-pilula:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
+
+@media (hover: hover) {
+    .btn-opcao-pilula:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.05);
+    }
+}
+
+.btn-opcao-pilula.selecionado {
+    border-color: var(--cor-btn-amarelo) !important;
+    box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important;
+    transform: scale(1.05);
+}
+
+/* Efeito de Pedra Ativa (Caminho Seguro) */
+.btn-opcao-pilula.pedra-ativa {
+    background-color: var(--cor-sucesso) !important;
+    border-color: var(--cor-sucesso-dark) !important;
+    color: white !important;
+    transform: translateY(4px) scale(0.96) !important;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.22), 0 0 15px rgba(46, 213, 115, 0.5) !important;
+    filter: brightness(1.02) !important;
+    pointer-events: none !important;
+}
+
+/* Alinhamento do Exercício de Ordenação/Arrastar */
+.container-arrastar {
+    display: flex;
+    gap: 35px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+}
+
+/* Carta do Oponente na Batalha de Cartas */
+.carta-desafio-oponente {
+    border: 4px solid var(--cor-btn-laranja) !important;
+    background-color: #fffde7 !important;
+    box-shadow: 0 6px 15px rgba(251, 152, 58, 0.15) !important;
+    animation: flutuarCartao 3s infinite ease-in-out;
+}
+
+/* Campo de Escrita */
+.container-escrita-verbo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+.campo-escrita-verbo {
+    width: 100%;
+	max-width: 280px;
+    padding: 15px 20px;
+    border: 3px solid var(--cor-btn-azul);
+    border-radius: 20px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    text-align: center;
+    background-color: white;
+    box-shadow: 0 5px 0 #4a8deb, inset 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.campo-escrita-verbo:focus {
+    border-color: var(--cor-btn-amarelo);
+    box-shadow: 0 5px 0 var(--cor-btn-amarelo), inset 0 0 10px rgba(251, 197, 49, 0.3);
+}
+
+.btn-confirmar-escrita {
+    background-color: var(--cor-sucesso);
+    color: white;
+    border: 3px solid white;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--cor-sucesso-dark);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Animação de flutuação ao passar o rato (Apenas em PC) */
+@media (hover: hover) {
+    .btn-confirmar-escrita:hover {
+        transform: translateY(-2px); /* O botão sobe suavemente */
+        box-shadow: 0 6px 0 var(--cor-sucesso-dark); /* Aumenta a sombra para dar sensação de profundidade */
+        filter: brightness(1.05); /* Torna o verde ligeiramente mais brilhante e convidativo */
+    }
+}
+
+.btn-confirmar-escrita:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 transparent;
+}
+
+.deposito-titulo {
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* --- ADICIONADO: A MOLDURA DA MÁQUINA DO TEMPO COM ECRÃ NÉON --- */
+.moldura-maquina-tempo {
+    position: relative;
+    width: 100%;
+    max-width: 450px; /* Proporção retangular 3:2 otimizada */
+    height: 300px;
+    background-image: url('img/painel_maquina.png'); /* Imagem recortada sem fundo */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
+
+/* O texto dinâmico projetado com brilho LED/Néon no ecrã da máquina */
+.texto-maquina-tempo {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #ffffff; /* Letras brancas de alto contraste */
+    text-transform: uppercase;
+	text-align: center;
+    line-height: 1.25 !important;
+    letter-spacing: 1px;
+    /* Efeito de brilho néon azul elétrico */
+    text-shadow: 0 0 10px rgba(0, 145, 255, 0.8), 0 0 20px rgba(0, 145, 255, 0.5); 
+    margin-bottom: 5px; /* Ligeiro ajuste vertical para centrar na tela física da imagem */
+    pointer-events: none;
+    user-select: none;
+}
+
+/* --- ADICIONADO: BOTÕES DE MOCHILA TRANSPARENTES (ESCOLHA MÚLTIPLA) --- */
+.btn-opcao-vibrante.mochila-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    flex-direction: column !important; /* Desativa herança de flex */
+}
+
+/* A imagem da tua mochila guardada na pasta /img */
+.img-mochila-opcao {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+    pointer-events: none; /* Deixa o clique passar para o botão pai */
+}
+
+@media (hover: hover) {
+    .btn-opcao-vibrante.mochila-btn:hover {
+        transform: scale(1.08) translateY(-4px) !important;
+        filter: brightness(1.05);
+    }
+}
+
+.btn-opcao-vibrante.mochila-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Dica Highlight: Brilho néon verde em redor da silhueta PNG transparente */
+.btn-opcao-vibrante.mochila-btn.highlight-correto {
+    animation: pulsarDestaqueMochila 1.4s infinite !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+@keyframes pulsarDestaqueMochila {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12)) drop-shadow(0 0 0 transparent); }
+    50% { transform: scale(1.06); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12)) drop-shadow(0 0 15px rgba(46, 213, 115, 0.65)); }
+}
+
+/* ==========================================================================
+   15. MEDIA QUERIES UNIFICADAS (600PX E 768PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+	.card-split {
+        padding: 10px;
+        padding-right: 35px;
+    }
+	.card-split .card-imagem-zoomable {
+        display: none !important; 
+    }
+	.texto-split {
+        font-size: 0.95rem;
+        text-align: left;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-niveis { grid-template-columns: 1fr !important; max-width: 320px; }
+    .btn-nivel-novo { padding: 12px 15px !important; gap: 10px !important; }
+    .icon-btn-nivel { width: 40px; height: 40px; }
+    .btn-nivel-titulo { font-size: 0.9rem; }
+    .btn-nivel-subtitulo { font-size: 0.75rem; }
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    .progress-bg { order: 10; width: 100%; margin: 4px 0 0 0; height: 25px; }
+    .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { padding: 4px 8px; font-size: 0.8rem; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .opcoes-container { flex-direction: column !important; align-items: center !important; gap: 12px !important; width: 100% !important; max-width: 290px !important; margin: 0 auto !important; }
+    .opcoes-container .btn-opcao-vibrante { width: 100% !important; font-size: 0.95rem !important; padding: 10px 15px !important; box-sizing: border-box; }
+    .imagem-opcao-vibrante { max-width: 90px; max-height: 70px; }
+    .texto-paragrafo-lacunas { font-size: 1.05rem !important; line-height: 2.8 !important; padding: 15px !important; }
+    /* Grelha dupla compacta de pílulas de banco no telemóvel (2x4) */
+    .banco-opcoes {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(105px, 130px)) !important; /* 2 colunas */
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 280px !important;
+        margin: 0 auto 15px auto !important;
+    }
+    
+    /* Encolhimento proporcional do botão de banco no Mobile */
+    .palavra-banco {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 3px 0 var(--azul-vibrante) !important;
+    }
+    .mapa-relevo-wrapper.mapa-quadrado { max-width: 210px; }
+    .mapa-relevo-wrapper.mapa-retangular { max-width: 320px; }
+    .slot-mapa.preenchido strong { font-size: 0.72rem !important; }
+    .end-title { flex-direction: column; gap: 10px; }
+
+}
+
+
+/* ==========================================================================
+   16. MEDIA QUERIES ESPECÍFICAS DO JOGO
+   ========================================================================== */
+@media (max-width: 600px) {
+    .painel-carruagens-tempo { 
+        flex-direction: column !important;
+        gap: 15px !important;
+        padding: 12px 10px !important;
+    }
+    
+    .carruagem-destino, .deposito-palavras { 
+		height: 120px !important;
+		max-height: 120px !important;
+		padding: 8px !important;
+		gap: 6px !important;
+	}
+    
+    .carruagem-titulo { 
+        font-size: 0.95rem !important;
+    }
+    
+    .coluna-classificacao {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(105px, 130px)) !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 280px !important;
+    }
+    
+    .btn-opcao-pilula {
+        min-width: 100px !important;
+        padding: 6px 12px !important;
+        font-size: 0.85rem !important;
+        border-radius: 16px !important;
+        box-shadow: 0 3px 0 #4a8deb !important;
+    }
+
+    .container-arrastar {
+        flex-direction: column !important;
+        gap: 15px !important;
+        width: 100% !important;
+    }
+    
+    .container-arrastar .coluna-ligar {
+        width: 100% !important;
+        max-width: 280px !important;
+        gap: 12px !important;
+    }
+    
+    .bloco-arrastar {
+        min-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Adaptação móvel para a Batalha de Cartas */
+    .card-split {
+        flex-direction: column !important;
+        gap: 15px !important;
+        padding: 15px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .card-split .carta-desafio-oponente {
+        width: 100% !important;
+        max-width: 260px !important;
+        height: 110px !important;
+        max-height: 110px !important;
+        box-sizing: border-box;
+    }
+
+    .card-split .coluna-ligar {
+        width: 100% !important;
+        max-width: 260px !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .card-split .btn-opcao-pilula {
+        width: 100% !important;
+        max-width: 260px !important;
+        box-sizing: border-box;
+    }
+
+    /* Adaptação do campo de escrita para mobile */
+    .campo-escrita-verbo {
+        font-size: 1.2rem !important;
+        padding: 12px 15px !important;
+    }
+    .btn-confirmar-escrita {
+        font-size: 1rem !important;
+        padding: 10px 20px !important;
+    }
+	
+	.deposito-titulo {
+        font-size: 0.95rem !important;
+    }
+	.moldura-maquina-tempo {
+        max-width: 270px !important;
+        height: 180px !important;
+    }
+    
+    .texto-maquina-tempo {
+        font-size: 1rem !important;
+    }
+	
+	.opcoes-container:has(.mochila-btn) {
+        flex-direction: row !important; /* Força horizontal */
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+    }
+    
+    .btn-opcao-vibrante.mochila-btn {
+        width: 90px !important;
+        height: 90px !important;
+    }
+}
+   
+   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>O Mistério das Perguntas<img src="misterio_perguntas.png" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Ajuda o amigo papagaio com os Determinantes Interrogativos!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+        
+        <!-- Mascote do Jogo (Papagaio) -->
+        <div id="mascote-feedback" style="display: none;">
+            <img src="img/mascote_normal.png" class="mascote-mascote" alt="Mascote do Jogo">
+        </div>
+
+        <!-- ECRÃ 1: SELEÇÃO DE DESAFIOS -->
+        <div id="ecra-selecao" class="ecra">
+            <!-- Animação Avançada da Mochila Interrogativa Mágica -->
+            <div class="animacao-tutorial">
+                <div class="mochila-anim-wrapper">
+                    <!-- Mochila Escolar Central (Usa a tua imagem verde!) -->
+                    <div class="mochila-central-anim">
+                        <img src="img/mochila_animacao.png" class="img-mochila-central" alt="">
+                    </div>
+                    
+                    <!-- Ponto de Interrogação que entra na mochila -->
+                    <div class="ponto-interrogacao-anim">?</div>
+                    
+                    <!-- Determinantes que Saem Disparados -->
+                    <div class="determ-anim-que">que?</div>
+                    <div class="determ-anim-qual">qual?</div>
+                    <div class="determ-anim-quais">quais?</div>
+                    
+                    <!-- Centelhas de Brilho -->
+                    <div class="sparkle-mochila sm-1"></div>
+                    <div class="sparkle-mochila sm-2"></div>
+                </div>
+            </div>
+            
+            <h2 class="titulo-menu">Escolhe o teu desafio!</h2>
+            
+            <!-- GRELHA DOS DOIS MINIJOGOS DE DETERMINANTES -->
+            <div class="grid-niveis">
+                
+                <!-- Nível 1: A Mochila das Perguntas -->
+                <button class="btn-nivel-novo bg-verde" onclick="prepararJogo('mochila')">
+                    <img src="img/menu_1.png" class="icon-btn-nivel-novo" alt="">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">A MOCHILA DAS PERGUNTAS</span>
+                        <span class="btn-nivel-subtitulo">Qual é o determinante interrogativo correto?</span>
+                    </div>
+                </button>
+        
+                <!-- Nível 2: Variável ou Invariável? -->
+                <button class="btn-nivel-novo bg-roxo" onclick="prepararJogo('variavel')">
+                    <img src="img/menu_2.png" class="icon-btn-nivel-novo" alt="">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">VARIÁVEL OU INVARIÁVEL?</span>
+                        <span class="btn-nivel-subtitulo">Separa e classifica os determinantes interrogativos</span>
+                    </div>
+                </button>
+				
+				<div class="badge-biblioteca" onclick="visitarJogoArtigos()">
+				<div class="badge-content">
+
+					<svg class="svg-biblio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+					</svg>
+					<span class="badge-text">EXPLORAR JOGO<br>"DETERMINANTES ARTIGOS" (3.º ANO)</span>
+				</div>
+			</div>
+			
+			<div class="badge-biblioteca" onclick="visitarJogoDeterminantes()">
+				<div class="badge-content">
+
+					<svg class="svg-biblio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+					</svg>
+					<span class="badge-text">EXPLORAR JOGO<br>"POSSESSIVOS E DEMONSTRATIVOS" (3.º ANO)</span>
+				</div>
+			</div>
+                
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: INTERFACE DE JOGO ATIVO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"><span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ 3: RESULTADOS FINAIS -->
+        <div id="ecra-fim" class="ecra">
+            <div id="rank-container"></div>
+            <h2 class="end-title" id="end-title-text">Mistérios Resolvidos!</h2>
+            <div class="end-stats">Erros cometidos: <strong id="final-erros">0</strong></div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">REPETIR JOGO <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">OUTRO JOGO <img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+        </div>
+		
+		<!-- MODAL DE ZOOM SEGURO DE IMAGENS -->
+		<div id="zoom-modal" class="zoom-overlay-imagem" onclick="if(event.target === this) fecharZoomImagem()">
+			<button class="btn-fechar-zoom" onclick="fecharZoomImagem()">✕</button>
+			<img id="zoom-img-content" class="zoom-imagem-conteudo" src="" alt="Imagem ampliada">
+		</div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+	document.getElementById('ano-atual').innerText = new Date().getFullYear();
+	
+/* =====================================================================
+	   1. DEFINIÇÕES E VARIÁVEIS GLOBAIS DO TEMPLATE
+	   ===================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	const CORES_BTNS = ['bg-azul', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa'];
+	const COOLDOWN_DICA = 5; // Dica permitida uma vez por bloco de 5 rondas
+	
+	// GESTÃO DE ESTADO DO JOGO ATIVO
+	let erradas = 0, desafioAtual = 0, perguntasSorteadas = [], podeInteragir = true, timerImpaciencia = null, sistemaAtivo = "";
+	let poolRestantesSessao = [];
+	let ultimoSistema = "";
+	let dicaUsadaNoBloco = false; // Novo sistema de dicas
+	
+	// VARIÁVEIS DE CONTROLO DE MECÂNICAS ATIVAS
+	let selecaoLigar = null, selecoesLigar = {}, paresElementosLigar = [];
+	let arrastoAtivo = null, selecoesArrastar = {};
+	let selecoesLacunas = {}, lacunaAtiva = null;
+	let totalRondas = 10;
+	let totalArrastar = 0;
+	
+
+
+/* ==========================================================================
+	   2. BASE DE DADOS - NÍVEL 1: A MOCHILA DAS PERGUNTAS (DETERMINANTES)
+	   ========================================================================== */
+	const BD_MOCHILA = [
+		// --- 10 QUESTÕES DE ESCRITA ATIVA (TECLADO FÍSICO / NATIVO MOBILE) ---
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">livro</span> estás a ler?"',
+			imagem: 'img/livro.png',
+			proporcao: 'quadrada',
+			correta: 'que',
+			dica: 'O nome "livro" é masculino singular. Usa o determinante invariável.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">o caminho</span> que devemos seguir?"',
+			imagem: 'img/caminho.png',
+			proporcao: 'quadrada',
+			correta: 'qual',
+			dica: 'O nome "caminho" está no singular. Usa o determinante variável.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">os brinquedos</span> que preferes?"',
+			imagem: 'img/brincar.png',
+			proporcao: 'quadrada',
+			correta: 'quais',
+			dica: 'O nome "brinquedos" está no plural. Usa o determinante variável no plural.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">menina</span> ganhou a prova?"',
+			imagem: 'img/corrida.png',
+			proporcao: 'quadrada',
+			correta: 'que',
+			dica: 'Usa o determinante invariável que se refere a "menina".'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">caneta</span> é a tua?"',
+			imagem: 'img/caneta.png',
+			proporcao: 'quadrada',
+			correta: 'qual',
+			dica: 'O nome "caneta" está no singular. Usa o determinante variável.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">mochilas</span> são as vossas?"',
+			imagem: 'img/mochila.png',
+			proporcao: 'quadrada',
+			correta: 'quais',
+			dica: 'O nome "mochilas" está no plural. Usa o determinante variável no plural.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">fruta</span> gostas mais?"',
+			imagem: 'img/fruta.png',
+			proporcao: 'quadrada',
+			correta: 'que',
+			dica: 'Usa o determinante invariável.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">o carro</span> que correu mais rápido?"',
+			imagem: 'img/carro.png',
+			proporcao: 'quadrada',
+			correta: 'qual',
+			dica: 'O nome "carro" está no singular. Usa o determinante variável.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">os atletas</span> foram convocados?"',
+			imagem: 'img/atleta.png',
+			proporcao: 'quadrada',
+			correta: 'quais',
+			dica: 'O nome "atletas" está no plural. Usa o determinante variável no plural.'
+		},
+		{
+			tipo: 'escrita',
+			pergunta: 'Completa com o <span class="destaque-texto-verde">determinante interrogativo</span> correto.<br>"___ <span class="destaque-fundo">dia</span> é hoje?"',
+			imagem: 'img/calendario.png',
+			proporcao: 'quadrada',
+			correta: 'que',
+			dica: 'Usa o determinante invariável.'
+		},
+
+		// --- 10 QUESTÕES DE ESCOLHA MÚLTIPLA (RENDERIZA AUTOMATICAMENTE AS TUAS MOCHILAS 3D!) ---
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> é a tua cor favorita?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Qual',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> os caminhos que nos levam à escola?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Quais',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> misteriosa história é essa?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Que',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> rapaz venceu o torneio?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Que',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> é o teu estojo?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Qual',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> segredos queres desvendar?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Quais',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> canção estavas a ouvir?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Que',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> são os teus colegas de equipa?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Quais',
+			dica: { tipo: 'retirar-um' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> mochila queres abrir primeiro?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Que',
+			dica: { tipo: '50-50' }
+		},
+		{
+			tipo: 'multipla',
+			pergunta: 'Completa a pergunta escolhendo a mochila certa:<br><br>"<span class="destaque-fundo">___</span> é a comida típica da tua terra?"',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Qual',
+			dica: { tipo: 'retirar-um' }
+		},
+
+		
+		// 21. Nova Dinâmica: O Intruso (Foco em Concordância de Número)
+		{
+			tipo: 'intruso',
+			pergunta: 'Três destas expressões estão escritas com a <span class="destaque-fundo">concordância correta</span>, mas uma é o intruso.<br><br>Clica no <span class="destaque-texto">intruso</span>!',
+			imagem: 'img/mochila_animacao.png',
+			proporcao: 'quadrada',
+			opcoes: ['Que dia?', 'Qual dia?', 'Quais dias?', 'Quais dia?'],
+			correta: 'Quais dia?',
+			dica: { tipo: '50-50' }
+		},
+		// 22. Nova Dinâmica: O Caminho Seguro (ESTREITAMENTE 8 OPÇÕES)
+		{
+			tipo: 'caminho',
+			pergunta: 'Clica apenas nas 3 expressões que apresentam a <span class="destaque-texto-verde">concordância correta</span> entre o determinante e o nome!',
+			imagem: 'img/mochila_animacao.png',
+			proporcao: 'quadrada',
+			itens: ['Qual segredo?', 'Quais segredos?', 'Que ideias?', 'Qual segredos?', 'Quais segredo?', 'Qual ideias?', 'Quais ideia?', 'Que? mistério'],
+			corretas: ['Qual segredo?', 'Quais segredos?', 'Que ideias?'],
+			dica: { tipo: 'highlight' }
+		},
+		// 23. Nova Dinâmica: O Caminho Seguro (ESTREITAMENTE 8 OPÇÕES)
+		{
+			tipo: 'caminho',
+			pergunta: 'Clica apenas nas 3 expressões que contêm <span class="destaque-texto">determinantes variáveis</span>!',
+			imagem: 'img/mochila_animacao.png',
+			proporcao: 'quadrada',
+			itens: ['qual', 'quais', 'Qual', 'que', 'quem', 'como', 'onde', 'porque'],
+			corretas: ['qual', 'quais', 'Qual'],
+			dica: { tipo: 'highlight' }
+		},
+		// 24. Nova Dinâmica: Batalha de Cartas
+		{
+			tipo: 'batalha',
+			pergunta: 'Vence a carta do oponente jogando o determinante <span class="destaque-fundo">variável no plural</span> correto!',
+			desafio: 'os segredos',
+			opcoes: ['Quais', 'Qual', 'Que'],
+			correta: 'Quais',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 25. Nova Dinâmica: Batalha de Cartas
+		{
+			tipo: 'batalha',
+			pergunta: 'Vence a carta do oponente jogando o determinante <span class="destaque-texto-verde">invariável</span> correto!',
+			desafio: 'história',
+			opcoes: ['Que', 'Qual', 'Quais'],
+			correta: 'Que',
+			dica: { tipo: 'retirar-um' }
+		}
+	];
+	
+	/* ==========================================================================
+	   2.1 BASE DE DADOS - NÍVEL 2: VARIÁVEL OU INVARIÁVEL? (DETERMINANTES)
+	   ========================================================================== */
+	const BD_VARIAVEL = [
+		// 1. Múltipla Escolha com Imagem
+		{
+			tipo: 'multipla',
+			pergunta: 'Como se classifica o determinante interrogativo <span class="regra-destaque-irregular">Qual</span>?',
+			imagem: 'img/mochila_rosa_qual.png',
+			proporcao: 'quadrada',
+			opcoes: ['Variável', 'Invariável', 'Pronome'],
+			correta: 'Variável',
+			dica: { tipo: '50-50' }
+		},
+		// 2. Múltipla Escolha com Imagem
+		{
+			tipo: 'multipla',
+			pergunta: 'Como se classifica o determinante interrogativo <span class="regra-destaque-irregular">Que</span>?',
+			imagem: 'img/mochila_verde_que.png',
+			proporcao: 'quadrada',
+			opcoes: ['Invariável', 'Variável', 'Nome'],
+			correta: 'Invariável',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 3. Verdadeiro ou Falso com Imagem
+		{
+			tipo: 'verdadeiro-falso',
+			pergunta: 'O determinante interrogativo <span class="destaque-texto-verde">Quais</span> pertence ao grupo dos determinantes variáveis.',
+			imagem: 'img/mochila_animacao.png',
+			proporcao: 'quadrada',
+			correta: 'Verdadeiro',
+			dica: 'Sim, varia em número (qual no singular, quais no plural).'
+		},
+		// 4. Nova Dinâmica: O Intruso
+		{
+			tipo: 'intruso',
+			pergunta: 'Três destes determinantes interrogativos pertencem ao grupo dos <span class="regra-destaque-irregular">variáveis</span>, mas uma é o intruso.<br><br>Clica no <span class="destaque-texto">intruso</span>!',
+			opcoes: ['Qual', 'Quais', 'quais', 'Que'],
+			correta: 'Que',
+			dica: { tipo: '50-50' }
+		},
+		// 5. Nova Dinâmica: O Caminho Seguro (ESTREITAMENTE 8 OPÇÕES)
+		{
+			tipo: 'caminho',
+			pergunta: 'Ajuda o papagaio clicando apenas nas 3 pedras que contêm <span class="regra-destaque-irregular">determinantes interrogativos invariáveis</span>!',
+			itens: ['Que', 'que', 'Que?', 'Qual', 'Quais', 'quais', 'como', 'onde'],
+			corretas: ['Que', 'que', 'Que?'],
+			dica: { tipo: 'highlight' }
+		},
+		// 6. Nova Dinâmica: Batalha de Cartas
+		{
+			tipo: 'batalha',
+			pergunta: 'Vence a carta do oponente jogando a forma plural do determinante <span class="destaque-fundo">Qual</span>!',
+			desafio: 'Qual',
+			opcoes: ['Quais', 'Que', 'Quals'],
+			correta: 'Quais',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 7. Classificação Dinâmica (ESTREITAMENTE 8 ITENS - Variável vs Invariável)
+		{
+			tipo: 'classificacao',
+			pergunta: 'Classifica os 8 determinantes interrogativos nas caixas corretas:',
+			itens: ['Qual', 'Quais', 'qual', 'quais', 'Que', 'que', 'Que?', 'que?'],
+			pares: {
+				'Qual': 'Variável',
+				'Quais': 'Variável',
+				'qual': 'Variável',
+				'quais': 'Variável',
+				'Que': 'Invariável',
+				'que': 'Invariável',
+				'Que?': 'Invariável',
+				'que?': 'Invariável'
+			},
+			dica: 'A caixa azul acolhe as formas variáveis (Qual/Quais), a caixa rosa acolhe a forma invariável (Que).'
+		},
+
+		// 9. Múltipla Escolha com Imagem
+		{
+			tipo: 'multipla',
+			pergunta: 'Como se classifica o determinante interrogativo <span class="regra-destaque-irregular">Quais</span>?',
+			imagem: 'img/mochila_azul_quais.png',
+			proporcao: 'quadrada',
+			opcoes: ['Variável', 'Invariável', 'Nome'],
+			correta: 'Variável',
+			dica: { tipo: '50-50' }
+		},
+		// 10. Verdadeiro ou Falso com Imagem
+		{
+			tipo: 'verdadeiro-falso',
+			pergunta: 'O determinante interrogativo <span class="regra-destaque-irregular">Que</span> varia de acordo com o singular e o plural.',
+			imagem: 'img/mochila_verde_que.png',
+			proporcao: 'quadrada',
+			correta: 'Falso',
+			dica: 'O determinante Que é invariável, ou seja, escreve-se sempre da mesma forma.'
+		},
+		// 11. Ligar Colunas (Frequência Reduzida)
+		{
+			tipo: 'ligar',
+			pergunta: 'Liga cada palavra à sua respetiva classificação de número:',
+			esquerda: ['Qual', 'Que', 'Quem'],
+			direita: ['Determinante variável', 'Determinante invariável', 'Pronome interrogativo'],
+			pares: {
+				'Qual': 'Determinante variável',
+				'Que': 'Determinante invariável',
+				'Quem': 'Pronome interrogativo'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		// 12. Nova Dinâmica: O Intruso
+		{
+			tipo: 'intruso',
+			pergunta: 'Três destes determinantes pertencem ao grupo dos <span class="regra-destaque-irregular">invariáveis</span>, mas uma é o intruso.<br><br>Clica no <span class="destaque-texto">intruso</span>!',
+			opcoes: ['Que', 'que', 'Que?', 'Qual'],
+			correta: 'Qual',
+			dica: { tipo: '50-50' }
+		},
+		// 13. Nova Dinâmica: O Caminho Seguro (ESTREITAMENTE 8 OPÇÕES)
+		{
+			tipo: 'caminho',
+			pergunta: 'Ajuda o papagaio clicando apenas nas 3 pedras que contêm determinantes <span class="regra-destaque-irregular">variáveis</span>!',
+			itens: ['Qual', 'Quais', 'quais', 'Que', 'que', 'como', 'onde', 'porque'],
+			corretas: ['Qual', 'Quais', 'quais'],
+			dica: { tipo: 'highlight' }
+		},
+		// 14. Nova Dinâmica: Batalha de Cartas
+		{
+			tipo: 'batalha',
+			pergunta: 'Vence a carta do oponente jogando a classificação correta do determinante <span class="destaque-fundo">Que</span>!',
+			desafio: 'Que',
+			opcoes: ['Invariável', 'Variável', 'Pronome'],
+			correta: 'Invariável',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 15. Classificação Dinâmica (ESTREITAMENTE 8 ITENS - Frases do Manual)
+		{
+			tipo: 'classificacao',
+			pergunta: 'Separa as 8 frases de acordo com o tipo de <span class="destaque-texto-verde">determinante interrogativo</span>.',
+			itens: ['Qual livro?', 'Quais livros?', 'Qual caneta?', 'Quais canetas?', 'Que livro?', 'Que canetas?', 'Que rapaz?', 'Que raparigas?'],
+			pares: {
+				'Qual livro?': 'Variável',
+				'Quais livros?': 'Variável',
+				'Qual caneta?': 'Variável',
+				'Quais canetas?': 'Variável',
+				'Que livro?': 'Invariável',
+				'Que canetas?': 'Invariável',
+				'Que rapaz?': 'Invariável',
+				'Que raparigas?': 'Invariável'
+			},
+			dica: 'Frases com "Qual/Quais" vão para a caixa Variável, frases com "Que" vão para a caixa Invariável.'
+		},
+		// 16. Múltipla Escolha com Imagem
+		{
+			tipo: 'multipla',
+			pergunta: 'Qual é o determinante interrogativo que completa a frase?<br>"___ <span class="destaque-fundo">segredo</span> queres descobrir?"',
+			imagem: 'img/generica.png',
+			proporcao: 'quadrada',
+			opcoes: ['Que', 'Quais', 'Quem'],
+			correta: 'Que',
+			dica: { tipo: '50-50' }
+		},
+		// 17. Verdadeiro ou Falso com Imagem
+		{
+			tipo: 'verdadeiro-falso',
+			pergunta: 'O determinante <span class="destaque-texto">Qual</span> altera a sua forma para <span class="destaque-texto-verde">Quais</span> quando o nome a que se refere está no plural.',
+			imagem: 'img/generica.png',
+			proporcao: 'quadrada',
+			correta: 'Verdadeiro',
+			dica: 'Sim, varia para concordar em número com o nome (Qual livro / Quais livros).'
+		},
+		// 18. Lacunas de 2 Toques (EXATAMENTE 4 LACUNAS + 4 DISTRATORES)
+		{
+			tipo: 'lacunas',
+			pergunta: 'Completa o texto aplicando a <span class="destaque-texto-verde">concordância correta</span>:',
+			texto: 'Na língua portuguesa, [0] (invariável) mistério queres descobrir? E [1] (variável no singular) é o teu plano? Tenho aqui três ideias: [2] (variável no plural) delas preferes? [3] (invariável) grande aventura nos espera!',
+			respostas: ['que', 'qual', 'quais', 'Que'],
+			distratores: ['Quai', 'Ques', 'Quem', 'Como'],
+			dica: { tipo: 'highlight' }
+		},
+		// 19. Múltipla Escolha com Imagem
+		{
+			tipo: 'multipla',
+			pergunta: '"<span class="destaque-texto-verde">Que mistério é este?</span>"<br>Qual é a classificação de "Que"?',
+			imagem: 'img/mochila_verde_que.png',
+			proporcao: 'quadrada',
+			opcoes: ['determinante invariável', 'determinante variável', 'pronome interrogativo'],
+			correta: 'determinante invariável',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 20. Verdadeiro ou Falso com Imagem
+		{
+			tipo: 'verdadeiro-falso',
+			pergunta: 'Na frase: "___ <span class="destaque-texto">mistérios são estes?</span>", o determinante correto que falta é "Quais".',
+			imagem: 'img/mochila_azul_quais.png',
+			proporcao: 'quadrada',
+			correta: 'Verdadeiro',
+			dica: 'O nome "mistérios" está no plural, por isso exige o determinante variável no plural.'
+		},
+		// 21. Nova Dinâmica: O Intruso (Opções no Masculino)
+		{
+			tipo: 'intruso',
+			pergunta: 'Três destes determinantes pertencem ao grupo dos <span class="regra-destaque-irregular">invariáveis</span>, mas uma é o intruso.<br><br>Clica no <span class="destaque-texto">intruso</span>!',
+			opcoes: ['Que', 'que', 'Que?', 'Quais'],
+			correta: 'Quais',
+			dica: { tipo: '50-50' }
+		},
+		// 22. Nova Dinâmica: O Caminho Seguro (ESTREITAMENTE 8 OPÇÕES)
+		{
+			tipo: 'caminho',
+			pergunta: 'Ajuda o papagaio a voar clicando apenas nas 3 pedras que contêm <span class="regra-destaque-irregular">determinantes invariáveis</span> com concordância correta!',
+			itens: ['Que rapaz?', 'Que rapariga?', 'Que segredo?', 'Qual segredo?', 'Quais segredos?', 'Qual caneta?', 'Quais canetas?', 'Qual ideia?'],
+			corretas: ['Que rapaz?', 'Que rapariga?', 'Que segredo?'],
+			dica: { tipo: 'highlight' }
+		},
+		// 23. Nova Dinâmica: Batalha de Cartas
+		{
+			tipo: 'batalha',
+			pergunta: 'Vence a carta do oponente jogando a classificação correta do determinante <span class="destaque-fundo">Qual</span>!',
+			desafio: 'Qual',
+			opcoes: ['Variável', 'Invariável', 'Pronome'],
+			correta: 'Variável',
+			dica: { tipo: 'retirar-um' }
+		},
+		// 24. Ordenação / Arrastar (Frequência Reduzida)
+		{
+			tipo: 'arrastar',
+			pergunta: 'Ordena os determinantes de acordo com a sua respetiva classificação de flexão:',
+			itens: ['Que', 'Qual', 'Quais'],
+			alvos: ['Determinante Invariável', 'Determinante Variável Singular', 'Determinante Variável Plural'],
+			pares: {
+				'Que': 'Determinante Invariável',
+				'Qual': 'Determinante Variável Singular',
+				'Quais': 'Determinante Variável Plural'
+			},
+			dica: { tipo: 'highlight' }
+		},
+		// 25. Classificação Dinâmica (ESTREITAMENTE 8 ITENS - Frases do Manual)
+		{
+			tipo: 'classificacao',
+			pergunta: 'Separa as 8 expressões na fábrica de género das perguntas:',
+			itens: ['Que brinquedos?', 'Que cores?', 'Que dia?', 'Que ideias?', 'Qual brinquedo?', 'Quais cores?', 'Qual dia?', 'Quais ideias?'],
+			pares: {
+				'Que brinquedos?': 'Invariável',
+				'Que cores?': 'Invariável',
+				'Que dia?': 'Invariável',
+				'Que ideias?': 'Invariável',
+				'Qual brinquedo?': 'Variável',
+				'Quais cores?': 'Variável',
+				'Qual dia?': 'Variável',
+				'Quais ideias?': 'Variável'
+			},
+			dica: 'Lembra-te: expressões com "Que" são Invariáveis, expressões com "Qual/Quais" são Variáveis.'
+		}
+	];
+	
+	
+	
+	
+	
+/* ==========================================================================
+   3. ZONA DE EDIÇÃO EXCLUSIVA DO JOGO
+   ========================================================================== */	
+	function visitarJogoArtigos() {
+		tocarSom('flip');
+		
+		setTimeout(() => {
+			window.location.href = "../../../3/pt/determinantes-artigos/index.html";
+		}, 300);
+	}
+	function visitarJogoDeterminantes() {
+		tocarSom('flip');
+		
+		setTimeout(() => {
+			window.location.href = "../../../3/pt/determinantes/index.html";
+		}, 300);
+	}
+
+
+/* ==========================================================================
+   4. ARRANQUE E NAVEGAÇÃO
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+		mostrarEcra('ecra-selecao');
+	});
+	
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if(alvo) alvo.style.display = 'flex';
+	}
+
+	/* --- SISTEMA DE ZOOM DE IMAGEM SEGURO --- */
+	function abrirZoomImagem(srcCaminho) {
+		const modal = document.getElementById('zoom-modal');
+		const img = document.getElementById('zoom-img-content');
+		if (modal && img) {
+			img.src = srcCaminho;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharZoomImagem() {
+		const modal = document.getElementById('zoom-modal');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function prepararJogo(sistema) {
+		sistemaAtivo = sistema;
+		erradas = 0; 
+		desafioAtual = 0; 
+		podeInteragir = true;
+
+		if (sistema !== ultimoSistema) {
+			poolRestantesSessao = [];
+			ultimoSistema = sistema;
+		}
+
+		let baseCompleta = [];
+		let nomeSistema = "";
+
+		if (sistema === 'mochila') {
+			baseCompleta = BD_MOCHILA; // Base do Nível 1: A Mochila das Perguntas
+			nomeSistema = "A Mochila das Perguntas";
+		} else if (sistema === 'variavel') {
+			baseCompleta = BD_VARIAVEL; // Base do Nível 2: Variável ou Invariável?
+			nomeSistema = "Variável ou Invariável?";
+		}
+
+		// 3. RECARREGAMENTO E SORTEIO SEM REPETIÇÃO (Fila Contínua Padrão)
+		if (baseCompleta.length >= 10) {
+			if (poolRestantesSessao.length < 10) {
+				// Junta as novas 25 perguntas baralhadas ao fim da fila, sem deitar fora as que restam
+				poolRestantesSessao = [...poolRestantesSessao, ...baralharArray([...baseCompleta])];
+				console.log(`Pilha de ${sistema} expandida de forma contínua.`);
+			}
+			perguntasSorteadas = poolRestantesSessao.splice(0, 10);
+		} else {
+			perguntasSorteadas = baralharArray([...baseCompleta]).slice(0, 10);
+		}
+		
+		const fog = document.getElementById('mascote-feedback');
+		if(fog) { 
+			fog.style.display = "flex"; 
+			animarMascote('normal'); 
+		}
+		
+		document.getElementById('subtitulo-header').textContent = nomeSistema;
+		
+		// Inicia o primeiro bloco de dicas do jogo ativo como "não usado"
+		dicaUsadaNoBloco = false;
+		atualizarBotaoDica(); 
+
+		mostrarEcra('ecra-jogo');
+		atualizarBarraEstado();
+		carregarRonda();
+	}
+	
+	function atualizarBarraEstado() {
+		const p = document.getElementById('val-progresso');
+		const t = document.getElementById('val-total');
+		const e = document.getElementById('val-erros');
+		if(p) p.textContent = Math.min(desafioAtual + 1, 10);
+		if(t) t.textContent = 10;
+		if(e) e.textContent = erradas;
+
+		// PROGRESSO VISUAL CORRIGIDO: Começa logo preenchido em 10% na Ronda 1
+		const progressoReferencia = Math.min(desafioAtual + 1, 10);
+		document.getElementById('progress-fill').style.width = (progressoReferencia / 10 * 100) + '%';
+	}
+	
+	function atualizarBotaoDica() {
+			const btn = document.getElementById('btn-dica');
+			if (!btn) return;
+
+			// Se o aluno já gastou a dica neste bloco de 5 rondas, bloqueia o botão
+			if (dicaUsadaNoBloco) {
+				btn.classList.add('esgotada');
+				btn.disabled = true;
+				btn.innerHTML = `❌ Usada`;
+			} else {
+				// Se não usou, o botão fica ativo e brilhante
+				btn.classList.remove('esgotada');
+				btn.disabled = false;
+				btn.innerHTML = SVG_BULB + ' Dica';
+			}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO MAPA EM CASO DE ERRO --- */
+	function validarMapa(zona) {
+		const ronda = perguntasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		// Verifica se cada órgão foi colocado no local correto
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, zona);
+		} else {
+			validar(false, zona);
+			
+			// REPOSIÇÃO SUAVE DO MAPA EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os botões azuis de órgãos à esquerda
+				document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e esvazia visualmente as caixas sobrepostas do corpo
+				document.querySelectorAll('.slot-mapa').forEach(slot => {
+					slot.innerHTML = '';
+					slot.className = 'slot-mapa';
+				});
+			}, 800);
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO ARRASTAR EM CASO DE ERRO --- */
+	function validarArrastar(container, ronda) {
+		let tudoCerto = true;
+
+		// Compara cada conceito ordenado com o par correto respetivo
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, container);
+		} else {
+			validar(false, container);
+			
+			// REPOSIÇÃO DO ARRASTAMENTO EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os blocos cinzentos à esquerda
+				document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e repõe o texto inicial dos alvos da direita (remover as palavras erradas)
+				const botoesAlvo = document.getElementById('game-area').querySelectorAll('.coluna-ligar:last-child button');
+				ronda.alvos.forEach((alvo, index) => {
+					if (botoesAlvo[index]) {
+						botoesAlvo[index].textContent = alvo;
+					}
+				});
+			}, 800);
+		}
+	}
+
+/* ==========================================================================
+   5. CONSTRUÇÃO DINÂMICA DOS EXERCÍCIOS
+   ========================================================================== */
+	function carregarRonda() {
+		podeInteragir = true;
+		selecaoLigar = null; 
+		selecoesLigar = {};
+		paresElementosLigar = [];
+		arrastoAtivo = null; 
+		selecoesArrastar = {}; 
+		selecoesLacunas = {}; 
+		lacunaAtiva = null;
+		
+		document.querySelectorAll('.highlight-correto').forEach(el => el.classList.remove('highlight-correto'));
+
+		// RESET AUTOMÁTICO DA DICA NA RONDA 6 (Início do Bloco 2)
+		if (desafioAtual === 5) {
+			dicaUsadaNoBloco = false;
+			atualizarBotaoDica();
+		}
+
+		const ronda = perguntasSorteadas[desafioAtual];
+		const area = document.getElementById('game-area');
+		if(!area || !ronda) return;
+		area.innerHTML = '';
+
+		area.className = 'area-jogo-custom';
+		if(ronda.tipo === 'ligar') area.classList.add('jogo-tipo-ligar');
+		if(ronda.tipo === 'lacunas') area.classList.add('jogo-tipo-lacunas');
+
+		// A. INJETA IMAGEM MODULAR (Ocultada em modo lacunas por segurança técnica)
+		if(ronda.imagem && ronda.tipo !== 'mapa' && ronda.tipo !== 'lacunas') {
+			const wrapper = document.createElement('div');
+			const proporcaoClasse = ronda.proporcao === 'quadrada' ? 'img-quadrada' : 'img-retangular';
+			wrapper.className = `card-imagem-zoomable ${proporcaoClasse}`;
+
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'imagem-evento-tempo';
+			img.alt = 'Suporte';
+			img.onerror = () => { wrapper.remove(); };
+			wrapper.appendChild(img);
+
+			if (ronda.zoom === true) {
+				wrapper.onclick = () => abrirZoomImagem(ronda.imagem);
+				const zoomBtn = document.createElement('div');
+				zoomBtn.className = 'btn-zoom-imagem';
+				zoomBtn.innerHTML = `
+					<svg viewBox="0 0 24 24">
+						<circle cx="11" cy="11" r="8"></circle>
+						<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					</svg>
+				`;
+				wrapper.appendChild(zoomBtn);
+			}
+			area.appendChild(wrapper);
+		}
+
+		// B. INJETA O TEXTO DA PERGUNTA
+		if (ronda.pergunta && ronda.tipo !== 'mapa') {
+			const txt = document.createElement('div');
+			txt.className = 'pergunta-texto';
+			txt.innerHTML = ronda.pergunta;
+			area.appendChild(txt);
+		}
+
+		// C. SELEÇÃO MÚLTIPLA VIBRANTE
+		// C. SELEÇÃO MÚLTIPLA VIBRANTE / MOCHILAS 3D DO MANUAL
+		if (ronda.tipo === 'multipla') {
+			const container = document.createElement('div'); 
+			container.className = 'opcoes-container';
+			
+			const baralhadas = baralharArray([...ronda.opcoes]);
+			const coresSorteio = obterCoresAleatorias(baralhadas.length);
+
+			baralhadas.forEach((opt, idx) => {
+				const b = document.createElement('button');
+				
+				// LÓGICA DE DETEÇÃO DE MOCHILAS 3D DO MANUAL
+				const optLower = opt.toLowerCase().trim();
+				if (optLower === 'que' || optLower === 'qual' || optLower === 'quais') {
+					b.className = 'btn-opcao-vibrante mochila-btn';
+					
+					// Determina qual é o ficheiro de imagem de acordo com a palavra
+					let imgFile = '';
+					if (optLower === 'que') imgFile = 'img/mochila_verde_que.png';
+					else if (optLower === 'qual') imgFile = 'img/mochila_rosa_qual.png';
+					else if (optLower === 'quais') imgFile = 'img/mochila_azul_quais.png';
+
+					const img = document.createElement('img');
+					img.src = imgFile;
+					img.className = 'img-mochila-opcao';
+					img.alt = opt;
+					b.appendChild(img);
+				} else {
+					// Fallback de segurança para botões de texto padrão do template
+					b.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+					b.textContent = opt;
+				}
+
+				b.onclick = () => {
+					if(!podeInteragir) return;
+					validar(opt === ronda.correta, b);
+				};
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+		// D. LIGAR COLUNAS (REDUZIDO NA NOVO BASE)
+		else if (ronda.tipo === 'ligar') {
+			const container = document.createElement('div'); container.className = 'coluna-ligar-container';
+			const colEsq = document.createElement('div'); colEsq.className = 'coluna-ligar';
+			const colDir = document.createElement('div'); colDir.className = 'coluna-ligar';
+			
+			ronda.esquerda.forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-azul'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarEsq(it, b, ronda); };
+				colEsq.appendChild(b);
+			});
+			baralharArray([...ronda.direita]).forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarDir(it, b, ronda); };
+				colDir.appendChild(b);
+			});
+			container.appendChild(colEsq); container.appendChild(colDir); area.appendChild(container);
+		}
+		// E. TEXTO COM LACUNAS (2 TOQUES)
+		else if (ronda.tipo === 'lacunas') {
+			const p = document.createElement('div'); p.className = 'texto-paragrafo-lacunas';
+			let html = ronda.texto || ronda.text || "";
+			html = html.replace(/\(([^)]+)\)/g, '<span class="dica-suave">($1)</span>');
+
+			ronda.respostas.forEach((r, i) => html = html.replace(`[${i}]`, `<span class="slot-vazio" id="slot-lacuna-${i}">...</span>`));
+			p.innerHTML = html; area.appendChild(p);
+			
+			const banco = document.createElement('div'); banco.className = 'banco-opcoes';
+			const distratoresSeguros = ronda.distratores || [];
+			const todasAsOpcoes = baralharArray([...ronda.respostas, ...distratoresSeguros]);
+
+			todasAsOpcoes.forEach(pal => {
+				const b = document.createElement('button'); b.className = 'palavra-banco'; b.textContent = pal;
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.palavra-banco').forEach(x => x.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					lacunaAtiva = { elemento: b, texto: pal };
+
+					document.querySelectorAll('.slot-vazio').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+				banco.appendChild(b);
+			});
+			area.appendChild(banco);
+
+			document.querySelectorAll('.slot-vazio').forEach((slot, idx) => {
+				slot.onclick = () => {
+					if (!lacunaAtiva) {
+						const palavraAtual = slot.querySelector('strong')?.textContent;
+						if (palavraAtual) {
+							tocarSom('flip');
+							slot.textContent = '...';
+							slot.classList.remove('preenchido');
+							delete selecoesLacunas[idx];
+							
+							document.querySelectorAll('.palavra-banco').forEach(b => {
+								if (b.textContent === palavraAtual) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						} else {
+							showToast("Seleciona primeiro uma palavra em baixo!");
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const palavraTexto = lacunaAtiva.texto;
+
+					const palavraAnterior = slot.querySelector('strong')?.textContent;
+					if (palavraAnterior) {
+						document.querySelectorAll('.palavra-banco').forEach(b => {
+							if (b.textContent === palavraAnterior) {
+								b.disabled = false;
+								b.style.opacity = '1';
+							}
+						});
+					}
+
+					slot.innerHTML = `<strong style="color:var(--azul-escuro); font-size:1.1rem;">${palavraTexto}</strong>`;
+					slot.classList.add('preenchido');
+					selecoesLacunas[idx] = palavraTexto;
+
+					lacunaAtiva.elemento.classList.remove('selecionado');
+					lacunaAtiva.elemento.style.opacity = '0.3';
+					lacunaAtiva.elemento.disabled = true;
+					lacunaAtiva = null;
+
+					document.querySelectorAll('.slot-vazio').forEach(s => s.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesLacunas).length === ronda.respostas.length) {
+						let tudoOk = true; 
+						ronda.respostas.forEach((res, index) => { 
+							if(selecoesLacunas[index] !== res) tudoOk = false; 
+						});
+						validar(tudoOk, p);
+					}
+				};
+			});
+		}
+		// F. ARRASTAR / ORDENAR (REDUZIDO NA BASE)
+		else if (ronda.tipo === 'arrastar') {
+			const container = document.createElement('div');
+			container.className = 'container-arrastar';
+			const colItens = document.createElement('div'); colItens.className="coluna-ligar";
+			const colAlvos = document.createElement('div'); colAlvos.className="coluna-ligar";
+			
+			const itensEmbaralhados = baralharArray(ronda.itens);
+
+			itensEmbaralhados.forEach(it => {
+				const b = document.createElement('button'); b.className = 'bloco-arrastar'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir || b.disabled) return; document.querySelectorAll('.bloco-arrastar').forEach(x=>x.classList.remove('selecionado')); b.classList.add('selecionado'); arrastoAtivo = {val: it, btn: b}; tocarSom('flip'); };
+				colItens.appendChild(b);
+			});
+
+			ronda.alvos.forEach(al => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = al;
+				
+				b.onclick = () => {
+					if (!arrastoAtivo) {
+						let itemEncontrado = null;
+						for (let item in selecoesArrastar) {
+							if (selecoesArrastar[item] === al) {
+								itemEncontrado = item;
+								break;
+							}
+						}
+						if (itemEncontrado) {
+							tocarSom('flip');
+							delete selecoesArrastar[itemEncontrado];
+							b.textContent = al;
+							document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(bloco => {
+								if (bloco.textContent === itemEncontrado) {
+									bloco.disabled = false;
+									bloco.style.opacity = '1';
+								}
+							});
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.val;
+					selecoesArrastar[valorSelecionado] = al;
+					
+					b.innerHTML = `${al}<br><small style="color:white; opacity:0.8;">(${valorSelecionado})</small>`; 
+					arrastoAtivo.btn.disabled = true; 
+					arrastoAtivo.btn.style.opacity = "0.3"; 
+					arrastoAtivo = null;
+
+					if (Object.keys(selecoesArrastar).length === ronda.itens.length) {
+						setTimeout(() => { validarArrastar(container, ronda); }, 400);
+					}
+				};
+				colAlvos.appendChild(b);
+			});
+			container.appendChild(colItens); container.appendChild(colAlvos); area.appendChild(container);
+		}
+		// G. CLASSIFICAÇÃO INDUSTRIAL DINÂMICA
+		else if (ronda.tipo === 'classificacao') {
+			selecoesArrastar = {};
+			arrastoAtivo = null;
+			let totalItens = ronda.itens.length;
+
+			const categoriasUnicas = Array.from(new Set(Object.values(ronda.pares)));
+			const cat1 = categoriasUnicas[0]; 
+			const cat2 = categoriasUnicas[1]; 
+
+			// LISTA UNIVERSAL DE CATEGORIAS AZUIS (Abrange todos os temas do 4.º ano)
+			const categoriasAzuis = [
+				'Masculino', 'Singular', 'Comparativo', 'Analítico', 'Relativo', 
+				'Variável', 'Pretérito Perfeito', 'Presente', 'Indicativo', 'Modo Indicativo'
+			];
+
+			// ASSOCIAÇÃO DINÂMICA DE CORES DAS CARRIAGES (Pretérito Perfeito = carruagem-perfeito, Pretérito Imperfeito = carruagem-imperfeito)
+			const classeCat1 = categoriasAzuis.includes(cat1) ? 'carruagem-perfeito' : 'carruagem-imperfeito';
+			const classeCat2 = categoriasAzuis.includes(cat2) ? 'carruagem-perfeito' : 'carruagem-imperfeito';
+
+			const zona = document.createElement('div');
+			zona.className = 'painel-carruagens-tempo'; // Usa a classe do painel do comboio
+
+			const colPalavras = document.createElement('div');
+			colPalavras.className = 'coluna-classificacao';
+
+			const baralhadas = baralharArray(ronda.itens);
+			baralhadas.forEach(pal => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = pal;
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.coluna-classificacao button').forEach(x => x.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					arrastoAtivo = { val: pal, btn: b };
+				};
+				colPalavras.appendChild(b);
+			});
+
+			// Contentor 1 (Lê dinamicamente o nome e a classe de cor da carruagem)
+			const depSingular = document.createElement('div');
+			depSingular.className = `carruagem-destino ${classeCat1}`;
+			depSingular.innerHTML = `<div class="carruagem-titulo">${cat1}</div>`;
+			depSingular.onclick = () => { processarClassificacao(cat1, depSingular); };
+
+			// Contentor 2 (Lê dinamicamente o nome e a classe de cor da carruagem)
+			const depPlural = document.createElement('div');
+			depPlural.className = `carruagem-destino ${classeCat2}`;
+			depPlural.innerHTML = `<div class="carruagem-titulo">${cat2}</div>`;
+			depPlural.onclick = () => { processarClassificacao(cat2, depPlural); };
+
+			function processarClassificacao(categoria, elementoDep) {
+				if (!arrastoAtivo) {
+					showToast("Seleciona primeiro uma palavra em cima!");
+					return;
+				}
+				tocarSom('flip');
+				const palavra = arrastoAtivo.val;
+				selecoesArrastar[palavra] = categoria;
+
+				const tag = document.createElement('div');
+				tag.className = 'destaque-fundo';
+				tag.style.margin = '4px';
+				tag.style.cursor = 'pointer'; // Indica visualmente que é clicável para remover
+				tag.textContent = palavra;
+
+				// MELHORIA 1: Lógica de clicar para desfazer a qualquer momento
+				tag.onclick = (e) => {
+					e.stopPropagation(); // Impede que o clique ative o depósito pai
+					tocarSom('flip');
+					delete selecoesArrastar[palavra];
+					tag.remove();
+					
+					// Reativa o respetivo botão na pool de palavras à esquerda
+					colPalavras.querySelectorAll('button').forEach(btn => {
+						if (btn.textContent === palavra) {
+							btn.disabled = false;
+							btn.style.opacity = '1';
+						}
+					});
+				};
+
+				elementoDep.appendChild(tag);
+
+				arrastoAtivo.btn.style.opacity = '0.3';
+				arrastoAtivo.btn.disabled = true;
+				arrastoAtivo = null;
+
+				if (Object.keys(selecoesArrastar).length === totalItens) {
+					setTimeout(() => {
+						let tudoOk = true;
+						for (let k in ronda.pares) {
+							if (selecoesArrastar[k] !== ronda.pares[k]) {
+								tudoOk = false;
+							}
+						}
+						if (tudoOk) {
+							validar(true, zona);
+						} else {
+							validar(false, zona);
+							
+							// MELHORIA 2: Devolução seletiva (só as erradas regressam à pool)
+							setTimeout(() => {
+								colPalavras.querySelectorAll('button').forEach(btn => {
+									const pal = btn.textContent;
+									const eCorreta = (selecoesArrastar[pal] === ronda.pares[pal]);
+									
+									if (!eCorreta) {
+										// Se estiver incorreta, remove dos registos e reativa o botão
+										btn.disabled = false;
+										btn.style.opacity = '1';
+										delete selecoesArrastar[pal];
+										
+										// Remove a etiqueta visual de dentro do depósito correspondente
+										document.querySelectorAll('.carruagem-destino .destaque-fundo').forEach(tagEl => {
+											if (tagEl.textContent === pal) {
+												tagEl.remove();
+											}
+										});
+									}
+								});
+								arrastoAtivo = null;
+							}, 800);
+						}
+					}, 400);
+				}
+			}
+
+			area.appendChild(colPalavras);
+			zona.appendChild(depSingular);
+			zona.appendChild(depPlural);
+			area.appendChild(zona);
+		}
+		// H. VERDADEIRO OU FALSO
+		else if (ronda.tipo === 'verdadeiro-falso') {
+			const container = document.createElement('div'); 
+			container.className = 'opcoes-container';
+
+			const btnVerdadeiro = document.createElement('button');
+			btnVerdadeiro.className = 'btn-opcao-vibrante bg-verde';
+			btnVerdadeiro.textContent = 'Verdadeiro';
+			btnVerdadeiro.onclick = () => validar(ronda.correta === 'Verdadeiro', btnVerdadeiro);
+
+			const btnFalso = document.createElement('button');
+			btnFalso.className = 'btn-opcao-vibrante bg-vermelho';
+			btnFalso.textContent = 'Falso';
+			btnFalso.onclick = () => validar(ronda.correta === 'Falso', btnFalso);
+
+			container.appendChild(btnVerdadeiro);
+			container.appendChild(btnFalso);
+			area.appendChild(container);
+		}
+		
+		// ==================================================================
+		// NOVAS MECÂNICAS ADICIONADAS EXCLUSIVAMENTE PARA ESTE PROJETO
+		// ==================================================================
+
+		// I. NOVA MECÂNICA: "O INTRUSO" (DETETAR INCORRETO)
+		else if (ronda.tipo === 'intruso') {
+			const container = document.createElement('div');
+			container.className = 'coluna-classificacao'; // Usa grelha 2x2 ou horizontal
+
+			const baralhadas = baralharArray([...ronda.opcoes]);
+			baralhadas.forEach(opt => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = opt;
+
+				b.onclick = () => {
+					if (!podeInteragir) return;
+					// Acerta se clicar estritamente no intruso (ronda.correta)
+					validar(opt === ronda.correta, b);
+				};
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+
+		// J. NOVA MECÂNICA: "O CAMINHO SEGURO" (PEDRAS DO CAMINHO DE 3 TOQUES)
+		else if (ronda.tipo === 'caminho') {
+			const container = document.createElement('div');
+			container.className = 'coluna-classificacao'; // Usa grelha para desenhar as pedras
+
+			let acertosAtivos = 0;
+			const totalNecessarios = ronda.corretas.length; // 3 pedras corretas
+
+			const baralhadas = baralharArray([...ronda.itens]);
+			baralhadas.forEach(opt => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = opt;
+
+				b.onclick = () => {
+					if (!podeInteragir || b.disabled) return;
+					tocarSom('flip');
+
+					const eCorreta = ronda.corretas.includes(opt);
+					if (eCorreta) {
+						// Pinta a pedra e desativa-a
+						b.classList.add('pedra-ativa');
+						b.disabled = true;
+						b.style.pointerEvents = 'none';
+						acertosAtivos++;
+
+						// Se pisou as 3 pedras corretas com sucesso, avança!
+						if (acertosAtivos === totalNecessarios) {
+							setTimeout(() => { validar(true, container); }, 400);
+						}
+					} else {
+						// Pisou uma pedra errada (Armadilha/Erro). Vibra e desconta erro
+						b.classList.add('erro-vibrante');
+						validar(false, b);
+					}
+				};
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+
+		// K. NOVA MECÂNICA: "BATALHA DE CARTAS" (OPONENTE VS ALUNO)
+		else if (ronda.tipo === 'batalha') {
+			const split = document.createElement('div');
+			split.className = 'card-split';
+
+			// Lado Esquerdo: A Carta lançada pelo Oponente (Efeito Flutuar)
+			const oponente = document.createElement('div');
+			oponente.className = 'deposito-palavras carta-desafio-oponente';
+			oponente.style.height = '145px';
+			oponente.style.maxHeight = '145px';
+			oponente.style.justifyContent = 'center';
+			oponente.innerHTML = `
+				<div class="deposito-titulo" style="color:var(--cor-btn-laranja);">OPONENTE</div>
+				<div style="font-size:1.55rem; font-weight:900; color:var(--azul-escuro); margin-top:5px; text-transform:uppercase;">
+					${ronda.desafio}
+				</div>
+			`;
+
+			// Lado Direito: A Mão do Aluno (3 opções de cartas de pílula)
+			const mao = document.createElement('div');
+			mao.className = 'coluna-ligar';
+			mao.style.gap = '10px';
+			mao.style.flex = '1';
+			mao.style.alignItems = 'center';
+
+			const baralhadas = baralharArray([...ronda.opcoes]);
+			baralhadas.forEach(opt => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = opt;
+
+				b.onclick = () => {
+					if (!podeInteragir) return;
+					// Vence se jogar a carta com o feminino correto
+					validar(opt === ronda.correta, b);
+				};
+				mao.appendChild(b);
+			});
+
+			split.appendChild(oponente);
+			split.appendChild(mao);
+			area.appendChild(split);
+		}
+		
+		// L. NOVA MECÂNICA: ESCRITA ATIVA DE VERBOS (TECLADO FÍSICO / NATIVO MOBILE)
+		else if (ronda.tipo === 'escrita') {
+			const container = document.createElement('div');
+			container.className = 'container-escrita-verbo';
+
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.className = 'campo-escrita-verbo';
+			input.placeholder = 'Escreve aqui...';
+			input.autocomplete = 'off';
+			input.autofocus = true;
+
+			const btnConfirmar = document.createElement('button');
+			btnConfirmar.className = 'btn-confirmar-escrita';
+			btnConfirmar.textContent = 'Confirmar';
+
+			// Evento de validação unificado
+			function submeterResposta() {
+				if (!podeInteragir) return;
+				
+				const respostaUtilizador = input.value.trim().toLowerCase();
+				const respostaCorreta = ronda.correta.trim().toLowerCase();
+				
+				// Validação estrita de acentos (ignora maiúsculas/minúsculas)
+				const acertou = (respostaUtilizador === respostaCorreta);
+
+				validar(acertou, input);
+			}
+
+			// Submete ao carregar no botão Confirmar
+			btnConfirmar.onclick = submeterResposta;
+
+			// Submete ao pressionar a tecla Enter no teclado do PC
+			input.onkeypress = (e) => {
+				if (e.key === 'Enter') {
+					submeterResposta();
+				}
+			};
+
+			container.appendChild(input);
+			container.appendChild(btnConfirmar);
+			area.appendChild(container);
+
+			// Foco automático do cursor dentro da caixa no carregamento (PC)
+			setTimeout(() => {
+				input.focus();
+			}, 150);
+		}
+		// M. NOVA MECÂNICA: A MÁQUINA DO TEMPO (NÉON + GRELHA 2X2 DE TEMPOS VERBAIS)
+		else if (ronda.tipo === 'maquina') {
+			// 1. Cria o painel 3D da Máquina do Tempo com o verbo néon
+			const moldura = document.createElement('div');
+			moldura.className = 'moldura-maquina-tempo';
+			moldura.innerHTML = `<div class="texto-maquina-tempo">${ronda.verbo}</div>`;
+			area.appendChild(moldura);
+
+			// 2. Cria a grelha simétrica 2x2 de pílulas para os tempos verbais
+			const container = document.createElement('div');
+			container.className = 'coluna-classificacao'; // Força a grelha 2x2 otimizada
+
+			const baralhadas = baralharArray([...ronda.opcoes]);
+			baralhadas.forEach(opt => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = opt;
+				
+				b.onclick = () => {
+					if (!podeInteragir) return;
+					// Valida se clicou no tempo verbal correto correspondente
+					validar(opt === ronda.correta, b);
+				};
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+
+		resetTimerImpaciencia();
+	}
+
+/* ==========================================================================
+   6. LÓGICA DE COORDENAÇÃO DO JOGO DE LIGAR (DESFAZER E ESTILO)
+   ========================================================================== */
+	function selecionarLigarEsq(it, b, ronda) {
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			if (selecaoLigar) {
+				selecaoLigar.btn.classList.remove('selecionado');
+				selecaoLigar = null;
+			}
+			return;
+		}
+
+		if (selecaoLigar && selecaoLigar.btn === b) {
+			b.classList.remove('selecionado');
+			selecaoLigar = null;
+			tocarSom('flip');
+			return;
+		}
+
+		tocarSom('flip');
+		document.querySelectorAll('.coluna-ligar button').forEach(x => x.classList.remove('selecionado'));
+		b.classList.add('selecionado');
+		selecaoLigar = { val: it, btn: b };
+	}
+
+	function selecionarLigarDir(it, b, ronda) {
+		if (!selecaoLigar || !podeInteragir) return;
+		
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			selecaoLigar = null;
+			return;
+		}
+
+		const ok = (ronda.pares[selecaoLigar.val] === it);
+		
+		if (ok) {
+			b.classList.add('ligado');
+			selecaoLigar.btn.classList.add('ligado');
+			selecaoLigar.btn.classList.remove('selecionado');
+
+			selecoesLigar[selecaoLigar.val] = it;
+			paresElementosLigar.push({
+				esqBtn: selecaoLigar.btn,
+				dirBtn: b,
+				esqVal: selecaoLigar.val,
+				dirVal: it
+			});
+
+			selecaoLigar = null;
+
+			const totalPares = Object.keys(ronda.pares).length;
+			if (Object.keys(selecoesLigar).length === totalPares) {
+				validar(true, b);
+			} else {
+				tocarSom('acerto');
+			}
+		} else {
+			validar(false, b);
+			
+			setTimeout(() => {
+				selecoesLigar = {};
+				selecaoLigar = null;
+				paresElementosLigar = [];
+				document.querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.classList.remove('selecionado', 'ligado');
+					btn.style.opacity = '1';
+				});
+			}, 600);
+		}
+	}
+
+/* ==========================================================================
+   7. VERIFICAÇÃO E TRANSIÇÕES DE FEEDBACK
+   ========================================================================== */
+	function validar(correto, el) {
+		if (!podeInteragir) return; podeInteragir = false; clearTimeout(timerImpaciencia);
+		if (correto) {
+			el.classList.add('sucesso-vibrante'); animarMascote('acerto'); tocarSom('decolar'); // Ativa o rugido do motor ao subir!
+			
+			// Mantém apenas a atualização do estado visual do botão de dica
+			atualizarBotaoDica();
+
+			setTimeout(() => { desafioAtual++; if(desafioAtual < 10) { atualizarBarraEstado(); carregarRonda(); } else finalizarJogo(); }, 1600);
+		} else {
+			el.classList.add('erro-vibrante'); erradas++; atualizarBarraEstado(); animarMascote('erro'); tocarSom('erro');
+			setTimeout(() => { el.classList.remove('erro-vibrante'); podeInteragir = true; resetTimerImpaciencia(); }, 600);
+		}
+	}
+
+	function animarMascote(estado) {
+		const container = document.getElementById('mascote-feedback');
+		if (!container) return;
+		const imgNode = container.querySelector('img');
+
+		// 1. Limpa as classes de animação anteriores do container (onde as animações CSS atuam)
+		container.classList.remove('mascote-normal', 'mascote-erro', 'mascote-sucesso');
+		void container.offsetWidth; // Truque de Engenharia para reiniciar a animação no navegador
+
+		if (estado === 'normal') {
+			if (imgNode) imgNode.src = "img/mascote_normal.png";
+			container.classList.add('mascote-normal');
+		}
+		else if (estado === 'erro') {
+			if (imgNode) imgNode.src = "img/mascote_erro.png";
+			container.classList.add('mascote-erro');
+			// Volta ao estado normal automaticamente após o abanão (0.7s)
+			setTimeout(() => animarMascote('normal'), 700);
+		}
+		else if (estado === 'acerto') {
+			if (imgNode) imgNode.src = "img/mascote_acerto.png";
+			container.classList.add('mascote-sucesso');
+			// Volta ao estado normal automaticamente após o salto (1s)
+			setTimeout(() => {
+				// Se ainda não acabou o jogo, volta a flutuar
+				if (desafioAtual < totalRondas) animarMascote('normal');
+			}, 1000);
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+		timerImpaciencia = setTimeout(() => { if(btnDica) btnDica.classList.add('dica-impaciente'); }, 15000);
+	}
+
+	function usarDica() {
+		// CORREÇÃO: Verifica dicaUsadaNoBloco em vez de rondasParaDica
+		if (dicaUsadaNoBloco || !podeInteragir) return;
+		
+		const ronda = perguntasSorteadas[desafioAtual];
+		const configDica = ronda.dica;
+		if (!configDica) return;
+
+		tocarSom('flip');
+
+		// 1. Dica tipo TEXTO (Abre Modal)
+		if (typeof configDica === 'string') {
+			document.getElementById('modal-dica-conteudo').innerHTML = `<p>${configDica}</p>`;
+			document.getElementById('modal-ajuda').classList.add('active');
+		}
+		// 2. Dica tipo HIGHLIGHT
+		else if (configDica.tipo === 'highlight') {
+			aplicarHighlightRespostaCorreta(ronda);
+		}
+		// 3. Dica tipo 50-50 ou RETIRAR-UM
+		else if (configDica.tipo === '50-50' || configDica.tipo === 'retirar-um') {
+			// CORREÇÃO: Adicionada a classe .btn-opcao-pilula:not([disabled]) à procura
+			const botoes = Array.from(document.querySelectorAll('.btn-opcao-vibrante:not(.ligado), .btn-opcao-pilula:not([disabled]), .palavra-banco:not([disabled])'));
+			let errados = botoes.filter(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				
+				const isCorretaMultipla = (texto === ronda.correta || imgInside === ronda.correta);
+				const isCorretaLacuna = ronda.respostas && ronda.respostas.includes(texto);
+				
+				return !isCorretaMultipla && !isCorretaLacuna;
+			});
+
+			errados = baralharArray(errados);
+			const qtdParaEsconder = (configDica.tipo === '50-50') ? Math.max(1, Math.floor(errados.length / 2)) : 1;
+
+			for (let i = 0; i < Math.min(qtdParaEsconder, errados.length); i++) {
+				errados[i].style.opacity = '0.2';
+				errados[i].style.pointerEvents = 'none';
+				errados[i].setAttribute('disabled', 'true');
+			}
+			showToast("O papagaio amigo removeu uma opção errada!");
+		}
+
+		// Ativa o bloqueio da dica para o bloco de rondas atual
+		dicaUsadaNoBloco = true;
+		atualizarBotaoDica();
+	}
+
+	function fecharModalDica() { document.getElementById('modal-ajuda').classList.remove('active'); }
+
+	function finalizarJogo() {
+		document.getElementById('mascote-feedback').style.display = "none";
+		mostrarEcra('ecra-fim');
+		document.getElementById('final-erros').textContent = erradas;
+		const rank = document.getElementById('rank-container');
+		let img = erradas === 0 ? "rank_ouro.svg" : (erradas <= 3 ? "rank_prata.svg" : "rank_bronze.svg");
+		rank.innerHTML = `<img src="../../../SVG/${img}" class="taca-vitoria" style="width:120px;">`;
+		tocarSom('vitoria'); dispararConfetis();
+	}
+
+	function voltarAoMenuPrincipal() {
+		mostrarEcra('ecra-selecao');
+		document.getElementById('mascote-feedback').style.display = "none";
+		document.getElementById('subtitulo-header').textContent = "Ajuda o amigo papagaio com os Determinantes Interrogativos!";
+		limparConfetis();
+	}
+
+	function confirmarSair() {
+		voltarAoMenuPrincipal();
+	}
+
+	function reiniciarJogo() { prepararJogo(sistemaAtivo); limparConfetis();}
+
+/* ==========================================================================
+   8. ÁUDIO, CONFETIS E AUXILIARES (COM COMPATIBILIDADE SEGURA)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha na inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('pointerdown', initAudio, { once: true });
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+	function tocarSom(t) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+			const agora = audioCtx.currentTime; // Variável unificada como agora
+
+			if (t === 'acerto') {
+				const notas = [783.99, 1046.50];
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (t === 'erro') {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle';
+				o.frequency.setValueAtTime(220, agora);
+				o.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				g.gain.setValueAtTime(0.08, agora);
+				o.start(agora);
+				o.stop(agora + 0.3);
+			} else if (t === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0.08, agora + nota.tempo);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			} else if (t === 'decolar') {
+				// NOVO: Som de Propulsão Sci-Fi Limpo e Cristalino (Zwoooop!)
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; // Onda 100% pura e limpa, sem qualquer distorção
+				o.frequency.setValueAtTime(150, agora);
+				// Varredura exponencial ascendente muito rápida (efeito de aceleração para o espaço)
+				o.frequency.exponentialRampToValueAtTime(1800, agora + 0.8); 
+				g.gain.setValueAtTime(0, agora);
+				g.gain.linearRampToValueAtTime(0.12, agora + 0.05); // Ataque de ignição rápido
+				g.gain.exponentialRampToValueAtTime(0.001, agora + 0.8); // Desvanece suavemente
+				o.start(agora);
+				o.stop(agora + 0.8);
+			} else if (t === 'flip') { // CORREÇÃO: Removida a chaveta extra "}" que quebrava a sintaxe aqui
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.setValueAtTime(400, agora);
+				o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+				g.gain.setValueAtTime(0.05, agora);
+				o.start(agora);
+				o.stop(agora + 0.1);
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		c.innerHTML = '';
+		const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = '';
+		}
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		// Seleciona todos os botões e elementos interativos do jogo
+		const todosBotoes = document.querySelectorAll('.btn-opcao-vibrante, .btn-opcao-pilula, .btn-opcao, .bloco-arrastar, .palavra-banco, .cartao-opcao-visual');
+
+		/* A. CASO: ESCOLHA MÚLTIPLA, INTRUSO, BATALHA OU VERDADEIRO/FALSO */
+		if (ronda.tipo === 'multipla' || ronda.tipo === 'intruso' || ronda.tipo === 'batalha' || ronda.tipo === 'verdadeiro-falso') {
+			todosBotoes.forEach(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				// Destaca apenas o botão da opção correta
+				if (texto === ronda.correta || imgInside === ronda.correta) {
+					btn.classList.add('highlight-correto');
+					setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+
+		/* B. CASO: LIGAR, ARRASTAR, CLASSIFICACAO OU MAPA (Destaque Duplo Inteligente) */
+		else if (ronda.tipo === 'ligar' || ronda.tipo === 'arrastar' || ronda.tipo === 'classificacao' || ronda.tipo === 'mapa') {
+			let itemPendente = null;
+			let alvoPendente = null;
+
+			if (ronda.tipo === 'ligar') {
+				itemPendente = Object.keys(ronda.pares).find(item => !selecoesLigar[item]);
+			} else {
+				itemPendente = Object.keys(ronda.pares).find(item => !selecoesArrastar[item]);
+			}
+
+			if (itemPendente) {
+				alvoPendente = ronda.pares[itemPendente];
+
+				todosBotoes.forEach(el => {
+					const txt = el.textContent.trim();
+					if (txt === itemPendente || txt === alvoPendente || (el.innerHTML.includes && el.innerHTML.includes(alvoPendente))) {
+						el.classList.add('highlight-correto');
+						setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+					}
+				});
+
+				if (ronda.tipo === 'classificacao') {
+					document.querySelectorAll('.deposito-palavras').forEach(dep => {
+						const titulo = dep.querySelector('.deposito-titulo')?.textContent.trim();
+						if (titulo === alvoPendente) {
+							dep.classList.add('highlight-correto');
+							setTimeout(() => dep.classList.remove('highlight-correto'), 4000);
+						}
+					});
+				}
+
+				showToast("Observa o destaque!");
+			}
+		}
+
+		/* C. NOVO CASO: TEXTO COM LACUNAS (Destaque do Slot Vazio + Botão do Banco) */
+		else if (ronda.tipo === 'lacunas') {
+			const slotsVazios = Array.from(document.querySelectorAll('.slot-vazio'));
+			// Encontra o índice do primeiro slot que ainda não está preenchido
+			const idxPendente = slotsVazios.findIndex(slot => !slot.classList.contains('preenchido'));
+
+			if (idxPendente !== -1) {
+				const slotPendente = slotsVazios[idxPendente];
+				const palavraCorreta = ronda.respostas[idxPendente];
+
+				// 1. Faz piscar em dourado o slot vazio pendente no texto
+				slotPendente.classList.add('highlight-correto');
+				setTimeout(() => slotPendente.classList.remove('highlight-correto'), 4000);
+
+				// 2. Faz piscar em dourado a pílula correta correspondente no banco de opções em baixo
+				todosBotoes.forEach(btn => {
+					if (btn.textContent.trim() === palavraCorreta) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+
+				showToast("Observa o destaque!");
+			}
+		}
+	}
+	
+	function showToast(mensagem) {
+		const toast = document.getElementById('toast-msg');
+		if (toast) {
+			toast.textContent = mensaje = mensagem;
+			toast.classList.add('active');
+			setTimeout(() => {
+				toast.classList.remove('active');
+			}, 2500);
+		}
+	}
+	
+</script>
+</body>
+</html>

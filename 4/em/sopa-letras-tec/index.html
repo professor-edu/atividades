@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - Sopa de Letras 🔍</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(69, 176, 98, 0.52); 
+    border-top: 8px solid var(--cor-em); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #eaf1eb; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-em); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-em); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--azul-escuro); margin-bottom: 20px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 65px;
+    height: 65px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 240px !important; height: 240px !important; }
+    .card-imagem-zoomable.img-retangular { width: 330px !important; height: 220px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-em); border-radius: 20px; padding: 25px; gap: 25px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto { font-size: clamp(1.2rem, 4vw, 1.5rem); color: var(--azul-escuro); font-weight: bold; text-align: center; margin: 0 0 20px 0; animation: fadeIn 0.4s ease;}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px !important;
+    min-width: 180px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+	flex-direction: column !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+.btn-opcao-vibrante.sucesso-vibrante, .btn-opcao.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, .btn-opcao.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar */
+.bloco-arrastar {
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 100%; min-width: 150px; padding: 12px 20px !important; border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.1rem) !important; font-weight: 700 !important;
+    background-color: #ffffff !important; border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; touch-action: manipulation;
+}
+.bloco-arrastar:active { transform: scale(0.95) !important; box-shadow: 0 0px 0 transparent !important; }
+.bloco-arrastar:not(.selecionado):not([disabled]) { animation: respirarBloco 2s infinite ease-in-out; }
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.25rem !important; line-height: 2.6 !important; color: var(--text-main) !important;
+    text-align: justify !important; margin-bottom: 25px !important; background: #ffffff !important;
+    padding: 20px 25px !important; border-radius: 20px !important; border: 2px solid #e2e8f0 !important;
+    width: 100% !important; max-width: 750px !important; box-sizing: border-box !important;
+}
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-em) !important; background-color: #ffffff !important; }
+
+.banco-opcoes { display: flex !important; gap: 12px !important; justify-content: center !important; flex-wrap: wrap !important; width: 100% !important; max-width: 650px !important; margin-bottom: 15px !important; }
+.palavra-banco {
+    padding: 8px 18px !important; background: #ffffff !important; border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; font-weight: 800 !important; font-size: 1.1rem !important; color: var(--azul-escuro) !important;
+    cursor: pointer !important; transition: all 0.15s ease !important; box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-em) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   8. MASCOTE, MODAIS E OVERLAYS
+   ========================================================================== */
+#foguetao-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; display: flex; align-items: center; justify-content: center;
+}
+#foguetao-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+.foguetao-normal { animation: flutuar 3s infinite ease-in-out; }
+.foguetao-erro { animation: shakeError 0.4s ease-in-out; filter: saturate(1.5) hue-rotate(-20deg); }
+.foguetao-decolar { animation: decolar 1.5s forwards ease-in; }
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.secundario:hover { box-shadow: 0 8px 0 #d97d2c, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: 130px;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(251, 197, 49, 0.4));
+    margin-bottom: 20px;
+    /* Animação de celebração já definida no template base */
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, 
+               tacaDanca 3s infinite 0.6s ease-in-out;
+}
+
+.end-stats strong {
+    color: var(--cor-sucesso);
+    font-size: 1.6rem;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+/* ==========================================================================
+   10. ZONA DE EDIÇÃO: PERSONALIDADE, ANIMAÇÕES E DESTAQUES
+   ========================================================================== */
+
+/* ==========================================================================
+   ANIMAÇÃO: HUB DE COMUNICAÇÃO (TECNOLOGIA)
+   ========================================================================== */
+.animacao-tutorial {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 180px !important;
+    border: 2px dashed #bcdcff !important;
+    border-radius: 20px !important;
+    background: #050a14 !important; /* Azul tecnológico profundo */
+    position: relative;
+    overflow: hidden;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+}
+
+/* 1. FLUXO BINÁRIO DE FUNDO */
+.binary-stream {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    min-height: 200% !important; 
+    height: auto !important;
+    
+    display: flex;
+    flex-direction: column;
+    
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: rgba(0, 255, 255, 0.25); 
+    line-height: 15px;
+    letter-spacing: 5px;
+    
+    /* Animação: Move -50% da sua própria altura (que é o dobro do quadro) */
+    animation: scrollBinaryContinuo 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scrollBinaryContinuo {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
+
+/* 2. ONDAS DE SINAL */
+.signal-waves {
+    position: absolute;
+    width: 150px; height: 150px;
+    z-index: 2;
+}
+
+.wave {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: pulseSignal 3s infinite;
+}
+
+.w2 { animation-delay: 1.5s; }
+
+@keyframes pulseSignal {
+    0% { width: 40px; height: 40px; opacity: 1; }
+    100% { width: 250px; height: 250px; opacity: 0; }
+}
+
+/* 3. SATÉLITE CENTRAL */
+.tech-center {
+    position: relative;
+    z-index: 10;
+}
+
+.img-satelite {
+    width: 70px;
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.4));
+    animation: rotateSatelite 6s infinite ease-in-out;
+}
+
+@keyframes rotateSatelite {
+    0%, 100% { transform: translateY(0) rotate(-10deg); }
+    50% { transform: translateY(-10px) rotate(10deg); }
+}
+
+/* 4. ÍCONES DOS CANTOS */
+.icon-tech {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    z-index: 5;
+    opacity: 0.3;
+    filter: grayscale(1);
+    animation: iconActivate 4s infinite;
+}
+
+.i-top-l { top: 15px; left: 15px; animation-delay: 0s; }
+.i-top-r { top: 15px; right: 15px; animation-delay: 1s; }
+.i-bot-l { bottom: 35px; left: 15px; animation-delay: 2s; }
+.i-bot-r { bottom: 35px; right: 15px; animation-delay: 3s; }
+
+@keyframes iconActivate {
+    0%, 100% { opacity: 0.3; filter: grayscale(1); transform: scale(1); }
+    25% { opacity: 0.9; filter: grayscale(0) drop-shadow(0 0 8px #00ffff); transform: scale(1.1); }
+}
+
+/* 5. LABEL TÉCNICA */
+.label-era {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff !important;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.6rem;
+    white-space: nowrap;
+    z-index: 20;
+}
+
+
+
+
+
+
+
+/* --- LAYOUT 2-2-1 PARA SOPA DE LETRAS --- */
+.grid-sopa {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+/* Faz o botão impossível ocupar a linha toda */
+.bg-impossivel {
+    grid-column: 1 / -1; 
+	max-width: 400px !important;
+	justify-self: center;	
+    background: linear-gradient(135deg, #2c3e50 0%, #000000 100%) !important;
+    border: 4px solid #fbc531 !important; /* Borda dourada */
+    box-shadow: 0 6px 0 #b18500, 0 10px 20px rgba(0,0,0,0.3) !important;
+}
+
+.bg-impossivel .btn-nivel-titulo {
+    color: #fbc531 !important;
+    text-shadow: 0 0 10px rgba(251, 197, 49, 0.5);
+}
+
+@media (max-width: 600px) {
+    .grid-sopa {
+        grid-template-columns: 1fr; /* No mobile volta a ser tudo uma coluna */
+    }
+    .bg-impossivel {
+        grid-column: auto;
+    }
+	.sopa-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #sopa-grelha {
+        gap: 1px;
+        padding: 2px;
+        width: 100vw; /* Ocupa a largura do ecrã */
+        max-width: 350px;
+    }
+
+    .sopa-letra {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    .sopa-lista-palavras {
+        width: 100%;
+        max-width: 350px;
+        display: grid;
+        grid-template-columns: repeat(1fr);
+        gap: 10px;
+    }
+}
+/* EFEITO HOVER SUAVE NAS LETRAS */
+@media (hover: hover) {
+    .sopa-letra:not(.encontrada):not(.selecionada):hover {
+        background-color: #f0f7ff; /* Um azul claríssimo */
+        transform: scale(1.12);    /* Aumenta ligeiramente */
+        color: var(--azul-vibrante);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        z-index: 2;
+        transition: all 0.2s ease;
+    }
+}
+
+/* Garante que a transição de volta ao normal também é suave */
+.sopa-letra {
+    transition: all 0.2s ease;
+}
+
+/* ==========================================================================
+   ESPECIAL: MOTOR DE SOPA DE LETRAS (12x12)
+   ========================================================================== */
+
+/* 1. CONTENTOR PRINCIPAL (GRELHA + LISTA) */
+.sopa-container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 2. A GRELHA 12x12 */
+#sopa-grelha {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* 12 colunas iguais */
+    grid-template-rows: repeat(12, 1fr);    /* 12 linhas iguais */
+    gap: 2px;
+    background-color: #e2e8f0;
+    border: 4px solid var(--azul-escuro);
+    border-radius: 12px;
+    padding: 4px;
+    background: #ffffff;
+    user-select: none !important; /* Impede a seleção de texto ao arrastar o dedo/rato */
+    touch-action: none !important; /* Necessário para o motor de arrasto funcionar bem */
+	-webkit-user-select: none;
+}
+
+/* 3. AS CÉLULAS (LETRAS) */
+.sopa-letra {
+    width: clamp(25px, 4vw, 38px);
+    height: clamp(25px, 4vw, 38px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    font-weight: 900;
+    color: var(--text-main);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+/* Estado: Letra em processo de seleção (ao arrastar) */
+.sopa-letra.selecionada {
+    background-color: var(--cor-btn-amarelo) !important;
+    color: var(--azul-escuro) !important;
+    transform: scale(1.1);
+    z-index: 5;
+}
+
+/* Estado: Letra que faz parte de uma palavra já encontrada */
+.sopa-letra.encontrada {
+    background-color: var(--cor-sucesso) !important;
+    color: white !important;
+    transform: scale(1.02);
+    box-shadow: none !important;
+}
+
+/* 4. LISTA DE PALAVRAS A PROCURAR */
+.sopa-lista-palavras {
+    flex: 0 0 200px;
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 20px;
+    border: 2px solid var(--cor-4ano);
+    text-align: left;
+}
+
+.sopa-lista-palavras h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    color: var(--cor-4ano-dark);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--cor-4ano);
+    padding-bottom: 5px;
+}
+
+.palavra-item {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+/* Estilo para quando a palavra é encontrada na lista */
+.palavra-item.riscada {
+    color: #cbd5e1;
+    text-decoration: line-through;
+    opacity: 0.6;
+    transform: translateX(10px);
+}
+
+/* 5. ANIMAÇÃO DE ACERTO */
+@keyframes popAcerto {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #fff275; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+
+/* ==========================================================================
+   11. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes decolar { 0% { transform: translateY(0) scale(1); } 20% { transform: translateY(10px) scale(0.9); } 100% { transform: translateY(-1000px) scale(1.2); opacity: 0; } }
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+
+/* ==========================================================================
+   12. MEDIA QUERIES UNIFICADAS (600PX E 768PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+}
+
+/* ==========================================================================
+   CORREÇÃO FINAL MOBILE: GRID INTEGRAL E LISTA LEGÍVEL
+   ========================================================================== */
+@media (max-width: 600px) {
+    /* 1. Reset de containers para ganhar cada pixel de largura */
+    .cartao-jogo-container {
+        padding: 10px 5px !important;
+    }
+    
+    .area-jogo-custom {
+        padding: 10px 5px !important;
+    }
+
+    .sopa-container {
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 15px !important;
+    }
+
+    /* 2. GRELHA: Força 12 colunas visíveis sem corte */
+    #sopa-grelha {
+        width: 98% !important;
+        max-width: 350px !important;
+        grid-template-columns: repeat(12, 1fr) !important;
+        grid-template-rows: repeat(12, 1fr) !important;
+        gap: 1px !important;
+        padding: 2px !important;
+        aspect-ratio: 1 / 1; /* Garante que a grelha é um quadrado perfeito */
+        margin: 0 auto !important;
+    }
+
+    .sopa-letra {
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 0.75rem !important; /* Reduzido para não transbordar a célula */
+        border-radius: 2px !important;
+    }
+
+    /* 3. LISTA DE PALAVRAS: 2 Colunas para evitar cortes (...) */
+    .sopa-lista-palavras {
+        width: 95% !important;
+        max-width: 350px !important;
+        padding: 12px !important;
+        border-width: 2px !important;
+        box-sizing: border-box !important;
+    }
+
+    .sopa-lista-palavras h3 {
+        font-size: 0.85rem !important;
+        margin-bottom: 10px !important;
+        text-align: center;
+    }
+
+    #lista-palavras-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* APENAS 2 COLUNAS */
+        gap: 8px 15px !important;
+    }
+
+    .palavra-item {
+        font-size: 0.75rem !important;
+        text-align: left !important;
+        white-space: nowrap !important; /* Impede quebra de linha */
+        overflow: visible !important;   /* REMOVE OS PONTINHOS (...) */
+        text-overflow: clip !important;
+        display: block !important;
+        font-weight: 800 !important;
+    }
+
+    /* 4. Ajuste das Badges para não empurrarem a grelha */
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    
+    #val-tempo {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ==========================================================================
+   13. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>Sopa de Letras<img src="sopa_letras.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Tecnologia e Meios de Comunicação</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+
+        <!-- FOGUETÃO: Posicionado corretamente para não tapar o menu -->
+        <img id="foguetao-feedback" src="img/foguetao_normal.png" class="mascote-foguetao" style="display: none;">
+
+        <!-- ECRÃ 1: SELEÇÃO -->
+        <div id="ecra-selecao" class="ecra">
+<div class="animacao-tutorial">
+    <!-- Camada 1: Chuva de Dados Binários (Estilo Matrix Tecnológico) -->
+<div class="binary-stream">
+    <!-- Bloco 1 -->
+    <span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+    <!-- Bloco 2 (Duplicado) -->
+    <span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+    <!-- Bloco 3 (Segurança extra) -->
+    <span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+	<span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+	<span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+	<span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+	<span>010101010101010101010101010101010101010101010101</span>
+    <span>101010101010101010101010101010101010101010101010</span>
+    <span>001100110011001100110011001100110011001100110011</span>
+    <span>110011001100110011001100110011001100110011001100</span>
+</div>
+
+    <!-- Camada 2: Ondas de Sinal Pulsantes -->
+    <div class="signal-waves">
+        <div class="wave w1"></div>
+        <div class="wave w2"></div>
+    </div>
+
+    <!-- Camada 3: Satélite Central -->
+    <div class="tech-center">
+        <img src="img/satelite.png" class="img-satelite" alt="Satélite">
+    </div>
+
+    <!-- Camada 4: Ícones de Evolução (Nos Cantos) -->
+    <img src="img/radio.png" class="icon-tech i-top-l">
+    <img src="img/envelope.png" class="icon-tech i-top-r">
+    <img src="img/smartphone.png" class="icon-tech i-bot-l">
+    <img src="img/computador.png" class="icon-tech i-bot-r">
+
+    <!-- Camada 5: Label Técnica na Base -->
+    <div class="label-era">SISTEMA_COM: TRANSMISSÃO_DE_DADOS_ATIVA</div>
+</div>
+            <h2 class="titulo-menu">Qual é o teu melhor tempo?</h2>
+
+            <!-- GRELHA DE NÍVEIS: 2-2-1 -->
+			<div class="grid-niveis grid-sopa" style="grid-template-columns: 1fr; max-width: 400px;">
+				
+
+				<button class="btn-nivel-novo bg-verde" onclick="prepararJogo('sistemas')">
+					<img src="robo.png" class="icon-btn-nivel-novo">
+					<div class="btn-nivel-text-container">
+						<span class="btn-nivel-titulo">INICIAR JOGO</span>
+						<span class="btn-nivel-subtitulo">Tecnologia e Meios de Comunicação</span>
+					</div>
+				</button>
+
+				
+			</div>
+        </div>
+
+
+        <!-- ECRÃ 2: ÁREA DA SOPA DE LETRAS -->
+		<div id="ecra-jogo" class="ecra">
+			<div class="status-bar-jogo">
+				<!-- Botão Sair -->
+				<button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+				<button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+				<!-- Contador de Palavras (Reaproveitando o Badge de Ronda) -->
+				<div class="badge-ronda">
+					<span id="badge-ronda-svg"></span>
+					<span id="val-progresso">0</span>/<span id="val-total">8</span>
+				</div>
+
+				<!-- Barra de Progresso (Enche à medida que encontram palavras) -->
+				<div class="progress-bg">
+					<div id="progress-fill" class="progress-fill"></div>
+				</div>
+
+				<!-- Temporizador (Substitui o Badge de Erros) -->
+				<div class="badge-erros">
+					<span id="icone-tempo-svg"></span>
+					<span id="val-tempo">00:00</span>
+				</div>
+			</div>
+
+			<!-- CONTENTOR DA ÁREA DE JOGO DINÂMICA -->
+			<div class="area-jogo-custom" id="game-area">
+				<div class="sopa-container">
+					
+					<!-- A GRELHA 12x12 (Gerada pelo JS) -->
+					<div id="sopa-grelha"></div>
+
+					<!-- LISTA LATERAL DE PALAVRAS -->
+					<div class="sopa-lista-palavras">
+						<h3>Procurar:</h3>
+						<div id="lista-palavras-container">
+							<!-- As palavras <span> aparecerão aqui -->
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
+        <!-- ECRÃ 3: FIM DA MISSÃO (SOPA DE LETRAS) -->
+		<div id="ecra-fim" class="ecra">
+			<div id="rank-container">
+				<!-- A Taça Dourada será injetada aqui pelo JS -->
+			</div>
+			
+			<h2 class="end-title" id="end-title-text">Missão Cumprida!</h2>
+			
+			<div class="end-stats">
+				Tempo de Missão: <strong id="final-tempo">00:00</strong>
+			</div>
+
+			<div class="botoes-acao-container">
+				<button class="btn-acao primario" onclick="reiniciarJogo()">
+					REPETIR SOPA <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt="">
+				</button>
+				<button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">
+					VOLTAR AO MENU <img src="../../../SVG/home.svg" class="icon-acao" alt="">
+				</button>
+			</div>
+		</div>
+		
+		<!-- MODAL DE ZOOM DE IMAGEM (TELA DE AMPLIÇÃO UNIVERSAL OPCIONAL) -->
+		<div id="zoom-modal" class="zoom-overlay-imagem" onclick="if(event.target === this) fecharZoomImagem()">
+			<button class="btn-fechar-zoom" onclick="fecharZoomImagem()">✕</button>
+			<img id="zoom-img-content" class="zoom-imagem-conteudo" src="" alt="Imagem ampliada">
+		</div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+/* =====================================================================
+   1. DEFINIÇÕES GLOBAIS E ESTADO DO JOGO
+   ===================================================================== */
+document.getElementById('ano-atual').innerText = new Date().getFullYear();
+
+const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Sair`;
+const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+const SVG_CRONO = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px; vertical-align:middle;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline><path d="M12 2v2"></path></svg>`;
+
+let ultimoSistema = "", poolRestantesSessao = [], sistemaAtivo = "";
+let perguntasSorteadas = [], palavrasEncontradas = [], palavrasAtuais = [];
+let estaSelecionando = false, inicioSelecao = null, fimSelecao = null, celulasSelecionadas = [];
+let tempoSegundos = 0, cronometroInterval = null, dicasDisponiveis = 1, podeInteragir = true;
+
+const INVENTARIO_SOPA = {
+    sistemas: ["COMPUTADOR", "RATO", "DISQUETE", "TELEMÓVEL", "TECNOLOGIA", "SMARTWATCH", "WALKMAN", "TABLET", "ROBÔ", "TECLADO", "TELEFONE", "BLUETOOTH", "INTERNET", "EMAIL", "SATÉLITE", "ONLINE", "OFFLINE", "CINEMA", "TELEVISÃO", "JORNAIS", "RÁDIO", "CORREIO", "REVISTAS", "CARTA", "POSTAL", "TEATRO", "MENSAGEM"]
+
+};
+
+function normalizarTexto(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+}
+
+/* =====================================================================
+   2. ARRANQUE E NAVEGAÇÃO
+   ===================================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+    document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+    document.getElementById('icone-tempo-svg').innerHTML = SVG_CRONO;
+    atualizarBotaoDica();
+    mostrarEcra('ecra-selecao');
+});
+
+function mostrarEcra(id) {
+    document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+    const alvo = document.getElementById(id);
+    if(alvo) alvo.style.display = 'flex';
+}
+
+function prepararJogo(sistema) {
+    sistemaAtivo = sistema;
+    palavrasEncontradas = [];
+    podeInteragir = true;
+
+    if (sistema !== ultimoSistema) {
+        poolRestantesSessao = [];
+        ultimoSistema = sistema;
+    }
+
+    // 1. Define a base completa
+    let baseRaw = (sistema === 'impossivel') ? [].concat(...Object.values(INVENTARIO_SOPA)) : INVENTARIO_SOPA[sistema];
+
+    // 2. LÓGICA DE PREENCHIMENTO ÚNICO (GARANTIDO 10)
+    let sorteadasParaAgora = [];
+
+    if (poolRestantesSessao.length >= 10) {
+        sorteadasParaAgora = poolRestantesSessao.splice(0, 10);
+    } else {
+        // Pegamos nas sobras (ex: as 9 que restavam)
+        const sobras = [...poolRestantesSessao];
+        
+        // Recarregamos a caixa original
+        let novaPool = baralharArray([...baseRaw]);
+        
+        // FILTRO CRUCIAL: Removemos da nova caixa qualquer palavra que já esteja nas sobras
+        novaPool = novaPool.filter(p => !sobras.includes(p));
+        
+        const faltam = 10 - sobras.length;
+        const extras = novaPool.splice(0, faltam);
+        
+        sorteadasParaAgora = [...sobras, ...extras];
+        poolRestantesSessao = novaPool; // Atualiza a caixa global com o que restou
+    }
+
+    // 3. Mapeamento
+    perguntasSorteadas = sorteadasParaAgora.map(p => ({
+        original: p,
+        busca: normalizarTexto(p)
+    }));
+
+    dicasDisponiveis = 1;
+    atualizarBotaoDica();
+    document.getElementById('subtitulo-header').textContent = "Caçador de Conceitos";
+    
+    mostrarEcra('ecra-jogo');
+    carregarRonda();
+}
+
+/* =====================================================================
+   3. MOTOR DA SOPA (GERAÇÃO E LÓGICA)
+   ===================================================================== */
+function carregarRonda() {
+    const area = document.getElementById('game-area');
+    if (!area) return;
+    area.innerHTML = ''; 
+    
+    estaSelecionando = false;
+    celulasSelecionadas = [];
+
+    // Tenta gerar a grelha. Se não conseguir colocar as 10, tenta mais uma vez com novas posições
+    let resultadoSopa = gerarGrelhaSopa(perguntasSorteadas.map(p => p.busca));
+    if (resultadoSopa.colocadas.length < 10) {
+        resultadoSopa = gerarGrelhaSopa(perguntasSorteadas.map(p => p.busca));
+    }
+
+    const { matriz, colocadas } = resultadoSopa;
+    grelhaSopa = matriz;
+    
+    palavrasAtuais = colocadas.map(c => ({
+        ...c,
+        original: perguntasSorteadas.find(p => p.busca === c.palavra).original
+    }));
+
+    const container = document.createElement('div');
+    container.className = 'sopa-container';
+    const gridDiv = document.createElement('div');
+    gridDiv.id = 'sopa-grelha';
+
+    for (let r = 0; r < 12; r++) {
+        for (let c = 0; c < 12; c++) {
+            const div = document.createElement('div');
+            div.className = 'sopa-letra';
+            div.textContent = matriz[r][c];
+            div.dataset.r = r; div.dataset.c = c;
+            div.onmousedown = (e) => startSelection(r, c);
+            div.ontouchstart = (e) => { e.preventDefault(); startSelection(r, c); };
+            div.onmouseenter = () => moveSelection(r, c);
+            gridDiv.appendChild(div);
+        }
+    }
+
+    const listaDiv = document.createElement('div');
+    listaDiv.className = 'sopa-lista-palavras';
+    listaDiv.innerHTML = '<h3>Procurar:</h3><div id="lista-palavras-container"></div>';
+    palavrasAtuais.forEach(p => {
+        const item = document.createElement('span');
+        item.className = 'palavra-item';
+        item.id = `item-${p.palavra}`;
+        item.textContent = p.original;
+        listaDiv.querySelector('#lista-palavras-container').appendChild(item);
+    });
+
+    container.appendChild(gridDiv);
+    container.appendChild(listaDiv);
+    area.appendChild(container);
+
+    document.getElementById('val-progresso').textContent = "0";
+    document.getElementById('val-total').textContent = "10";
+    document.getElementById('progress-fill').style.width = '0%';
+    
+    window.onmouseup = endSelection;
+    window.ontouchend = endSelection;
+    window.ontouchmove = handleTouchMove;
+
+    iniciarCronometro();
+    const fog = document.getElementById('foguetao-feedback');
+    if(fog) { fog.style.display = "flex"; animarFoguetao('normal'); }
+}
+
+function gerarGrelhaSopa(lista) {
+    let matriz = Array(12).fill().map(() => Array(12).fill(null));
+    let colocadas = [];
+    lista.forEach(palavra => {
+        let colocada = false, tentativas = 0;
+        while(!colocada && tentativas < 100) {
+            let dir = Math.floor(Math.random() * 3);
+            let dr = [0, 1, 1][dir], dc = [1, 0, 1][dir];
+            let r = Math.floor(Math.random() * 12), c = Math.floor(Math.random() * 12);
+            if (r + dr * palavra.length <= 12 && c + dc * palavra.length <= 12) {
+                let ok = true;
+                for (let i = 0; i < palavra.length; i++) {
+                    let char = matriz[r + dr * i][c + dc * i];
+                    if (char && char !== palavra[i]) { ok = false; break; }
+                }
+                if (ok) {
+                    for (let i = 0; i < palavra.length; i++) matriz[r + dr * i][c + dc * i] = palavra[i];
+                    colocadas.push({palavra, r, c, dr, dc});
+                    colocada = true;
+                }
+            }
+            tentativas++;
+        }
+    });
+    const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(let r=0; r<12; r++) for(let c=0; c<12; c++) if(!matriz[r][c]) matriz[r][c] = alfabeto[Math.floor(Math.random()*26)];
+    return { matriz, colocadas };
+}
+
+/* =====================================================================
+   4. INTERAÇÃO E VALIDAÇÃO
+   ===================================================================== */
+function startSelection(r, c) {
+    if(!podeInteragir) return;
+    estaSelecionando = true;
+    inicioSelecao = {r, c};
+    fimSelecao = {r, c};
+    tocarSom('flip');
+    highlightPath();
+}
+
+function moveSelection(r, c) {
+    if(!estaSelecionando) return;
+    let dr = Math.abs(r - inicioSelecao.r);
+    let dc = Math.abs(c - inicioSelecao.c);
+    if (r === inicioSelecao.r || c === inicioSelecao.c || dr === dc) {
+        fimSelecao = {r, c};
+        highlightPath();
+    }
+}
+
+function handleTouchMove(e) {
+    if(!estaSelecionando) return;
+    const t = e.touches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    if(el && el.classList.contains('sopa-letra')) {
+        moveSelection(parseInt(el.dataset.r), parseInt(el.dataset.c));
+    }
+}
+
+function highlightPath() {
+    document.querySelectorAll('.sopa-letra.selecionada').forEach(el => el.classList.remove('selecionada'));
+    const path = getPathCells(inicioSelecao, fimSelecao);
+    celulasSelecionadas = [];
+    path.forEach(cell => {
+        const el = document.querySelector(`.sopa-letra[data-r="${cell.r}"][data-c="${cell.c}"]`);
+        if(el) { el.classList.add('selecionada'); celulasSelecionadas.push(el); }
+    });
+}
+
+function getPathCells(start, end) {
+    let cells = [];
+    let dr = end.r === start.r ? 0 : (end.r > start.r ? 1 : -1);
+    let dc = end.c === start.c ? 0 : (end.c > start.c ? 1 : -1);
+    let currR = start.r, currC = start.c;
+    while(true) {
+        cells.push({r: currR, c: currC});
+        if(currR === end.r && currC === end.c) break;
+        currR += dr; currC += dc;
+    }
+    return cells;
+}
+
+function endSelection() {
+    if(!estaSelecionando) return;
+    estaSelecionando = false;
+    let word = celulasSelecionadas.map(el => el.textContent).join('');
+    let wordRev = word.split('').reverse().join('');
+    const found = palavrasAtuais.find(p => (p.palavra === word || p.palavra === wordRev) && !palavrasEncontradas.includes(p.palavra));
+
+    if(found) {
+        tocarSom('acerto');
+        palavrasEncontradas.push(found.palavra);
+        celulasSelecionadas.forEach(el => { el.classList.remove('selecionada'); el.classList.add('encontrada'); });
+        document.getElementById(`item-${found.palavra}`).classList.add('riscada');
+        let prog = palavrasEncontradas.length;
+        document.getElementById('val-progresso').textContent = prog;
+        document.getElementById('progress-fill').style.width = (prog * 10) + '%';
+        if(prog === 5) { dicasDisponiveis = 1; atualizarBotaoDica(); showToast("Dica disponível!"); }
+        if(prog === 10) {
+            clearInterval(cronometroInterval); podeInteragir = false;
+            setTimeout(() => { tocarSom('decolar'); animarFoguetao('acerto'); setTimeout(finalizarJogo, 1500); }, 500);
+        }
+    } else {
+        document.querySelectorAll('.sopa-letra.selecionada').forEach(el => el.classList.remove('selecionada'));
+    }
+    celulasSelecionadas = [];
+}
+
+/* =====================================================================
+   5. CRONÓMETRO, DICAS E ÁUDIO INTEGRAL
+   ===================================================================== */
+function iniciarCronometro() {
+    tempoSegundos = 0; clearInterval(cronometroInterval);
+    cronometroInterval = setInterval(() => {
+        tempoSegundos++;
+        let m = Math.floor(tempoSegundos/60).toString().padStart(2,'0');
+        let s = (tempoSegundos%60).toString().padStart(2,'0');
+        document.getElementById('val-tempo').textContent = `${m}:${s}`;
+    }, 1000);
+}
+
+function usarDica() {
+    if(dicasDisponiveis <= 0) return;
+    const p = palavrasAtuais.find(p => !palavrasEncontradas.includes(p.palavra));
+    if(p) {
+        const el = document.querySelector(`.sopa-letra[data-r="${p.r}"][data-c="${p.c}"]`);
+        if(el) {
+            el.classList.add('selecionada');
+            setTimeout(() => el.classList.remove('selecionada'), 2000);
+            dicasDisponiveis = 0; atualizarBotaoDica(); tocarSom('flip');
+        }
+    }
+}
+
+function atualizarBotaoDica() {
+    const b = document.getElementById('btn-dica');
+    if(b) { b.innerHTML = `${SVG_BULB} Dica: ${dicasDisponiveis}`; b.style.opacity = dicasDisponiveis ? "1" : "0.5"; }
+}
+
+function finalizarJogo() {
+    document.getElementById('foguetao-feedback').style.display = "none";
+    mostrarEcra('ecra-fim');
+    document.querySelector('.end-stats').innerHTML = `Tempo Total: <strong>${document.getElementById('val-tempo').textContent}</strong>`;
+    document.getElementById('rank-container').innerHTML = `<img src="../../../SVG/taca.svg" class="taca-vitoria" style="width:130px;">`;
+    tocarSom('vitoria'); dispararConfetis();
+}
+
+function animarFoguetao(state) {
+    const f = document.getElementById('foguetao-feedback');
+    if(!f) return;
+    f.classList.remove('foguetao-normal', 'foguetao-erro', 'foguetao-decolar');
+    void f.offsetWidth;
+    if(state === 'normal') { f.src = "img/foguetao_normal.png"; f.classList.add('foguetao-normal'); }
+    else { f.src = "img/foguetao_decolar.png"; f.classList.add('foguetao-decolar'); }
+}
+
+/* --- MOTOR DE ÁUDIO (WEB AUDIO API) --- */
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function initAudio() { if(!audioCtx && AudioContextClass) audioCtx = new AudioContextClass(); if(audioCtx.state==='suspended') audioCtx.resume(); }
+document.addEventListener('pointerdown', initAudio, { once: true });
+
+function tocarSom(t) {
+    try {
+        initAudio(); if (!audioCtx) return;
+        const agora = audioCtx.currentTime;
+        if (t === 'acerto') {
+            [783.99, 1046.50].forEach((f, i) => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = f;
+                g.gain.setValueAtTime(0, agora + i * 0.1);
+                g.gain.linearRampToValueAtTime(0.05, agora + i * 0.1 + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.1 + 0.3);
+                o.start(agora + i * 0.1); o.stop(agora + i * 0.1 + 0.3);
+            });
+        } else if (t === 'vitoria') {
+            const mel = [{f:523, t:0}, {f:659, t:0.15}, {f:783, t:0.3}, {f:1046, t:0.5}];
+            mel.forEach(n => {
+                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'triangle'; o.frequency.value = n.f;
+                g.gain.setValueAtTime(0.05, agora + n.t);
+                g.gain.exponentialRampToValueAtTime(0.001, agora + n.t + 0.4);
+                o.start(agora + n.t); o.stop(agora + n.t + 0.5);
+            });
+        } else if (t === 'decolar') {
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.type = 'sine'; o.frequency.setValueAtTime(150, agora);
+            o.frequency.exponentialRampToValueAtTime(1800, agora + 1.2);
+            g.gain.setValueAtTime(0, agora); g.gain.linearRampToValueAtTime(0.1, agora + 0.1);
+            g.gain.exponentialRampToValueAtTime(0.001, agora + 1.2);
+            o.start(agora); o.stop(agora + 1.2);
+        } else if (t === 'flip') {
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.type = 'sine'; o.frequency.setValueAtTime(400, agora);
+            o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+            g.gain.setValueAtTime(0.05, agora); o.start(agora); o.stop(agora + 0.1);
+        }
+    } catch (e) { console.warn(e); }
+}
+
+/* --- MOTOR DE CONFETIS --- */
+function dispararConfetis() {
+    const c = document.getElementById('confetti-container'); if (!c) return;
+    c.innerHTML = ''; const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+    for (let i = 0; i < 100; i++) {
+        const d = document.createElement('div'); d.className = 'confetti';
+        d.style.left = Math.random() * 100 + '%';
+        d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+        const dur = Math.random() * 2 + 2; const del = Math.random() * 2;
+        d.style.animation = `fall ${dur}s linear ${del}s forwards`;
+        c.appendChild(d); setTimeout(() => d.remove(), (dur + del) * 1000);
+    }
+}
+
+function limparConfetis() { const c = document.getElementById('confetti-container'); if(c) c.innerHTML = ''; }
+function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+function confirmarSair() { voltarAoMenuPrincipal(); }
+function voltarAoMenuPrincipal() { mostrarEcra('ecra-selecao'); document.getElementById('foguetao-feedback').style.display = "none"; limparConfetis(); }
+function reiniciarJogo() { prepararJogo(sistemaAtivo); limparConfetis(); }
+function baralharArray(a) { for(let i=a.length-1; i>0; i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function showToast(m) { const t = document.getElementById('toast-msg'); t.textContent = m; t.classList.add('active'); setTimeout(()=>t.classList.remove('active'), 2500); }
+</script>
+</body>
+</html>
