@@ -8,8 +8,8 @@ const todosOsJogos =[
     // ------------------------------------
     // PORTUGUÊS (cat: "pt")
     // ------------------------------------
-	{ nome: "Fábrica de Plurais", icone: "icones/fabrica_plurais.png", link: "pt/fabrica-plurais/", cat: "pt" },
-	{ nome: "Fábrica de Femininos", icone: "icones/fabrica_femininos.png", link: "pt/fabrica-femininos/", cat: "pt" },
+	{ nome: "Fábrica dos Plurais", icone: "icones/fabrica_plurais.png", link: "pt/fabrica-plurais/", cat: "pt" },
+	{ nome: "Fábrica dos Femininos", icone: "icones/fabrica_femininos.png", link: "pt/fabrica-femininos/", cat: "pt" },
 	{ nome: "Graus dos Adjetivos", icone: "icones/graus_adjetivos.png", link: "pt/graus-adjetivos/", cat: "pt" },
 	{ nome: "O Comboio do Passado", icone: "icones/comboio_passado.png", link: "pt/comboio-passado/", cat: "pt" },
 	{ nome: "A Máquina do Tempo", icone: "icones/maquina_tempo.png", link: "pt/maquina-tempo/", cat: "pt" },
@@ -17,6 +17,7 @@ const todosOsJogos =[
 	{ nome: "O Mundo das Preposições", icone: "icones/preposicoes.png", link: "pt/preposicoes/", cat: "pt" },
 	{ nome: "Truques de Escrita", icone: "icones/truques_escrita.png", link: "pt/truques-escrita/", cat: "pt" },
 	{ nome: "Expressões Idiomáticas", icone: "icones/expressoes.png", link: "pt/expressoes/", cat: "pt" },
+	{ nome: "Nomes Comuns Coletivos", icone: "icones/coletivos.png", link: "pt/coletivos/", cat: "pt" },
     
 	
 	

@@ -1020,6 +1020,8 @@ footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
     #val-tempo {
         font-size: 0.8rem !important;
     }
+	
+	#foguetao-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
 }
 
 /* ==========================================================================
@@ -1367,11 +1369,11 @@ function carregarRonda() {
     estaSelecionando = false;
     celulasSelecionadas = [];
 
-    // Tenta gerar a grelha. Se não conseguir colocar as 10, tenta mais uma vez com novas posições
-    let resultadoSopa = gerarGrelhaSopa(perguntasSorteadas.map(p => p.busca));
-    if (resultadoSopa.colocadas.length < 10) {
-        resultadoSopa = gerarGrelhaSopa(perguntasSorteadas.map(p => p.busca));
-    }
+	let resultadoSopa = gerarGrelhaSopa(perguntasSorteadas.map(p => p.busca));
+
+	if (resultadoSopa.colocadas.length < 10) {
+		console.warn("Atenção: Esta combinação específica de palavras é matematicamente impossível de encaixar numa grelha 12x12.");
+	}
 
     const { matriz, colocadas } = resultadoSopa;
     grelhaSopa = matriz;
@@ -1430,29 +1432,103 @@ function carregarRonda() {
 function gerarGrelhaSopa(lista) {
     let matriz = Array(12).fill().map(() => Array(12).fill(null));
     let colocadas = [];
-    lista.forEach(palavra => {
-        let colocada = false, tentativas = 0;
-        while(!colocada && tentativas < 100) {
-            let dir = Math.floor(Math.random() * 3);
-            let dr = [0, 1, 1][dir], dc = [1, 0, 1][dir];
-            let r = Math.floor(Math.random() * 12), c = Math.floor(Math.random() * 12);
-            if (r + dr * palavra.length <= 12 && c + dc * palavra.length <= 12) {
-                let ok = true;
-                for (let i = 0; i < palavra.length; i++) {
-                    let char = matriz[r + dr * i][c + dc * i];
-                    if (char && char !== palavra[i]) { ok = false; break; }
-                }
-                if (ok) {
-                    for (let i = 0; i < palavra.length; i++) matriz[r + dr * i][c + dc * i] = palavra[i];
-                    colocadas.push({palavra, r, c, dr, dc});
-                    colocada = true;
+
+    // Mantivemos as tuas 3 direções originais: Horizontal (Dir), Vertical (Baixo), Diagonal (Dir-Baixo)
+    const direcoes = [
+        { dr: 0, dc: 1 },
+        { dr: 1, dc: 0 },
+        { dr: 1, dc: 1 }
+    ];
+
+    // Função auxiliar para baralhar as opções e garantir que a sopa é sempre diferente
+    function baralhar(array) {
+        let atual = array.length, aleatorio;
+        while (atual !== 0) {
+            aleatorio = Math.floor(Math.random() * atual);
+            atual--;
+            [array[atual], array[aleatorio]] = [array[aleatorio], array[atual]];
+        }
+        return array;
+    }
+
+    // A função recursiva que faz a "magia" do backtracking
+    function tentarColocar(palavraIndex) {
+        // Se chegámos ao fim da lista, todas as palavras foram colocadas com sucesso!
+        if (palavraIndex === lista.length) return true; 
+
+        const palavra = lista[palavraIndex];
+
+        // Criamos todas as combinações possíveis de linha, coluna e direção
+        let opcoes = [];
+        for (let r = 0; r < 12; r++) {
+            for (let c = 0; c < 12; c++) {
+                for (let d = 0; d < direcoes.length; d++) {
+                    opcoes.push({ r, c, dr: direcoes[d].dr, dc: direcoes[d].dc });
                 }
             }
-            tentativas++;
         }
-    });
+        
+        // Baralhamos para não colocar as palavras sempre no canto superior esquerdo
+        baralhar(opcoes);
+
+        // Testamos cada uma das opções
+        for (let i = 0; i < opcoes.length; i++) {
+            const { r, c, dr, dc } = opcoes[i];
+
+            // 1. Verifica se a palavra não sai fora da grelha
+            if (r + dr * palavra.length <= 12 && c + dc * palavra.length <= 12) {
+                let podeColocar = true;
+
+                // 2. Verifica se choca com letras de outras palavras
+                for (let j = 0; j < palavra.length; j++) {
+                    let charNaGrelha = matriz[r + dr * j][c + dc * j];
+                    if (charNaGrelha !== null && charNaGrelha !== palavra[j]) {
+                        podeColocar = false;
+                        break;
+                    }
+                }
+
+                if (podeColocar) {
+                    // 3. GUARDA O ESTADO: Registamos o que lá estava antes (null ou letras cruzadas)
+                    let estadoAnterior = [];
+                    for (let j = 0; j < palavra.length; j++) {
+                        estadoAnterior.push(matriz[r + dr * j][c + dc * j]);
+                        matriz[r + dr * j][c + dc * j] = palavra[j]; // Escreve a palavra
+                    }
+                    
+                    colocadas.push({ palavra, r, c, dr, dc });
+
+                    // 4. AVANÇA: Tenta colocar a PRÓXIMA palavra
+                    if (tentarColocar(palavraIndex + 1)) {
+                        return true; // Se a próxima resultar, sucesso em cadeia!
+                    }
+
+                    // 5. BACKTRACKING: Se a próxima não couber, volta atrás!
+                    colocadas.pop(); // Remove a palavra da lista de colocadas
+                    for (let j = 0; j < palavra.length; j++) {
+                        matriz[r + dr * j][c + dc * j] = estadoAnterior[j]; // Restaura a grelha
+                    }
+                }
+            }
+        }
+
+        // Se testou TODAS as opções e nenhuma deu, devolve false para acionar o backtracking da palavra anterior
+        return false; 
+    }
+
+    // Arranca o processo com a primeira palavra (índice 0)
+    tentarColocar(0);
+
+    // No fim, preenche as casas vazias com letras aleatórias
     const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for(let r=0; r<12; r++) for(let c=0; c<12; c++) if(!matriz[r][c]) matriz[r][c] = alfabeto[Math.floor(Math.random()*26)];
+    for(let r = 0; r < 12; r++) {
+        for(let c = 0; c < 12; c++) {
+            if(!matriz[r][c]) {
+                matriz[r][c] = alfabeto[Math.floor(Math.random() * 26)];
+            }
+        }
+    }
+
     return { matriz, colocadas };
 }
 
