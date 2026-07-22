@@ -75,7 +75,7 @@ const dbPalavras = [
   { palavra: "brasil", imagem: "../../img/brasil.png", num: 2, divisao: "BRA-SIL", tonica: "SIL", classificacao: "aguda" },
   { palavra: "brincos", imagem: "../../img/brincos.png", num: 2, divisao: "BRIN-COS", tonica: "BRIN", classificacao: "grave" },
   { palavra: "bruxa", imagem: "../../img/bruxa.png", num: 2, divisao: "BRU-XA", tonica: "BRU", classificacao: "grave" },
-  { palavra: "burro", imagem: "../../img/burro.png", num: 2, divisao: "BUR-RO", tonica: "BUR", classificacao: "grave" },
+  { palavra: "burro", imagem: "../../img/burro.png", num: 2, divisao: "BU-RRO", tonica: "BUR", classificacao: "grave" },
   { palavra: "bússola", imagem: "../../img/bussola.png", num: 3, divisao: "BÚ-SSO-LA", tonica: "BÚ", classificacao: "esdrúxula" },
   { palavra: "buzina", imagem: "../../img/buzina.png", num: 3, divisao: "BU-ZI-NA", tonica: "ZI", classificacao: "grave" },
   { palavra: "cabra", imagem: "../../img/cabra.png", num: 2, divisao: "CA-BRA", tonica: "CA", classificacao: "grave" },
