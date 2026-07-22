@@ -18,6 +18,7 @@ const todosOsJogos =[
 	{ nome: "Truques de Escrita", icone: "icones/truques_escrita.png", link: "pt/truques-escrita/", cat: "pt" },
 	{ nome: "Expressões Idiomáticas", icone: "icones/expressoes.png", link: "pt/expressoes/", cat: "pt" },
 	{ nome: "Nomes Comuns Coletivos", icone: "icones/coletivos.png", link: "pt/coletivos/", cat: "pt" },
+	{ nome: "O Comboio dos Pronomes", icone: "icones/pronomes.png", link: "pt/pronomes/", cat: "pt" },
     
 	
 	

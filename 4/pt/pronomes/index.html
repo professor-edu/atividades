@@ -1,0 +1,4450 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Ano - O Comboio dos Pronomes 🚂</title>
+    
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+/* ==========================================================================
+   1. RESET E VARIÁVEIS GLOBAIS (LITERAL)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-body: #f0f7ff;
+    --azul-vibrante: #0091ff; 
+    --cor-4ano: #a28cf2;     
+    --cor-4ano-dark: #8a72e0;
+    --cor-borda: #8a72e0;
+    --bg-header: #f3f0ff; 
+    --cor-btn-fundo: #fffde7;
+    --azul-escuro: #0d47a1;
+    --text-main: #455a64;
+    --borda-cartao: #ced6e0;
+    --cor-pt: #ff6b6b;
+    --cor-mat: #4dabf7;
+    --cor-em: #51cf66;
+
+    /* CORES DOS BOTÕES DO MENU INICIAL */
+    --cor-btn-azul: #61A0FF;
+    --cor-btn-verde: #5DD279;
+    --cor-btn-amarelo: #FBC531;
+    --cor-btn-vermelho: #FF6B6B;
+    --cor-btn-roxo: #A55EEA;
+    --cor-btn-laranja: #FA983A;
+    --cor-btn-rosa: #e04d8c;
+    --cor-btn-turquesa: #139ea3;
+    
+    /* Cores de Feedback (Vibrantes) */
+    --cor-sucesso: #2ed573;
+    --cor-sucesso-dark: #219d53;
+    --cor-erro: #ff4757;
+    --cor-erro-dark: #d0303f;
+}
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    text-align: center; 
+    background-color: var(--bg-body); 
+    background-image: radial-gradient(rgba(13, 71, 161, 0.06) 2px, transparent 2px);
+    background-size: 25px 25px;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh; 
+    overflow-x: hidden; 
+}
+
+*:focus-visible {
+    outline: 4px solid var(--cor-btn-amarelo);
+    border-radius: 8px;
+}
+
+@media (min-width: 769px) and (min-height: 600px) { body { height: 100vh; overflow-y: auto; } }
+
+/* ==========================================================================
+   2. LAYOUT: HEADER, SIDEBAR, MAIN, FOOTER E ÍCONES
+   ========================================================================== */
+header {
+    background-color: var(--bg-header); padding: 25px 20px;
+    border-bottom: 1px solid var(--cor-4ano-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; flex-shrink: 0; z-index: 100;
+}
+.header-content { max-width: 1200px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+
+.nav-container { width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 15px; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+.hamburger { cursor: pointer; background: rgba(255,255,255,0.3); border: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 8px; transition: background 0.4s ease; }
+@media (hover: hover) { .hamburger:hover { background: #fff9c4; } }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--azul-escuro); transition: 0.3s; transform-origin: center; }        
+.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+h1 { color: var(--azul-escuro); font-size: clamp(1.4rem, 5vw, 2.2rem); margin: 0; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.subtitulo { color: var(--azul-escuro); font-size: clamp(0.85rem, 3vw, 1.1rem); font-weight: 500; opacity: 0.8; margin-top: 15px; }
+
+.btn-voltar { background: var(--cor-4ano); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 700; text-decoration: none; font-size: 0.9rem; box-shadow: 0 3px 0 var(--cor-4ano-dark); display: flex; align-items: center; gap: 8px; transition: 0.2s; cursor: pointer;}
+@media (hover: hover) { .btn-voltar:hover { transform: scale(1.05); } }
+
+.sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.4s; box-shadow: 10px 0 30px rgba(0,0,0,0.1); text-align: left; }
+.sidebar.active { left: 0; }
+.sidebar .btn-fechar { background: #fff5f5; color: #ff4757; padding: 20px 25px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; border-bottom: 1px solid #ffebeb; }
+.sidebar ul { list-style: none; padding: 15px; margin: 0; }
+.sidebar li a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-main); background: #f8fafc; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; }
+@media (hover: hover) { .sidebar li a:hover { background: var(--cor-4ano); color: white; transform: translateX(8px); } }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+.overlay.active { display: block; }
+
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px 20px; width: 100%; box-sizing: border-box; }
+
+.cartao-jogo-container { 
+    background: white; width: 100%; max-width: 950px; 
+    flex: 1; min-height: 0; 
+    padding: 25px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55); 
+    border-top: 8px solid var(--cor-pt); 
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; box-sizing: border-box;
+}
+
+footer { height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-top: 1px solid var(--cor-4ano-dark); margin-top: auto; flex-shrink: 0;}
+footer p { font-size: 0.8rem; color: var(--cor-4ano-dark); margin: 0; }
+
+/* Ícones e Classes Utilitárias de SVG */
+.icon-svg-menu { width: 20px; height: 20px; display: inline-block; vertical-align: middle; object-fit: contain; }
+.icon-svg-voltar { width: 1.3em; height: 1.3em; vertical-align: middle; margin-right:0px; object-fit: contain; }
+.icon-svg-footer { width: 2.3em; height: 2.3em; vertical-align: middle; margin-right:5px; margin-left: 7px; object-fit: contain; }
+.icon-svg-titulo { width: 1em; height: 1em; vertical-align: middle; object-fit: contain; }
+.svg-icon { width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+
+/* ==========================================================================
+   3. BARRA DE ESTADO DO JOGO (HUD) E PROGRESSO
+   ========================================================================== */
+.status-bar-jogo {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; background: #fdf2f2; padding: 8px 12px;
+    border-radius: 20px; border: 2px solid var(--cor-pt); margin-bottom: 15px; box-sizing: border-box; flex-shrink: 0;
+    max-width: 900px;
+}
+
+.btn-voltar-menu { 
+    background-color: white; color: var(--azul-escuro); border: 2px solid var(--cor-pt); 
+    padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-voltar-menu svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-voltar-menu:hover { border-color: var(--azul-escuro); } 
+    .btn-voltar-menu:hover svg { transform: scale(1.15); }
+}
+
+.btn-dica { 
+    background-color: #fff9c4; border: 2px solid #fbc531; color: #b18500; 
+    padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+    display: flex; align-items: center; gap: 5px; 
+    transition: border-color 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-dica svg {
+    transition: transform 0.2s ease;
+}
+
+@media (hover: hover) { 
+    .btn-dica:hover:not(.esgotada) { border-color: #b18500; } 
+    .btn-dica:hover:not(.esgotada) svg { transform: scale(1.15); }
+}
+
+.btn-dica.esgotada { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
+
+.btn-dica.dica-impaciente:not(.esgotada) {
+    animation: chamarAtencaoDica 1.5s infinite ease-in-out;
+    border-color: #f39c12;
+    background-color: #fffde7;
+}
+
+.badge-ronda { 
+    background: white; 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    border: 2px solid #219d53; 
+    color: #219d53; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-ronda svg {
+    margin: 0 !important; 
+    width: 1.1em !important; 
+    height: 1.1em !important;
+    display: block;
+}
+
+.badge-erros { 
+    background: white; 
+    border: 2px solid var(--cor-pt); 
+    color: var(--cor-mat); 
+    font-weight: 800; 
+    font-size: 0.9rem; 
+    line-height: 1; 
+    padding: 6px 12px; 
+    border-radius: 15px; 
+    white-space: nowrap; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 6px; 
+}
+
+.badge-erros svg {
+    margin: 0 !important; 
+    width: 0.85em !important;
+    height: 0.85em !important;
+    display: block;
+}
+
+.progress-bg { 
+    background-color: #e2e8f0; 
+    border-radius: 20px; 
+    height: 35px; 
+    flex: 1 1 0%; 
+    min-width: 50px; 
+    margin: 0; 
+    overflow: hidden; 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.1); 
+    border: 2px solid white; 
+}
+
+.progress-fill { height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); background-color: var(--cor-4ano-dark); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); background-size: 30px 30px; animation: moverRiscas 2s linear infinite; }
+
+/* ==========================================================================
+   4. MENU INICIAL E SELEÇÃO DE NÍVEIS
+   ========================================================================== */
+.ecra { width: 100%; flex: 1; min-height: 0; display: none; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.4s ease; box-sizing: border-box; position: relative; z-index: 2;}
+#ecra-selecao { display: flex; }
+#ecra-jogo { justify-content: flex-start; }
+.titulo-menu { font-size: clamp(1rem, 4vw, 1.5rem); color: var(--azul-escuro); margin-bottom: 40px; margin-top: 40px; font-weight: 900;}
+
+.grid-niveis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px;
+}
+
+.btn-nivel-novo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 15px 20px;
+    gap: 15px;
+    width: 100%;
+    border-radius: 20px;
+    border: 4px solid white;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 0 #e2e8f0, 0 10px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .btn-nivel-novo:hover {
+        transform: translateY(-2px); box-shadow: 0 8px 0 #cbd5e1, 0 12px 20px rgba(0,0,0,0.12); filter: brightness(1.05);
+    }
+}
+
+.btn-nivel-novo:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent, 0 0px 0 transparent !important; }
+
+.icon-btn-nivel-novo, .icon-btn-nivel {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+    pointer-events: none;
+}
+
+.btn-nivel-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+}
+
+.btn-nivel-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.btn-nivel-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+/* CLASSES DE COR DOS BOTÕES */
+.bg-azul { background-color: var(--cor-btn-azul); }
+.bg-verde { background-color: var(--cor-btn-verde); }
+.bg-amarelo { background-color: var(--cor-btn-amarelo); }
+.bg-vermelho { background-color: var(--cor-btn-vermelho); }
+.bg-roxo { background-color: var(--cor-btn-roxo); }
+.bg-laranja { background-color: var(--cor-btn-laranja); }
+.bg-rosa { background-color: var(--cor-btn-rosa); }
+.bg-turquesa { background-color: var(--cor-btn-turquesa); }
+
+/* ==========================================================================
+   5. IMAGENS MODULARES E CARD ZOOMABLE
+   ========================================================================== */
+.card-imagem-zoomable {
+    position: relative;
+    display: inline-block;
+    background-color: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    animation: flutuarCartao 3.5s infinite ease-in-out;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-imagem-zoomable:hover {
+    animation-play-state: paused;
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.imagem-evento-tempo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.card-imagem-zoomable.img-quadrada { width: 160px; height: 160px; }
+.card-imagem-zoomable.img-retangular { width: 210px; height: 140px; }
+
+@media (min-width: 769px) {
+    .card-imagem-zoomable.img-quadrada { width: 180px !important; height: 180px !important; }
+    .card-imagem-zoomable.img-retangular { width: 225px !important; height: 150px !important; }
+}
+/* ==========================================================================
+   6. MECÂNICA DE JOGO: BOTÕES VIBRANTES E FEEDBACKS
+   ========================================================================== */
+.area-jogo-custom {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; flex: 1; min-height: 0; background: #f8fafc; border: 2px dashed var(--cor-pt); border-radius: 20px; padding: 25px; gap: 25px;
+    position: relative; color: #94a3b8; font-weight: bold; overflow: hidden;
+}
+
+.pergunta-texto {
+  font-size: clamp(1.2rem, 4vw, 1.4rem);
+  line-height: 1.5;
+  color: var(--azul-escuro);
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 20px 0;
+  
+  /* Substituímos o fadeIn simples por este popIn */
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7); /* Começa mais pequeno */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1); /* Termina no tamanho normal com um leve ressalto */
+  }
+}
+
+.opcoes-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; width: 100%; }
+
+/* Botão Opção Vibrante (Usado em Múltipla Escolha e Ligar) */
+.btn-opcao-vibrante {
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 15px !important;
+    min-width: 180px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    transition: transform 0.1s, filter 0.1s;
+    touch-action: manipulation;
+    text-align: center;
+	flex-direction: column !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+/* Cores dos Botões Vibrantes dentro do Jogo */
+.btn-opcao-vibrante.bg-azul { background-color: var(--cor-btn-azul); box-shadow: 0 4px 0 #4a8deb; }
+.btn-opcao-vibrante.bg-verde { background-color: var(--cor-btn-verde); box-shadow: 0 4px 0 #45b062; }
+.btn-opcao-vibrante.bg-laranja { background-color: var(--cor-btn-laranja); box-shadow: 0 4px 0 #d97d2c; }
+.btn-opcao-vibrante.bg-roxo { background-color: var(--cor-btn-roxo); box-shadow: 0 4px 0 #8e44ad; }
+.btn-opcao-vibrante.bg-amarelo { background-color: var(--cor-btn-amarelo); box-shadow: 0 4px 0 #FBC531; }
+.btn-opcao-vibrante.bg-turquesa { background-color: var(--cor-btn-turquesa); box-shadow: 0 4px 0 #139ea3; }
+.btn-opcao-vibrante.bg-rosa { background-color: var(--cor-btn-rosa); box-shadow: 0 4px 0 #e04d8c; }
+.btn-opcao-vibrante.bg-vermelho { background-color: var(--cor-btn-vermelho); box-shadow: 0 4px 0 #d64f4f; }
+
+.btn-opcao-vibrante:active { transform: scale(0.95); filter: brightness(0.9); }
+@media (hover: hover) { .btn-opcao-vibrante:hover { transform: translateY(-2px); filter: brightness(1.05); } }
+
+/* Estados de Sucesso e Erro Vibrante */
+/* 1. Regra Universal: Permite que qualquer elemento (botão, parágrafo ou div) abane em caso de erro */
+.erro-vibrante { 
+    animation: shakeError 0.4s ease; 
+}
+
+/* 2. Feedback Tridimensional para Botões (Opções, Palavras do Banco, etc.) */
+.btn-opcao-vibrante.sucesso-vibrante, 
+.btn-opcao.sucesso-vibrante,
+.palavra-banco.sucesso-vibrante { 
+    background-color: var(--cor-sucesso) !important; 
+    color: white !important; 
+    border-color: var(--cor-sucesso-dark) !important; 
+    box-shadow: 0 6px 0 var(--cor-sucesso-dark) !important; 
+    transform: translateY(3px) !important; 
+}
+
+.btn-opcao-vibrante.erro-vibrante, 
+.btn-opcao.erro-vibrante,
+.palavra-banco.erro-vibrante { 
+    border-color: var(--cor-erro) !important; 
+    background-color: #ffefef !important; 
+    color: var(--cor-erro) !important; 
+    box-shadow: 0 6px 0 var(--cor-erro) !important;
+}
+
+/* 3. Feedback Suave para a Caixa de Texto das Lacunas (Parágrafo) */
+.texto-paragrafo-lacunas.erro-vibrante {
+    border-color: var(--cor-erro) !important;
+    background-color: #ffefef !important;
+    color: var(--cor-erro) !important;
+}
+
+.texto-paragrafo-lacunas.sucesso-vibrante {
+    border-color: var(--cor-sucesso) !important;
+    background-color: #e8fbf0 !important; /* Fundo verde muito suave e legível */
+    color: var(--cor-sucesso-dark) !important;
+}
+
+.icon-certo { width: 1.1em; height: 1.1em; object-fit: contain; vertical-align: middle; }
+.icon-errado { width: 1em; height: 1em; object-fit: contain; vertical-align: middle; }
+.imagem-opcao-vibrante { display: block; max-width: 180px; max-height: 140px; object-fit: contain; border-radius: 8px; pointer-events: none; }
+.btn-opcao-vibrante:has(img) {
+    min-width: 180px;
+    min-height: 150px;
+}
+
+.card-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    width: 100%;
+    max-width: 800px;
+    background-color: #f4faff;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.55);
+    box-sizing: border-box;
+    position: relative;
+}
+
+.texto-split {
+    flex: 1;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    line-height: 1.5;
+    text-align: justify;
+}
+
+
+/* ==========================================================================
+   7. MECÂNICA DE ARRASTAR, LIGAR E LACUNAS
+   ========================================================================== */
+.coluna-ligar-container { display: flex; gap: 40px; justify-content: center; width: 100%; box-sizing: border-box; }
+.coluna-ligar { display: flex; flex-direction: column; gap: 18px !important; }
+
+.btn-opcao-vibrante.ligado {
+    opacity: 0.55;
+    border-color: #cbd5e1 !important;
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+    transform: translateY(2px) !important;
+}
+
+/* Blocos de Arrastar */
+.bloco-arrastar {
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important;
+    width: 100%; 
+    min-width: 180px; /* Alinhado */
+    padding: 15px !important; /* Alinhado */
+    border-radius: 15px !important;
+    font-size: clamp(1rem, 3vw, 1.2rem) !important; /* Alinhado */
+    font-weight: 700 !important;
+    background-color: #ffffff !important; 
+    border: 3px solid var(--azul-vibrante) !important;
+    color: var(--azul-escuro) !important; 
+    box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    cursor: pointer; 
+    transition: transform 0.1s, box-shadow 0.1s; 
+    touch-action: manipulation;
+}
+.bloco-arrastar:active { 
+    transform: scale(0.95) !important; 
+    box-shadow: 0 0px 0 transparent !important; 
+}
+.bloco-arrastar:not(.selecionado):not([disabled]) { 
+    animation: respirarBloco 2s infinite ease-in-out; 
+}
+
+.alvo-arrastar.pronto-receber {
+    border-color: var(--cor-btn-amarelo) !important;
+    background-color: #fffde7;
+    animation: pulseAlvo 0.8s infinite alternate;
+}
+
+/* Lacunas (Gaps) */
+.texto-paragrafo-lacunas {
+    font-size: 1.1rem !important; /* Ligeiramente mais compacto */
+    line-height: 2.6 !important;
+    color: var(--text-main) !important;
+    text-align: justify !important;
+    margin-bottom: 18px !important;
+    background: #ffffff !important;
+    padding: 15px 20px !important;
+    border-radius: 20px !important;
+    border: 2px solid #e2e8f0 !important;
+    width: 100% !important;
+    max-width: 750px !important;
+    box-sizing: border-box !important;
+}
+
+.dica-suave {
+    font-size: 0.72rem !important;
+    font-style: italic !important;
+    font-weight: 600 !important;
+    color: #57606f !important; /* Cinzento suave */
+    background-color: #f1f5f9; /* Fundo cinzento clarinho discreto */
+    border: 1px solid #cbd5e1;
+    padding: 1px 6px;
+    border-radius: 6px;
+    display: inline-block;
+    line-height: 1.1;
+    vertical-align: middle;
+    margin: 0 4px;
+}
+
+.slot-vazio {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 110px; height: 34px; margin: 0 6px;
+    padding: 0 12px; border: 2px dashed var(--azul-vibrante); border-radius: 10px; background-color: #f8fafc;
+    vertical-align: middle; cursor: pointer; transition: all 0.2s ease; font-weight: 900; color: var(--azul-escuro);
+}
+.slot-vazio.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: #fffde7 !important; animation: pulseAlvo 0.8s infinite alternate !important; }
+.slot-vazio.preenchido { border-style: solid !important; border-color: var(--cor-pt) !important; background-color: #ffffff !important; }
+
+/* Grelha simétrica de 4+4 para o banco de opções no PC */
+.banco-opcoes {
+    display: grid !important; /* Muda de flex para grid */
+    grid-template-columns: repeat(4, minmax(110px, 140px)); /* Força 4 colunas exatas */
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 610px !important; /* Limita a largura para obrigar à quebra 4+4 */
+    margin: 0 auto 15px auto !important;
+}
+
+/* Garante que os botões se adaptam à largura das células da grelha */
+.palavra-banco {
+    padding: 8px 14px !important; /* Ajuste fino de padding para não espremer texto */
+    background: #ffffff !important; 
+    border: 2px solid var(--azul-vibrante) !important;
+    border-radius: 14px !important; 
+    font-weight: 800 !important; 
+    font-size: 1rem !important; 
+    color: var(--azul-escuro) !important;
+    cursor: pointer !important; 
+    transition: all 0.15s ease !important; 
+    box-shadow: 0 4px 0 var(--azul-vibrante) !important;
+    text-align: center;
+    box-sizing: border-box;
+    width: 100% !important;
+}
+.palavra-banco.selecionado { border-color: var(--cor-btn-amarelo) !important; box-shadow: 0 4px 0 var(--cor-btn-amarelo) !important; outline: none !important; }
+
+/* Mapas e Esquemas */
+.mapa-relevo-wrapper { position: relative; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04); flex-shrink: 0; }
+.mapa-relevo-wrapper.mapa-quadrado { max-width: 450px !important; aspect-ratio: 1 / 1; }
+.mapa-relevo-wrapper.mapa-retangular { max-width: 540px; aspect-ratio: 800 / 510; }
+.mapa-relevo-imagem { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.slot-mapa {
+    position: absolute; background-color: rgba(255, 255, 255, 0.45); border: 2px dashed #0091ff;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all 0.2s ease; box-sizing: border-box; z-index: 10;
+}
+.slot-mapa.pronto-receber { border-color: var(--cor-btn-amarelo) !important; background-color: rgba(251, 197, 49, 0.18) !important; animation: pulseAlvo 0.8s infinite alternate; }
+.slot-mapa.preenchido { border: 2px solid var(--cor-pt) !important; background-color: #ffffff !important; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important; }
+.slot-mapa.preenchido strong { color: var(--azul-escuro) !important; font-size: 0.95rem; font-weight: 900; }
+
+/* ==========================================================================
+   7.1 JOGO I: CLASSIFICAÇÃO DE GAVETAS (BAÚS)
+   ========================================================================== */
+.classificacao-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.cartao-classificar {
+    background: white;
+    border: 4px solid var(--cor-4ano-dark);
+    border-radius: 20px;
+    padding: 20px 40px;
+    font-size: clamp(1.8rem, 4vw, 2.3rem);
+    font-weight: 900;
+    color: var(--azul-escuro);
+    box-shadow: 0 8px 16px rgba(13, 71, 161, 0.08);
+    animation: flutuarCartao 3.5s infinite ease-in-out, popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2) both;
+    text-align: center;
+    min-width: 220px;
+}
+
+.gavetas-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.btn-gaveta {
+    flex: 1;
+    min-width: 130px;
+    max-width: 180px;
+    background-color: #efebe9; /* Tom de madeira muito claro */
+    border: 3px solid #8d6e63; /* Borda de madeira */
+    border-radius: 15px;
+    padding: 15px 10px 22px 10px; /* Margem inferior extra para o puxador */
+    color: #5d4037;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #8d6e63;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s, border-color 0.2s;
+    position: relative;
+    touch-action: manipulation;
+}
+
+/* Puxador da gaveta estilizado em CSS puro */
+.btn-gaveta::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 6px;
+    background: #8d6e63;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+/* Efeito de foco/hover no Computador */
+@media (hover: hover) {
+    .btn-gaveta:hover {
+        background-color: #f1f8ff;
+        border-color: var(--azul-vibrante);
+        color: var(--azul-escuro);
+        box-shadow: 0 5px 0 var(--azul-vibrante);
+    }
+    .btn-gaveta:hover::after {
+        background-color: var(--azul-vibrante);
+    }
+}
+
+/* Efeito de clique físico tridimensional */
+.btn-gaveta:active {
+    transform: translateY(4px) !important;
+    box-shadow: 0 1px 0 #8d6e63 !important;
+}
+
+/* ==========================================================================
+   7.1.1 JOGO I: CLASSIFICAÇÃO EM CARRUAGENS DO COMBOIO
+   ========================================================================== */
+
+/* Grelha simétrica de pílulas no PC */
+.coluna-classificacao {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(110px, 150px));
+    justify-content: center;
+    gap: 12px !important;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto 15px auto;
+}
+
+/* Regra Adaptativa: Se forem exatamente 6 pílulas, usa 3 colunas (cria um layout 3+3 simétrico) */
+.coluna-classificacao[data-qtd="6"] {
+    grid-template-columns: repeat(3, minmax(120px, 160px));
+    max-width: 550px; /* Limita a largura para manter as pílulas bem proporcionadas */
+}
+
+/* Pílulas de Palavras (Botões redondos) */
+.btn-opcao-pilula {
+    background: white;
+    border: 2px solid var(--azul-vibrante);
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--azul-escuro);
+    box-shadow: 0 4px 0 var(--azul-vibrante);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+    touch-action: manipulation;
+}
+
+.btn-opcao-pilula.selecionado {
+    border-color: var(--cor-btn-amarelo);
+    box-shadow: 0 4px 0 var(--cor-btn-amarelo);
+    background-color: #fffde7;
+}
+
+@media (hover: hover) {
+    .btn-opcao-pilula:hover:not(:disabled) {
+        transform: translateY(-2px);
+        filter: brightness(1.03);
+    }
+}
+
+/* Painel que envolve as Carruagens do Comboio */
+.painel-carruagens-tempo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 800px;
+    margin: 15px auto 0 auto;
+}
+
+/* Carruagens de Destino */
+.carruagem-destino {
+    flex: 1;
+    min-height: 150px;
+    border: 3px dashed var(--borda-cartao);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: center;
+    gap: 8px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.carruagem-titulo {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--azul-escuro);
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+    padding-bottom: 6px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+    pointer-events: none;
+}
+
+/* Variações Dinâmicas de Cor das Carruagens */
+.carruagem-destino.carruagem-perfeito {
+    border-color: var(--azul-vibrante);
+    background-color: #f0f7ff;
+}
+
+.carruagem-destino.carruagem-imperfeito {
+    border-color: var(--cor-4ano-dark);
+    background-color: #f3f0ff;
+}
+
+/* ==========================================================================
+   7.2 JOGO J: O INTRUSO (BOLHAS DE SABÃO)
+   ========================================================================== */
+.intruso-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    perspective: 800px;
+}
+
+.btn-bolha-intruso {
+    position: relative;
+    padding: 18px 30px;
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-weight: 800;
+    color: var(--azul-escuro);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.7) 45%, rgba(0, 145, 255, 0.18) 100%);
+    border: 3px solid rgba(0, 145, 255, 0.3);
+    border-radius: 40px; /* Cantos muito arredondados para simular a esfera */
+    box-shadow: 0 8px 20px rgba(0, 145, 255, 0.1), inset 0 -4px 8px rgba(0, 145, 255, 0.15), inset 0 4px 8px rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+}
+
+/* Brilho da bolha (Efeito de reflexo de luz em CSS puro) */
+.btn-bolha-intruso::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    width: 18px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50% 50% 40% 40%;
+    transform: rotate(-10deg);
+}
+
+/* Animações de flutuação dessincronizadas (pares e ímpares flutuam com tempos e inclinações diferentes) */
+.btn-bolha-intruso:nth-child(odd) {
+    animation: flutuarBolhaImpar 3.8s infinite ease-in-out;
+}
+.btn-bolha-intruso:nth-child(even) {
+    animation: flutuarBolhaPar 4.3s infinite ease-in-out;
+}
+
+@media (hover: hover) {
+    .btn-bolha-intruso:hover {
+        background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 1) 0%, rgba(235, 245, 255, 0.85) 45%, rgba(165, 94, 234, 0.25) 100%);
+        border-color: var(--cor-btn-roxo);
+        box-shadow: 0 12px 24px rgba(165, 94, 234, 0.2), inset 0 -4px 10px rgba(165, 94, 234, 0.15), inset 0 4px 10px rgba(255, 255, 255, 0.9);
+        transform: scale(1.06);
+    }
+}
+
+.btn-bolha-intruso:active {
+    transform: scale(0.95);
+}
+
+/* Keyframes das flutuações independentes */
+@keyframes flutuarBolhaImpar {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-10px) rotate(1.5deg); }
+}
+
+@keyframes flutuarBolhaPar {
+    0%, 100% { transform: translateY(0) rotate(1deg); }
+    50% { transform: translateY(-12px) rotate(-1.5deg); }
+}
+
+/* ==========================================================================
+   7.3 JOGO K: O CONSTRUTOR DE PALAVRAS (CARROSSEL DE AFIXOS)
+   ========================================================================== */
+.carrossel-palavras-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.carrossel-coluna {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    max-width: 150px;
+}
+
+/* Visores que imitam tambores rotativos de um cofre */
+.carrossel-visor {
+    width: 100%;
+    height: 60px;
+    background-color: white;
+    border: 3px solid var(--azul-vibrante);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 900;
+    color: var(--azul-escuro);
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 145, 255, 0.05);
+    text-transform: lowercase;
+    transition: background-color 0.2s, border-color 0.2s;
+    user-select: none;
+    text-align: center;
+}
+
+/* Destaque para o tambor central do Radical */
+.carrossel-visor.visor-radical {
+    background-color: #fffde7;
+    border-color: var(--cor-btn-amarelo);
+    color: #b18500;
+    box-shadow: inset 0 4px 8px rgba(251, 197, 49, 0.1), 0 4px 10px rgba(251, 197, 49, 0.1);
+}
+
+/* Setas de navegação vertical */
+.btn-carrossel-seta {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background-color: var(--cor-4ano);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 var(--cor-4ano-dark);
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
+    touch-action: manipulation;
+}
+
+@media (hover: hover) {
+    .btn-carrossel-seta:hover {
+        background-color: var(--cor-4ano-dark);
+        transform: translateY(-1px);
+    }
+}
+
+.btn-carrossel-seta:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--cor-4ano-dark);
+}
+
+/* Botão central de validação para submeter a palavra montada */
+.btn-validar-carrossel {
+    margin-top: 15px;
+    background-color: var(--cor-btn-verde);
+    border: 3px solid white;
+    border-radius: 15px;
+    padding: 12px 30px;
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #45b062, 0 8px 15px rgba(0,0,0,0.06);
+    text-transform: uppercase;
+    transition: transform 0.1s, box-shadow 0.1s;
+    touch-action: manipulation;
+}
+
+@media (hover: hover) {
+    .btn-validar-carrossel:hover {
+        background-color: #4cd137;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-validar-carrossel:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #45b062;
+}
+
+/* ==========================================================================
+   7.4 JOGO L: TIRO AO ALVO ORTOGRÁFICO
+   ========================================================================== */
+.tiro-alvo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Painel de suporte que exibe a palavra incompleta */
+.painel-ortografico {
+    background-color: white;
+    border: 4px solid var(--cor-4ano-dark);
+    border-radius: 20px;
+    padding: 15px 40px;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 900;
+    color: var(--azul-escuro);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.05), 0 8px 16px rgba(13, 71, 161, 0.05);
+    text-align: center;
+    min-width: 240px;
+    letter-spacing: 2px;
+}
+
+/* Lacuna que pisca para prender a atenção visual da criança */
+.gap-pulsar {
+    color: var(--cor-btn-vermelho);
+    border-bottom: 4px dashed var(--cor-btn-vermelho);
+    padding: 0 4px;
+    animation: pulsarBrilhoGap 1.2s infinite alternate ease-in-out;
+}
+
+.alvos-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+}
+
+/* Alvo circular concêntrico com contorno de texto para alto contraste */
+.btn-alvo {
+    position: relative;
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    border: 5px solid #ff4757;
+    background: radial-gradient(circle, #ff4757 25%, #ffffff 26%, #ffffff 50%, #ff4757 51%, #ff4757 75%, #ffffff 76%);
+    color: white !important;
+    font-weight: 900;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 12px rgba(255, 71, 87, 0.2), inset 0 3px 5px rgba(255,255,255,0.4);
+    cursor: crosshair;
+    touch-action: manipulation;
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.2), box-shadow 0.15s;
+    user-select: none;
+
+    /* CORREÇÃO DE CONTRASTE: Contorno escuro em redor das letras brancas (estilo videojogo) */
+    text-shadow: 
+        2px  2px 0px #0d47a1,
+       -2px -2px 0px #0d47a1,
+        2px -2px 0px #0d47a1,
+       -2px  2px 0px #0d47a1,
+        0px  4px 6px rgba(0, 0, 0, 0.4);
+    
+    font-size: 1.8rem; /* Tamanho padrão para 1 ou 2 letras */
+}
+
+/* Escalonamento automático de tamanho de letra no PC consoante o comprimento da palavra */
+.btn-alvo[data-length="3"] { font-size: 1.5rem; }
+.btn-alvo[data-length="4"] { font-size: 1.25rem; }
+.btn-alvo[data-length="5"] { font-size: 1.1rem; }
+.btn-alvo[data-length="6"] { font-size: 0.98rem; }
+
+@media (hover: hover) {
+    .btn-alvo:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.35), inset 0 3px 5px rgba(255,255,255,0.5);
+        border-color: #ff6b6b;
+    }
+}
+
+.btn-alvo:active {
+    transform: scale(0.92);
+}
+
+/* Animação de pulsação da lacuna */
+@keyframes pulsarBrilhoGap {
+    from {
+        opacity: 0.4;
+        filter: drop-shadow(0 0 1px rgba(255, 71, 87, 0));
+    }
+    to {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px rgba(255, 71, 87, 0.6));
+    }
+}
+
+
+/* ==========================================================================
+   8. MASCOTE: SISTEMA DE EXPRESSÕES E MOVIMENTOS
+   ========================================================================== */
+#mascote-feedback {
+    position: absolute; bottom: 15px; right: 15px; width: 100px; height: 100px;
+    z-index: 100; pointer-events: none; transition: all 0.5s ease; 
+    display: flex; align-items: center; justify-content: center;
+}
+
+#mascote-feedback img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Estado em Repouso: Movimento lateral leve e mecânico */
+.mascote-normal { animation: balancoMascote 3s infinite ease-in-out; }
+
+/* Estado de Erro: Abana (Shake) */
+.mascote-erro { animation: shakeError 0.4s ease-in-out; }
+
+/* Estado de Sucesso: Salto de alegria */
+.mascote-sucesso { animation: saltoAlegria 0.8s ease-out; }
+
+/* ANIMAÇÃO DO SALTO */
+@keyframes saltoAlegria {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-45px) scale(1.1, 0.9); } /* Sobe e achata um pouco */
+    50% { transform: translateY(-55px) scale(0.9, 1.1); } /* Pico do salto e estica */
+}
+
+/* Modais e Toasts */
+.modal-ajuda-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; padding: 20px; box-sizing: border-box;}
+.modal-ajuda-overlay.active { display: flex; }
+.modal-ajuda-box { background: white; width: 100%; max-width: 450px; border-radius: 25px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; border-top: 8px solid var(--cor-4ano);}
+.btn-fechar-modal { position: absolute; top: 15px; right: 15px; background: #ffebeb; color: #ff4757; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s;}
+
+.toast-msg { position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px); background: #fff9c4; border: 2px solid #fbc531; color: #b18500; padding: 8px 20px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 50; }
+.toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Destaques e Recompensas */
+.highlight-correto {
+    position: relative;
+    outline: 4px solid var(--cor-btn-verde);
+    outline-offset: 4px;
+    animation: pulseHighlight 1.4s infinite;
+    z-index: 2;
+}
+.highlight-correto::after {
+    position: absolute; top: -16px; right: -16px; background: var(--cor-btn-verde); color: white;
+    border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: bounceCheck 1s infinite alternate;
+}
+
+/* Realce de Títulos e Textos */
+.destaque-fundo { background-color: #dcd6f3; color: var(--azul-escuro); padding: 2px 6px; border-radius: 6px; font-weight: 900; }
+.destaque-texto { color: var(--cor-btn-vermelho); font-weight: 900; }
+.destaque-texto-verde { color: var(--cor-em); font-weight: 900; }
+
+/* Destaque tipo badge */
+.destaque-amarelo {
+    background-color: #fff275;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 900;
+    color: var(--cor-erro-dark); /* Vermelho escuro para contraste */
+    border: 1px dashed var(--cor-btn-amarelo);
+    display: inline-block;
+    font-size: 0.95em;
+    margin: 0 4px;
+}
+/* Realce Premium Adicional */
+.destaque-badge {
+    background: linear-gradient(135deg, #a28cf2 0%, #8a72e0 100%);
+    color: white !important;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 0.95em;
+    box-shadow: 0 4px 10px rgba(138, 114, 224, 0.25);
+    display: inline-block;
+    border: 2px solid white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   9. ECRÃ DE FIM E ESTATÍSTICAS
+   ========================================================================== */
+.end-title { font-size: clamp(2rem, 5vw, 2.5rem); color: var(--azul-escuro); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; }
+.icon-end-title {
+    width: 1.2em; 
+    height: 1.2em;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.end-stats { 
+    font-size: 1.3rem; color: var(--text-main); margin-bottom: 40px; 
+    text-align: center; background: var(--bg-header); padding: 30px 20px; 
+    border-radius: 20px; border: 2px dashed var(--cor-em); line-height: 1.5; 
+}
+
+.botoes-acao-container { display: flex; flex-direction: column; align-items: center; gap: 35px; width: 100%; }
+
+.btn-acao { 
+    border: 4px solid white; color: white; padding: 15px 30px; 
+    font-size: 1.2rem; font-weight: 900; border-radius: 20px; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; gap: 12px; 
+    width: 100%; max-width: 350px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); touch-action: manipulation; 
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-acao.primario { background-color: var(--cor-btn-verde); box-shadow: 0 6px 0 #45b062, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.primario:hover { box-shadow: 0 8px 0 #45b062, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao.secundario { background-color: var(--cor-btn-laranja); box-shadow: 0 6px 0 #d97d2c, 0 10px 15px rgba(0,0,0,0.1); }
+.btn-acao.terciario { background-color: var(--cor-btn-azul); box-shadow: 0 6px 0 #4a8deb, 0 10px 15px rgba(0,0,0,0.1); }
+@media (hover: hover) { .btn-acao.terciario:hover { box-shadow: 0 8px 0 #4a8deb, 0 12px 20px rgba(0,0,0,0.15); } }
+.btn-acao:active { transform: translateY(6px) !important; box-shadow: 0 0px 0 transparent !important; }
+
+.icon-acao { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; pointer-events: none; transition: transform 0.2s ease; }
+.primario:hover .icon-acao, .secundario:hover .icon-acao, .terciario:hover .icon-acao { transform: translateX(4px); }
+
+/* Vitória e Confetis */
+.taca-vitoria {
+    width: clamp(80px, 15vw, 130px); 
+    margin-bottom: 15px; 
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, tacaDanca 3s infinite 0.6s ease-in-out;
+}
+.confetti-container { position: absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; pointer-events:none; border-radius:30px; z-index: 10; }
+.confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; opacity: 0; animation: fall linear forwards; pointer-events: none; z-index: 15; }
+
+
+/* ==========================================================================
+   10. KEYFRAMES (TODAS AS ANIMAÇÕES DO TEMPLATE)
+   ========================================================================== */
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes balancoMascote {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes scanMove { 0%, 100% { top: 5%; } 50% { top: 90%; } }
+@keyframes tacaDanca {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    25% { transform: translateY(-10px) scale(1.06) rotate(-4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+    50% { transform: translateY(0) scale(1) rotate(0deg); filter: drop-shadow(0 6px 12px rgba(251, 197, 49, 0.3)); }
+    75% { transform: translateY(-10px) scale(1.06) rotate(4deg); filter: drop-shadow(0 14px 24px rgba(251, 197, 49, 0.65)); }
+}
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px) rotate(-2deg); } 75% { transform: translateX(6px) rotate(2deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes moverRiscas { 0% { background-position: 0 0; } 100% { background-position: 30px 0; } }
+@keyframes pulseAlvo { from { box-shadow: inset 0 0 0 transparent, 0 0 0 transparent; } to { box-shadow: inset 0 0 10px rgba(251, 197, 49, 0.2), 0 0 15px rgba(251, 197, 49, 0.4); } }
+@keyframes pulseHighlight { 0% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0.6); } 70% { box-shadow: 0 0 0 12px rgba(93, 210, 121, 0); } 100% { box-shadow: 0 0 0 0 rgba(93, 210, 121, 0); } }
+@keyframes bounceCheck { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes flutuarCartao { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes chamarAtencaoDica { 0%, 100% { transform: scale(1) translateY(0); box-shadow: 0 0 0 transparent; } 50% { transform: scale(1.1) translateY(-3px); box-shadow: 0 5px 15px rgba(243, 156, 18, 0.5); } }
+@keyframes respirarBloco {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 0 var(--azul-vibrante);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 6px 12px rgba(0, 145, 255, 0.25), 0 5px 0 var(--azul-vibrante);
+    }
+}
+
+
+/* ==========================================================================
+   11. SISTEMA DE ZOOM E OVERLAYS
+   ========================================================================== */
+.btn-zoom-imagem {
+    position: absolute; bottom: 8px; right: 8px; width: 32px; height: 32px; background-color: rgba(0, 145, 255, 0.9);
+    border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; animation: pulsarLupa 2s infinite ease-in-out;
+}
+.btn-zoom-imagem svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: white;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+}
+
+.btn-zoom-imagem:hover {
+		background-color: var(--azul-escuro);
+		transform: scale(1.1);
+}
+@keyframes pulsarLupa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.zoom-overlay-imagem {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 20, 36, 0.95);
+    z-index: 400; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;
+}
+.zoom-overlay-imagem.active { display: flex; }
+.zoom-imagem-conteudo {
+    max-width: 90%; max-height: 80%; object-fit: contain; border: 5px solid white; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); background-color: white; animation: popIn 0.3s;
+}
+.btn-fechar-zoom {
+    position: absolute; top: 25px; right: 25px; background: #ff4757; color: white; border: none;
+    width: 45px; height: 45px; border-radius: 50%; font-weight: bold; font-size: 1.5rem; cursor: pointer;
+}
+
+/* ==========================================================================
+   12. TECLADO
+   ========================================================================== */
+.teclado-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 25px;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-teclado {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 5px;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    box-shadow: 0 5px 0 #cbd5e1;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.btn-teclado:active { transform: translateY(4px); box-shadow: 0 1px 0 #cbd5e1; }
+.btn-teclado.btn-apagar { background: #fff1f0; color: var(--cor-erro); box-shadow: 0 5px 0 #ffa39e; }
+.btn-teclado.btn-confirmar { background: #f6ffed; color: var(--cor-sucesso); box-shadow: 0 5px 0 #b7eb8f; }
+
+/* Efeito de Hover no Teclado (Apenas PC) */
+@media (hover: hover) {
+    .btn-teclado:hover {
+        background-color: #f8fafc;
+        transform: translateY(-3px); /* O botão sobe */
+        box-shadow: 0 7px 0 #cbd5e1; /* A sombra aumenta para dar profundidade */
+        color: var(--azul-vibrante);
+    }
+    
+    .btn-teclado.btn-apagar:hover {
+        background-color: #fff1f0;
+        box-shadow: 0 7px 0 #ffa39e;
+    }
+    
+    .btn-teclado.btn-confirmar:hover {
+        background-color: #f6ffed;
+        box-shadow: 0 7px 0 #b7eb8f;
+    }
+}
+
+/* Ajuste no clique para parecer que afunda mesmo */
+.btn-teclado:active {
+    transform: translateY(2px) !important;
+    box-shadow: 0 2px 0 #cbd5e1 !important;
+}
+
+
+/* ==========================================================================
+   13. ZONA DA ANIMAÇÃO
+   ========================================================================== */
+.animacao-tutorial {
+    width: 100%; max-width: 400px; height: 180px;
+	position: relative;
+    background: #f4faff; border: 3px dashed var(--cor-pt); border-radius: 20px;
+    margin: 0 auto 25px; display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 15px rgba(0,145,255,0.05); color: var(--azul-vibrante); font-size: 1.2rem; font-weight: 900;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   13. COMPLEMENTO DA ANIMAÇÃO DO TUTORIAL (SINCRONIZAÇÃO E CORES NOVAS)
+   ========================================================================== */
+.tut-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 25px;
+    box-sizing: border-box;
+}
+
+/* Linha dos carris */
+.tut-trilho {
+    position: absolute;
+    bottom: 35px;
+    left: 10px;
+    right: 10px;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, #b2bec3, #b2bec3 8px, transparent 8px, transparent 16px);
+    border-radius: 2px;
+}
+
+/* Contentores Individuais de cada Trem */
+.tut-trem {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Carruagem Base */
+.tut-carruagem {
+    position: absolute;
+    bottom: 39px;
+    width: 140px;
+    height: 75px;
+    background-color: #efebe9;
+    border: 3px solid #8d6e63;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    animation: rolarCarruagem 9s infinite ease-in-out, piscarSucesso 9s infinite ease-in-out;
+}
+
+/* Título interior da carruagem */
+.tut-titulo-carruagem {
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #5d4037;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+    padding-bottom: 2px;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Rodas da Carruagem */
+.tut-roda {
+    position: absolute;
+    bottom: -12px;
+    width: 22px;
+    height: 22px;
+    background-color: #5d4037;
+    border: 3px solid #d7ccc8;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: rodarRodas 9s infinite ease-in-out;
+}
+.tut-roda.roda-esq { left: 15px; }
+.tut-roda.roda-dir { right: 15px; }
+
+/* Palavra que cai */
+.tut-pilula {
+    position: absolute;
+    bottom: 50px;
+    padding: 6px 15px;
+    background-color: white;
+    border: 2px solid var(--azul-vibrante);
+    border-radius: 15px;
+    color: var(--azul-escuro);
+    font-size: 0.9rem;
+    font-weight: 800;
+    box-shadow: 0 3px 0 var(--azul-vibrante);
+    animation: cairPalavra 9s infinite ease-in-out;
+}
+
+/* Faíscas de acerto */
+.tut-faísca {
+    position: absolute;
+    bottom: 80px;
+    width: 12px;
+    height: 12px;
+    fill: var(--cor-sucesso);
+    opacity: 0;
+    animation: brilharFaisca 9s infinite ease-out;
+}
+.tut-faísca.f-esq { left: 30%; }
+.tut-faísca.f-dir { right: 30%; }
+
+
+/* --- CONFIGURAÇÃO DE DELAYS NEGATIVOS --- */
+.tut-trem-1 .tut-carruagem,
+.tut-trem-1 .tut-roda,
+.tut-trem-1 .tut-pilula,
+.tut-trem-1 .tut-faísca {
+    animation-delay: 0s;
+}
+
+.tut-trem-2 .tut-carruagem,
+.tut-trem-2 .tut-roda,
+.tut-trem-2 .tut-pilula,
+.tut-trem-2 .tut-faísca {
+    animation-delay: -6s;
+}
+
+.tut-trem-3 .tut-carruagem,
+.tut-trem-3 .tut-roda,
+.tut-trem-3 .tut-pilula,
+.tut-trem-3 .tut-faísca {
+    animation-delay: -3s;
+}
+
+
+/* --- TIMELINES DE ANIMAÇÃO CORRIGIDAS --- */
+
+/* 1. Translação horizontal estendida para 300px */
+@keyframes rolarCarruagem {
+    0% { transform: translateX(-300px); animation-timing-function: ease-in-out; }
+    11%, 33% { transform: translateX(0); animation-timing-function: ease-in-out; }
+    44%, 100% { transform: translateX(300px); }
+}
+
+/* 2. Rotação das rodas */
+@keyframes rodarRodas {
+    0% { transform: rotate(0deg); animation-timing-function: ease-in-out; }
+    11% { transform: rotate(360deg); }
+    33% { transform: rotate(360deg); animation-timing-function: ease-in-out; }
+    44%, 100% { transform: rotate(720deg); }
+}
+
+/* 3. Queda com curvas de aceleração isoladas por segmento */
+@keyframes cairPalavra {
+    0% { transform: translateY(-110px) translateX(-300px) scale(0.8); opacity: 0; animation-timing-function: ease-in-out; }
+    11% { transform: translateY(-110px) translateX(0) scale(0.8); opacity: 0; animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); } /* Efeito elástico EXCLUSIVO para a queda */
+    15% { transform: translateY(0) translateX(0) scale(1.1, 0.85); opacity: 1; }
+    19% { transform: translateY(-12px) translateX(0) scale(0.9, 1.1); }
+    23%, 33% { transform: translateY(0) translateX(0) scale(1); opacity: 1; animation-timing-function: ease-in-out; } /* Volta a acompanhar a carruagem suavemente na saída */
+    44%, 100% { transform: translateY(0) translateX(300px) scale(1); opacity: 0; }
+}
+
+/* 4. Sinal de sucesso */
+@keyframes piscarSucesso {
+    0%, 14% { background-color: #efebe9; border-color: #8d6e63; }
+    15%, 33% { background-color: #e8fbf0; border-color: var(--cor-sucesso); }
+    44%, 100% { background-color: #efebe9; border-color: #8d6e63; }
+}
+
+/* 5. Estrelas de faíscas */
+@keyframes brilharFaisca {
+    0%, 14% { transform: scale(0) translateY(0); opacity: 0; }
+    15% { transform: scale(1.3) translateY(-10px); opacity: 1; }
+    22%, 100% { transform: scale(0) translateY(-25px); opacity: 0; }
+}
+
+
+/* ==========================================================================
+   14. CSS ESPECÍFICO DO JOGO: O MUNDO DOS PRONOMES
+   ========================================================================== */
+
+/* Layout do Ecrã Informativo de Estudo */
+.pronomes-estudo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+/* Barra de Abas (Tabs) do topo */
+.tabs-pronomes-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.btn-tab-pronome {
+    background-color: white;
+    border: 3px solid var(--borda-cartao);
+    border-radius: 15px;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--borda-cartao);
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.btn-tab-pronome.active {
+    background-color: var(--cor-4ano-dark);
+    border-color: var(--cor-4ano-dark);
+    color: white;
+    box-shadow: 0 4px 0 #7359cc;
+    transform: translateY(2px);
+}
+
+@media (hover: hover) {
+    .btn-tab-pronome:hover:not(.active) {
+        border-color: var(--cor-4ano);
+        color: var(--cor-4ano-dark);
+        box-shadow: 0 4px 0 var(--cor-4ano);
+        transform: translateY(-1px);
+    }
+}
+
+/* Painel de Conteúdo Ativo */
+.painel-conteudo-pronomes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+.intro-estudo-texto {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--text-main);
+    background-color: var(--bg-header);
+    border-left: 5px solid var(--cor-4ano);
+    padding: 12px 18px;
+    border-radius: 4px 15px 15px 4px;
+    text-align: justify;
+    margin: 0;
+}
+
+/* Grelha de Cartões de Estudo (Substituta das tabelas horizontais) */
+.cards-estudo-grid {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.card-estudo {
+    flex: 1 1 calc(33.33% - 15px);
+    min-width: 200px;
+    max-width: 280px;
+    background: white;
+    border: 3px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-estudo-titulo {
+    background-color: var(--cor-4ano-dark);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 12px;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Linhas e Células dos Cartões de Estudo */
+.card-estudo-conteudo {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.linha-estudo-par {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    border: 1px solid #f1f5f9;
+}
+
+.linha-estudo-par:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.estudo-chave {
+    font-weight: 800;
+    color: var(--azul-escuro);
+}
+
+.estudo-valor {
+    font-weight: 700;
+    color: var(--text-main);
+    text-align: right;
+}
+
+.estudo-valor-destaque {
+    color: var(--cor-pt);
+    font-weight: 900;
+}
+/* Título Reativo do Modo Estudo na Barra de Estado */
+.status-titulo-estudo {
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    font-weight: 900;
+    color: var(--azul-escuro);
+    text-align: center;
+    flex: 1; /* Ocupa o espaço central livre no flexbox */
+    animation: popIn 0.3s ease;
+}
+
+/* Força o alinhamento ao topo apenas no modo estudo, eliminando o "pulo" vertical */
+.area-jogo-custom.jogo-tipo-estudo {
+    justify-content: flex-start !important;
+    padding-top: 25px !important; /* Margem de conforto no topo */
+}
+
+
+
+/* ==========================================================================
+   15. MEDIA QUERIES UNIFICADAS (600PX E 768PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { padding: 15px 10px; }
+    .header-content { display: grid; grid-template-columns: 50px 1fr 50px; grid-template-rows: auto auto; gap: 5px; }
+    .nav-container { position: static; transform: none; grid-column: 1 / -1; display: grid; grid-template-columns: 50px 1fr 50px; width: 100%; margin-bottom: 10px; }
+    .hamburger { grid-column: 1; justify-self: start; }
+    .btn-voltar { grid-column: 2; justify-self: center; width: fit-content; }
+    h1, .subtitulo { grid-column: 2; text-align: center; }
+	.card-split {
+        padding: 10px;
+        padding-right: 35px;
+    }
+	.card-split .card-imagem-zoomable {
+        display: none !important; 
+    }
+	.texto-split {
+        font-size: 0.95rem;
+        text-align: left;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-niveis { grid-template-columns: 1fr !important; max-width: 320px; }
+    .btn-nivel-novo { padding: 12px 15px !important; gap: 10px !important; }
+    .icon-btn-nivel { width: 40px; height: 40px; }
+    .btn-nivel-titulo { font-size: 1rem; }
+    .btn-nivel-subtitulo { font-size: 0.75rem; }
+    .status-bar-jogo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 6px; padding: 10px 8px; }
+    .progress-bg { order: 10; width: 100%; margin: 4px 0 0 0; height: 25px; }
+    .btn-voltar-menu, .btn-dica, .badge-ronda, .badge-erros { padding: 4px 8px; font-size: 0.8rem; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .opcoes-container { flex-direction: column !important; align-items: center !important; gap: 12px !important; width: 100% !important; max-width: 290px !important; margin: 0 auto !important; }
+    .opcoes-container .btn-opcao-vibrante { width: 100% !important; font-size: 0.95rem !important; padding: 10px 15px !important; box-sizing: border-box; }
+    .imagem-opcao-vibrante { max-width: 90px; max-height: 70px; }
+    .texto-paragrafo-lacunas { font-size: 1.05rem !important; line-height: 2.8 !important; padding: 15px !important; }
+    .slot-vazio { min-width: 85px !important; height: 28px !important; margin: 0 4px !important; }
+	 #mascote-feedback { width: 60px; height: 60px; right: 5px; bottom: 5px; }
+    /* Grelha dupla compacta de pílulas de banco no telemóvel (2x4) */
+    .banco-opcoes {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(105px, 130px)) !important; /* 2 colunas */
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 280px !important;
+        margin: 0 auto 15px auto !important;
+    }
+    
+    /* Encolhimento proporcional do botão de banco no Mobile */
+    .palavra-banco {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 3px 0 var(--azul-vibrante) !important;
+    }
+    .mapa-relevo-wrapper.mapa-quadrado { max-width: 210px; }
+    .mapa-relevo-wrapper.mapa-retangular { max-width: 320px; }
+    .slot-mapa.preenchido strong { font-size: 0.72rem !important; }
+    .end-title { flex-direction: column; gap: 10px; }
+   
+    .bloco-arrastar {
+        min-width: 100% !important;
+        box-sizing: border-box;
+    }
+	
+	/* Ajuste responsivo para o Jogo de Ligar (Lado a Lado Simétrico) */
+    .coluna-ligar-container {
+        display: flex !important;
+        flex-direction: row !important; /* Mantém rigorosamente as duas colunas lado a lado */
+        gap: 12px !important; /* Reduz o espaço horizontal entre colunas */
+        justify-content: center !important;
+        width: 100% !important;
+        padding: 0 5px;
+        box-sizing: border-box;
+    }
+
+    .coluna-ligar {
+        flex: 1 1 0% !important; /* Divide o ecrã a meio de forma equitativa (50% cada) */
+        max-width: 145px !important; /* Limite de segurança para não estourar a tela */
+        gap: 10px !important; /* Reduz o espaço vertical entre os botões da mesma coluna */
+    }
+
+    /* Encolhimento proporcional dos botões vibrantes dentro do ligar */
+    .coluna-ligar .btn-opcao-vibrante {
+        width: 100% !important;
+        min-width: unset !important; /* Desativa os 180px fixos do PC */
+        max-width: 145px !important;
+        padding: 10px 6px !important; /* Torna o botão mais compacto no toque */
+        font-size: 0.82rem !important; /* Fonte legível mas perfeitamente dimensionada */
+        border-radius: 12px !important;
+    }
+	
+	/* Responsividade específica: Jogo I (Classificação) */
+    .classificacao-container {
+        gap: 15px !important;
+    }
+
+    .cartao-classificar {
+        padding: 15px 30px !important;
+        min-width: 180px !important;
+    }
+
+    .gavetas-container {
+        flex-direction: column !important; /* Empilha as gavetas verticalmente */
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .btn-gaveta {
+        width: 100% !important;
+        max-width: 260px !important;
+        padding: 10px 10px 18px 10px !important;
+        font-size: 0.95rem !important;
+    }
+	
+	/* Responsividade específica: Jogo J (O Intruso) */
+    .intruso-container {
+        gap: 12px !important;
+        max-width: 290px !important;
+    }
+
+    .btn-bolha-intruso {
+        width: 100% !important;
+        flex: 1 1 calc(50% - 10px) !important; /* Cria uma grelha simétrica de 2x2 */
+        padding: 12px 10px !important;
+        font-size: 0.9rem !important;
+        border-radius: 25px !important;
+    }
+
+    .btn-bolha-intruso::before {
+        top: 3px !important;
+        left: 10px !important;
+        width: 12px !important;
+        height: 5px !important;
+    }
+	
+	/* Responsividade específica: Jogo K (Construtor) */
+    .carrossel-palavras-container {
+        gap: 6px !important;
+        max-width: 290px !important;
+    }
+
+    .carrossel-coluna {
+        min-width: 80px !important;
+        max-width: 95px !important;
+        gap: 6px !important;
+    }
+
+    .carrossel-visor {
+        height: 48px !important;
+        font-size: 0.92rem !important;
+        border-radius: 10px !important;
+        border-width: 2px !important;
+    }
+
+    .btn-carrossel-seta {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.9rem !important;
+        box-shadow: 0 3px 0 var(--cor-4ano-dark) !important;
+    }
+    
+    .btn-validar-carrossel {
+        padding: 10px 20px !important;
+        font-size: 0.95rem !important;
+        border-radius: 12px !important;
+    }
+	
+	/* Responsividade específica: Jogo L (Tiro ao Alvo) */
+    .tiro-alvo-container {
+        gap: 20px !important;
+    }
+
+    .painel-ortografico {
+        padding: 10px 25px !important;
+        font-size: 1.4rem !important;
+        min-width: 180px !important;
+    }
+
+    .alvos-container {
+        gap: 15px !important;
+        justify-content: center !important;
+    }
+
+	/* Ajuste de tamanho de fonte dos alvos no mobile */
+    .btn-alvo {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: 1.4rem !important; /* Padrão para letras curtas */
+    }
+    .btn-alvo[data-length="3"] { font-size: 1.15rem !important; }
+    .btn-alvo[data-length="4"] { font-size: 0.95rem !important; }
+    .btn-alvo[data-length="5"] { font-size: 0.82rem !important; }
+    .btn-alvo[data-length="6"] { font-size: 0.72rem !important; }
+	
+	/* Responsividade específica: Jogo I (Carruagens) */
+    .coluna-classificacao {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(105px, 130px)) !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 280px !important;
+    }
+
+    .btn-opcao-pilula {
+        padding: 8px 10px !important;
+        font-size: 0.85rem !important;
+        border-radius: 15px !important;
+    }
+
+    .painel-carruagens-tempo {
+        flex-direction: column !important; /* Empilha as carruagens */
+        gap: 15px !important;
+        align-items: center !important;
+    }
+
+    .carruagem-destino {
+        width: 100% !important;
+        max-width: 280px !important;
+        min-height: 110px !important;
+        padding: 10px !important;
+    }
+
+    .carruagem-titulo {
+        font-size: 0.95rem !important;
+        margin-bottom: 6px !important;
+    }
+}
+
+/* ==========================================================================
+   16. MEDIA QUERIES ESPECÍFICAS DO JOGO
+   ========================================================================== */
+@media (max-width: 600px) {
+    /* Ajustes das abas de navegação no telemóvel */
+    .tabs-pronomes-container {
+        flex-direction: column !important; /* Empilha os botões de abas */
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 260px !important;
+    }
+
+    .btn-tab-pronome {
+        width: 100% !important;
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        box-shadow: 0 3px 0 var(--borda-cartao) !important;
+    }
+
+    .btn-tab-pronome.active {
+        box-shadow: 0 3px 0 #7359cc !important;
+    }
+
+    /* Ajuste da introdução em texto */
+    .intro-estudo-texto {
+        font-size: 0.9rem !important;
+        padding: 10px !important;
+    }
+
+    /* Conversão da tabela horizontal para uma lista vertical de cartões de leitura fácil */
+    .cards-estudo-grid {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    .card-estudo {
+        width: 100% !important;
+        max-width: 280px !important;
+        min-width: unset !important;
+    }
+    
+    .card-estudo-titulo {
+        font-size: 0.8rem !important;
+        padding: 10px !important;
+    }
+
+    .linha-estudo-par {
+        padding: 6px 8px !important;
+        font-size: 0.8rem !important;
+    }
+}
+   
+   
+
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="btn-fechar" onclick="toggleMenu()"><span>✕</span> Fechar</div>
+    <ul>
+        <li><a href="../../../"><img src="../../../SVG/home.svg" alt="Início" class="icon-svg-menu" onerror="this.style.display='none'">Início</a></li>
+        <li><a href="../../../pre"><img src="../../../SVG/pre.svg" alt="Pré-Escolar" class="icon-svg-menu" onerror="this.style.display='none'">Pré-Escolar</a></li>
+        <li><a href="../../../1"><img src="../../../SVG/ano1.svg" alt="1º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 1º Ano</a></li>
+        <li><a href="../../../2"><img src="../../../SVG/ano2.svg" alt="2º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 2º Ano</a></li>
+        <li><a href="../../../3"><img src="../../../SVG/ano3.svg" alt="3º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 3º Ano</a></li>
+        <li><a href="../../"><img src="../../../SVG/ano4.svg" alt="4º Ano" class="icon-svg-menu" onerror="this.style.display='none'"> 4º Ano</a></li>
+    </ul>
+</nav>
+
+<header>
+    <div class="header-content">
+        <div class="nav-container">
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="../" class="btn-voltar"><img src="../../../SVG/voltar.svg" class="icon-svg-voltar" alt=""> Voltar</a>
+        </div>
+        
+        <h1>O Comboio dos Pronomes<img src="comboio_pronomes.svg" class="icon-svg-titulo" alt=""></h1>
+        <div class="subtitulo" id="subtitulo-header">Uma viagem pelo poder dos pronomes nas frases!</div>
+    </div>
+</header>
+
+<main>
+    <div class="cartao-jogo-container" id="cartao-jogo">
+        <div id="confetti-container" class="confetti-container"></div>
+        <div class="toast-msg" id="toast-msg"></div>
+        <div id="mascote-feedback" style="display: none;">
+			<img src="img/mascote_normal.png" class="mascote-mascote" alt="Mascote">
+		</div>
+
+        <!-- ECRÃ 1: SELEÇÃO DE DESAFIOS -->
+        <div id="ecra-selecao" class="ecra">
+            <div class="animacao-tutorial">
+                <div class="tut-container">
+                    <div class="tut-trilho"></div>
+                    
+                    <!-- CARRUAGEM 1: PESSOAIS (Azul Mar) -->
+                    <div class="tut-trem tut-trem-1">
+                        <div class="tut-carruagem" style="border-color: var(--cor-mar, var(--cor-mat, #4dabf7));">
+                            <div class="tut-titulo-carruagem" style="color: var(--cor-mar, var(--cor-mat, #4dabf7)); border-color: rgba(77, 171, 247, 0.15);">Pessoais</div>
+                            <div class="tut-roda roda-esq"></div>
+                            <div class="tut-roda roda-dir"></div>
+                        </div>
+                        <div class="tut-pilula" style="border-color: var(--cor-mar, var(--cor-mat, #4dabf7)); box-shadow: 0 3px 0 var(--cor-mar, var(--cor-mat, #4dabf7)); color: var(--cor-mar, var(--cor-mat, #4dabf7));">eu</div>
+                        <svg class="tut-faísca f-esq" viewBox="0 0 24 24" style="fill: var(--cor-mar, var(--cor-mat, #4dabf7));"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="tut-faísca f-dir" viewBox="0 0 24 24" style="fill: var(--cor-mar, var(--cor-mat, #4dabf7));"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+
+                    <!-- CARRUAGEM 2: POSSESSIVOS (Laranja) -->
+                    <div class="tut-trem tut-trem-2">
+                        <div class="tut-carruagem" style="border-color: #fa983a;">
+                            <div class="tut-titulo-carruagem" style="color: #fa983a; border-color: rgba(250, 152, 58, 0.15);">Possessivos</div>
+                            <div class="tut-roda roda-esq"></div>
+                            <div class="tut-roda roda-dir"></div>
+                        </div>
+                        <div class="tut-pilula" style="border-color: #fa983a; box-shadow: 0 3px 0 #fa983a; color: #fa983a;">nosso</div>
+                        <svg class="tut-faísca f-esq" viewBox="0 0 24 24" style="fill: #fa983a;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="tut-faísca f-dir" viewBox="0 0 24 24" style="fill: #fa983a;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+
+                    <!-- CARRUAGEM 3: DEMONSTRATIVOS (Verde) -->
+                    <div class="tut-trem tut-trem-3">
+                        <div class="tut-carruagem" style="border-color: var(--cor-em, #51cf66);">
+                            <div class="tut-titulo-carruagem" style="color: var(--cor-em, #51cf66); border-color: rgba(81, 207, 102, 0.15);">Demonstrativos</div>
+                            <div class="tut-roda roda-esq"></div>
+                            <div class="tut-roda roda-dir"></div>
+                        </div>
+                        <div class="tut-pilula" style="border-color: var(--cor-em, #51cf66); box-shadow: 0 3px 0 var(--cor-em, #51cf66); color: var(--cor-em, #51cf66);">isto</div>
+                        <svg class="tut-faísca f-esq" viewBox="0 0 24 24" style="fill: var(--cor-em, #51cf66);"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="tut-faísca f-dir" viewBox="0 0 24 24" style="fill: var(--cor-em, #51cf66);"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                </div>
+            </div>
+            <h2 class="titulo-menu">Escolhe o teu desafio!</h2>
+            
+            <div class="grid-niveis">
+                
+                <!-- Nível 1: Guia de Estudo Interativo -->
+                <button class="btn-nivel-novo bg-verde" onclick="prepararJogo('estudo')">
+                    <img src="img/menu_1.svg" class="icon-btn-nivel-novo">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Guia de Estudo</span>
+                        <span class="btn-nivel-subtitulo">Aprende ou recorda os pronomes</span>
+                    </div>
+                </button>
+        
+                <!-- Nível 2: Pronomes Pessoais -->
+                <button class="btn-nivel-novo bg-amarelo" onclick="prepararJogo('pessoais')">
+                    <img src="img/menu_2.svg" class="icon-btn-nivel-novo">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Pronomes Pessoais</span>
+                        <span class="btn-nivel-subtitulo">Sujeito, formas tónicas e átonas</span>
+                    </div>
+                </button>
+                
+                <!-- Nível 3: Pronomes Possessivos -->
+                <button class="btn-nivel-novo bg-azul" onclick="prepararJogo('possessivos')">
+                    <img src="img/menu_3.svg" class="icon-btn-nivel-novo">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Pronomes Possessivos</span>
+                        <span class="btn-nivel-subtitulo">Descobre a quem pertencem as coisas</span>
+                    </div>
+                </button>
+                
+                <!-- Nível 4: Pronomes Demonstrativos -->
+                <button class="btn-nivel-novo bg-vermelho" onclick="prepararJogo('demonstrativos')">
+                    <img src="img/menu_4.svg" class="icon-btn-nivel-novo">
+                    <div class="btn-nivel-text-container">
+                        <span class="btn-nivel-titulo">Pronomes Demonstrativos</span>
+                        <span class="btn-nivel-subtitulo">Indica a posição das coisas no espaço</span>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ECRÃ 2: ÁREA ATIVA DE JOGO -->
+        <div id="ecra-jogo" class="ecra">
+            <div class="status-bar-jogo">
+                <button class="btn-voltar-menu" onclick="confirmarSair()" id="btn-home-svg"></button>
+                <button id="btn-dica" class="btn-dica" onclick="usarDica()"></button>
+                <div class="badge-ronda"><span id="badge-ronda-svg"></span><span id="val-progresso">1</span>/<span id="val-total">10</span></div>
+                <div class="progress-bg"><div id="progress-fill" class="progress-fill"></div></div>
+                <div class="badge-erros"><span id="icone-erro-svg"></span><span id="val-erros">0</span></div>
+            </div>
+            <div class="area-jogo-custom" id="game-area"></div>
+        </div>
+
+        <!-- ECRÃ 3: PONTUAÇÃO E RANKING FINAL -->
+        <div id="ecra-fim" class="ecra">
+            <div id="rank-container"></div>
+            <h2 class="end-title" id="end-title-text">Missão Concluída!</h2>
+            <div class="end-stats">Erros: <strong id="final-erros">0</strong></div>
+            <div class="botoes-acao-container">
+                <button class="btn-acao primario" onclick="reiniciarJogo()">REPETIR JOGO <img src="../../../SVG/jogar_novo.svg" class="icon-acao" alt=""></button>
+                <button class="btn-acao terciario" onclick="voltarAoMenuPrincipal()">OUTRO JOGO <img src="../../../SVG/home.svg" class="icon-acao" alt=""></button>
+            </div>
+        </div>
+		
+		<!-- MODAL DE AMPLIÇÃO DE IMAGEM -->
+		<div id="zoom-modal" class="zoom-overlay-imagem" onclick="if(event.target === this) fecharZoomImagem()">
+			<button class="btn-fechar-zoom" onclick="fecharZoomImagem()">✕</button>
+			<img id="zoom-img-content" class="zoom-imagem-conteudo" src="" alt="Imagem ampliada">
+		</div>
+    </div>
+</main>
+<div id="modal-ajuda" class="modal-ajuda-overlay" onclick="if(event.target === this) fecharModalDica()">
+    <div class="modal-ajuda-box">
+        <button class="btn-fechar-modal" onclick="fecharModalDica()">✕</button>
+        <div class="ajuda-icone">
+            <svg viewBox="0 0 24 24" width="50" height="50" fill="#fff9c4" stroke="#fbc531" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path>
+            </svg>
+        </div>
+        <div id="modal-dica-conteudo" class="ajuda-texto"></div>
+    </div>
+</div>
+<footer>
+    <p><span id="ano-atual"> </span><img src="../../../SVG/4_ano.webp" class="icon-svg-footer" alt=""> <a href="https://eb1pemarinheira.pt/" target="_blank" style="color:inherit; text-decoration:none; font-weight:700;">EB1/PE da Marinheira</a></p>
+</footer>
+
+<script>
+	document.getElementById('ano-atual').innerText = new Date().getFullYear();
+	
+	/* =====================================================================
+	   1. DEFINIÇÕES E SVGs GLOBAIS DO TEMPLATE
+	   ===================================================================== */
+	const SVG_HOME = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" style="margin-right:4px; vertical-align:middle;"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" fill="#fff" stroke="#d35400" stroke-width="2"/><rect x="10" y="12" width="4" height="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/></svg> Menu`;
+	const SVG_STAR = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="#f1c40f" stroke="#f39c12" stroke-width="1" style="margin-right:5px; vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+	const SVG_BULB = `<svg viewBox="0 0 24 24" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:middle;"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"></path></svg>`;
+	const SVG_ERRO = `<svg viewBox="0 0 14 14" width="0.8em" height="0.8em" style="margin-right:5px; vertical-align:middle;"><path d="M2 2 L12 12 M12 2 L2 12" stroke="var(--cor-pt,#ff4757)" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+	const CORES_BTNS = ['bg-azul', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa'];
+	const COOLDOWN_DICA = 3;
+	let erradas = 0, desafioAtual = 0, perguntasSorteadas = [], podeInteragir = true, timerImpaciencia = null, sistemaAtivo = "";
+	let poolRestantesSessao = [];
+	let ultimoSistema = "";
+	let rondasParaDica = 0;
+	let selecaoLigar = null, selecoesLigar = {}, paresElementosLigar = [], arrastoAtivo = null, selecoesArrastar = {}, selecoesLacunas = {}, lacunaAtiva = null;
+	let modoAtual = "";
+	let totalRondas = 10;
+
+/* ==========================================================================
+   2. BASES DE DADOS DO JOGO "O MUNDO DOS PRONOMES"
+   ========================================================================== */
+
+	// 2.1 - BASE DE DADOS DOS PRONOMES PESSOAIS (21 Perguntas)
+	const BD_PESSOAIS = [
+	{
+		tipo: 'classificacao',
+		pergunta: 'Classifica os seguintes pronomes pessoais conforme a sua <span class="destaque-badge">forma</span>',
+		itens: ['me', 'mim', 'lhe', 'contigo', 'nos', 'consigo', 'te', 'connosco'],
+		categorias: ['Formas Átonas', 'Formas Tónicas'],
+		pares: {
+			'me': 'Formas Átonas', 'mim': 'Formas Tónicas', 'lhe': 'Formas Átonas', 'contigo': 'Formas Tónicas',
+			'nos': 'Formas Átonas', 'consigo': 'Formas Tónicas', 'te': 'Formas Átonas', 'connosco': 'Formas Tónicas'
+		},
+		dica: 'Lembra-te: os pronomes átonos acompanham diretamente o verbo e não levam preposição antes.'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Clica no <span class="destaque-texto">intruso</span> que <span class="destaque-amarelo">NÃO</span> é um pronome pessoal:',
+		opcoes: ['eu', 'contigo', 'este', 'elas', 'lhe'],
+		correta: 'este',
+		dica: '"Este" é um pronome demonstrativo (serve para mostrar coisas no espaço).'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa a frase com o pronome <span class="destaque-fundo">átono</span> correto:',
+		palavraComLacuna: 'A Mariana telefonou-<span class="gap-pulsar">__</span> logo pela manhã.',
+		opcoes: ['me', 'mim'],
+		correta: 'me',
+		dica: 'O pronome átono "me" junta-se ao verbo; "mim" é uma forma tónica que necessita de preposição.'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Qual é o <span class="destaque-fundo">pronome pessoal</span> na frase?<br><br><span class="destaque-amarelo">Nós fomos ao parque de skate.</span>',
+		imagem: 'img/skate.png',
+		proporcao: 'quadrada',
+		opcoes: ['Nós', 'fomos', 'parque', 'skate'],
+		correta: 'Nós',
+		dica: 'Identifica a palavra que substitui os nomes das pessoas que falam.'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa a conversa usando os <span class="destaque-badge">pronomes átonos</span> corretos:',
+		texto: 'O João viu-me na rua e chamou-[0]. Eu ouvi-[1] mas estava com muita pressa.',
+		respostas: ['me', 'o'],
+		distratores: ['lhe', 'mim'],
+		dica: 'Chamar a mim é "chamou-me"; ouvir a ele é "ouvi-o".'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: '<span class="destaque-amarelo">Eles escreveram a carta.</span><br><br>Nesta frase, a palavra <span class="destaque-badge">Eles</span> é um pronome pessoal sujeito.',
+		imagem: 'img/escrever.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Sim, "Eles" indica quem realiza a ação e está na 3.ª pessoa do plural.'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Liga cada <span class="destaque-fundo">pronome pessoal</span> à sua correspondente <span class="destaque-texto">pessoa gramatical</span>:',
+		esquerda: ['eu', 'tu', 'nós', 'vós'],
+		direita: ['1.ª do singular', '2.ª do singular', '1.ª do plural', '2.ª do plural'],
+		pares: {
+			'eu': '1.ª do singular', 'tu': '2.ª do singular',
+			'nós': '1.ª do plural', 'vós': '2.ª do plural'
+		},
+		dica: 'Eu e nós referem-se a quem fala; tu e vós a com quem se fala.'
+	},
+	{
+		tipo: 'arrastar',
+		pergunta: 'Ordena os pronomes sujeito das pessoas do <span class="destaque-fundo">singular</span> (1.ª, 2.ª, 3.ª):',
+		itens: ['eu', 'tu', 'ele/ela'],
+		alvos: ['1.ª Sing.', '2.ª Sing.', '3.ª Sing.'],
+		pares: {
+			'eu': '1.ª Sing.', 'tu': '2.ª Sing.', 'ele/ela': '3.ª Sing.'
+		},
+		dica: 'A ordem segue a estrutura clássica dos verbos: eu, tu, ele.'
+	},
+	{
+		tipo: 'arrastar',
+		pergunta: 'Ordena os pronomes sujeito das pessoas do <span class="destaque-texto-verde">plural</span> (1.ª, 2.ª, 3.ª):',
+		itens: ['nós', 'vós', 'eles/elas'],
+		alvos: ['1.ª Plur.', '2.ª Plur.', '3.ª Plur.'],
+		pares: {
+			'nós': '1.ª Plur.', 'vós': '2.ª Plur.', 'eles/elas': '3.ª Plur.'
+		},
+		dica: 'Pessoas do plural: nós (1.ª), vós (2.ª), eles/elas (3.ª).'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'A que <span class="destaque-badge">pessoa gramatical</span> corresponde o pronome <span class="destaque-amarelo">connosco</span>?',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		opcoes: ['1.ª do plural', '2.ª do plural', '3.ª do plural'],
+		correta: '1.ª do plural',
+		dica: 'Connosco significa "com nós" (1.ª pessoa do plural).'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: 'O pronome <span class="destaque-amarelo">consigo</span> é uma forma pessoal tónica contratada com a palavra <span class="destaque-fundo">"com"</span>.',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Exato! "Consigo" equivale a "com si" (3.ª pessoa).'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Escolhe o pronome <span class="destaque-fundo">sujeito</span> adequado para completar a frase:',
+		palavraComLacuna: 'A Ana e o Rui correm muito. <span class="gap-pulsar">___</span> treinam atletismo.',
+		opcoes: ['Eles', 'Ele', 'Ela'],
+		correta: 'Eles',
+		dica: 'Como nos referimos a um rapaz e a uma rapariga em conjunto, usamos o masculino plural.'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Identifica o pronome pessoal que está no <span class="destaque-texto">plural</span>.',
+		opcoes: ['mim', 'ti', 'si', 'vos', 'contigo'],
+		correta: 'vos',
+		dica: 'O pronome "vos" refere-se à 2.ª pessoa do plural (vós).'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa o texto sobre a <span class="destaque-badge">partilha de segredos</span>.',
+		texto: 'Eu contei um segredo ao Filipe e disse-[0]:<br> "-Isto fica só entre [1] e mim".',
+		respostas: ['lhe', 'ti'],
+		distratores: ['o', 'consigo'],
+		dica: 'Dizer a ele é "disse-lhe"; a preposição "entre" exige a forma tónica "ti".'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Qual destas frases contém um pronome pessoal <span class="destaque-texto-verde">átono</span>?',
+		imagem: 'img/menino.png',
+		proporcao: 'quadrada',
+		opcoes: ['O Pedro deu-me um doce.', 'O Pedro correu comigo.', 'O Pedro falou para mim.'],
+		correta: 'O Pedro deu-me um doce.',
+		dica: 'O pronome "me" junta-se ao verbo sem preposição antecedente.'
+	},
+	{
+		tipo: 'classificacao',
+		pergunta: 'Organiza as formas <span class="destaque-amarelo">tónicas</span> conforme sejam sujeitos ou usadas com preposições.',
+		itens: ['eu', 'mim', 'tu', 'ti', 'ela', 'si'],
+		categorias: ['Sujeitos', 'Com Preposição'],
+		pares: {
+			'eu': 'Sujeitos', 'mim': 'Com Preposição', 'tu': 'Sujeitos',
+			'ti': 'Com Preposição', 'ela': 'Sujeitos', 'si': 'Com Preposição'
+		},
+		dica: 'Os sujeitos conjugam os verbos (eu leio, tu lês).'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Associa cada expressão ao pronome <span class="destaque-fundo">tónico contraído</span> equivalente:',
+		esquerda: ['com eu', 'com tu', 'com nós', 'com vós'],
+		direita: ['comigo', 'contigo', 'connosco', 'convosco'],
+		pares: {
+			'com eu': 'comigo', 'com tu': 'contigo',
+			'com nós': 'connosco', 'com vós': 'convosco'
+		},
+		dica: 'Estas formas juntam a preposição "com" num único pronome.'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa a frase com o pronome tónico <span class="destaque-badge">sujeito</span> adequado.',
+		palavraComLacuna: 'A Maria e a Joana são irmãs. <span class="gap-pulsar">____</span> adoram ler.',
+		opcoes: ['Elas', 'Eles', 'Ela'],
+		correta: 'Elas',
+		dica: 'Duas pessoas do género feminino no plural exigem "Elas".'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: '<span class="destaque-amarelo">Eu comprei o livro e li-o.</span><br><br>O pronome <span class="destaque-texto">"o"</span> na frase é um pronome pessoal átono.',
+		imagem: 'img/ler.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Correto! Refere-se ao livro ("li o livro") e junta-se ao verbo por hífen.'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: '<span class="destaque-amarelo">Eles convidaram-nos para a festa.</span><br><br>Nesta frase, quem é o <span class="destaque-texto-verde">sujeito</span>?',
+		imagem: 'img/festa.png',
+		proporcao: 'quadrada',
+		opcoes: ['Eles', 'nos', 'festa'],
+		correta: 'Eles',
+		dica: 'O sujeito é quem pratica a ação (neste caso, "Eles").'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Qual destes pronomes pessoais <span class="destaque-badge">NÃO</span> muda de forma no plural?',
+		opcoes: ['consigo', 'connosco', 'convosco', 'eles'],
+		correta: 'consigo',
+		dica: '"Consigo" não muda de forma: usa-se tanto para o singular ("ele traz consigo") como para o plural ("eles trazem consigo").'
+	}
+];
+
+// 2.2 - BASE DE DADOS DOS PRONOMES POSSESSIVOS (20 Perguntas)
+const BD_POSSESSIVOS = [
+	{
+		tipo: 'classificacao',
+		pergunta: 'Classifica os seguintes <span class="destaque-fundo">pronomes possessivos</span> quanto ao <span class="destaque-badge">número de possuidores</span>',
+		itens: ['meu', 'nosso', 'teu', 'vosso', 'minha', 'nossa'],
+		categorias: ['Um Possuidor', 'Vários Possuidores'],
+		pares: {
+			'meu': 'Um Possuidor', 'nosso': 'Vários Possuidores', 'teu': 'Um Possuidor',
+			'vosso': 'Vários Possuidores', 'minha': 'Um Possuidor', 'nossa': 'Vários Possuidores'
+		},
+		dica: 'Meu e teu indicam posse de uma só pessoa; nosso e vosso indicam posse de um grupo.'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Identifica o que <span class="destaque-amarelo">NÃO</span> é um <span class="destaque-texto">pronome possessivo</span>:',
+		opcoes: ['meu', 'vosso', 'sua', 'connosco', 'teus'],
+		correta: 'connosco',
+		dica: '"Connosco" é um pronome pessoal, não estabelece relação de posse.'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa a frase com o pronome possessivo de <span class="destaque-fundo">vários possuidores</span> que substitui o nome:',
+		palavraComLacuna: 'A casa do Pedro é pequena, mas a <span class="gap-pulsar">_____</span> é grande e acolhedora.',
+		opcoes: ['nossa', 'minha', 'sua'],
+		correta: 'nossa',
+		dica: 'Para substituir "a nossa casa" (de nós = vários possuidores), usamos o pronome "nossa".'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Qual é o pronome possessivo feminino plural da <span class="destaque-badge">2.ª pessoa do plural</span>?',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		opcoes: ['vossas', 'vossos', 'nossas', 'tuas'],
+		correta: 'vossas',
+		dica: 'Refere-se a "vós" (feminino plural = vossas).'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa o texto com os <span class="destaque-texto-verde">pronomes possessivos</span> corretos:',
+		texto: 'Eu perdi o meu lápis, emprestas-me o [0]? A Maria também perdeu a borracha e eu emprestei a [1].',
+		respostas: ['teu', 'minha'],
+		distratores: ['suas', 'meus'],
+		dica: 'O lápis é teu (tu); a borracha é minha (eu).'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: '<span class="destaque-amarelo">Estes óculos não são meus, são os teus.</span><br><br>Nesta frase, a palavra <span class="destaque-badge">teus</span> é um pronome possessivo masculino plural.',
+		imagem: 'img/oculos.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Verdadeiro! "Teus" substitui o nome "óculos" e concorda em género e número.'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Liga cada pronome pessoal à forma do possessivo <span class="destaque-texto">masculino singular</span> correspondente:',
+		esquerda: ['eu', 'tu', 'nós', 'vós'],
+		direita: ['meu', 'teu', 'nosso', 'vosso'],
+		pares: {
+			'eu': 'meu', 'tu': 'teu', 'nós': 'nosso', 'vós': 'vosso'
+		},
+		dica: 'Relaciona a pessoa gramatical com aquilo que lhe pertence.'
+	},
+	{
+		tipo: 'arrastar',
+		pergunta: 'Ordena os pronomes possessivos de <span class="destaque-fundo">um só possuidor</span> no singular (1.ª, 2.ª, 3.ª pessoa). <span class="dica-suave">*m.s. = masculino, singular</span>',
+		itens: ['meu', 'teu', 'seu'],
+		alvos: ['1.ª m.s.', '2.ª m.s.', '3.ª m.s.'],
+		pares: {
+			'meu': '1.ª m.s.', 'teu': '2.ª m.s.', 'seu': '3.ª m.s.'
+		},
+		dica: 'Os possessivos variam em pessoa, género e número.'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Qual destes pronomes indica posse de <span class="destaque-badge">um só possuidor</span> (2.ª pessoa)?',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		opcoes: ['tua', 'vossa', 'nossa'],
+		correta: 'tua',
+		dica: 'Refere-se a "tu" (tua).'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: 'O pronome possessivo <span class="destaque-amarelo">seu</span> pode indicar <span class="destaque-texto-verde">posse tanto de um só possuidor como de vários</span>.',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Sim, aplica-se a "ele/ela" (um possuidor) ou a "eles/elas" (vários possuidores).'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Escolhe o pronome que substitui o nome no feminino plural:',
+		palavraComLacuna: 'Tu guardaste as tuas canetas e eu guardei as <span class="gap-pulsar">______</span> no estojo.',
+		opcoes: ['minhas', 'minha', 'meus'],
+		correta: 'minhas',
+		dica: 'Substitui "as minhas canetas" (feminino plural).'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Procura o pronome possessivo que está no <span class="destaque-badge">singular</span>:',
+		opcoes: ['meus', 'tuas', 'nossa', 'vossos', 'suas'],
+		correta: 'nossa',
+		dica: 'O pronome "nossa" é feminino singular; os restantes estão no plural (só seria plural se fosse "nossas").'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa o diálogo com os <span class="destaque-badge">pronomes possessivos</span> corretos:',
+		texto: 'Esta borracha não é a [0] (de quem fala), mas aquele lápis é o [1] (de quem se fala).',
+		respostas: ['minha', 'teu'],
+		distratores: ['meu', 'tua'],
+		dica: 'Borracha é feminino (minha); lápis é masculino (teu).'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'De quem são estes livros que pertencem a <span class="destaque-badge">vós</span>?<br><br><span class="destaque-amarelo">- São os...</span>',
+		imagem: 'img/livros.png',
+		proporcao: 'quadrada',
+		opcoes: ['vossos.', 'nossos.', 'seus.'],
+		correta: 'vossos.',
+		dica: 'O pronome que substitui "os vossos livros" é "vossos".'
+	},
+	{
+		tipo: 'classificacao',
+		pergunta: 'Organiza os seguintes pronomes possessivos de acordo com o seu <span class="destaque-amarelo">género</span>',
+		itens: ['meu', 'minha', 'teu', 'tua', 'nosso', 'nossa'],
+		categorias: ['Masculino', 'Feminino'],
+		pares: {
+			'meu': 'Masculino', 'minha': 'Feminino', 'teu': 'Masculino',
+			'tua': 'Feminino', 'nosso': 'Masculino', 'nossa': 'Feminino'
+		},
+		dica: 'Observa a terminação: -o indica masculino e -a indica feminino.'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Associa cada pronome no <span class="destaque-fundo">plural</span> ao seu respetivo <span class="destaque-fundo">singular</span>:',
+		esquerda: ['meus', 'tuas', 'nossos', 'vossas'],
+		direita: ['meu', 'tua', 'nosso', 'vossa'],
+		pares: {
+			'meus': 'meu', 'tuas': 'tua',
+			'nossos': 'nosso', 'vossas': 'vossa'
+		},
+		dica: 'Retira a marca de plural (-s) para encontrar a forma singular.'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa com o pronome possessivo que substitui o nome no masculino singular:',
+		palavraComLacuna: 'Eu cuido do meu gato e o João cuida do <span class="gap-pulsar">____</span>.',
+		opcoes: ['seu', 'sua', 'seus'],
+		correta: 'seu',
+		dica: 'Substitui "o seu gato" (masculino singular).'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: 'O pronome <span class="destaque-amarelo">nossa</span> refere-se à 1.ª pessoa do plural (vários possuidores).',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Exato! Refere-se a nós (nossa).'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: '<span class="destaque-amarelo">Os teus pais ficaram em casa, mas os meus viajaram.</span><br><br>Qual é o <span class="destaque-badge">pronome possessivo</span> nesta frase?',
+		opcoes: ['meus', 'pais', 'teus'],
+		correta: 'meus',
+		dica: '"Meus" é o pronome porque substitui a expressão "os meus pais".'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Qual destes pronomes possessivos <span class="destaque-amarelo">NÃO</span> pode substituir a palavra <span class="destaque-texto">borrachas</span> (feminino plural)?',
+		opcoes: ['minhas', 'tuas', 'suas', 'teus', 'vossas'],
+		correta: 'teus',
+		dica: '"Teus" é um pronome masculino plural, não podendo substituir um nome feminino.'
+	}
+];
+
+// 2.3 - BASE DE DADOS DOS PRONOMES DEMONSTRATIVOS (19 Perguntas)
+const BD_DEMONSTRATIVOS = [
+	{
+		tipo: 'classificacao',
+		pergunta: 'Classifica os pronomes demonstrativos consoante sejam <span class="destaque-badge">variáveis</span> ou <span class="destaque-badge">invariáveis</span>',
+		itens: ['este', 'isto', 'aquele', 'aquilo', 'essa', 'isso'],
+		categorias: ['Variáveis', 'Invariáveis'],
+		pares: {
+			'este': 'Variáveis', 'isto': 'Invariáveis', 'aquele': 'Variáveis',
+			'aquilo': 'Invariáveis', 'essa': 'Variáveis', 'isso': 'Invariáveis'
+		},
+		dica: 'Os invariáveis terminam em -o (isto, isso, aquilo) e nunca mudam de forma.'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Procura o pronome que <span class="destaque-amarelo">NÃO</span> pertence aos <span class="destaque-badge">demonstrativos</span>:',
+		opcoes: ['isto', 'aquele', 'essa', 'nosso', 'aquilo'],
+		correta: 'nosso',
+		dica: '"Nosso" é um pronome possessivo.'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa a frase com o pronome que substitui um objeto <span class="destaque-fundo">perto de quem fala</span>:',
+		palavraComLacuna: 'Tenho duas canetas. <span class="gap-pulsar">____</span> aqui na minha mão é a melhor.',
+		opcoes: ['Esta', 'Essa', 'Aquela'],
+		correta: 'Esta',
+		dica: 'Para substituir algo muito próximo de quem fala (aqui), usamos "Esta".'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Que <span class="destaque-texto-verde">pronome demonstrativo invariável</span> indica algo que está <span class="destaque-badge">muito distante</span> de ambos?',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		opcoes: ['aquilo', 'isto', 'isso'],
+		correta: 'aquilo',
+		dica: 'Longe de quem fala e de quem ouve equivale a "aquilo" (lá/acolá).'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa as frases conforme a <span class="destaque-texto-verde">posição espacial</span> dos objetos:',
+		texto: 'Tenho dois objetos comigo: [0] aqui na minha mão é meu, mas [1] aí na tua mão é teu.',
+		respostas: ['Este', 'esse'],
+		distratores: ['Aquele', 'isto'],
+		dica: 'Perto de quem fala usa-se "Este"; perto do interlocutor usa-se "esse".'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: '<span class="destaque-amarelo">"De todos os prédios da rua, aquele acolá é o mais alto."</span><br><br>Nesta frase, a palavra <span class="destaque-badge">aquele</span> é um pronome demonstrativo.',
+		imagem: 'img/predio.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Verdadeiro! "Aquele" substitui "o prédio" e indica grande distância.'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Associa cada pronome demonstrativo invariável ao seu respetivo <span class="destaque-badge">grau de proximidade</span>',
+		esquerda: ['isto', 'isso', 'aquilo'],
+		direita: ['perto de quem fala', 'perto de quem se fala', 'distante de ambos'],
+		pares: {
+			'isto': 'perto de quem fala', 'isso': 'perto de quem se fala',
+			'aquilo': 'distante de ambos'
+		},
+		dica: 'Isto (aqui), isso (aí), aquilo (acolá).'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Qual destes pronomes demonstrativos é <span class="destaque-badge">invariável</span>?',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		opcoes: ['isso', 'esta', 'aqueles'],
+		correta: 'isso',
+		dica: 'Os invariáveis são apenas três: isto, isso, aquilo.'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: 'As palavras <span class="destaque-amarelo">isto</span> e <span class="destaque-amarelo">este</span> referem-se ambas a objetos que estão perto de quem fala.',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		correta: 'Verdadeiro',
+		dica: 'Correto! Ambas indicam proximidade máxima (aqui).'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa substituindo o objeto que está <span class="destaque-texto-verde">perto de quem ouve</span> (aí):',
+		palavraComLacuna: 'Gosto de vários livros, mas passa-me <span class="gap-pulsar">____</span> que está aí ao teu lado, por favor.',
+		opcoes: ['esse', 'este', 'aquele'],
+		correta: 'esse',
+		dica: 'Para substituir algo perto da pessoa com quem se fala (aí), usamos "esse".'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Procura o pronome demonstrativo que está no <span class="destaque-texto">feminino plural</span>:',
+		opcoes: ['estes', 'essas', 'aqueles', 'isto', 'aquilo'],
+		correta: 'essas',
+		dica: '"Essas" é feminino plural (essa/essas); estes e aqueles são masculinos.'
+	},
+	{
+		tipo: 'lacunas',
+		pergunta: 'Completa o diálogo com os pronomes <span class="destaque-badge">invariáveis</span> corretos:',
+		texto: 'O que é [0] aqui na minha mão? - perguntou o Rui.<br>-Não sei, mas [1] aí ao teu lado parece um carimbo.',
+		respostas: ['isto', 'isso'],
+		distratores: ['aquilo', 'este'],
+		dica: 'Perto de quem fala é "isto"; perto do outro é "isso".'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: 'Se queres indicar uma estrela no céu que está muito <span class="destaque-texto">distante</span>, que opção usas?',
+		imagem: 'img/estrela.png',
+		proporcao: 'quadrada',
+		opcoes: ['Prefiro olhar para aquela acolá.', 'Prefiro olhar para esta aqui.', 'Prefiro olhar para essa aí.'],
+		correta: 'Prefiro olhar para aquela acolá.',
+		dica: 'Grandes distâncias espaciais exigem o pronome "aquela".'
+	},
+	{
+		tipo: 'classificacao',
+		pergunta: 'Organiza os seguintes pronomes variáveis de acordo com a sua <span class="destaque-amarelo">flexão de número</span>',
+		itens: ['este', 'estes', 'esta', 'estas', 'aquela', 'aquelas'],
+		categorias: ['Singular', 'Plural'],
+		pares: {
+			'este': 'Singular', 'estes': 'Plural', 'esta': 'Singular',
+			'estas': 'Plural', 'aquela': 'Singular', 'aquelas': 'Plural'
+		},
+		dica: 'A terminação em "-s" indica o plural.'
+	},
+	{
+		tipo: 'ligar',
+		pergunta: 'Associa cada pronome variável ao seu correspondente <span class="destaque-fundo">feminino plural</span>:',
+		esquerda: ['este', 'esse', 'aquele', 'estes'],
+		direita: ['estas', 'essas', 'aquelas', 'estas'],
+		pares: {
+			'este': 'estas', 'esse': 'essas',
+			'aquele': 'aquelas', 'estes': 'estas'
+		},
+		dica: 'Altera o género e o número para fazer a ligação correta.'
+	},
+	{
+		tipo: 'tiro-alvo',
+		pergunta: 'Completa a frase com o <span class="destaque-badge">pronome demonstrativo</span> correto:',
+		palavraComLacuna: 'Vês aquelas nuvens? As de perto são brancas, mas <span class="gap-pulsar">_____</span> lá longe são pretas.',
+		opcoes: ['aquelas', 'estas', 'essas'],
+		correta: 'aquelas',
+		dica: 'Substitui "as nuvens" que estão lá longe (distância extrema).'
+	},
+	{
+		tipo: 'verdadeiro-falso',
+		pergunta: 'O pronome demonstrativo <span class="destaque-texto">isso</span> refere-se a objetos que estão distantes de <span class="destaque-texto">ambos</span> os interlocutores.',
+		imagem: 'img/generica.png',
+		proporcao: 'quadrada',
+		correta: 'Falso',
+		dica: 'Falso! "Isso" refere-se a algo que está perto da pessoa com quem falamos (aí).'
+	},
+	{
+		tipo: 'multipla',
+		pergunta: '<span class="destaque-amarelo">Isto é muito fácil!</span><br><br>Qual é o <span class="destaque-badge">pronome demonstrativo</span> nesta frase?',
+		imagem: 'img/facil.png',
+		proporcao: 'quadrada',
+		opcoes: ['Isto', 'muito', 'fácil'],
+		correta: 'Isto',
+		dica: 'Identifica o pronome invariável que serve de sujeito à frase.'
+	},
+	{
+		tipo: 'intruso',
+		pergunta: 'Qual destes pronomes demonstrativos <span class="destaque-amarelo">NÃO</span> pode substituir a palavra <span class="destaque-badge">cão</span> (masculino singular)?',
+		opcoes: ['este', 'esse', 'aquele', 'esta', 'este'],
+		correta: 'esta',
+		dica: '"Esta" é um pronome feminino, logo não pode substituir o nome masculino "cão".'
+	}
+];
+	
+	
+/* ==========================================================================
+   3. ZONA DE EDIÇÃO EXCLUSIVA DO JOGO
+   ========================================================================== */	
+	// Renderiza o esqueleto estrutural da área de estudo com os separadores
+	function carregarGuiaEstudo() {
+		const area = document.getElementById('game-area');
+		if (!area) return;
+		area.innerHTML = '';
+		
+		area.className = 'area-jogo-custom jogo-tipo-estudo';
+
+		const container = document.createElement('div');
+		container.className = 'pronomes-estudo-container';
+
+		const tabsWrap = document.createElement('div');
+		tabsWrap.className = 'tabs-pronomes-container';
+
+		const tabTipos = [
+			{ id: 'pessoais', nome: 'Pessoais' },
+			{ id: 'possessivos', nome: 'Possessivos' },
+			{ id: 'demonstrativos', nome: 'Demonstrativos' }
+		];
+
+		tabTipos.forEach(tab => {
+			const btn = document.createElement('button');
+			btn.className = 'btn-tab-pronome';
+			btn.id = `btn-tab-${tab.id}`;
+			btn.textContent = tab.nome;
+			btn.onclick = () => {
+				tocarSom('flip');
+				mostrarTabEstudo(tab.id);
+			};
+			tabsWrap.appendChild(btn);
+		});
+
+		container.appendChild(tabsWrap);
+
+		const painelInfo = document.createElement('div');
+		painelInfo.id = 'painel-conteudo-pronomes';
+		painelInfo.className = 'painel-conteudo-pronomes';
+		container.appendChild(painelInfo);
+
+		area.appendChild(container);
+
+		// Mostra a primeira aba por predefinição
+		mostrarTabEstudo('pessoais');
+	}
+
+	// Altera dinamicamente o painel de estudo usando a grelha de cartões correspondente
+	function mostrarTabEstudo(tipo) {
+		document.querySelectorAll('.btn-tab-pronome').forEach(btn => btn.classList.remove('active'));
+		
+		const btnAtivo = document.getElementById(`btn-tab-${tipo}`);
+		if (btnAtivo) btnAtivo.classList.add('active');
+
+		const painel = document.getElementById('painel-conteudo-pronomes');
+		if (!painel) return;
+		painel.innerHTML = '';
+
+		// Atualiza o título reativo na barra de estado para guiar o aluno
+		const tituloEstudo = document.getElementById('status-titulo-estudo');
+		if (tituloEstudo) {
+			const imgSVG = `<img src="img/livro_estudo.svg" style="width: 1.3em; height: 1.3em; vertical-align: middle; margin-right: 6px; display: inline-block; object-fit: contain;" alt="">`;
+
+			if (tipo === 'pessoais') {
+				tituloEstudo.innerHTML = `${imgSVG} Pronomes <span class="destaque-badge" style="background:var(--cor-mat); border-color:white; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.25);">Pessoais</span>`;
+			} else if (tipo === 'possessivos') {
+				tituloEstudo.innerHTML = `${imgSVG} Pronomes <span class="destaque-badge" style="background:#fa983a; border-color:white; box-shadow: 0 4px 10px rgba(250, 152, 58, 0.25);">Possessivos</span>`;
+			} else if (tipo === 'demonstrativos') {
+				tituloEstudo.innerHTML = `${imgSVG} Pronomes <span class="destaque-badge" style="background:var(--cor-em); border-color: white; box-shadow: 0 4px 10px rgba(165, 94, 234, 0.25);">Demonstrativos</span>`;
+			}
+		}
+
+		let htmlInfo = '';
+
+		if (tipo === 'pessoais') {
+			htmlInfo = `
+				<p class="intro-estudo-texto">
+					Os <span class="destaque-badge">pronomes pessoais</span> <strong>substituem nomes e indicam as pessoas do discurso</strong>. Dividem-se em formas <span class="destaque-texto">tónicas</span> (funcionam como sujeito ou surgem com preposição) e formas <span class="destaque-texto-verde">átonas</span> (acompanham o verbo).
+				</p>
+				<div class="cards-estudo-grid">
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-mat);">Formas Tónicas (Sujeito)</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Singular</span> <span class="estudo-valor">eu</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Singular</span> <span class="estudo-valor">tu</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Singular</span> <span class="estudo-valor">ele / ela</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Plural</span> <span class="estudo-valor">nós</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Plural</span> <span class="estudo-valor">vós</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Plural</span> <span class="estudo-valor">eles / elas</span></div>
+						</div>
+					</div>
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-mat);">Formas Tónicas (Com Preposição)</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Singular</span> <span class="estudo-valor-destaque">mim / comigo</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Singular</span> <span class="estudo-valor-destaque">ti / contigo</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Singular</span> <span class="estudo-valor-destaque">si / consigo</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Plural</span> <span class="estudo-valor-destaque">nós / connosco</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Plural</span> <span class="estudo-valor-destaque">vós / convosco</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Plural</span> <span class="estudo-valor-destaque">si / consigo</span></div>
+						</div>
+					</div>
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-mat);">Formas Átonas</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Singular</span> <span class="estudo-valor-destaque">me</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Singular</span> <span class="estudo-valor-destaque">te</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Singular</span> <span class="estudo-valor-destaque">o / a / lhe / se</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Plural</span> <span class="estudo-valor-destaque">nos</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Plural</span> <span class="estudo-valor-destaque">vos</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Plural</span> <span class="estudo-valor-destaque">os / as / lhes / se</span></div>
+						</div>
+					</div>
+				</div>
+			`;
+		} else if (tipo === 'possessivos') {
+			htmlInfo = `
+				<p class="intro-estudo-texto">
+					Os <span class="destaque-badge">pronomes possessivos</span> <strong>substituem o nome</strong> e indicam a quem pertence o ser ou objeto.<br>
+					<small style="display:block; margin-top:6px; opacity:0.9;">⚠️ <strong>Atenção:</strong> Se acompanharem um nome (ex.: <em>"O <strong>meu</strong> cão"</em>), são <span class="destaque-texto">determinantes</span>. Só são <strong>pronomes</strong> se substituírem o nome (ex.: <em>"O teu cão é brincalhão, mas o <span class="destaque-texto-verde">meu</span> é calmo"</em>).</small>
+				</p>
+				<div class="cards-estudo-grid">
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:#fa983a;">Um Só Possuidor</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Pessoa (eu)</span> <span class="estudo-valor">meu(s) / minha(s)</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Pessoa (tu)</span> <span class="estudo-valor">teu(s) / tua(s)</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Pessoa (ele/ela)</span> <span class="estudo-valor">seu(s) / sua(s)</span></div>
+						</div>
+					</div>
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:#fa983a;">Vários Possuidores</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">1ª Pessoa (nós)</span> <span class="estudo-valor">nosso(s) / nossa(s)</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">2ª Pessoa (vós)</span> <span class="estudo-valor">vosso(s) / vossa(s)</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">3ª Pessoa (eles/elas)</span> <span class="estudo-valor">seu(s) / sua(s)</span></div>
+						</div>
+					</div>
+				</div>
+			`;
+		} else if (tipo === 'demonstrativos') {
+			htmlInfo = `
+				<p class="intro-estudo-texto">
+					Os <span class="destaque-badge">pronomes demonstrativos</span> <strong>substituem o nome</strong> e indicam a posição do objeto em relação a quem fala.<br>
+					<small style="display:block; margin-top:6px; opacity:0.9;">⚠️ <strong>Atenção:</strong> <em>Isto, isso, aquilo</em> são <strong>sempre pronomes</strong>. Palavras como <em>este</em> ou <em>aquele</em> só são pronomes se substituírem o nome (ex.: <em>"Não quero este bolo, quero <strong>aquele</strong>"</em>).</small>
+				</p>
+				<div class="cards-estudo-grid">
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-em);">Perto (1ª Pessoa - Eu)</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">Masculino</span> <span class="estudo-valor">este / estes</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Feminino</span> <span class="estudo-valor">esta / estas</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Invariável</span> <span class="estudo-valor-destaque">isto</span></div>
+						</div>
+					</div>
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-em);">Médio (2ª Pessoa - Tu)</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">Masculino</span> <span class="estudo-valor">esse / esses</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Feminino</span> <span class="estudo-valor">essa / essas</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Invariável</span> <span class="estudo-valor-destaque">isso</span></div>
+						</div>
+					</div>
+					<div class="card-estudo">
+						<div class="card-estudo-titulo" style="background-color:var(--cor-em);">Longe (3ª Pessoa - Ele)</div>
+						<div class="card-estudo-conteudo">
+							<div class="linha-estudo-par"><span class="estudo-chave">Masculino</span> <span class="estudo-valor">aquele / aqueles</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Feminino</span> <span class="estudo-valor">aquela / aquelas</span></div>
+							<div class="linha-estudo-par"><span class="estudo-chave">Invariável</span> <span class="estudo-valor-destaque">aquilo</span></div>
+						</div>
+					</div>
+				</div>
+			`;
+		}
+
+		painel.innerHTML = htmlInfo;
+	}
+	
+
+/* ==========================================================================
+   4. ARRANQUE E NAVEGAÇÃO
+   ========================================================================== */
+	document.addEventListener("DOMContentLoaded", () => {
+		document.getElementById('btn-home-svg').innerHTML = SVG_HOME;
+		document.getElementById('badge-ronda-svg').innerHTML = SVG_STAR;
+		document.getElementById('btn-dica').innerHTML = SVG_BULB + ' Dica';
+		document.getElementById('icone-erro-svg').innerHTML = SVG_ERRO;
+		mostrarEcra('ecra-selecao');
+	});
+	
+	function toggleMenu() {
+		document.getElementById('sidebar').classList.toggle('active');
+		document.getElementById('overlay').classList.toggle('active');
+	}
+
+	function mostrarEcra(id) {
+		document.querySelectorAll('.ecra').forEach(e => e.style.display = 'none');
+		const alvo = document.getElementById(id);
+		if(alvo) alvo.style.display = 'flex';
+	}
+
+	/* --- SISTEMA DE ZOOM DE IMAGEM SEGURO --- */
+	function abrirZoomImagem(srcCaminho) {
+		const modal = document.getElementById('zoom-modal');
+		const img = document.getElementById('zoom-img-content');
+		if (modal && img) {
+			img.src = srcCaminho;
+			modal.classList.add('active');
+		}
+	}
+
+	function fecharZoomImagem() {
+		const modal = document.getElementById('zoom-modal');
+		if (modal) modal.classList.remove('active');
+	}
+
+	function prepararJogo(sistema) {
+		sistemaAtivo = sistema;
+		erradas = 0; 
+		desafioAtual = 0; 
+		podeInteragir = true;
+
+		// Gestão inteligente da pool de questões da sessão
+		if (sistema !== ultimoSistema) {
+			poolRestantesSessao = [];
+			ultimoSistema = sistema;
+		}
+
+		let baseCompleta = [];
+		let nomeSistema = "";
+
+		// Configuração dos caminhos lógicos para "O Mundo dos Pronomes"
+		if (sistema === 'estudo') {
+			nomeSistema = "1. Guia de Estudo";
+		} else if (sistema === 'pessoais') {
+			baseCompleta = BD_PESSOAIS;
+			nomeSistema = "2. Pronomes Pessoais";
+		} else if (sistema === 'possessivos') {
+			baseCompleta = BD_POSSESSIVOS;
+			nomeSistema = "3. Pronomes Possessivos";
+		} else if (sistema === 'demonstrativos') {
+			baseCompleta = BD_DEMONSTRATIVOS;
+			nomeSistema = "4. Pronomes Demonstrativos";
+		}
+
+		// Seleção de elementos do HUD da barra de estado
+		const progressBg = document.querySelector('.progress-bg');
+		const badgeRonda = document.querySelector('.badge-ronda');
+		const badgeErros = document.querySelector('.badge-erros');
+		const btnDica = document.getElementById('btn-dica');
+		const mascote = document.getElementById('mascote-feedback');
+
+		if (sistema === 'estudo') {
+			// Modo Estudo: Oculta elementos semânticos de pontuação, progresso e dicas
+			if (progressBg) progressBg.style.display = 'none';
+			if (badgeRonda) badgeRonda.style.display = 'none';
+			if (badgeErros) badgeErros.style.display = 'none';
+			if (btnDica) btnDica.style.display = 'none';
+			if (mascote) mascote.style.display = 'none';
+
+			// Cria ou ativa o Título Dinâmico na barra de estado
+			let tituloEstudo = document.getElementById('status-titulo-estudo');
+			if (!tituloEstudo) {
+				tituloEstudo = document.createElement('div');
+				tituloEstudo.id = 'status-titulo-estudo';
+				tituloEstudo.className = 'status-titulo-estudo';
+				const statusBar = document.querySelector('.status-bar-jogo');
+				if (statusBar) statusBar.appendChild(tituloEstudo);
+			}
+			tituloEstudo.style.display = 'block';
+		} else {
+			// Modo Jogo Ativo: Repõe todos os elementos e reativa a mascote
+			if (progressBg) progressBg.style.display = 'block';
+			if (badgeRonda) badgeRonda.style.display = 'flex';
+			if (badgeErros) badgeErros.style.display = 'flex';
+			if (btnDica) btnDica.style.display = 'flex';
+			if (mascote) {
+				mascote.style.display = 'flex';
+				animarMascote('normal');
+			}
+
+			// Oculta o título do modo estudo
+			const tituloEstudo = document.getElementById('status-titulo-estudo');
+			if (tituloEstudo) tituloEstudo.style.display = 'none';
+		}
+
+		// Sorteio de questões (apenas para os minijogos 2, 3 e 4)
+		if (sistema !== 'estudo') {
+			if (baseCompleta.length >= 10) {
+				if (poolRestantesSessao.length < 10) {
+					poolRestantesSessao = baralharArray([...baseCompleta]);
+				}
+				perguntasSorteadas = poolRestantesSessao.splice(0, 10);
+			} else {
+				perguntasSorteadas = baralharArray([...baseCompleta]).slice(0, 10);
+			}
+		}
+
+		document.getElementById('subtitulo-header').textContent = nomeSistema;
+		rondasParaDica = 0;
+		atualizarBotaoDica(); 
+
+		mostrarEcra('ecra-jogo');
+
+		// Direciona para o renderizador correto
+		if (sistema === 'estudo') {
+			carregarGuiaEstudo();
+		} else {
+			atualizarBarraEstado();
+			carregarRonda();
+		}
+	}
+	
+	function atualizarBarraEstado() {
+		const p = document.getElementById('val-progresso');
+		const t = document.getElementById('val-total');
+		const e = document.getElementById('val-erros');
+		if(p) p.textContent = Math.min(desafioAtual + 1, 10);
+		if(t) t.textContent = 10;
+		if(e) e.textContent = erradas;
+
+		// PROGRESSO VISUAL CORRIGIDO: Começa logo preenchido em 10% na Ronda 1
+		const progressoReferencia = Math.min(desafioAtual + 1, 10);
+		document.getElementById('progress-fill').style.width = (progressoReferencia / 10 * 100) + '%';
+	}
+	
+	function atualizarBotaoDica() {
+		const btn = document.getElementById('btn-dica');
+		if (!btn) return;
+
+		// Se o tempo de recarga chegou a zero, o botão fica ativo
+		if (rondasParaDica <= 0) {
+			btn.classList.remove('esgotada');
+			btn.disabled = false;
+			btn.innerHTML = SVG_BULB + ' Dica';
+		} else {
+			// Se estiver em recarga, bloqueia o botão e mostra a ampulheta com a contagem decrescente
+			btn.classList.add('esgotada');
+			btn.disabled = true;
+			btn.innerHTML = `⏳ ${rondasParaDica}`;
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO MAPA EM CASO DE ERRO --- */
+	function validarMapa(zona) {
+		const ronda = perguntasSorteadas[desafioAtual];
+		let tudoCerto = true;
+
+		// Verifica se cada órgão foi colocado no local correto
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, zona);
+		} else {
+			validar(false, zona);
+			
+			// REPOSIÇÃO SUAVE DO MAPA EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os botões azuis de órgãos à esquerda
+				document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e esvazia visualmente as caixas sobrepostas do corpo
+				document.querySelectorAll('.slot-mapa').forEach(slot => {
+					slot.innerHTML = '';
+					slot.className = 'slot-mapa';
+				});
+			}, 800);
+		}
+	}
+	
+	/* --- VALIDAÇÃO EXCLUSIVA DO ARRASTAR EM CASO DE ERRO --- */
+	function validarArrastar(container, ronda) {
+		let tudoCerto = true;
+
+		// Compara cada conceito ordenado com o par correto respetivo
+		for (let k in ronda.pares) {
+			if (selecoesArrastar[k] !== ronda.pares[k]) {
+				tudoCerto = false;
+			}
+		}
+
+		if (tudoCerto) {
+			validar(true, container);
+		} else {
+			validar(false, container);
+			
+			// REPOSIÇÃO DO ARRASTAMENTO EM CASO DE ERRO
+			setTimeout(() => {
+				selecoesArrastar = {};
+				arrastoAtivo = null;
+
+				// 1. Reativa todos os blocos cinzentos à esquerda
+				document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(btn => {
+					btn.disabled = false;
+					btn.style.opacity = '1';
+					btn.classList.remove('selecionado');
+				});
+
+				// 2. Limpa e repõe o texto inicial dos alvos da direita (remover as palavras erradas)
+				const botoesAlvo = document.getElementById('game-area').querySelectorAll('.coluna-ligar:last-child button');
+				ronda.alvos.forEach((alvo, index) => {
+					if (botoesAlvo[index]) {
+						botoesAlvo[index].textContent = alvo;
+					}
+				});
+			}, 800);
+		}
+	}
+
+/* ==========================================================================
+   5. CONSTRUÇÃO DINÂMICA DOS EXERCÍCIOS
+   ========================================================================== */
+	function carregarRonda() {
+		podeInteragir = true;
+		selecaoLigar = null; 
+		selecoesLigar = {};
+		paresElementosLigar = [];
+		arrastoAtivo = null; 
+		selecoesArrastar = {}; 
+		selecoesLacunas = {}; 
+		lacunaAtiva = null;
+		
+		// Remove realces de rondas anteriores
+		document.querySelectorAll('.highlight-correto').forEach(el => el.classList.remove('highlight-correto'));
+
+		const ronda = perguntasSorteadas[desafioAtual];
+		const area = document.getElementById('game-area');
+		if(!area || !ronda) return;
+		area.innerHTML = '';
+
+		// Limpa as classes do wrapper do ligar e lacunas de segurança
+		area.className = 'area-jogo-custom';
+		if(ronda.tipo === 'ligar') area.classList.add('jogo-tipo-ligar');
+		if(ronda.tipo === 'lacunas') area.classList.add('jogo-tipo-lacunas');
+
+		// A. INJETA IMAGEM MODULAR (QUADRADA OU RETANGULAR COM ZOOM OPCIONAL)
+		if(ronda.imagem && ronda.tipo !== 'mapa' && ronda.tipo !== 'lacunas') {
+			const wrapper = document.createElement('div');
+			const proporcaoClasse = ronda.proporcao === 'quadrada' ? 'img-quadrada' : 'img-retangular';
+			wrapper.className = `card-imagem-zoomable ${proporcaoClasse}`;
+
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'imagem-evento-tempo';
+			img.alt = 'Imagem de suporte';
+			img.onerror = () => { wrapper.remove(); };
+			wrapper.appendChild(img);
+
+			// Se a propriedade "zoom" for verdadeira na base de dados, ativa a lupa e o clique!
+			if (ronda.zoom === true) {
+				wrapper.onclick = () => abrirZoomImagem(ronda.imagem);
+
+				const zoomBtn = document.createElement('div');
+				zoomBtn.className = 'btn-zoom-imagem';
+				zoomBtn.innerHTML = `
+					<svg viewBox="0 0 24 24">
+						<circle cx="11" cy="11" r="8"></circle>
+						<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+					</svg>
+				`;
+				wrapper.appendChild(zoomBtn);
+			}
+
+			area.appendChild(wrapper);
+		}
+
+		// B. INJETA O TEXTO DA PERGUNTA
+		if (ronda.pergunta && ronda.tipo !== 'mapa') {
+			const txt = document.createElement('div');
+			txt.className = 'pergunta-texto';
+			txt.innerHTML = ronda.pergunta;
+			area.appendChild(txt);
+		}
+
+		// C. GERADOR DE SELEÇÃO MÚLTIPLA VIBRANTE (SUPORTA TEXTO OU IMAGENS)
+		if (ronda.tipo === 'multipla') {
+			const container = document.createElement('div'); 
+			container.className = 'opcoes-container';
+			
+			// Baralhamos as opções
+			const baralhadas = [...ronda.opcoes].sort(() => Math.random() - 0.5);
+			const coresSorteio = obterCoresAleatorias(baralhadas.length);
+
+			baralhadas.forEach((opt, idx) => {
+				const b = document.createElement('button');
+				b.className = `btn-opcao-vibrante ${coresSorteio[idx]}`;
+				
+				let valorComparacao = "";
+
+				// 1. VERIFICAÇÃO: É o formato NOVO (Objeto com Imagem + Nome)?
+				if (typeof opt === 'object' && opt !== null) {
+					b.innerHTML = `
+						<img src="${opt.img}" class="imagem-opcao-vibrante" alt="">
+						<div class="nome-opcao-legenda" style="font-size:1.1rem; font-weight:900; color:white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); margin-top:5px;">
+							${opt.nome}
+						</div>
+					`;
+					valorComparacao = opt.img;
+				}
+				// 2. VERIFICAÇÃO: É o formato ANTIGO (String)?
+				else if (typeof opt === 'string') {
+					const isImagem = (opt.endsWith('.png') || opt.endsWith('.jpg') || opt.endsWith('.webp') || opt.endsWith('.svg'));
+					
+					if (isImagem) {
+						const imgOpt = document.createElement('img');
+						imgOpt.src = opt;
+						imgOpt.className = 'imagem-opcao-vibrante';
+						b.appendChild(imgOpt);
+					} else {
+						b.textContent = opt;
+					}
+					valorComparacao = opt; // O valor para comparar é a própria string
+				}
+
+				// AÇÃO DE CLIQUE: Usa o valorComparacao para validar contra a resposta correta
+				b.onclick = () => {
+					if(!podeInteragir) return;
+					validar(valorComparacao === ronda.correta, b);
+				};
+				
+				container.appendChild(b);
+			});
+			area.appendChild(container);
+		}
+		// D. GERADOR DE LIGAR COLUNAS (COM DESFAZER E CLASSES DO CSS)
+		else if (ronda.tipo === 'ligar') {
+			const container = document.createElement('div'); container.className = 'coluna-ligar-container';
+			const colEsq = document.createElement('div'); colEsq.className = 'coluna-ligar';
+			const colDir = document.createElement('div'); colDir.className = 'coluna-ligar';
+			
+			ronda.esquerda.forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-azul'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarEsq(it, b, ronda); };
+				colEsq.appendChild(b);
+			});
+			[...ronda.direita].sort(() => Math.random() - 0.5).forEach(it => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir) return; selecionarLigarDir(it, b, ronda); };
+				colDir.appendChild(b);
+			});
+			container.appendChild(colEsq); container.appendChild(colDir); area.appendChild(container);
+		}
+		// E. GERADOR DE TEXTO COM LACUNAS (MÉTODO PREMIUM 2 TOQUES)
+		else if (ronda.tipo === 'lacunas') {
+			const p = document.createElement('div'); p.className = 'texto-paragrafo-lacunas';
+			let html = ronda.texto;
+			ronda.respostas.forEach((r, i) => html = html.replace(`[${i}]`, `<span class="slot-vazio" id="slot-lacuna-${i}">...</span>`));
+			p.innerHTML = html; area.appendChild(p);
+			
+			const banco = document.createElement('div'); banco.className = 'banco-opcoes';
+			const distratoresSeguros = ronda.distratores || [];
+			const todasAsOpcoes = baralharArray([...ronda.respostas, ...distratoresSeguros]);
+
+			todasAsOpcoes.forEach(pal => {
+				const b = document.createElement('button'); b.className = 'palavra-banco'; b.textContent = pal;
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.palavra-banco').forEach(x => x.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					lacunaAtiva = { elemento: b, texto: pal };
+
+					// Ilumina apenas os slots vazios
+					document.querySelectorAll('.slot-vazio').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+				banco.appendChild(b);
+			});
+			area.appendChild(banco);
+
+			// Ativa ação de clique nos slots vazios para receber a palavra
+			document.querySelectorAll('.slot-vazio').forEach((slot, idx) => {
+				slot.onclick = () => {
+					if (!lacunaAtiva) {
+						const palavraAtual = slot.querySelector('strong')?.textContent;
+						if (palavraAtual) {
+							tocarSom('flip');
+							slot.textContent = '...';
+							slot.classList.remove('preenchido');
+							delete selecoesLacunas[idx];
+							
+							document.querySelectorAll('.palavra-banco').forEach(b => {
+								if (b.textContent === palavraAtual) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						} else {
+							showToast("Seleciona primeiro uma palavra em baixo!");
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const palavraTexto = lacunaAtiva.texto;
+
+					const palavraAnterior = slot.querySelector('strong')?.textContent;
+					if (palavraAnterior) {
+						document.querySelectorAll('.palavra-banco').forEach(b => {
+							if (b.textContent === palavraAnterior) {
+								b.disabled = false;
+								b.style.opacity = '1';
+							}
+						});
+					}
+
+					slot.innerHTML = `<strong style="color:var(--azul-escuro); font-size:1.1rem;">${palavraTexto}</strong>`;
+					slot.classList.add('preenchido');
+					selecoesLacunas[idx] = palavraTexto;
+
+					lacunaAtiva.elemento.classList.remove('selecionado');
+					lacunaAtiva.elemento.style.opacity = '0.3';
+					lacunaAtiva.elemento.disabled = true;
+					lacunaAtiva = null;
+
+					document.querySelectorAll('.slot-vazio').forEach(s => s.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesLacunas).length === ronda.respostas.length) {
+						let tudoOk = true; 
+						ronda.respostas.forEach((res, index) => { 
+							if(selecoesLacunas[index] !== res) tudoOk = false; 
+						});
+
+						if (tudoOk) {
+							validar(true, p);
+						} else {
+							// Dispara feedback de erro e abana o texto das lacunas
+							validar(false, p);
+
+							// Aguarda os 600ms do abanão para repor apenas as lacunas erradas
+							setTimeout(() => {
+								ronda.respostas.forEach((res, index) => {
+									const palavraColocada = selecoesLacunas[index];
+									if (palavraColocada !== res) {
+										
+										// 1. Limpa o slot e repõe o aspeto inicial
+										const slotErrado = document.getElementById(`slot-lacuna-${index}`);
+										if (slotErrado) {
+											slotErrado.textContent = '...';
+											slotErrado.classList.remove('preenchido');
+										}
+										
+										// 2. Reativa o botão correspondente no banco de opções
+										document.querySelectorAll('.palavra-banco').forEach(b => {
+											if (b.textContent === palavraColocada) {
+												b.disabled = false;
+												b.style.opacity = '1';
+											}
+										});
+										
+										// 3. Apaga a resposta errada da memória temporária de validação
+										delete selecoesLacunas[index];
+									}
+								});
+							}, 600);
+						}
+					}
+				};
+			});
+		}
+		// F. GERADOR DE ARRASTAR E LIGAR (SISTEMA DE DOIS TOQUES)
+		else if (ronda.tipo === 'arrastar') {
+			const container = document.createElement('div'); container.style.display="flex"; container.style.gap="30px";
+			const colItens = document.createElement('div'); colItens.className="coluna-ligar";
+			const colAlvos = document.createElement('div'); colAlvos.className="coluna-ligar";
+			
+			const itensEmbaralhados = baralharArray(ronda.itens);
+
+			itensEmbaralhados.forEach(it => {
+				const b = document.createElement('button'); b.className = 'bloco-arrastar'; b.textContent = it;
+				b.onclick = () => { if(!podeInteragir || b.disabled) return; document.querySelectorAll('.bloco-arrastar').forEach(x=>x.classList.remove('selecionado')); b.classList.add('selecionado'); arrastoAtivo = {val: it, btn: b}; tocarSom('flip'); };
+				colItens.appendChild(b);
+			});
+
+			ronda.alvos.forEach(al => {
+				const b = document.createElement('button'); b.className = 'btn-opcao-vibrante bg-turquesa'; b.textContent = al;
+				
+				b.onclick = () => {
+					// MECÂNICA DE DESFAZER ATIVA NO ARRASTAR: Se clicar num alvo já ocupado sem palavra selecionada
+					if (!arrastoAtivo) {
+						let itemEncontrado = null;
+						for (let item in selecoesArrastar) {
+							if (selecoesArrastar[item] === al) {
+								itemEncontrado = item;
+								break;
+							}
+						}
+						
+						if (itemEncontrado) {
+							tocarSom('flip');
+							delete selecoesArrastar[itemEncontrado];
+							b.textContent = al; // Devolve o botão ao seu texto original de etapa
+
+							// Reativa o bloco correspondente no lado esquerdo
+							document.getElementById('game-area').querySelectorAll('.bloco-arrastar').forEach(bloco => {
+								if (bloco.textContent === itemEncontrado) {
+									bloco.disabled = false;
+									bloco.style.opacity = '1';
+								}
+							});
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.val;
+					selecoesArrastar[valorSelecionado] = al;
+					
+					b.innerHTML = `${al}<br><small style="color:white; opacity:0.8;">(${valorSelecionado})</small>`; 
+					arrastoAtivo.btn.disabled = true; 
+					arrastoAtivo.btn.style.opacity = "0.3"; 
+					arrastoAtivo = null;
+
+					if (Object.keys(selecoesArrastar).length === ronda.itens.length) {
+						// CORREÇÃO: Encaminha para a validação e reposição do arrastamento em caso de erro!
+						setTimeout(() => { validarArrastar(container, ronda); }, 400);
+					}
+				};
+				colAlvos.appendChild(b);
+			});
+			container.appendChild(colItens); container.appendChild(colAlvos); area.appendChild(container);
+		}
+
+		// G. NOVO CASO: MAPA / ESQUEMA ANATÓMICO COM COORDENADAS E LINHAS VETORIAIS DINÂMICAS
+		else if (ronda.tipo === 'mapa') {
+			selecoesArrastar = {};
+			arrastoAtivo = null;
+			const totalArrastar = Object.keys(ronda.pares).length;
+
+			const zona = document.createElement('div');
+			zona.style.display = 'flex';
+			zona.style.alignItems = 'center';
+			zona.style.justifyContent = 'center';
+			zona.style.gap = '25px';
+			zona.style.width = '100%';
+			zona.style.flexWrap = 'wrap';
+
+			const itens = document.createElement('div');
+			itens.className = 'coluna-ligar';
+
+			const itensEmbaralhados = baralharArray(ronda.itens);
+			itensEmbaralhados.forEach(valor => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-vibrante bg-azul';
+				b.textContent = valor;
+				b.style.fontSize = '0.92rem';
+
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.btn-opcao-vibrante').forEach(b => b.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					arrastoAtivo = { val: valor, btn: b };
+
+					document.querySelectorAll('.slot-mapa').forEach(s => {
+						if (!s.querySelector('strong')) {
+							s.classList.add('pronto-receber');
+						}
+					});
+				};
+				itens.appendChild(b);
+			});
+
+			const wrapper = document.createElement('div');
+			const mapaProporcao = 'mapa-quadrado'; /* Forçado 1:1 Quadrado para o Corpo Humano */
+			wrapper.className = `mapa-relevo-wrapper ${mapaProporcao}`;
+
+			// Injeta o mapa de fundo
+			const img = document.createElement('img');
+			img.src = ronda.imagem;
+			img.className = 'mapa-relevo-imagem';
+			img.alt = 'Esquema do Corpo';
+			img.onerror = () => { wrapper.remove(); };
+			wrapper.appendChild(img);
+
+			// NOVO: Desenha as linhas pontilhadas dinamicamente na tela transparente sobre o mapa
+			if (ronda.coords.linhas) {
+				const svgNS = "http://www.w3.org/2000/svg";
+				const svg = document.createElementNS(svgNS, "svg");
+				svg.setAttribute("viewBox", "0 0 100 100");
+				svg.style.position = "absolute";
+				svg.style.top = "0";
+				svg.style.left = "0";
+				svg.style.width = "100%";
+				svg.style.height = "100%";
+				svg.style.pointerEvents = "none";
+				svg.style.zIndex = "5";
+
+				ronda.coords.linhas.forEach(linhaObj => {
+				const path = document.createElementNS(svgNS, "path");
+				path.setAttribute("d", linhaObj.d); // Lê o trajeto d
+				path.setAttribute("stroke", linhaObj.cor || "#0091ff"); // Lê a cor individual definida ou usa azul por padrão
+				path.setAttribute("stroke-width", "0.6");
+				path.setAttribute("fill", "none");
+				svg.appendChild(path);
+			});
+
+				wrapper.appendChild(svg);
+			}
+
+			// Leitura das coordenadas dinâmicas da base de dados (Evita erros de cruzamento)
+			const tops = ronda.coords.tops;
+			const lefts = ronda.coords.lefts;
+			const widths = ronda.coords.widths;
+			const heights = ronda.coords.heights || ['6%', '6%', '6%', '6%', '6%'];
+
+			ronda.alvos.forEach((alvo, index) => {
+				const slot = document.createElement('div');
+				slot.className = 'slot-mapa';
+				slot.style.top = tops[index];
+				slot.style.left = lefts[index];
+				slot.style.width = widths[index];
+				slot.style.height = heights[index];
+
+				slot.onclick = () => {
+					if (!arrastoAtivo) {
+						const palavraAtual = slot.querySelector('strong')?.textContent;
+						if (palavraAtual) {
+							tocarSom('flip');
+							slot.innerHTML = '';
+							slot.classList.remove('preenchido');
+							delete selecoesArrastar[palavraAtual];
+							
+							document.getElementById('game-area').querySelectorAll('.coluna-ligar button').forEach(b => {
+								if (b.textContent === palavraAtual) {
+									b.disabled = false;
+									b.style.opacity = '1';
+								}
+							});
+						} else {
+							showToast("Seleciona primeiro uma palavra à esquerda!", false);
+						}
+						return;
+					}
+
+					tocarSom('flip');
+					const valorSelecionado = arrastoAtivo.val;
+					selecoesArrastar[valorSelecionado] = alvo;
+
+					slot.innerHTML = `<strong>${valorSelecionado}</strong>`;
+					slot.classList.add('preenchido');
+
+					arrastoAtivo.btn.classList.remove('selecionado');
+					arrastoAtivo.btn.style.opacity = '0.3';
+					arrastoAtivo.btn.disabled = true;
+					arrastoAtivo = null;
+
+					document.querySelectorAll('.slot-mapa').forEach(s => s.classList.remove('pronto-receber'));
+
+					if (Object.keys(selecoesArrastar).length === totalArrastar) {
+						setTimeout(() => { validarMapa(zona); }, 400);
+					}
+				};
+
+				wrapper.appendChild(slot);
+			});
+
+			zona.appendChild(itens);
+			zona.appendChild(wrapper);
+			area.appendChild(zona);
+		}
+		// H. NOVO CASO: JOGO DE VERDADEIRO OU FALSO (BOTÕES FIXOS DE CORES FIXAS)
+		else if (ronda.tipo === 'verdadeiro-falso') {
+			const container = document.createElement('div'); 
+			container.className = 'opcoes-container';
+
+			// Botão Fixo "Verdadeiro" (Sempre Verde Vibrante)
+			const btnVerdadeiro = document.createElement('button');
+			btnVerdadeiro.className = 'btn-opcao-vibrante bg-verde';
+			btnVerdadeiro.textContent = 'Verdadeiro';
+			btnVerdadeiro.onclick = () => validar(ronda.correta === 'Verdadeiro', btnVerdadeiro);
+
+			// Botão Fixo "Falso" (Sempre Vermelho Vibrante)
+			const btnFalso = document.createElement('button');
+			btnFalso.className = 'btn-opcao-vibrante bg-vermelho';
+			btnFalso.textContent = 'Falso';
+			btnFalso.onclick = () => validar(ronda.correta === 'Falso', btnFalso);
+
+			container.appendChild(btnVerdadeiro);
+			container.appendChild(btnFalso);
+			area.appendChild(container);
+		}
+		
+		// I. JOGO I: CLASSIFICAÇÃO DE GAVETAS (CARRUAGENS DO COMBOIO)
+		else if (ronda.tipo === 'classificacao') {
+			selecoesArrastar = {};
+			arrastoAtivo = null;
+			let totalItens = ronda.itens.length;
+
+			const colPalavras = document.createElement('div');
+			colPalavras.className = 'coluna-classificacao';
+			colPalavras.dataset.qtd = totalItens; // Regista o tamanho para simetria de grelha
+
+			const categoriasUnicas = Array.from(new Set(Object.values(ronda.pares)));
+			const cat1 = categoriasUnicas[0]; 
+			const cat2 = categoriasUnicas[1]; 
+
+			// LISTA UNIVERSAL DE CATEGORIAS AZUIS (Abrange todos os temas do 4.º ano)
+			const categoriasAzuis = [
+				'Masculino', 'Singular', 'Comparativo', 'Analítico', 'Relativo', 'Átonos',
+				'Variável', 'Pretérito Perfeito', 'Presente', 'Indicativo', 'Modo Indicativo', 'Preposição'
+			];
+
+			// ASSOCIAÇÃO DINÂMICA DE CORES DAS CARRIAGES (Pretérito Perfeito = carruagem-perfeito, Pretérito Imperfeito = carruagem-imperfeito)
+			const classeCat1 = categoriasAzuis.includes(cat1) ? 'carruagem-perfeito' : 'carruagem-imperfeito';
+			const classeCat2 = categoriasAzuis.includes(cat2) ? 'carruagem-perfeito' : 'carruagem-imperfeito';
+
+			const zona = document.createElement('div');
+			zona.className = 'painel-carruagens-tempo'; // Usa a classe do painel do comboio
+
+			const baralhadas = baralharArray(ronda.itens);
+			baralhadas.forEach(pal => {
+				const b = document.createElement('button');
+				b.className = 'btn-opcao-pilula';
+				b.textContent = pal;
+				b.onclick = () => {
+					if (b.disabled || !podeInteragir) return;
+					tocarSom('flip');
+					document.querySelectorAll('.coluna-classificacao button').forEach(x => x.classList.remove('selecionado'));
+					b.classList.add('selecionado');
+					arrastoAtivo = { val: pal, btn: b };
+				};
+				colPalavras.appendChild(b);
+			});
+
+			// Contentor 1 (Lê dinamicamente o nome e a classe de cor da carruagem)
+			const depSingular = document.createElement('div');
+			depSingular.className = `carruagem-destino ${classeCat1}`;
+			depSingular.innerHTML = `<div class="carruagem-titulo">${cat1}</div>`;
+			depSingular.onclick = () => { processarClassificacao(cat1, depSingular); };
+
+			// Contentor 2 (Lê dinamicamente o nome e a classe de cor da carruagem)
+			const depPlural = document.createElement('div');
+			depPlural.className = `carruagem-destino ${classeCat2}`;
+			depPlural.innerHTML = `<div class="carruagem-titulo">${cat2}</div>`;
+			depPlural.onclick = () => { processarClassificacao(cat2, depPlural); };
+
+			function processarClassificacao(categoria, elementoDep) {
+				if (!arrastoAtivo) {
+					showToast("Seleciona primeiro uma palavra em cima!");
+					return;
+				}
+				tocarSom('flip');
+				const palavra = arrastoAtivo.val;
+				selecoesArrastar[palavra] = categoria;
+
+				const tag = document.createElement('div');
+				tag.className = 'destaque-fundo';
+				tag.style.margin = '4px';
+				tag.style.cursor = 'pointer'; // Indica visualmente que é clicável para remover
+				tag.textContent = palavra;
+
+				// MELHORIA 1: Lógica de clicar para desfazer a qualquer momento
+				tag.onclick = (e) => {
+					e.stopPropagation(); // Impede que o clique ative o depósito pai
+					tocarSom('flip');
+					delete selecoesArrastar[palavra];
+					tag.remove();
+					
+					// Reativa o respetivo botão na pool de palavras à esquerda
+					colPalavras.querySelectorAll('button').forEach(btn => {
+						if (btn.textContent === palavra) {
+							btn.disabled = false;
+							btn.style.opacity = '1';
+						}
+					});
+				};
+
+				elementoDep.appendChild(tag);
+
+				arrastoAtivo.btn.style.opacity = '0.3';
+				arrastoAtivo.btn.disabled = true;
+				arrastoAtivo = null;
+
+				if (Object.keys(selecoesArrastar).length === totalItens) {
+					setTimeout(() => {
+						let tudoOk = true;
+						for (let k in ronda.pares) {
+							if (selecoesArrastar[k] !== ronda.pares[k]) {
+								tudoOk = false;
+							}
+						}
+						if (tudoOk) {
+							validar(true, zona);
+						} else {
+							validar(false, zona);
+							
+							// MELHORIA 2: Devolução seletiva (só as erradas regressam à pool)
+							setTimeout(() => {
+								colPalavras.querySelectorAll('button').forEach(btn => {
+									const pal = btn.textContent;
+									const eCorreta = (selecoesArrastar[pal] === ronda.pares[pal]);
+									
+									if (!eCorreta) {
+										// Se estiver incorreta, remove dos registos e reativa o botão
+										btn.disabled = false;
+										btn.style.opacity = '1';
+										delete selecoesArrastar[pal];
+										
+										// Remove a etiqueta visual de dentro do depósito correspondente
+										document.querySelectorAll('.carruagem-destino .destaque-fundo').forEach(tagEl => {
+											if (tagEl.textContent === pal) {
+												tagEl.remove();
+											}
+										});
+									}
+								});
+								arrastoAtivo = null;
+							}, 800);
+						}
+					}, 400);
+				}
+			}
+
+			area.appendChild(colPalavras);
+			zona.appendChild(depSingular);
+			zona.appendChild(depPlural);
+			area.appendChild(zona);
+		}
+
+		// J. JOGO J: O INTRUSO (BOLHAS DE SABÃO)
+		else if (ronda.tipo === 'intruso') {
+			const container = document.createElement('div');
+			container.className = 'intruso-container';
+
+			const baralhadas = [...ronda.opcoes].sort(() => Math.random() - 0.5);
+
+			baralhadas.forEach(opt => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-bolha-intruso';
+				btn.textContent = opt;
+
+				btn.onclick = () => {
+					if (!podeInteragir) return;
+					const isIntruso = (opt === ronda.correta);
+					
+					if (isIntruso) {
+						// Efeito físico de rebentar a bolha antes de avançar
+						btn.style.transition = 'transform 0.15s ease-out, opacity 0.15s ease-out';
+						btn.style.transform = 'scale(0)';
+						btn.style.opacity = '0';
+						tocarSom('flip');
+						setTimeout(() => {
+							validar(true, btn);
+						}, 200);
+					} else {
+						validar(false, btn);
+					}
+				};
+				container.appendChild(btn);
+			});
+			area.appendChild(container);
+		}
+
+		// K. JOGO K: O CONSTRUTOR DE PALAVRAS (CARROSSEL DE AFIXOS)
+		else if (ronda.tipo === 'carrossel') {
+			let idxPrefixo = 0;
+			let idxSufixo = 0;
+
+			const container = document.createElement('div');
+			container.style.display = 'flex';
+			container.style.flexDirection = 'column';
+			container.style.alignItems = 'center';
+			container.style.gap = '20px';
+			container.style.width = '100%';
+
+			const carrosselWrap = document.createElement('div');
+			carrosselWrap.className = 'carrossel-palavras-container';
+
+			// --- 1. COLUNA PREFIXO ---
+			const colPref = document.createElement('div');
+			colPref.className = 'carrossel-coluna';
+
+			const btnPrefUp = document.createElement('button');
+			btnPrefUp.className = 'btn-carrossel-seta';
+			btnPrefUp.innerHTML = '▲';
+			btnPrefUp.onclick = () => {
+				if (!podeInteragir) return;
+				tocarSom('flip');
+				idxPrefixo = (idxPrefixo - 1 + ronda.prefixos.length) % ronda.prefixos.length;
+				visorPref.textContent = ronda.prefixos[idxPrefixo] || '---';
+			};
+
+			const visorPref = document.createElement('div');
+			visorPref.className = 'carrossel-visor';
+			visorPref.textContent = ronda.prefixos[idxPrefixo] || '---';
+
+			const btnPrefDown = document.createElement('button');
+			btnPrefDown.className = 'btn-carrossel-seta';
+			btnPrefDown.innerHTML = '▼';
+			btnPrefDown.onclick = () => {
+				if (!podeInteragir) return;
+				tocarSom('flip');
+				idxPrefixo = (idxPrefixo + 1) % ronda.prefixos.length;
+				visorPref.textContent = ronda.prefixos[idxPrefixo] || '---';
+			};
+
+			colPref.appendChild(btnPrefUp);
+			colPref.appendChild(visorPref);
+			colPref.appendChild(btnPrefDown);
+
+			// --- 2. COLUNA RADICAL (FIXO CENTRAL) ---
+			const colRad = document.createElement('div');
+			colRad.className = 'carrossel-coluna';
+			
+			// Espaçadores transparentes para simetria vertical com as setas laterais
+			const espacoTop = document.createElement('div');
+			espacoTop.style.height = '42px';
+			const espacoBot = document.createElement('div');
+			espacoBot.style.height = '42px';
+
+			const visorRad = document.createElement('div');
+			visorRad.className = 'carrossel-visor visor-radical';
+			visorRad.textContent = ronda.radical;
+
+			colRad.appendChild(espacoTop);
+			colRad.appendChild(visorRad);
+			colRad.appendChild(espacoBot);
+
+			// --- 3. COLUNA SUFIXO ---
+			const colSuf = document.createElement('div');
+			colSuf.className = 'carrossel-coluna';
+
+			const btnSufUp = document.createElement('button');
+			btnSufUp.className = 'btn-carrossel-seta';
+			btnSufUp.innerHTML = '▲';
+			btnSufUp.onclick = () => {
+				if (!podeInteragir) return;
+				tocarSom('flip');
+				idxSufixo = (idxSufixo - 1 + ronda.sufixos.length) % ronda.sufixos.length;
+				visorSuf.textContent = ronda.sufixos[idxSufixo] || '---';
+			};
+
+			const visorSuf = document.createElement('div');
+			visorSuf.className = 'carrossel-visor';
+			visorSuf.textContent = ronda.sufixos[idxSufixo] || '---';
+
+			const btnSufDown = document.createElement('button');
+			btnSufDown.className = 'btn-carrossel-seta';
+			btnSufDown.innerHTML = '▼';
+			btnSufDown.onclick = () => {
+				if (!podeInteragir) return;
+				tocarSom('flip');
+				idxSufixo = (idxSufixo + 1) % ronda.sufixos.length;
+				visorSuf.textContent = ronda.sufixos[idxSufixo] || '---';
+			};
+
+			colSuf.appendChild(btnSufUp);
+			colSuf.appendChild(visorSuf);
+			colSuf.appendChild(btnSufDown);
+
+			carrosselWrap.appendChild(colPref);
+			carrosselWrap.appendChild(colRad);
+			carrosselWrap.appendChild(colSuf);
+			container.appendChild(carrosselWrap);
+
+			// --- 4. BOTÃO VALIDAR REGISTO ---
+			const btnValidar = document.createElement('button');
+			btnValidar.className = 'btn-validar-carrossel';
+			btnValidar.textContent = 'Validar Palavra';
+			btnValidar.onclick = () => {
+				if (!podeInteragir) return;
+				const palavraMontada = (ronda.prefixos[idxPrefixo] || '') + ronda.radical + (ronda.sufixos[idxSufixo] || '');
+				const correta = (palavraMontada === ronda.correta);
+				
+				if (!correta) {
+					// Feedback de abanão de erro localizado nas duas roletas móveis
+					visorPref.classList.add('erro-vibrante');
+					visorSuf.classList.add('erro-vibrante');
+					validar(false, btnValidar);
+					setTimeout(() => {
+						visorPref.classList.remove('erro-vibrante');
+						visorSuf.classList.remove('erro-vibrante');
+					}, 600);
+				} else {
+					visorPref.classList.add('sucesso-vibrante');
+					visorSuf.classList.add('sucesso-vibrante');
+					validar(true, btnValidar);
+				}
+			};
+			container.appendChild(btnValidar);
+
+			area.appendChild(container);
+		}
+
+		// L. JOGO L: TIRO AO ALVO ORTOGRÁFICO
+		else if (ronda.tipo === 'tiro-alvo') {
+			const container = document.createElement('div');
+			container.className = 'tiro-alvo-container';
+
+			const painel = document.createElement('div');
+			painel.className = 'painel-ortografico';
+			painel.innerHTML = ronda.palavraComLacuna;
+			container.appendChild(painel);
+
+			const alvosWrap = document.createElement('div');
+			alvosWrap.className = 'alvos-container';
+
+			ronda.opcoes.forEach(opt => {
+				const btn = document.createElement('button');
+				btn.className = 'btn-alvo';
+				btn.textContent = opt;
+				btn.dataset.length = opt.length;
+
+				btn.onclick = () => {
+					if (!podeInteragir) return;
+					const correta = (opt === ronda.correta);
+
+					if (correta) {
+						tocarSom('flip');
+						// Troca dinamicamente o elemento pulsar pelo caractere correto
+						const spanGap = painel.querySelector('.gap-pulsar');
+						if (spanGap) {
+							spanGap.textContent = opt;
+							spanGap.classList.remove('gap-pulsar');
+							spanGap.style.color = 'var(--cor-sucesso)';
+							spanGap.style.borderBottom = 'none';
+						}
+						setTimeout(() => {
+							validar(true, btn);
+						}, 300);
+					} else {
+						validar(false, btn);
+					}
+				};
+				alvosWrap.appendChild(btn);
+			});
+
+			container.appendChild(alvosWrap);
+			area.appendChild(container);
+		}
+		
+		resetTimerImpaciencia();
+	}
+
+/* ==========================================================================
+   6. LÓGICA DE COORDENAÇÃO DO JOGO DE LIGAR (DESFAZER E ESTILO)
+   ========================================================================== */
+	function selecionarLigarEsq(it, b, ronda) {
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			if (selecaoLigar) {
+				selecaoLigar.btn.classList.remove('selecionado');
+				selecaoLigar = null;
+			}
+			return;
+		}
+
+		if (selecaoLigar && selecaoLigar.btn === b) {
+			b.classList.remove('selecionado');
+			selecaoLigar = null;
+			tocarSom('flip');
+			return;
+		}
+
+		tocarSom('flip');
+		document.querySelectorAll('.coluna-ligar button').forEach(x => x.classList.remove('selecionado'));
+		b.classList.add('selecionado');
+		selecaoLigar = { val: it, btn: b };
+	}
+
+	function selecionarLigarDir(it, b, ronda) {
+		if (!selecaoLigar || !podeInteragir) return;
+		
+		if (b.classList.contains('ligado')) {
+			tocarSom('flip');
+			const parIdx = paresElementosLigar.findIndex(p => p.esqBtn === b || p.dirBtn === b);
+			if (parIdx !== -1) {
+				const par = paresElementosLigar[parIdx];
+				par.esqBtn.classList.remove('ligado');
+				par.dirBtn.classList.remove('ligado');
+				delete selecoesLigar[par.esqVal];
+				paresElementosLigar.splice(parIdx, 1);
+			}
+			selecaoLigar = null;
+			return;
+		}
+
+		const ok = (ronda.pares[selecaoLigar.val] === it);
+		
+		if (ok) {
+			b.classList.add('ligado');
+			selecaoLigar.btn.classList.add('ligado');
+			selecaoLigar.btn.classList.remove('selecionado');
+
+			selecoesLigar[selecaoLigar.val] = it;
+			paresElementosLigar.push({
+				esqBtn: selecaoLigar.btn,
+				dirBtn: b,
+				esqVal: selecaoLigar.val,
+				dirVal: it
+			});
+
+			selecaoLigar = null;
+
+			const totalPares = Object.keys(ronda.pares).length;
+			if (Object.keys(selecoesLigar).length === totalPares) {
+				validar(true, b);
+			} else {
+				tocarSom('acerto');
+			}
+		} else {
+			// Armazena e abana também o botão da esquerda que falhou a ligação
+			const esqBtn = selecaoLigar.btn;
+			esqBtn.classList.add('erro-vibrante');
+			
+			validar(false, b);
+			
+			setTimeout(() => {
+				// Limpa apenas o par incorreto, mantendo os outros ligados ativos
+				esqBtn.classList.remove('selecionado', 'erro-vibrante');
+				selecaoLigar = null;
+			}, 600);
+		}
+	}
+
+/* ==========================================================================
+   7. VERIFICAÇÃO E TRANSIÇÕES DE FEEDBACK
+   ========================================================================== */
+	function validar(correto, el) {
+		if (!podeInteragir) return; podeInteragir = false; clearTimeout(timerImpaciencia);
+		if (correto) {
+			el.classList.add('sucesso-vibrante'); animarMascote('acerto'); tocarSom('decolar'); // Ativa o rugido do motor ao subir!
+			
+			// ADICIONADO: Reduz o cooldown da dica em caso de acerto!
+			if (rondasParaDica > 0) {
+				rondasParaDica--;
+			}
+			atualizarBotaoDica();
+
+			setTimeout(() => { desafioAtual++; if(desafioAtual < 10) { atualizarBarraEstado(); carregarRonda(); } else finalizarJogo(); }, 1600);
+		} else {
+			el.classList.add('erro-vibrante'); erradas++; atualizarBarraEstado(); animarMascote('erro'); tocarSom('erro');
+			setTimeout(() => { el.classList.remove('erro-vibrante'); podeInteragir = true; resetTimerImpaciencia(); }, 600);
+		}
+	}
+
+	function animarMascote(estado) {
+		const container = document.getElementById('mascote-feedback');
+		if (!container) return;
+		const imgNode = container.querySelector('img');
+
+		// 1. Limpa as classes de animação anteriores do container (onde as animações CSS atuam)
+		container.classList.remove('mascote-normal', 'mascote-erro', 'mascote-sucesso');
+		void container.offsetWidth; // Truque de Engenharia para reiniciar a animação no navegador
+
+		if (estado === 'normal') {
+			if (imgNode) imgNode.src = "img/mascote_normal.png";
+			container.classList.add('mascote-normal');
+		}
+		else if (estado === 'erro') {
+			if (imgNode) imgNode.src = "img/mascote_erro.png";
+			container.classList.add('mascote-erro');
+			// Volta ao estado normal automaticamente após o abanão (0.7s)
+			setTimeout(() => animarMascote('normal'), 700);
+		}
+		else if (estado === 'acerto') {
+			if (imgNode) imgNode.src = "img/mascote_acerto.png";
+			container.classList.add('mascote-sucesso');
+			// Volta ao estado normal automaticamente após o salto (1s)
+			setTimeout(() => {
+				// Se ainda não acabou o jogo, volta a flutuar
+				if (desafioAtual < totalRondas) animarMascote('normal');
+			}, 1000);
+		}
+	}
+
+	function resetTimerImpaciencia() {
+		clearTimeout(timerImpaciencia); 
+		const btnDica = document.getElementById('btn-dica');
+		if(btnDica) btnDica.classList.remove('dica-impaciente');
+		timerImpaciencia = setTimeout(() => { if(btnDica) btnDica.classList.add('dica-impaciente'); }, 15000);
+	}
+
+	function usarDica() {
+		if (rondasParaDica > 0 || !podeInteragir) return;
+		
+		const ronda = perguntasSorteadas[desafioAtual];
+		const configDica = ronda.dica;
+		if (!configDica) return;
+
+		tocarSom('flip');
+
+		// 1. Dica tipo TEXTO (Abre Modal)
+		if (typeof configDica === 'string') {
+			document.getElementById('modal-dica-conteudo').innerHTML = `<p>${configDica}</p>`;
+			document.getElementById('modal-ajuda').classList.add('active');
+		}
+		// 2. Dica tipo HIGHLIGHT (Delega para a função inteligente)
+		else if (configDica.tipo === 'highlight') {
+			aplicarHighlightRespostaCorreta(ronda);
+		}
+		// 3. Dica tipo 50-50 ou RETIRAR-UM
+		else if (configDica.tipo === '50-50' || configDica.tipo === 'retirar-um') {
+			
+			// SALVAGUARDA DE SEGURANÇA: Se o tipo de ronda não suportar eliminação,
+			// reverte silenciosamente para a dica de realce e evita que o jogo quebre.
+			if (ronda.tipo !== 'multipla' && ronda.tipo !== 'lacunas') {
+				aplicarHighlightRespostaCorreta(ronda);
+				rondasParaDica = COOLDOWN_DICA;
+				atualizarBotaoDica();
+				return;
+			}
+
+			// Seleciona botões que não estão desativados nem ligados
+			const botoes = Array.from(document.querySelectorAll('.btn-opcao-vibrante:not(.ligado), .palavra-banco:not([disabled])'));
+			let errados = botoes.filter(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				
+				// Verifica se é a correta (suporta texto ou imagem)
+				const isCorretaMultipla = (texto === ronda.correta || imgInside === ronda.correta);
+				const isCorretaLacuna = ronda.respostas && ronda.respostas.includes(texto);
+				
+				return !isCorretaMultipla && !isCorretaLacuna;
+			});
+
+			errados = baralharArray(errados);
+			const qtdParaEsconder = (configDica.tipo === '50-50') ? Math.max(1, Math.floor(errados.length / 2)) : 1;
+
+			for (let i = 0; i < qtdParaEsconder; i++) {
+				errados[i].style.opacity = '0.2';
+				errados[i].style.pointerEvents = 'none';
+				errados[i].setAttribute('disabled', 'true');
+			}
+			showToast("O amigo Papagaio removeu uma opção errada!");
+		}
+
+		rondasParaDica = COOLDOWN_DICA;
+		atualizarBotaoDica();
+	}
+
+	function fecharModalDica() { document.getElementById('modal-ajuda').classList.remove('active'); }
+
+	function finalizarJogo() {
+		document.getElementById('mascote-feedback').style.display = "none";
+		mostrarEcra('ecra-fim');
+		document.getElementById('final-erros').textContent = erradas;
+		const rank = document.getElementById('rank-container');
+		let img = erradas === 0 ? "rank_ouro.svg" : (erradas <= 3 ? "rank_prata.svg" : "rank_bronze.svg");
+		rank.innerHTML = `<img src="../../../SVG/${img}" class="taca-vitoria" style="width:120px;">`;
+		tocarSom('vitoria'); dispararConfetis();
+	}
+
+	function voltarAoMenuPrincipal() {
+		mostrarEcra('ecra-selecao');
+		document.getElementById('mascote-feedback').style.display = "none";
+		document.getElementById('subtitulo-header').textContent = "Uma viagem pelo poder dos pronomes nas frases!";
+		limparConfetis();
+	}
+
+	function confirmarSair() {
+		voltarAoMenuPrincipal();
+	}
+
+	function reiniciarJogo() { prepararJogo(sistemaAtivo); limparConfetis();}
+
+/* ==========================================================================
+   8. ÁUDIO, CONFETIS E AUXILIARES (COM COMPATIBILIDADE SEGURA)
+   ========================================================================== */
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	let audioCtx = null;
+
+	function initAudio() {
+		try {
+			if (!AudioContextClass) return;
+			if (!audioCtx) {
+				audioCtx = new AudioContextClass();
+			}
+			if (audioCtx && audioCtx.state === 'suspended') {
+				audioCtx.resume().catch(e => console.warn("Aviso: Não foi possível retomar o AudioContext:", e));
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha na inicialização do AudioContext:", error);
+			audioCtx = null;
+		}
+	}
+
+	document.addEventListener('pointerdown', initAudio, { once: true });
+
+	function baralharArray(arr) {
+		let array = [...arr];
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+		return array;
+	}
+
+	function obterCoresAleatorias(quantidade) {
+		const coresTemplate = ['bg-azul', 'bg-amarelo', 'bg-roxo', 'bg-laranja', 'bg-rosa', 'bg-turquesa', 'bg-vermelho'];
+		const baralhadas = baralharArray(coresTemplate);
+		return baralhadas.slice(0, quantidade);
+	}
+
+	function tocarSom(t) {
+		try {
+			initAudio();
+			if (!audioCtx) return;
+			const agora = audioCtx.currentTime; // Variável unificada como agora
+
+			if (t === 'acerto') {
+				const notas = [783.99, 1046.50];
+				notas.forEach((freq, i) => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'sine';
+					o.frequency.value = freq;
+					g.gain.setValueAtTime(0, agora + i * 0.12);
+					g.gain.linearRampToValueAtTime(0.08, agora + i * 0.12 + 0.02);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + i * 0.12 + 0.3);
+					o.start(agora + i * 0.12);
+					o.stop(agora + i * 0.12 + 0.3);
+				});
+			} else if (t === 'erro') {
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'triangle';
+				o.frequency.setValueAtTime(220, agora);
+				o.frequency.exponentialRampToValueAtTime(80, agora + 0.3);
+				g.gain.setValueAtTime(0.08, agora);
+				o.start(agora);
+				o.stop(agora + 0.3);
+			} else if (t === 'vitoria') {
+				const melodia = [
+					{ freq: 523.25, tempo: 0.00, duracao: 0.15 }, 
+					{ freq: 659.25, tempo: 0.15, duracao: 0.15 }, 
+					{ freq: 783.99, tempo: 0.30, duracao: 0.20 }, 
+					{ freq: 659.25, tempo: 0.50, duracao: 0.15 }, 
+					{ freq: 1046.50, tempo: 0.65, duracao: 0.70 } 
+				];
+				melodia.forEach(nota => {
+					const o = audioCtx.createOscillator();
+					const g = audioCtx.createGain();
+					o.connect(g); g.connect(audioCtx.destination);
+					o.type = 'triangle'; 
+					o.frequency.value = nota.freq;
+					g.gain.setValueAtTime(0.08, agora + nota.tempo);
+					g.gain.exponentialRampToValueAtTime(0.001, agora + nota.tempo + nota.duracao);
+					o.start(agora + nota.tempo);
+					o.stop(agora + nota.tempo + nota.duracao);
+				});
+			} else if (t === 'decolar') {
+				// NOVO: Som de Propulsão Sci-Fi Limpo e Cristalino (Zwoooop!)
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine'; // Onda 100% pura e limpa, sem qualquer distorção
+				o.frequency.setValueAtTime(150, agora);
+				// Varredura exponencial ascendente muito rápida (efeito de aceleração para o espaço)
+				o.frequency.exponentialRampToValueAtTime(1800, agora + 0.8); 
+				g.gain.setValueAtTime(0, agora);
+				g.gain.linearRampToValueAtTime(0.12, agora + 0.05); // Ataque de ignição rápido
+				g.gain.exponentialRampToValueAtTime(0.001, agora + 0.8); // Desvanece suavemente
+				o.start(agora);
+				o.stop(agora + 0.8);
+			} else if (t === 'flip') { // CORREÇÃO: Removida a chaveta extra "}" que quebrava a sintaxe aqui
+				const o = audioCtx.createOscillator();
+				const g = audioCtx.createGain();
+				o.connect(g); g.connect(audioCtx.destination);
+				o.type = 'sine';
+				o.frequency.setValueAtTime(400, agora);
+				o.frequency.exponentialRampToValueAtTime(600, agora + 0.1);
+				g.gain.setValueAtTime(0.05, agora);
+				o.start(agora);
+				o.stop(agora + 0.1);
+			}
+		} catch (error) {
+			console.warn("Aviso: Ocorreu uma falha ao tentar reproduzir o áudio sintetizado:", error);
+		}
+	}
+
+	function dispararConfetis() {
+		const c = document.getElementById('confetti-container');
+		if (!c) return;
+		c.innerHTML = '';
+		const cores = ['#ff4757', '#2ed573', '#0091ff', '#fbc531'];
+		for (let i = 0; i < 120; i++) {
+			const d = document.createElement('div');
+			d.className = 'confetti';
+			d.style.left = Math.random() * 100 + '%';
+			d.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+			
+			const escala = Math.random() * 0.8 + 0.4;
+			const duracao = Math.random() * 2 + 2.5;
+			const atraso = Math.random() * 1.5;
+			
+			d.style.animationDuration = duracao + 's';
+			d.style.animationDelay = atraso + 's';
+			d.style.transform = `scale(${escala})`;
+			
+			c.appendChild(d);
+			setTimeout(() => d.remove(), (duracao + atraso) * 1000);
+		}
+	}
+
+	function limparConfetis() {
+		const container = document.getElementById('confetti-container');
+		if (container) {
+			container.innerHTML = '';
+		}
+	}
+
+	function aplicarHighlightRespostaCorreta(ronda) {
+		// Seleciona todos os elementos interativos possíveis
+		const todosBotoes = document.querySelectorAll('.btn-opcao-vibrante, .btn-opcao, .bloco-arrastar, .palavra-banco, .cartao-opcao-visual');
+
+		/* A. CASO: ESCOLHA MÚLTIPLA */
+		if (ronda.tipo === 'multipla') {
+			todosBotoes.forEach(btn => {
+				const texto = btn.textContent.trim();
+				const imgInside = btn.querySelector('img')?.getAttribute('src');
+				// Verifica se o texto ou o SRC da imagem coincide com a resposta certa
+				if (texto === ronda.correta || imgInside === ronda.correta) {
+					btn.classList.add('highlight-correto');
+					setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+				}
+			});
+		}
+
+		/* B. CASO: LIGAR (Lógica Inteligente) */
+		else if (ronda.tipo === 'ligar') {
+			// Encontra o primeiro par da esquerda que AINDA NÃO está ligado
+			const parPendente = Object.entries(ronda.pares).find(([esq, dir]) => {
+				const btnEsq = Array.from(todosBotoes).find(b => b.textContent.trim() === esq);
+				return btnEsq && !btnEsq.classList.contains('ligado');
+			});
+
+			if (parPendente) {
+				const [valEsq, valDir] = parPendente;
+				todosBotoes.forEach(btn => {
+					const txt = btn.textContent.trim();
+					if (txt === valEsq || txt === valDir) {
+						btn.classList.add('highlight-correto');
+						setTimeout(() => btn.classList.remove('highlight-correto'), 4000);
+					}
+				});
+			}
+		}
+
+		/* C. CASO: ARRASTAR OU MAPA */
+		else if (ronda.tipo === 'arrastar' || ronda.tipo === 'mapa') {
+			// Encontra o primeiro item que ainda não foi colocado no alvo
+			const itemPendente = Object.keys(ronda.pares).find(item => !selecoesArrastar[item]);
+
+			if (itemPendente) {
+				todosBotoes.forEach(el => {
+					if (el.textContent.trim() === itemPendente) {
+						el.classList.add('highlight-correto');
+						setTimeout(() => el.classList.remove('highlight-correto'), 4000);
+					}
+				});
+				showToast("Observa o destaque!");
+			}
+		}
+	}
+	
+	function showToast(mensagem) {
+		const toast = document.getElementById('toast-msg');
+		if (toast) {
+			toast.textContent = mensagem;
+			toast.classList.add('active');
+			setTimeout(() => toast.classList.remove('active'), 2500);
+		}
+	}
+</script>
+</body>
+</html>
