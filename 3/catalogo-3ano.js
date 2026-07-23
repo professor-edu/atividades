@@ -14,7 +14,7 @@ const todosOsJogos =[
 	{ nome: "Revisões", icone: "icones/revisoes.png", link: "pt/revisoes/", cat: "pt" },
 	{ nome: "Pronomes Pessoais", icone: "icones/pronomes_pessoais.png", link: "pt/pronomes-pessoais/", cat: "pt" },
 	{ nome: "Acentuação", icone: "icones/acentuacao.png", link: "pt/acentuacao/", cat: "pt" },
-	{ nome: "Sinais", icone: "icones/sinais.png", link: "pt/sinais/", cat: "pt" },
+	{ nome: "O Mistério dos Sinais", icone: "icones/sinais.png", link: "pt/sinais/", cat: "pt" },
 	{ nome: "Quantificadores Numerais", icone: "icones/quantificadores_numerais.png", link: "pt/quantificadores-numerais/", cat: "pt" },
 	{ nome: "A Viagem dos Verbos", icone: "icones/viagem_verbos.png", link: "pt/viagem_verbos/", cat: "pt" },
 	{ nome: "Grupos nas Frases", icone: "icones/grupos_frases.png", link: "pt/grupos-frases/", cat: "pt" },

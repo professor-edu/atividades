@@ -22,6 +22,7 @@ const todosOsJogos =[
 	{ nome: "A Ponte dos Conectores", icone: "icones/conectores.png", link: "pt/conectores/", cat: "pt" },
 	{ nome: "A Oficina dos Afixos", icone: "icones/afixos.png", link: "pt/afixos/", cat: "pt" },
 	{ nome: "O Mapa dos Advérbios", icone: "icones/adverbios.png", link: "pt/adverbios/", cat: "pt" },
+	{ nome: "O Polícia da Pontuação", icone: "icones/pontuacao.png", link: "pt/pontuacao/", cat: "pt" },
     
 	
 	
