@@ -24,6 +24,7 @@ const todosOsJogos =[
 	{ nome: "O Mapa dos Advérbios", icone: "icones/adverbios.png", link: "pt/adverbios/", cat: "pt" },
 	{ nome: "O Polícia da Pontuação", icone: "icones/pontuacao.png", link: "pt/pontuacao/", cat: "pt" },
 	{ nome: "A Montanha das Sílabas", icone: "icones/silaba_tonica.png", link: "pt/silaba-tonica/", cat: "pt" },
+	{ nome: "O Detetive dos Textos", icone: "icones/detetive_textos.png", link: "pt/detetive-textos/", cat: "pt" },
     
 	
 	
